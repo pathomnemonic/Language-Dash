@@ -25,8 +25,13 @@ So Language Dash uses names nothing else uses, and `tests/unit/silo.test.js` fai
 4. Deploy `supabase/functions/*` to the new project with its own Stripe keys and webhook secret (see `docs/PRO.md`).
 5. The Apple/Google sign-in redirect URLs must list `com.pathomnemonic.languagedash://auth` and the Language Dash site URL only.
 
-## One caveat that lives in the other game
-Dx Dash's service worker (`public/sw.js` in that repo) deletes every cache whose name is not its own when it updates. On the
-shared host that also deletes Language Dash's caches, which only costs a re-download. Changing its `activate` filter to
-`k.indexOf('dx-') === 0 && ...` fixes it. Only a separate origin (a custom domain, or a different GitHub account) gives
-complete isolation; naming keeps data apart in practice.
+## The other game's service worker (fixed on a branch, needs merging)
+Dx Dash's `public/sw.js` deleted every cache that was not its own when it updated, which on the shared host also deleted Language
+Dash's caches (only a re-download, but still a cross-over). The fix (delete only caches starting `dx-`) is committed in the
+`buzzword-dash-v2` repo on branch `ccr-bd150d31-nr1rph`. Merge that branch and redeploy Dx Dash to apply it; nothing was merged or
+deployed for you. Only a separate origin (a custom domain, or a different GitHub account) gives complete isolation; naming keeps
+data apart in practice, and `tests/unit/silo.test.js` guards it from this side.
+
+## Checklist for any future game on this host
+Pick a unique prefix, never read an unsuffixed key from another game, give the service worker a prefix filter, give Supabase its
+own project and `storageKey`, and use a unique PeerJS prefix and store product ids.
