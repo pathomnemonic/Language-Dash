@@ -2,41 +2,54 @@
 
 > **Publishing? Start with `docs/RELEASE_GUIDE.md`.** The ready-to-paste text and policy answers are in `store/google-play/` and `store/app-store/`. This page keeps the background and the rules about what the listing may claim.
 
-Edit freely. Keep claims honest: the game is a study aid and does not guarantee exam results.
+Edit freely. Keep claims honest: the game is a practice aid and does not guarantee fluency or test results.
 
 ## Name and short description
 
 **Title:** Language Dash: Word Runner (30 characters max on Google Play; "Language Dash" alone also works)
 
-**Tagline:** Run the list.
+**Tagline:** Run through the right word.
 
-**App Store subtitle (30 chars):** Board questions, at a sprint
+**App Store subtitle (30 chars):** Learn words at a sprint
 
-**Short description (80 chars):** Run the list. Dodge, dash and Dx USMLE & COMLEX questions.
+**Short description (80 chars):** Run through the right word. Learn 1,000 words in 15 languages by playing.
 
 ## Full description
 
-Run the list. Study for your boards by playing.
+Run the words. Learn a language by playing.
 
-Language Dash shows you the clues from a classic exam vignette (the "buzzwords") and asks you to run into the correct diagnosis. Pick a lane, dodge the obstacles, keep your streak alive, and learn something every run.
+Language Dash flashes a word in the language you speak and rushes three gates at you, each showing a word in the language you are learning. Run through the gate that means the same thing. Dodge the obstacles, keep your streak alive, and pick up a few words every run.
 
-- **Challenge a friend, live.** Head-to-head multiplayer with a room code. No account needed.
-- **3,000+ board-style questions** across 15 subjects, with a quick explanation after every miss.
-- **Learn from your misses.** Spaced repetition (FSRS, the open algorithm Anki offers) brings back each card just before you would forget it.
-- **Flashcards and a timed exam simulator** for when you want to slow down and test yourself.
-- **Daily goals, streaks and a study plan** with your language goal date, a mastery level for each subject and a pace for the days you have left.
-- **A friends feed with kudos.** Share your runs with friends or keep them private, cheer each other on, and join private study groups.
-- **An exam monster that chases you** when your streak slips, and drifts away when you get back on track.
-- **Earn coins and unlock** animated characters, monsters, trails and themed tracks.
-- **Solo play needs no internet.** No ads. No tracking.
+WORDS THAT STICK
+• The 1,000 most common words of 15 languages, in any pair: English, Spanish, French, German, Italian, Portuguese, Dutch, Swedish, Polish, Russian, Japanese, Korean, Mandarin, Arabic and Hindi
+• Hear every word, with a pronunciation line for Japanese, Korean, Mandarin, Russian, Arabic and Hindi
+• Smart reviews: each word comes back just before you would forget it, scheduled with FSRS, the same algorithm Anki uses
+• Pick topics (food, travel, feelings and more) and a word level: the first 100, 300, 600 or all 1,000 words
+• Flashcards, a timed Word Quiz, a weekly Gauntlet and a Daily 15 for when you want to slow down and test yourself
+• Make your own word lists or import vocabulary decks
 
-Language Dash is an educational game, not medical advice. Content may contain errors; verify important facts with authoritative sources.
+SIGN IN YOUR WAY
+• Play as a guest, or sign in with Google, Apple, Microsoft or email to keep your progress on every device
+
+PLAY WITH FRIENDS
+• Challenge a friend live, head to head, with a room code. No account needed
+• A friends feed with kudos: share your runs with friends or keep them private
+• Private study groups with a shared weekly goal
+
+KEEP GOING
+• Daily goals, streaks and quests
+• Earn coins and unlock Wordrunners, pals, trails and travel-themed maps from Tokyo to Verona
+• The Hush, a creeping silence, gains on you when your streak slips
+
+SOLO PLAY NEEDS NO INTERNET. No ads.
+
+Language Dash is a practice game, not a language course or a fluency test. Words may contain errors; check anything important with a native speaker or a dictionary. Not affiliated with or endorsed by Anki.
 
 ## What the listing may claim (and what it may not yet)
 
 Only list a feature once it has been checked end to end. As of the last check:
 
-**Checked, safe to list** (the list above): live multiplayer (two real browsers connected, played a match and saw each other's scores), the question bank size and subjects, the run, the case review after a run, flashcards and the exam simulator (automated browser tests), daily goals and the study plan (unit tests), the exam monster and characters (seen in play), solo play making no network requests other than to the app itself.
+**Checked, safe to list** (the list above): live multiplayer (two real browsers connected, played a match and saw each other's scores), the word list size and topics (`npm run validate:deck`), the run, the run report after a run, flashcards and the Word Quiz (automated browser tests), daily goals and the study plan (unit tests), the Hush and characters (seen in play), solo play making no network requests other than to the app itself.
 
 **Built and tested, but not yet checked against the live online service, so do not list yet:**
 - Ranked matches, trophies and leagues: built and tested but hidden for now (not mentioned in the store listings). Versus works with a room code.

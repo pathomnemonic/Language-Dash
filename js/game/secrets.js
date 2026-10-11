@@ -2,7 +2,7 @@
  * secrets.js — one tiny hidden thing on every map.
  *
  * Once in a while during a solo run something small and friendly shows up beside the track (a waving cow, a squeaky
- * pill bottle, a rubber duck). Tap it before it passes and it pays a few coins; the first time on each map pays more.
+ * jam jar, a rubber duck). Tap it before it passes and it pays a few coins; the first time on each map pays more.
  * It rewards noticing the scenery, appears at most once per run, never in competitive runs, sits well outside the lanes
  * and is only a tap away, never something to dodge. This file has the list, the little models and the rules.
  */
@@ -17,28 +17,28 @@ export var TAP_RADIUS_PX = 58;
 
 /** map name -> { kind, name } */
 export var SECRETS = {
-  'Hospital Hallway': { kind: 'heart', name: 'a bashful heart' },
-  'Operating Room': { kind: 'star', name: 'a surgical star' },
-  'Research Lab': { kind: 'flask', name: 'a bubbly beaker' },
+  'Hospital Hallway': { kind: 'heart', name: 'a bookworm with a heart' },
+  'Operating Room': { kind: 'star', name: 'a golden-quill star' },
+  'Research Lab': { kind: 'inkwell', name: 'a bubbly inkwell' },
   'Ambulance Bay': { kind: 'duck', name: 'a rubber duck on night shift' },
-  'Neural Highway': { kind: 'spark', name: 'a cheeky neuron' },
-  'Vascular Rush': { kind: 'cell', name: 'a waving red cell' },
-  'Skeletal Corridor': { kind: 'bone', name: 'a dancing bone' },
-  'Cellular Matrix': { kind: 'cell', name: 'a shy cell' },
-  'Neon ER': { kind: 'bottle', name: 'a squeaky pill bottle' },
-  'DNA Helix Tunnel': { kind: 'spark', name: 'a spinning base pair' },
-  'Prescription Sunset': { kind: 'bottle', name: 'a squeaky pill bottle' },
+  'Neural Highway': { kind: 'spark', name: 'a cheeky lantern spark' },
+  'Vascular Rush': { kind: 'pearl', name: 'a soggy waving pearl' },
+  'Skeletal Corridor': { kind: 'churro', name: 'a dancing churro' },
+  'Cellular Matrix': { kind: 'pearl', name: 'a shy tapioca pearl' },
+  'Neon ER': { kind: 'bottle', name: 'a squeaky vending-machine can' },
+  'DNA Helix Tunnel': { kind: 'spark', name: 'a spinning letter block' },
+  'Prescription Sunset': { kind: 'bottle', name: 'a squeaky sun-cream bottle' },
   'Cardiac Pulse': { kind: 'heart', name: 'a happy heart' },
-  'Surgical Theater': { kind: 'star', name: 'a surgical star' },
+  'Surgical Theater': { kind: 'star', name: 'a golden-quill star' },
   'Candy Lab': { kind: 'jelly', name: 'a jelly blob' },
-  'X-Ray Vision': { kind: 'bone', name: 'a bone with a secret' },
+  'X-Ray Vision': { kind: 'churro', name: 'a pretzel with a secret' },
   'Defibrillator Shock': { kind: 'spark', name: 'a static spark' },
   'Pediatric Playland': { kind: 'duck', name: 'a squeaky rubber duck' },
   'Sunshine Rehab Garden': { kind: 'bunny', name: 'a garden bunny' },
-  'Cafeteria Carnival': { kind: 'bottle', name: 'a giggling ketchup bottle' },
+  'Cafeteria Carnival': { kind: 'bottle', name: 'a giggling soy-sauce bottle' },
   'Neonatal Cloud Nursery': { kind: 'cloud', name: 'a sleepy little cloud' },
   'Anatomy Amusement Park': { kind: 'balloon', name: 'a runaway balloon' },
-  'Pharmacy Pop Factory': { kind: 'bottle', name: 'a squeaky pill bottle' },
+  'Pharmacy Pop Factory': { kind: 'bottle', name: 'a squeaky syrup bottle' },
   'Aquarium Imaging Center': { kind: 'fish', name: 'a shy clownfish' },
   'Rooftop Helipad Resort': { kind: 'duck', name: 'a pool duck' },
   'Vet and Farm Clinic': { kind: 'cow', name: 'a waving cow' },
@@ -74,12 +74,12 @@ var BUILDERS = {
   heart: function (g) { ball(g, 0.3, 0xff4d6a, -0.2, 0.9, 0, { seg: 8 }); ball(g, 0.3, 0xff4d6a, 0.2, 0.9, 0, { seg: 8 }); cone(g, 0.5, 0.7, 0xff4d6a, 0, 0.4, 0, { seg: 8, rx: Math.PI }); ball(g, 0.05, 0x222222, -0.12, 0.8, 0.3, { seg: 4 }); ball(g, 0.05, 0x222222, 0.12, 0.8, 0.3, { seg: 4 }); },
   bunny: function (g) { ball(g, 0.4, 0xffffff, 0, 0.45, 0, { seg: 8, sy: 0.9 }); ball(g, 0.26, 0xffffff, 0.2, 0.95, 0, { seg: 8 }); box(g, 0.1, 0.5, 0.1, 0xffffff, 0.15, 1.35, 0.06, { rz: 0.1 }); box(g, 0.1, 0.5, 0.1, 0xffffff, 0.27, 1.35, -0.06, { rz: -0.1 }); ball(g, 0.1, 0xffa8c0, -0.4, 0.4, 0, { seg: 5 }); },
   balloon: function (g) { ball(g, 0.5, 0xff4d6a, 0, 1.0, 0, { seg: 8, sy: 1.15 }); cone(g, 0.08, 0.14, 0xcc2a48, 0, 0.45, 0, { seg: 4, rx: Math.PI }); cyl(g, 0.012, 0.012, 0.8, 0xdddddd, 0, 0.0, 0, { seg: 3 }); },
-  cell: function (g) { ball(g, 0.5, 0xff5566, 0, 0.6, 0, { seg: 8, sy: 0.55 }); ball(g, 0.05, 0x222222, -0.12, 0.7, 0.2, { seg: 4 }); ball(g, 0.05, 0x222222, 0.12, 0.7, 0.2, { seg: 4 }); },
-  bone: function (g) { cyl(g, 0.1, 0.1, 0.9, 0xf4ead8, 0, 0.6, 0, { seg: 6, rz: Math.PI / 2 }); [[-0.45, 0.1], [-0.45, -0.1], [0.45, 0.1], [0.45, -0.1]].forEach(function (p) { ball(g, 0.14, 0xf4ead8, p[0], 0.6 + p[1], 0, { seg: 5 }); }); },
+  pearl: function (g) { ball(g, 0.5, 0x4a3326, 0, 0.6, 0, { seg: 8, sy: 0.55 }); ball(g, 0.05, 0x222222, -0.12, 0.7, 0.2, { seg: 4 }); ball(g, 0.05, 0x222222, 0.12, 0.7, 0.2, { seg: 4 }); },
+  churro: function (g) { cyl(g, 0.16, 0.16, 1.0, 0xd9a15b, 0, 0.6, 0, { seg: 6, rz: Math.PI / 2 }); [[-0.5, 0], [0.5, 0]].forEach(function (p) { ball(g, 0.18, 0xc98a43, p[0], 0.6, 0, { seg: 5 }); }); ball(g, 0.04, 0x222222, -0.1, 0.68, 0.17, { seg: 4 }); ball(g, 0.04, 0x222222, 0.1, 0.68, 0.17, { seg: 4 }); },
   spark: function (g) { cone(g, 0.35, 0.8, 0xcc88ff, 0, 0.8, 0, { seg: 4 }); cone(g, 0.35, 0.8, 0xcc88ff, 0, 0.8, 0, { seg: 4, rx: Math.PI }); ball(g, 0.1, 0xffffff, 0, 0.8, 0, { seg: 5 }); },
   cloud: function (g) { ball(g, 0.35, 0xffffff, 0, 0.6, 0, { seg: 7 }); ball(g, 0.28, 0xffffff, 0.35, 0.55, 0, { seg: 6 }); ball(g, 0.28, 0xffffff, -0.35, 0.55, 0, { seg: 6 }); ball(g, 0.04, 0x444466, -0.1, 0.62, 0.3, { seg: 4 }); ball(g, 0.04, 0x444466, 0.1, 0.62, 0.3, { seg: 4 }); },
   jelly: function (g) { ball(g, 0.5, 0xff7ab8, 0, 0.5, 0, { seg: 8, sy: 0.75, op: 0.9 }); ball(g, 0.05, 0x222222, -0.14, 0.6, 0.4, { seg: 4 }); ball(g, 0.05, 0x222222, 0.14, 0.6, 0.4, { seg: 4 }); },
-  flask: function (g) { cone(g, 0.5, 0.8, 0x7fe3ff, 0, 0.45, 0, { seg: 8, op: 0.85 }); cyl(g, 0.14, 0.14, 0.5, 0x7fe3ff, 0, 1.0, 0, { seg: 6, op: 0.85 }); ball(g, 0.12, 0xb27fff, 0.12, 0.45, 0.1, { seg: 4 }); ball(g, 0.1, 0xb27fff, -0.1, 0.65, 0.1, { seg: 4 }); }
+  inkwell: function (g) { cone(g, 0.5, 0.8, 0x2a2f6b, 0, 0.45, 0, { seg: 8, op: 0.95 }); cyl(g, 0.14, 0.14, 0.5, 0x2a2f6b, 0, 1.0, 0, { seg: 6, op: 0.95 }); ball(g, 0.12, 0xb27fff, 0.12, 0.45, 0.1, { seg: 4 }); ball(g, 0.1, 0xb27fff, -0.1, 0.65, 0.1, { seg: 4 }); }
 };
 
 /**

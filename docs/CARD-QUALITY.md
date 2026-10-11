@@ -1,58 +1,40 @@
-# Card quality: the "CLL Rai Staging" post-mortem
+# Word quality
 
-A player reported a card whose answer was **CLL Rai Staging** and whose clues were *"CLL staging"* and
-*"Rai staging system"*. The clue is the answer. This document records how that got through, what was done
-to every card in the deck, and what now stops it happening again.
+Language Dash cards are built from data, not hand-written, so quality is checked as data: by `tools/validate-deck.mjs`,
+by the card schema, and by unit tests.
 
-## How it slipped through
+## What a good card is
 
-The load-time filter (`clueLeaksAnswer` in `js/cardleaks.js`) was written to drop clues that repeat the answer,
-and it was tuned to avoid dropping good clues. Each tuning decision opened a hole:
+One hint word in the language the player knows, one answer word in the language they are learning, and two wrong gate
+words in the target language. A hint is never "the answer written out" the way a long clue could be, so the old clue-leak
+checks (`js/cardleaks.js`) are kept only as cheap no-ops: no one-word hint is ever dropped. What still matters:
 
-| Hole | What it hid in he146 |
+| Risk | What stops it |
 | --- | --- |
-| Word stems shorter than 4 letters were ignored | `CLL` and `Rai` were never compared |
-| Words that also appear in a distractor are treated as "category" words | `staging` is in *Ann Arbor Staging* and *TNM Staging*, so it was exempt, and the rest of the clue was waved through |
-| Bracketed text was stripped before comparing | aliases such as `(Prinzmetal)`, `(WAGR)`, `(HNPCC)` never counted |
-| Deck-frequency "generic word" list | common medical words (`syndrome`, `disease`, `deficiency`) could never leak |
-| No check for initials or acronym expansions | *Myasthenia gravis* for `MG`, *Rheumatoid arthritis* for `RA`, *Ulcerative colitis* for `UC` |
-| The filter only *removed* clues, and the tests only ran on the filtered output | a card with two leaking clues still shipped, as long as two clues survived, and nothing reported how many were being dropped |
-| Authoring review looked at a sample, never at every card | there was no whole-deck read |
+| Two cards with the same answer word in one run (the player could not tell which gate is right) | `answerKey` / `uniqueByAnswer` (case, accents and punctuation never make two answers different) in `js/cardleaks.js`, applied when a run is dealt (`js/game/gates.js`) |
+| A wrong gate equal to the answer or to the hint | `buildDeck` drops the card; `validateCard` rejects it; `tools/validate-deck.mjs` asserts it for every pair |
+| The same two wrong gates twice, or a missing gate | same three places |
+| A word that is the same in both languages (a Spanish/Portuguese "hotel") | `buildDeck` drops the card and reports why; close pairs can fall a little short of 1,000 |
+| Missing pronunciation for Japanese, Korean, Mandarin, Russian, Arabic or Hindi | `ansRoman` / `dRoman` are required for non-Latin targets and are asserted by `validate-deck` and `tests/unit/langdeck.test.js` |
+| An unknown topic or word level | `js/cardschema.js` |
 
-The filter was a safety net that was also being used as the quality bar.
+## Commands
 
-## What was done to the deck
+```bash
+npm run validate:deck                   # all 210 pairs: at least 950 cards each (close pairs may be lower only through identical words)
+node tools/validate-deck.mjs --pair=en-es   # one pair
+node tools/validate-deck.mjs --json         # machine-readable
+npx vitest run tests/unit/langdeck.test.js tests/unit/cardquality.test.js tests/unit/cardcount.test.js
+```
 
-1. **Strict detector** (`strictClueLeak`, `strictLeakReport` in `js/cardleaks.js`). It compares every token of
-   two letters or more, includes bracketed aliases, checks the answer's initials, checks acronyms spelled out in the
-   clue (including two-letter ones such as MG, UC and RA), and only exempts words that are genuinely shared with a
-   distractor or are plain modifiers.
-2. **Audit tool**: `node tools/audit-leaks.mjs` lists every flagged card by subject (`--json out` for a report).
-   First run: **308 of 3,010 cards flagged, 145 left with fewer than three clues**.
-3. **Rewrite**: all 309 flagged clue sets were rewritten by hand so they describe the entity without naming it.
-4. **Full read-through of all 3,010 cards**, subject by subject, for leaks no detector can see:
-   - exact synonyms and eponyms used as clues (*Prinzmetal angina* for variant angina, *Hand-foot syndrome* for
-     sickle dactylitis, *Folie à deux* for shared psychosis)
-   - acronyms expanded in the clues (POEMS, CREST, CURB-65, ABVD, R-CHOP, SNOOP, ATRA, ADHD)
-   - the clue that restates the answer ("Hepatitis B surface antigen" for *Chronic hepatitis B*, "Trisomy 21" for
-     Down syndrome, "Tricyclic antidepressant overdose" for *TCA Overdose*)
-   - a factual error (clindamycin was listed as acting on the 30S subunit; it is 50S)
-   About 500 more clues were rewritten in this pass. Cards that are genuinely topic cards (for example
-   *Right shift of the O2-Hb curve*) now describe the mechanism instead of restating the title.
-5. **Runtime defence in depth**: after the old filter, `validateCard` now also drops clues the strict detector
-   flags, but only while at least three clues remain, so a card is never starved.
+## Reports from players
 
-## What now stops it coming back
-
-- `tests/unit/cardquality.test.js` fails the build if **any** built-in card has a clue that the strict detector
-  flags, or has fewer than three clues. It also pins the original he146 case.
-- `tests/unit/cardcount.test.js` keeps the clue text of a card to 260 characters so it fits a phone screen.
-- Players can now report a card from the Card Browser and from the results screen, with *"a clue gives away the
-  answer"* as a reason (`js/cardreport.js`), so what the detector and the read-through miss reaches us.
+Players can report a word from the Phrasebook and from the run report (`js/cardreport.js`), with reasons such as "wrong
+translation" and "another word would fit better". Reports are saved on the device and sent to the server when signed in.
+To fix a word, edit its language file in `js/lang/data/<code>.js` and run `npm run validate:deck`.
 
 ## Known limits
 
-The detector is lexical. It cannot see a clue that is a *definition* of the answer in different words (for example
-"Potassium above 6.5" for *Hyperkalemia ECG progression*), a synonym it has never been told about, or a clue that
-is merely too easy. Those are caught by reading, which is why the player report button matters. When reports
-arrive, fix the card in `js/cards/<subject>.js`; the test will tell you if the fix itself leaks.
+The checks are structural. They cannot know that a word has a better translation, that a word has several meanings
+(the card shows one), or that a wrong gate happens to be a synonym of the answer. A native-speaker read-through of each
+language file is the way to catch those, and player reports tell us where to look.

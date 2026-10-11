@@ -2,7 +2,7 @@
  * rules.js — personal rule changes for single-player runs, and what they mean
  * for the leaderboard.
  *
- * Players can turn off individual power-ups, map hazards and the exam monster
+ * Players can turn off individual power-ups, map hazards and the Hush (the chasing monster)
  * in single-player modes. To keep rankings fair, any run played with a rule
  * changed is a "custom" run: it still counts for the player's own progress,
  * but is never submitted to a leaderboard. Modes that compare players
@@ -95,7 +95,7 @@ export function getRunRules(mode, prefs) {
 
 /** Whether a finished run may appear on leaderboards. */
 export function isRankedRun(summary) {
-  // (a speed below 1× is a calmer, easier track: practice, not a ranked score)
+  // (an old saved speed below 1× is a calmer track: practice, not a ranked score; the app has no speed setting now)
   return !(summary && (summary.custom || Number(summary.userSpeed) < 1));
 }
 
@@ -111,11 +111,11 @@ export function describeRules(rules) {
     parts.push('no ' + names.join(', '));
   }
   if (rules.hazardsOff) parts.push('no map hazards');
-  if (rules.monsterOff) parts.push('no exam monster');
+  if (rules.monsterOff) parts.push('no Hush');
   if (rules.relaxed) parts.push('relaxed pace');
   var r = rules.speedRamp;
   if (!rules.relaxed && r && (r.on !== DEFAULT_SPEED_RAMP.on || r.every !== DEFAULT_SPEED_RAMP.every || r.step !== DEFAULT_SPEED_RAMP.step)) {
-    parts.push(r.on ? 'speed +' + r.step + ' every ' + r.every + ' questions' : 'no speed-up');
+    parts.push(r.on ? 'pace +' + r.step + ' every ' + r.every + ' words' : 'no speed-up');
   }
   return parts.join(' · ');
 }

@@ -105,7 +105,7 @@ export var EVENTS = {
   streak_milestone: ['gameplay', 'A streak milestone (5, 10, 15...) was hit.', { streak: 'i', multiplier: 'i', run_id: 's40' }],
   map_changed: ['gameplay', 'The track changed to another map mid-run.', { from: 's40', to: 's40', run_id: 's40' }],
   hazard_started: ['gameplay', 'A map hazard (blackout, tremor, fog...) began.', { kind: 's24!', map: 's40', run_id: 's40' }],
-  monster_event: ['gameplay', 'The exam monster warned, closed in or caught the runner.', { kind: 'e:warning|close|caught|slip', run_id: 's40' }],
+  monster_event: ['gameplay', 'The Hush warned, closed in or caught the runner.', { kind: 'e:warning|close|caught|slip', run_id: 's40' }],
   obstacle_outcome: ['gameplay', 'An obstacle was cleared or hit (sampled: 1 in 5).', { kind: 'e:jump|slide', outcome: 'e:cleared|hit', run_id: 's40' }],
   coin_chain: ['gameplay', 'A coin chain of 10 or more ended.', { length: 'i', air: 'i', run_id: 's40' }],
 
@@ -131,11 +131,11 @@ export var EVENTS = {
   coins_earned: ['economy', 'Coins from a source outside the run (login, quest, subject bonus, mastery, secrets, gift).', { source: 'e:login|quest|subject_bonus|mastery|secret|flashcards|gauntlet|gift|other!', amount: 'i' }],
 
   // ───────────────────────── study and content ─────────────────────────
-  subjects_changed: ['study', 'The subject, exam or source filters changed.', { subjects: 'i', total: 'i', exams: 'sa', sources: 'sa', cards_in_pool: 'i' }],
+  subjects_changed: ['study', 'The topic, word level or source filters changed.', { subjects: 'i', total: 'i', exams: 'sa', sources: 'sa', cards_in_pool: 'i' }],
   flashcard_session: ['study', 'A flashcard session ended.', { cards: 'i', correct: 'i', duration_s: 'i', kind: 'e:review|new|weak|due|custom|other', subjects: 'i' }],
-  exam_started: ['study', 'The exam simulator was started.', { questions: 'i', minutes: 'i', blocks: 'i', filters: 'sa' }],
-  exam_ended: ['study', 'The exam simulator finished or was left.', { questions: 'i', answered: 'i', correct: 'i', duration_s: 'i', outcome: 'e:finished|left|timeout', flagged: 'i' }],
-  study_plan_changed: ['study', 'The exam date or study plan was set or changed.', { action: 'e:created|changed|cleared|run_started', days_out: 'i', exam: 's30' }],
+  exam_started: ['study', 'A Word Quiz (the timed quiz) was started.', { questions: 'i', minutes: 'i', blocks: 'i', filters: 'sa' }],
+  exam_ended: ['study', 'A Word Quiz finished or was left.', { questions: 'i', answered: 'i', correct: 'i', duration_s: 'i', outcome: 'e:finished|left|timeout', flagged: 'i' }],
+  study_plan_changed: ['study', 'The goal date or study plan was set or changed.', { action: 'e:created|changed|cleared|run_started', days_out: 'i', exam: 's30' }],
   review_session: ['study', 'The quick-review of missed cards.', { cards: 'i', correct: 'i', trigger: 'e:postrun|home|reminder|other' }],
   explain_viewed: ['study', 'The "why" explanation for a missed card was opened.', { card_id: 's40', source: 'e:postrun|study|review|flashcards|other' }],
   card_reported: ['study', 'A card was reported (the reason, never the text).', { card_id: 's40', reason: 's40', source: 'e:postrun|browser|flashcards|other' }],

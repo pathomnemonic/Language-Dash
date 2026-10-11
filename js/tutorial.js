@@ -34,9 +34,9 @@ var SAMPLE = {
   wrong: ['gato', 'casa']
 };
 
-/** The control text still says "diagnosis gate" in older builds of controlhints.js: always say what the gate means. */
+/** What a control does, in the tutorial's words. */
 function gateIntro(c) {
-  return String(c.intro || 'move into the matching gate').replace(/the correct diagnosis gate/i, 'the gate with the same meaning');
+  return String(c.intro || 'move into the matching gate');
 }
 
 /**

@@ -171,7 +171,7 @@ export function buildAllSteps(ctx) {
     { id: 'settings-look', title: 'Look and performance', target: '#settingsContent', press: 'next',
       text: 'Colors and Night Shift, colorblind-safe colors, a dyslexia-friendly font, which side your buttons sit on, how dashing works, the camera and graphics. If the game feels slow on your device, lower Graphics or turn on 30 frames per second here.' },
     { id: 'settings-rules', title: 'Your rules', target: '#settingsContent', press: 'next',
-      text: 'Switch power-ups, map hazards and the Hush on or off, or turn off the pace ramp (the run speeds up the further you get). The line at the top says whether your runs are still ranked: change a rule and they become practice, but your coins, levels and streaks still count.' },
+      text: 'Switch power-ups, map hazards and the Hush on or off, or pick a relaxed pace. The line at the top says whether your runs are still ranked: change a rule and they become practice, but your coins, levels and streaks still count.' },
     { id: 'settings-study', title: 'Study settings', target: '#settingsContent', press: 'next',
       text: 'Set your daily goal, a daily reminder and the time it arrives, and how strongly words you have never seen are favored. Reaching your daily goal keeps your streak going.' },
     { id: 'locker-heroes', title: 'Heroes', target: '#shopItems', press: 'next',

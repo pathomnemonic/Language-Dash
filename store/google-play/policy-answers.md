@@ -46,11 +46,11 @@ Category: **Reference, News or Educational** (or "Utility, Productivity, Communi
 Expected result: Everyone / PEGI 3 / low rating.
 
 ## Target audience and content
-Target age: **18 and over** (medical students and professionals). Not designed for children, does not appeal to children. Tick that the app is **not** primarily child-directed.
+Target age: **18 and over** (adult learners). Not designed for children, does not appeal to children. Tick that the app is **not** primarily child-directed.
 
 ## Government apps / Financial features / Health apps
 - Government app: **No**. Financial features: **No**.
-- Health: choose **"The app is not a health app"**... if the form asks about medical information, it is an **educational study aid for medical exams** that does not diagnose, treat or give personal medical advice (the in-app terms say so).
+- Health: choose **"The app is not a health app"**... if the form asks, it is a **language-learning game** with no health or medical content.
 
 ## News app, COVID-19, advertising ID
 **No**. Advertising ID: **No** (the app does not use it). Tick that you do not use the advertising ID.

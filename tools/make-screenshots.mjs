@@ -199,17 +199,17 @@ const results = async (opts, name, caption, sub) => {
 
 await run({ skin: 'avatar_m_nurse', monster: 'monster_m_demon', subjects: ['Basics'], map: 'Hospital Hallway' },
   'run-1', 'Study that feels like a game', 'Run, dodge and pick the word', 10000);
-await run({ skin: 'avatar_intern', monster: 'monster_m_ghost', subjects: ['Neurology'], map: 'Neural Highway' },
-  'run-2', 'Real board-style questions', 'Spot the buzzwords. Pick the Dx.', 10000);
+await run({ skin: 'avatar_intern', monster: 'monster_m_ghost', subjects: ['Travel & Places'], map: 'Neural Highway' },
+  'run-2', '1,000 words, 15 languages', 'See a word. Run through its match.', 10000);
 if (!TABLET) await multiplayerShot('multiplayer', 'Challenge a friend. Live.', 'Head-to-head, no account needed');
 await results({ skin: 'avatar_intern', monster: 'monster_m_yeti', subjects: ['Food & Drink'], map: 'Cardiac Pulse' },
-  'review', 'Learn from every miss', 'Quick explanations, then it comes back');
+  'review', 'Learn from every miss', 'See the pair, hear it, and it comes back');
 
 await setup({ skin: 'avatar_m_paramedic', monster: 'monster_classic', subjects: [], map: '' });
 await page.locator('[data-screen="screenHome"]').click().catch(() => {});
 await page.evaluate(() => { const c = document.getElementById('analyticsConsent'); if (c) c.remove(); });
 await page.waitForTimeout(1200);
-await snap('home', 'One tap to start', 'Pick your subjects, set your pace, run');
+await snap('home', 'One tap to start', 'Pick your languages and topics, run');
 await page.getByRole('button', { name: /Quests/ }).click().catch(() => {});
 await page.waitForTimeout(1500);
 await snap('goals', 'Build a daily streak', 'Short goals that keep you consistent');

@@ -81,7 +81,7 @@ GitHub → `pathomnemonic/Language-Dash` → **Settings** → **Secrets and vari
 (The `keepalive` workflow uses the two Supabase values to stop a free project pausing.)
 
 ### 2.2 Serve the site from GitHub Actions
-GitHub → the repo → **Settings → Pages** → **Build and deployment → Source** → choose **GitHub Actions**. Do the same in the old `buzzword-dash` repository (**Settings → Pages**).
+GitHub → the repo → **Settings → Pages** → **Build and deployment → Source** → choose **GitHub Actions**.
 
 ### 2.3 Redeploy so the variables take effect
 GitHub → **Actions** tab → left list **Deploy to GitHub Pages** → **Run workflow** (button on the right) → branch `main` → **Run workflow**. Wait for the green tick (about 4 minutes). Open the site and refresh.

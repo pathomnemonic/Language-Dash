@@ -119,6 +119,6 @@ describe('feedback never gets lost', () => {
   it('only a real address counts as the support email', () => {
     expect(supportEmail('a@b.co')).toBe('a@b.co');
     expect(supportEmail('not an email')).toBe('');
-    expect(feedbackBody({ message: 'hi', contact: 'x@y.z' }, { version: '1', platform: 'ios' })).toMatch(/Dx Dash 1 on ios\nReply to: x@y\.z/);
+    expect(feedbackBody({ message: 'hi', contact: 'x@y.z' }, { version: '1', platform: 'ios' })).toMatch(/Language Dash 1 on ios\nReply to: x@y\.z/);
   });
 });

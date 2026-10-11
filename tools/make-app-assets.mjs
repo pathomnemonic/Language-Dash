@@ -26,7 +26,7 @@ console.log('wrote public/icon.svg');
 
 // Splash
 const splash = svg(2732, 2732, `<rect width="2732" height="2732" fill="${BG}"/>${halo(2732, 0.3)}${mark(2732, 0.3, 1366, 1250)}` +
-  `<text x="1366" y="1830" font-family="Arial, Helvetica, sans-serif" font-size="170" font-weight="800" fill="${WHITE}" text-anchor="middle" letter-spacing="18">DX DASH</text>` +
+  `<text x="1366" y="1830" font-family="Arial, Helvetica, sans-serif" font-size="150" font-weight="800" fill="${WHITE}" text-anchor="middle" letter-spacing="10">LANGUAGE DASH</text>` +
   `<text x="1366" y="1960" font-family="Arial, Helvetica, sans-serif" font-size="80" fill="${CYAN}" text-anchor="middle" letter-spacing="6">${TAGLINE}</text>`);
 await png('assets/splash.png', splash, 2732);
 await png('assets/splash-dark.png', splash, 2732);
@@ -36,7 +36,7 @@ const banner = (w, h) => svg(w, h, `<rect width="${w}" height="${h}" fill="url(#
   `<g opacity=".35" stroke="${CYAN}" stroke-width="3" stroke-linecap="round">${[0, 1, 2, 3, 4].map((i) => `<path d="M${w * 0.48 + i * 40} ${h * (0.2 + i * 0.14)}h${w * 0.5}" opacity="${0.9 - i * 0.15}"/>`).join('')}</g>` +
   `<circle cx="${w * 0.22}" cy="${h / 2}" r="${h * 0.36}" fill="${CYAN}" opacity=".2" filter="url(#g)"/>` +
   mark(h, 0.74, w * 0.22, h / 2) +
-  `<text x="${w * 0.43}" y="${h * 0.47}" font-family="Arial, Helvetica, sans-serif" font-size="${h * 0.19}" font-weight="900" fill="${WHITE}" letter-spacing="3">DX DASH</text>` +
+  `<text x="${w * 0.43}" y="${h * 0.47}" font-family="Arial, Helvetica, sans-serif" font-size="${w * 0.05}" font-weight="900" fill="${WHITE}" letter-spacing="2">LANGUAGE DASH</text>` +
   `<text x="${w * 0.43}" y="${h * 0.63}" font-family="Arial, Helvetica, sans-serif" font-size="${h * 0.075}" font-weight="600" fill="${CYAN}">${TAGLINE}</text>` +
   `<text x="${w * 0.43}" y="${h * 0.78}" font-family="Arial, Helvetica, sans-serif" font-size="${h * 0.05}" fill="#9fb3d9">1,000 words in 15 languages, at a sprint</text>`);
 await png('assets/store/feature-graphic.png', banner(1024, 500), 1024, 500);

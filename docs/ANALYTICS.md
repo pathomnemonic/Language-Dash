@@ -471,7 +471,7 @@ A map hazard (blackout, tremor, fog...) began.
 
 ### `monster_event`
 
-The exam monster warned, closed in or caught the runner.
+The Hush warned, closed in or caught the runner.
 
 | Property | Type |
 |---|---|
@@ -680,7 +680,7 @@ Coins from a source outside the run (login, quest, subject bonus, mastery, secre
 
 ### `subjects_changed`
 
-The subject, exam or source filters changed.
+The topic, word level or source filters changed.
 
 | Property | Type |
 |---|---|
@@ -704,7 +704,7 @@ A flashcard session ended.
 
 ### `exam_started`
 
-The exam simulator was started.
+A Word Quiz (the timed quiz) was started.
 
 | Property | Type |
 |---|---|
@@ -715,7 +715,7 @@ The exam simulator was started.
 
 ### `exam_ended`
 
-The exam simulator finished or was left.
+A Word Quiz finished or was left.
 
 | Property | Type |
 |---|---|
@@ -728,7 +728,7 @@ The exam simulator finished or was left.
 
 ### `study_plan_changed`
 
-The exam date or study plan was set or changed.
+The goal date or study plan was set or changed.
 
 | Property | Type |
 |---|---|

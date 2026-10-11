@@ -44,7 +44,7 @@ export function sanitizeAnalyticsConfig(raw) {
 }
 
 export function analyticsConfig() { return _analytics; }
-/** The Dx Dash Pro switches (everything off unless the file turns Pro on; see proconfig.js). */
+/** The Language Dash Pro switches (everything off unless the file turns Pro on; see proconfig.js). */
 export function proConfig() { return _pro; }
 export function setProConfigForTest(raw) { _pro = sanitizeProConfig(raw); }
 export function setAnalyticsConfigForTest(raw) { _analytics = sanitizeAnalyticsConfig(raw); }

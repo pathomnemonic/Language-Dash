@@ -4,27 +4,27 @@ Play Console → your app → **Grow → Store presence → Main store listing**
 
 ## App name (max 30)
 ```
-Language Dash: Board Exam Runner
+Language Dash: Word Runner
 ```
 
 ## Short description (max 80)
 ```
-Run the list. Dodge, dash and Dx USMLE & COMLEX questions.
+Run through the right word. Learn 1,000 words in 15 languages by playing.
 ```
 
 ## Full description (max 4000)
 ```
-Run the list. Study for your boards by playing.
+Run the words. Learn a language by playing.
 
-Language Dash shows you the clues from a classic exam vignette (the "buzzwords") and asks you to run into the correct diagnosis. Pick a lane, dodge the obstacles, keep your streak alive, and learn something every run.
+Language Dash flashes a word in the language you speak and rushes three gates at you, each showing a word in the language you are learning. Run through the gate that means the same thing. Dodge the obstacles, keep your streak alive, and pick up a few words every run.
 
-STUDY THAT STICKS
-• 3,000+ board-style questions across 15 subjects, for USMLE and COMLEX prep
-• After a miss, see why the answer you picked was wrong and what the right one is
-• Smart reviews: each card comes back just before you would forget it, scheduled with FSRS, the same algorithm Anki uses
-• Set your exam date for a daily pace, and see your accuracy and mastery level for each subject
-• Flashcards, a timed exam simulator, a weekly Gauntlet and a Daily 15 for when you want to slow down and test yourself
-• Make your own cards or import decks
+WORDS THAT STICK
+• The 1,000 most common words of 15 languages, in any pair: English, Spanish, French, German, Italian, Portuguese, Dutch, Swedish, Polish, Russian, Japanese, Korean, Mandarin, Arabic and Hindi
+• Hear every word, with a pronunciation line for Japanese, Korean, Mandarin, Russian, Arabic and Hindi
+• Smart reviews: each word comes back just before you would forget it, scheduled with FSRS, the same algorithm Anki uses
+• Pick topics (food, travel, feelings and more) and a word level: the first 100, 300, 600 or all 1,000 words
+• Flashcards, a timed Word Quiz, a weekly Gauntlet and a Daily 15 for when you want to slow down and test yourself
+• Make your own word lists or import vocabulary decks
 
 SIGN IN YOUR WAY
 • Play as a guest, or sign in with Google, Apple, Microsoft or email to keep your progress on every device
@@ -36,18 +36,18 @@ PLAY WITH FRIENDS
 
 KEEP GOING
 • Daily goals, streaks and quests
-• Earn coins and unlock animated heroes, monsters, trails and themed tracks
-• An exam monster chases you when your streak slips
+• Earn coins and unlock Wordrunners, pals, trails and travel-themed maps from Tokyo to Verona
+• The Hush, a creeping silence, gains on you when your streak slips
 
 SOLO PLAY NEEDS NO INTERNET. No ads.
 
-Language Dash is an educational game, not medical advice, and is not affiliated with or endorsed by the NBME, FSMB, NBOME or Anki. Content may contain errors; verify important facts with authoritative sources.
+Language Dash is a practice game, not a language course or a fluency test. Words may contain errors; check anything important with a native speaker or a dictionary. Not affiliated with or endorsed by Anki.
 ```
 
 
 ## Release notes (max 500), for version 1.0
 ```
-First release of Language Dash: run the list and learn the diagnosis. 3,000+ board-style questions, live head-to-head, flashcards, an exam simulator, smart FSRS reviews, friends feed and study groups.
+First release of Language Dash: run through the right word. The 1,000 most common words of 15 languages, live head-to-head, flashcards, a Word Quiz, smart FSRS reviews, friends feed and study groups.
 ```
 
 ## Graphics
@@ -65,5 +65,5 @@ Tablet screenshots (the app is made for tablets and Chromebooks too, and Google 
 - Privacy policy: `https://pathomnemonic.github.io/Language-Dash/privacy.html`
 
 ## Category and tags
-- App (not game) → **Education**. Tags: Education, Quiz/trivia, Medical.
-- (Choose "App" rather than "Game": the primary purpose is study. If Play pushes back, switch to Game → Trivia.)
+- App (not game) → **Education**. Tags: Education, Language learning, Quiz/trivia.
+- (Choose "App" rather than "Game": the primary purpose is learning. If Play pushes back, switch to Game → Trivia.)

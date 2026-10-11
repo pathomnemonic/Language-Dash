@@ -49,7 +49,7 @@ let native;
 
 vi.mock('../../js/native.js', async (orig) => {
   const real = await orig();
-  return { ...real, isNative: () => native, getAuthRedirectUrl: () => (native ? 'com.pathomnemonic.dxdash://auth' : 'https://me.github.io/dx/') };
+  return { ...real, isNative: () => native, getAuthRedirectUrl: () => (native ? 'com.pathomnemonic.languagedash://auth' : 'https://me.github.io/dx/') };
 });
 const opened = [];
 vi.mock('@capacitor/browser', () => ({ Browser: { open: async (o) => { opened.push(o.url); }, close: async () => {} } }));
@@ -114,7 +114,7 @@ describe('Continue with Google / Apple', () => {
     const lb = await boot();
     const res = await lb.signInWithProvider('google', { link: true });
     expect(res.success).toBe(true);
-    expect(calls[0][1].options).toMatchObject({ redirectTo: 'com.pathomnemonic.dxdash://auth', skipBrowserRedirect: true });
+    expect(calls[0][1].options).toMatchObject({ redirectTo: 'com.pathomnemonic.languagedash://auth', skipBrowserRedirect: true });
     expect(opened).toEqual(['https://accounts.google.com/o/oauth2/auth?x=1']);
   });
 

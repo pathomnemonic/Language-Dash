@@ -31,7 +31,7 @@ export function supportEmail(override) {
 
 /** The text of the email (or the copied message). */
 export function feedbackBody(fb, ctx) {
-  return String(fb.message || '').trim() + '\n\n—\nDx Dash ' + (ctx.version || '') + ' on ' + ctx.platform + (fb.contact ? '\nReply to: ' + fb.contact : '');
+  return String(fb.message || '').trim() + '\n\n—\nLanguage Dash ' + (ctx.version || '') + ' on ' + ctx.platform + (fb.contact ? '\nReply to: ' + fb.contact : '');
 }
 
 /**
@@ -56,7 +56,7 @@ export function sendFeedback(fb, deps) {
   function viaEmail() {
     var to = supportEmail(deps.email);
     if (!to) return Promise.resolve(false);
-    var url = 'mailto:' + to + '?subject=' + encodeURIComponent('Dx Dash feedback') + '&body=' + encodeURIComponent(feedbackBody(payload, ctx));
+    var url = 'mailto:' + to + '?subject=' + encodeURIComponent('Language Dash feedback') + '&body=' + encodeURIComponent(feedbackBody(payload, ctx));
     return openUrl(url);
   }
 

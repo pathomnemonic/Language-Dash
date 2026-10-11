@@ -45,7 +45,7 @@ export function getControlText(touchFirst, dashControl) {
       slide: 'Swipe down to slide',
       rush: dash.rush,
       rushVerb: dash.rushVerb,
-      intro: 'swipe into the correct diagnosis gate'
+      intro: 'swipe into the gate with the same meaning'
     };
   }
   // (worded from the keys now in force, so a player's own choices in Settings show up in the instructions)
@@ -57,7 +57,7 @@ export function getControlText(touchFirst, dashControl) {
       slide: 'Press the down arrow (or S) to slide',
       rush: 'Press Shift or Space to rush',
       rushVerb: 'Press Shift or Space',
-      intro: 'move into the correct diagnosis gate'
+      intro: 'move into the gate with the same meaning'
     };
   }
   return {
@@ -67,6 +67,6 @@ export function getControlText(touchFirst, dashControl) {
     slide: 'Press ' + keysPhrase('slide') + ' to slide',
     rush: 'Press ' + keysPhrase('rush') + ' to rush',
     rushVerb: 'Press ' + keysPhrase('rush'),
-    intro: 'move into the correct diagnosis gate'
+    intro: 'move into the gate with the same meaning'
   };
 }

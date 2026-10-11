@@ -4,7 +4,7 @@ import { getRunRules, describeRules, isRankedRun, RELAXED_PACE } from '../../js/
 import { planPack, formatBytes, canDownloadPack, downloadPack, packStatus } from '../../js/offlinepack.js';
 
 describe('relaxed pace', () => {
-  const prefs = { disabledPowerups: [], hazardsOff: false, monsterOff: false, speedRamp: { on: true, every: 20, step: 0.5 } };
+  const prefs = { disabledPowerups: [], hazardsOff: false, monsterOff: false, speedRamp: { on: true, every: 3, step: 0.25 } };
 
   it('is slower than normal, and never lets the run speed up', () => {
     expect(RELAXED_PACE).toBeLessThan(1);

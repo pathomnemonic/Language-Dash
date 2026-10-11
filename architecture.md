@@ -147,7 +147,7 @@ It must not silently fall back to unfiltered cards.
 In multiplayer:
 
 - The host’s accepted match configuration is authoritative.
-- Local subject settings must not override it.
+- Local topic settings must not override it.
 - Local filter settings must not override it.
 - Both peers must verify the same content version and card-pool hash.
 - Competitive encounter plans must not depend on unseeded `Math.random()` calls.
@@ -545,7 +545,7 @@ Full shape:
   subjects: string[],
 
   filters: {
-    exams: string[],
+    exams: string[],   // word levels
     questionTypes: string[],
     sources: string[],
     years: number[],
@@ -553,7 +553,7 @@ Full shape:
     includeCustomCards: boolean
   },
 
-  userSpeed: number,
+  userSpeed: number,   // legacy: the app has no speed setting; the pace starts at START_PACE and ramps to TOP_GEAR (js/rules.js)
 
   orderedCardIds: string[] | null,
   encounterPlan: EncounterPlanEntry[] | null,
@@ -903,59 +903,36 @@ Once locked:
 
 # 9. Card schema
 
+Terminology: the code keeps its original identifiers (`subj`, `subjects`, `exams`, `selectedExams`, `questionType`, the "exam monster"). In the player-facing game a *subject* is a **topic**, an *exam* filter is a **word level**, a card is a **word** and the exam monster is **the Hush**. See `docs/WORLD.md`.
+
 ## 9.1 Canonical card shape
 
-```js
-{
-  id,
-  subj,
-  bw,
-  ans,
-  d,
-  tp,
-  ww,
-
-  exams,
-  baseDifficulty,
-  questionType,
-  source,
-  tags,
-  hx,
-  yr,
-  pearls,
-
-  enabledModes,
-  contentVersion,
-  reviewedAt,
-
-  isCustom,
-  createdAt,
-  updatedAt
-}
-```
-
-Full type:
+A card is one hint word in the language the player knows (`bw`, an array with exactly one entry), one answer word in the language being learned (`ans`) and two wrong gate words (`d`). Built-in cards are made by `js/lang/deck.js` from `js/lang/data/*.js`; custom cards come from `js/customcards.js`.
 
 ```js
 {
-  id: string,
-  subj: string,
-  bw: string[],
-  ans: string,
-  d: [string, string],
-  tp: string,
-  ww: Record<string, string>,
+  id: string,              // 'known-target-NNN', NNN = frequency rank 1..1000, e.g. 'en-es-007'
+  subj: string,            // one of the 15 topics (js/lang/topics.js)
+  bw: [string],            // ONE hint word in the player's language
+  ans: string,             // ONE word in the target language
+  d: [string, string],     // two wrong target-language words
+  tp: string,              // the word card: "dog is perro (pe-rro). Word #7 of the 1,000 most common."
+  ww: Record<string, string>, // what each wrong gate means in the player's language
+  ansRoman?: string,       // romanization of ans (required when the target is not written in Latin letters)
+  dRoman?: [string, string],
+  rank?: number,
+  pos?: string,
 
-  exams: string[],
-  baseDifficulty: 1 | 2 | 3,
-  questionType: string,
-  source: string,
+  exams: string[],         // word levels: 'top100' | 'top300' | 'top600' | 'all'
+  baseDifficulty: 1 | 2 | 3,   // 1 = ranks 1-300, 2 = 301-700, 3 = 701-1000
+  questionType: 'word',
+  source: 'vocabulary',
   tags: string[],
-  hx: boolean,
-  yr: 1 | 2 | 3 | 4,
-  pearls: string[],
+  hx: boolean,             // legacy flag (true for the first 300 words)
+  yr: 1 | 2 | 3 | 4,       // legacy flag
+  pearls: string[],        // legacy, empty
 
-  enabledModes: string[],
+  enabledModes?: string[],
   contentVersion: string,
   reviewedAt: string | null,
 
@@ -967,31 +944,18 @@ Full type:
 
 ---
 
-## 9.2 Canonical subjects
+## 9.2 Canonical topics
 
 ```js
-export const SUBJECTS = Object.freeze([
-  'Neurology',
-  'Cardiology',
-  'Nephrology',
-  'Psychiatry',
-  'Gastroenterology',
-  'Pulmonology',
-  'Infectious Disease',
-  'Endocrinology',
-  'Hematology/Oncology',
-  'Rheumatology',
-  'Obstetrics/Gynecology',
-  'Pediatrics',
-  'Surgery',
-  'Emergency Medicine',
-  'Multisystem / Mixed'
-]);
+export const SUBJECTS = TOPICS; // from js/lang/topics.js
+// 'Basics', 'People & Family', 'Body & Health', 'Food & Drink', 'Home & Things', 'Nature & Animals',
+// 'Travel & Places', 'Time & Numbers', 'Colors & Describing', 'Actions', 'Feelings & Thinking', 'Talking',
+// 'Work & School', 'Shopping & Money', 'Small Words'
 ```
 
-No alternate subject strings are permitted.
+No alternate topic strings are permitted. Imported cards with an unknown topic are rejected or placed in `Basics` by the import flow.
 
-For example, `"Hematology"` is not valid and must be migrated or rejected in favor of `"Hematology/Oncology"`.
+Word levels (`EXAM_FILTERS`) are `top100` (ranks 1-100), `top300`, `top600` and `all` (ranks 1-1000).
 
 ---
 
@@ -1000,37 +964,31 @@ For example, `"Hematology"` is not valid and must be migrated or rejected in fav
 Every runner-playable card must satisfy:
 
 - `id` is globally unique.
-- `subj` is canonical.
-- `bw` contains at least one nonempty string.
+- `subj` is one of the 15 topics.
+- `bw` contains exactly one nonempty string (a short phrase is allowed).
 - `ans` is nonempty.
 - `d` contains exactly two nonempty strings.
-- Both distractors are unique.
-- Neither distractor equals the answer after normalization.
-- `ww` keys refer only to actual distractors.
+- Both wrong gates are unique, and neither equals the answer after normalization.
+- No hint is dropped because it looks like the answer: for single-word hints a hint is never removed by a leak check
+  (a hint and its answer are different languages, and cognates are fine).
+- `ww` keys refer only to actual wrong gates.
 - `baseDifficulty` is 1, 2, or 3.
-- `questionType` is canonical.
-- `source` is canonical.
-- `yr` is 1–4.
-- `enabledModes` includes the current runner mode.
+- `questionType` is `word` and `source` is `vocabulary`.
+- `enabledModes`, if present, includes the current runner mode.
 - Untrusted HTML is not required for display.
+- No two gates in one deal may be the same word (`uniqueByAnswer` / `answerKey` in `js/game/gates.js`).
 
 ---
 
 ## 9.4 Raw Anki imports
 
-Raw imports without generated distractors must use:
+A vocabulary deck has the word you know on the front and the word you are learning on the back. Raw imports without generated wrong gates must use:
 
 ```js
 enabledModes: ['flashcard']
 ```
 
-They must not use placeholder distractors such as:
-
-```js
-['N/A', 'N/A']
-```
-
-A raw card becomes runner-playable only after two valid distractors are supplied and validation succeeds.
+They must not use placeholder wrong gates such as `['N/A', 'N/A']`. A raw card becomes runner-playable only after two valid wrong gates are supplied (the importer can borrow them from other words in the same deck) and validation succeeds.
 
 ---
 
@@ -1039,10 +997,10 @@ A raw card becomes runner-playable only after two valid distractors are supplied
 `js/cardschema.js` must export:
 
 ```js
-export const SUBJECTS;
-export const EXAM_FILTERS;
-export const QUESTION_TYPES;
-export const SOURCE_DISCIPLINES;
+export const SUBJECTS;          // the 15 topics
+export const EXAM_FILTERS;      // the word levels
+export const QUESTION_TYPES;    // ['word']
+export const SOURCE_DISCIPLINES;// ['vocabulary']
 export const CARD_SCHEMA_VERSION;
 
 export function normalizeCard(input, options = {});
@@ -1074,7 +1032,7 @@ Issue shape:
 }
 ```
 
-Runtime validation must not silently rewrite medically meaningful text.
+Runtime validation must not silently rewrite the player's words.
 
 ---
 
@@ -1802,9 +1760,9 @@ Achievements describing 10 or 50 perfect runs evaluate `perfectRuns`, not lifeti
 
 ---
 
-## 14.9 Subject mastery
+## 14.9 Topic mastery
 
-Subject mastery requires:
+Topic mastery (the `subjectStats` save key) requires:
 
 ```js
 total >= 50 &&
@@ -1813,7 +1771,7 @@ correct / total >= 0.8
 
 Descriptions and evaluation thresholds must match.
 
-Per-subject mastery achievements must use the IDs defined in the registry.
+Per-topic mastery achievements must use the IDs defined in the registry.
 
 ---
 
@@ -2846,7 +2804,7 @@ shopdata
   -> no storage or UI modules
 
 cards
-  -> cardschema + subject card files
+  -> cardschema + js/lang deck builder
 
 customcards
   -> cardschema
@@ -3106,11 +3064,10 @@ Owns:
 
 ```text
 js/cards.js
-tools/validate-cards.mjs
-tools/audit-content.mjs
+tools/validate-deck.mjs
 ```
 
-The active subject files in `js/cards/` remain externally owned unless assigned later.
+The word data in `js/lang/data/` is the single source of built-in cards.
 
 ---
 
@@ -3271,7 +3228,7 @@ Agent 19 must not patch production files owned by other agents.
 - [ ] Avoids importing `cards.js` from `customcards.js`.
 - [ ] Validates add/update/import consistently.
 - [ ] Rejects malformed cards.
-- [ ] Enforces canonical subjects.
+- [ ] Enforces canonical topics.
 - [ ] Enforces distractor uniqueness.
 - [ ] Restricts raw cards to flashcard mode.
 - [ ] Adds size/count limits.
@@ -3488,7 +3445,7 @@ The integration audit must verify all of the following.
 - Every reward can be claimed once.
 - Quest rendering has no persistence side effects.
 - Perfect-run achievements use `perfectRuns`.
-- Subject mastery uses 50 or more answers and at least 80% accuracy.
+- Topic mastery uses 50 or more answers and at least 80% accuracy.
 - Volume zero persists.
 
 ---
@@ -3558,7 +3515,7 @@ reset scopes
 ```text
 all modules import
 unique IDs
-canonical subjects
+canonical topics
 required fields
 exactly two unique distractors
 answer differs from distractors
@@ -3739,7 +3696,7 @@ Parallel QA tracks:
 - Accessibility
 - Multiplayer latency and disconnects
 - Security and abuse
-- Medical editorial review
+- Native-speaker review of word data
 
 ---
 
@@ -3759,8 +3716,8 @@ The release is blocked unless:
 - Map transitions preserve gameplay objects.
 - Main rendering has one owner.
 - Mobile memory does not grow continuously in a 30-minute run.
-- Active card files pass automated validation.
-- Medical content has an editorial review process.
+- Every language-pair deck passes `tools/validate-deck.mjs`.
+- Word data passes `npm run validate:deck` for all 210 language pairs.
 - A clean checkout installs, tests, builds, and deploys.
 
 ---
@@ -3780,8 +3737,8 @@ streak-reactive environments
 victory animations
 achievement-linked cosmetics
 weekly seeded challenges
-clinical boss rounds
-differential-diagnosis chains
+boss rounds (a phrase per gate)
+minimal-pair chains
 confidence calibration
 personalized remediation
 ghost racing

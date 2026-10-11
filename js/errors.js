@@ -28,7 +28,7 @@ export function reportError(error, context = {}) {
   var stack = error instanceof Error ? error.stack : undefined;
 
   console.error(
-    '[Dx Dash]' +
+    '[Language Dash]' +
       (context.system ? ' [' + context.system + ']' : '') +
       (context.operation ? ' ' + context.operation + ':' : '') +
       ' ' + msg

@@ -4,19 +4,19 @@ App Store Connect → your app → **iOS App → (version) → App Information /
 
 ## Name (max 30)
 ```
-Language Dash: Board Exam Runner
+Language Dash: Word Runner
 ```
 ## Subtitle (max 30)
 ```
-Board questions, at a sprint
+Learn words at a sprint
 ```
 ## Promotional text (max 170, can be changed any time without a new version)
 ```
-Run the list. Pick a lane, dodge the obstacles and name the diagnosis. 3,000+ board-style questions, live head-to-head and smart reviews.
+Pick a lane, dodge the obstacles and run through the right word. 1,000 common words in 15 languages, live head-to-head and smart reviews.
 ```
 ## Keywords (max 100, comma-separated, no spaces after commas)
 ```
-USMLE,COMLEX,Step 1,Step 2,boards,flashcards,medical,study,spaced repetition,quiz,exam prep,MCAT
+language,vocabulary,words,learn,flashcards,spanish,french,japanese,german,spaced repetition,quiz,polyglot
 ```
 (Do not add "Anki" or other brand names to the keywords: Apple rejects trademarks you do not own. The description may mention Anki factually.)
 
@@ -25,7 +25,7 @@ Use the same text as `store/google-play/listing.md` → Full description, but re
 
 ## What's new in this version
 ```
-First release of Language Dash: run the list and learn the diagnosis.
+First release of Language Dash: run through the right word and learn 1,000 common words.
 ```
 ## URLs
 - Support URL: `https://pathomnemonic.github.io/Language-Dash/` (contact email `patho.mnemonic1@gmail.com`)
@@ -33,7 +33,7 @@ First release of Language Dash: run the list and learn the diagnosis.
 - Privacy Policy URL: `https://pathomnemonic.github.io/Language-Dash/privacy.html`
 
 ## Category
-Primary: **Education**. Secondary: **Games → Trivia** (or Medical; Education is the better fit).
+Primary: **Education**. Secondary: **Games → Trivia** (Education is the better fit).
 
 ## Copyright
 `2026 <your name>`
@@ -47,7 +47,6 @@ Upload the 6.9-inch set (required) from `assets/store/appstore/` (1290 × 2796).
 ## Age rating (answer the questionnaire)
 - Cartoon or fantasy violence: **None** (or "Infrequent/Mild" if you want to be safe).
 - Realistic violence, sexual content, profanity, horror, drugs, alcohol, gambling, contests: **None**.
-- Medical or treatment information: **None** (the app is a study game for exams and states it gives no medical advice; if you prefer to be safe choose "Infrequent/Mild").
 - Unrestricted web access: **No**. User-generated content: **Yes, display names and friend requests only** (reporting and blocking exist).
 Expected: **4+** (or 9+ if you chose the mild options).
 
@@ -70,8 +69,8 @@ Tracking: **No**. Third-party advertising: **No**.
 - Sign-in required: **No**. (Accounts are optional; reviewers can play without one. The app offers Sign in with Apple, Google and Microsoft; deleting an account revokes the Apple login.)
 - Notes for the reviewer:
 ```
-Language Dash is a study game for US medical licensing exam prep (USMLE/COMLEX). No account is needed: tap PLAY on the Home screen. A short interactive tutorial runs the first time (the x in the corner closes it).
-In-app purchases (all optional; the app is fully playable free with 300 questions):
+Language Dash is a language-learning game: a word in your language flashes, you run through the gate showing the same word in the language you are learning. No account is needed: tap PLAY on the Home screen. A short interactive tutorial runs the first time (the x in the corner closes it).
+In-app purchases (all optional; the app is fully playable free with the 300 most common words of every language pair):
 - Auto-renewable subscription group "Language Dash Pro": languagedash_pro_yearly, languagedash_pro_monthly, languagedash_pro_pass3m (auto-renewing, 3-month period). No store trial: every signed-in account gets a free 7-day Pro trial from our own server, with no payment details.
 - Non-consumable: languagedash_pro_lifetime (all Pro features).
 - Consumable tip jar (Settings > About & help > Leave a tip): languagedash_tip_small, languagedash_tip_medium, languagedash_tip_large. Tips unlock nothing.
@@ -79,6 +78,6 @@ In-app purchases (all optional; the app is fully playable free with 300 question
 To see the paywall: Stats tab > tap any locked "Pro" section, or Settings > About & help > Language Dash Pro > See Pro. "Restore purchases" is on the paywall and in that Settings row. Subscription terms, price and renewal are shown on the paywall, with links to the Privacy Policy and Terms.
 Online features (Friends, feed, groups, Versus by room code) are optional and use an anonymous guest account created automatically, or an account made with Sign in with Apple, Google, Microsoft or email (Friends > Account). Account deletion: Friends > Account > Delete my account (it cancels any web subscription, revokes the Apple sign-in and removes the account).
 User safety: players can report and block other players (the flag and block icons next to a name in Friends). There is no chat and no free text between users. Reports are reviewed by the developer and abusive accounts are removed.
-The app is an educational aid and contains a medical-education disclaimer (Settings > About, and in the Terms). It does not provide medical advice.
+The app is an educational aid and says so (Settings > About, and in the Terms): a practice game, not a language course or a fluency test.
 ```
 - Contact: your name, phone and email (required by Apple; not public).
