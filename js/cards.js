@@ -33,6 +33,25 @@ export function computeCardPoolHash(cards) {
   return djb2Hash(segments.join('\n'));
 }
 
+// One lazy import per language, written out so the bundler can see (and split) every table.
+var WORD_TABLES = {
+  en: function () { return import('./lang/data/en.js'); },
+  es: function () { return import('./lang/data/es.js'); },
+  fr: function () { return import('./lang/data/fr.js'); },
+  de: function () { return import('./lang/data/de.js'); },
+  it: function () { return import('./lang/data/it.js'); },
+  pt: function () { return import('./lang/data/pt.js'); },
+  nl: function () { return import('./lang/data/nl.js'); },
+  sv: function () { return import('./lang/data/sv.js'); },
+  pl: function () { return import('./lang/data/pl.js'); },
+  ru: function () { return import('./lang/data/ru.js'); },
+  ja: function () { return import('./lang/data/ja.js'); },
+  ko: function () { return import('./lang/data/ko.js'); },
+  zh: function () { return import('./lang/data/zh.js'); },
+  ar: function () { return import('./lang/data/ar.js'); },
+  hi: function () { return import('./lang/data/hi.js'); }
+};
+
 /**
  * Load the word tables for a pair and build its deck.
  * @param {{known: string, target: string}} pair
@@ -41,8 +60,8 @@ export function computeCardPoolHash(cards) {
 export async function loadDeck(pair) {
   var loaded = await Promise.all([
     import('./lang/data/concepts.js'),
-    import('./lang/data/' + pair.known + '.js'),
-    import('./lang/data/' + pair.target + '.js')
+    WORD_TABLES[pair.known](),
+    WORD_TABLES[pair.target]()
   ]);
   var result = buildDeck(pair, loaded[0].default, loaded[1].default, loaded[2].default);
   var byId = new Map();

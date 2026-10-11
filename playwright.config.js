@@ -19,6 +19,14 @@ export default defineConfig({
     // The page ships a Content-Security-Policy, which also blocks the string evaluation Playwright uses for waitForFunction.
     // Tests run without it; csp.spec.js turns it back on (test.use({ bypassCSP: false })) to check the real policy.
     bypassCSP: true,
+    // A player chooses a language pair on first launch; tests start with one chosen (English speaker learning Spanish).
+    // The welcome screen itself is covered by tests/e2e/welcome.spec.js, which clears it.
+    storageState: {
+      cookies: [],
+      origins: [{ origin: new URL(process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4173').origin, localStorage: [{ name: 'langdash.pair.v1', value: JSON.stringify({ known: 'en', target: 'es' }) }] }]
+    },
+    // Set PW_CHROMIUM to use a browser that is already installed instead of the one Playwright downloads
+    launchOptions: process.env.PW_CHROMIUM ? { executablePath: process.env.PW_CHROMIUM, args: ['--no-sandbox'] } : undefined,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     actionTimeout: 8000,
