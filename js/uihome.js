@@ -34,7 +34,7 @@ export var homeMethods = {
     if (langBtn) langBtn.addEventListener('click', function () { renderLanguageSheet(document.getElementById('langSheetBody')); self.openSheet('langSheet'); });
     var langVal = document.getElementById('langBtnValue');
     if (langVal) setText(langVal, pairLabel());
-    // Anything changed in the filters (a subject chip, an exam, a toggle) refreshes the summary on Home
+    // Anything changed in the filters (a topic chip, a word level) refreshes the summary on Home
     var filtersSheet = document.getElementById('filtersSheet');
     if (filtersSheet) filtersSheet.addEventListener('click', function () { setTimeout(function () { self._renderFiltersSummary(); }, 0); });
     var goalBtn = document.getElementById('studyGoal');
@@ -62,7 +62,7 @@ export var homeMethods = {
       b.addEventListener('click', function () {
         self.closeSheets();
         var source = b.getAttribute('data-source');
-        if (!source) return; // Browse cards and My cards open their own screens (which ask for Pro themselves)
+        if (!source) return; // Phrasebook and My words open their own screens (which ask for Pro themselves)
         if (source === 'missed' && !requireGate('missed_cards')) return;
         var pick = self._fcPick || (self._fcPick = { source: 'mine', subjects: [], count: 20 });
         pick.source = source;
@@ -98,9 +98,9 @@ export var homeMethods = {
     var p = this._pickerPools();
     var plural = function (n, one, many) { return n + ' ' + (n === 1 ? one : many); };
     var set = function (id, text) { var el = document.getElementById(id); if (el) setText(el, text); };
-    set('fcDueText', p.due.length ? plural(p.due.length, 'card is', 'cards are') + ' ready to see again, most overdue first.' : 'Nothing is due yet. Cards come back here after you study them.');
-    set('fcMissedText', p.missed.length ? plural(p.missed.length, 'card', 'cards') + ' you get wrong the most.' : 'Cards you get wrong will collect here.');
-    set('fcFreshText', p.fresh.length ? plural(p.fresh.length, 'card', 'cards') + ' in your subjects you have not seen yet.' : 'You have seen every card in your subjects.');
+    set('fcDueText', p.due.length ? plural(p.due.length, 'word is', 'words are') + ' ready to see again, most overdue first.' : 'Nothing is due yet. Words come back here after you study them.');
+    set('fcMissedText', p.missed.length ? plural(p.missed.length, 'word', 'words') + ' you get wrong the most.' : 'Words you get wrong will collect here.');
+    set('fcFreshText', p.fresh.length ? plural(p.fresh.length, 'word', 'words') + ' in your topics you have not seen yet.' : 'You have seen every word in your topics.');
   },
 
   /** The compact goal strip on Home: today's progress and the streak, one tap from the full picture. */
@@ -126,19 +126,19 @@ export var homeMethods = {
       chipEl.classList.toggle('at-risk', lit && !streak.playedToday);
       chipEl.appendChild(createElement('span', { className: 'streak-flame', text: '🔥' }));
       chipEl.appendChild(createElement('span', { className: 'streak-num', text: String(streak.streak) }));
-      chipEl.setAttribute('aria-label', (lit ? streak.streak + '-day study streak' + (streak.playedToday ? '' : ', study today to keep it') : 'No streak yet, study today to start one') + '. Open the streak calendar.');
+      chipEl.setAttribute('aria-label', (lit ? streak.streak + '-day streak' + (streak.playedToday ? '' : ', practice today to keep it') : 'No streak yet, practice today to start one') + '. Open the streak calendar.');
     }
     el.classList.toggle('goal-done', done >= goal);
     el.appendChild(line);
     var bar = createElement('div', {
       className: 'study-goal-bar',
-      attributes: { role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(goal), 'aria-valuenow': String(Math.min(done, goal)), 'aria-label': 'Daily study goal' }
+      attributes: { role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(goal), 'aria-valuenow': String(Math.min(done, goal)), 'aria-label': 'Daily word goal' }
     });
     var fill = createElement('div', { className: 'study-goal-fill' });
     fill.style.width = pct + '%';
     bar.appendChild(fill);
     el.appendChild(bar);
-    el.setAttribute('aria-label', 'Today: ' + done + ' of ' + goal + ' cards.' + (streak.shields > 0 ? ' ' + streak.shields + ' streak shield' + (streak.shields === 1 ? '' : 's') + '.' : '') + (due > 0 ? ' ' + due + ' due for review.' : '') + ' Open details.');
+    el.setAttribute('aria-label', 'Today: ' + done + ' of ' + goal + ' words.' + (streak.shields > 0 ? ' ' + streak.shields + ' streak shield' + (streak.shields === 1 ? '' : 's') + '.' : '') + (due > 0 ? ' ' + due + ' due for review.' : '') + ' Open details.');
   },
 
   /** The first-week checklist: seven small steps, each with a button that takes you there. */
@@ -187,10 +187,10 @@ export var homeMethods = {
     var line = function (text) { el.appendChild(createElement('div', { className: 'today-line', text: text })); };
     var goal = storage.get('dailyGoal') || 20;
     var done = storage.getStudiedToday();
-    line('🎯 ' + done + ' of ' + goal + ' cards today' + (done >= goal ? ' ✅' : ''));
+    line('🎯 ' + done + ' of ' + goal + ' words today' + (done >= goal ? ' ✅' : ''));
     var due = storage.getDueCount();
-    line(due > 0 ? '🔁 ' + due + ' card' + (due === 1 ? '' : 's') + ' due for review' : '🔁 No reviews due');
-    // The next study step, right here: no trip to the Performance tab
+    line(due > 0 ? '🔁 ' + due + ' word' + (due === 1 ? '' : 's') + ' due for review' : '🔁 No reviews due');
+    // The next study step, right here: no trip to the Stats tab
     var today = getTodayPlan();
     if (today.plan.steps.length > 0) {
       var next = today.plan.steps[0];
@@ -201,9 +201,9 @@ export var homeMethods = {
     }
     this._renderFirstWeek(el);
     var streak = storage.getStreakStatus();
-    line('🔥 Study streak: ' + streak.streak + (streak.streak === 1 ? ' day' : ' days') + (streak.atRisk ? '. Answer a card today to keep it.' : ''));
+    line('🔥 Hearth streak: ' + streak.streak + (streak.streak === 1 ? ' day' : ' days') + (streak.atRisk ? '. Catch a word today to keep the hearth lit.' : ''));
     line('🛡 Streak shields: ' + streak.shields + ' of 3. A shield covers one missed day so your streak survives; you earn one for every 7 days in a row.');
-    line('⭐ Bonus subject today: ' + bonusSubjectFor(localDateKey(new Date()), SUBJECTS) + '. Each right answer in it pays ' + BONUS_COINS_PER_CORRECT + ' 🪙 extra, up to ' + BONUS_COINS_CAP + ' a day.');
+    line('⭐ Bonus topic today: ' + bonusSubjectFor(localDateKey(new Date()), SUBJECTS) + '. Each right answer in it pays ' + BONUS_COINS_PER_CORRECT + ' 🪙 extra, up to ' + BONUS_COINS_CAP + ' a day.');
     var week = storage.getWeeklyProgress();
     line('📆 This week: ' + week.daysMet + '/' + week.target + ' goal days' + (week.claimed ? ' ✅' : ''));
     if (week.daysMet >= week.target && !week.claimed) {

@@ -470,7 +470,7 @@ class UI {
     if (examBtn) examBtn.addEventListener('click', function () { self.show('screenExam'); });
   }
 
-  /** Lazy-load and mount the exam simulator. */
+  /** Lazy-load and mount the Word Quiz (internally still the "exam"). */
   openExam() {
     var self = this;
     var container = document.getElementById('examContent');
@@ -481,7 +481,7 @@ class UI {
         toast: function (m) { self._showToast(m); },
         startFlashcards: function (ids) { mod.unmountExam(); self.startFlashcardSession(null, ids); }
       });
-    }).catch(function () { self._showToast('Could not load the exam simulator.'); });
+    }).catch(function () { self._showToast('Could not load the Word Quiz.'); });
   }
 
   /** Keyboard study: Space/Enter reveals, right arrow or 1 = got it, left arrow or 2 = missed. */
@@ -1305,7 +1305,7 @@ class UI {
     }
     var old = document.getElementById('autoPilotHint');
     if (old) old.remove();
-    var hint = createElement('div', { className: 'bottom-hint', text: '🤖 Auto-Pilot ready: ' + how + ' to answer the next question for you', attributes: { id: 'autoPilotHint', role: 'status', 'aria-live': 'polite' } });
+    var hint = createElement('div', { className: 'bottom-hint', text: '🤖 Auto-Pilot ready: ' + how + ' to pick the next gate for you', attributes: { id: 'autoPilotHint', role: 'status', 'aria-live': 'polite' } });
     document.body.appendChild(hint);
     setTimeout(function () { hint.classList.add('fade'); }, 4200);
     setTimeout(function () { if (hint.parentNode) hint.parentNode.removeChild(hint); }, 5000);
@@ -1427,7 +1427,7 @@ class UI {
 
     if (tip) {
       var rushVerb = getControlText(undefined, getDashControl()).rushVerb;
-      setText(tip, rushVerb ? '💡 Know the answer? ' + rushVerb.toUpperCase() + ' to RUSH through! ⚡ Faster = more points' : '💡 Read the clue, then run into the right gate');
+      setText(tip, rushVerb ? '💡 Know the word? ' + rushVerb.toUpperCase() + ' to RUSH through! ⚡ Faster = more points' : '💡 Read the hint, then run through the gate with the same meaning');
       tip.style.opacity = '1';
     }
 
@@ -1620,7 +1620,7 @@ class UI {
       { id: 'sound', icon: '🔊', title: 'Sound', desc: 'Music, effects, volume and reading aloud' },
       { id: 'look', icon: '🎨', title: 'Look & performance', desc: 'Colors, camera, graphics and frame rate' },
       { id: 'keys', icon: '⌨️', title: 'Keyboard', desc: 'Choose the keys for moving, dashing and Auto-Pilot' },
-      { id: 'study', icon: '📚', title: 'Study', desc: 'Daily goal, reminders and how cards are picked' },
+      { id: 'study', icon: '📚', title: 'Study', desc: 'Daily goal, reminders and how words are picked' },
       { id: 'rules', icon: '🎛️', title: 'Your rules', desc: 'Turn power-ups, hazards and the monster off' },
       { id: 'data', icon: '💾', title: 'Backup & data', desc: 'Save, restore, export or reset your progress' },
       { id: 'about', icon: 'ℹ️', title: 'About & help', desc: 'How to play, legal pages and support' }
@@ -1631,7 +1631,7 @@ class UI {
   exportCardReports() {
     var reports = storage.get('cardReports') || [];
     if (reports.length === 0) {
-      this._showToast('No card reports to export.');
+      this._showToast('No word reports to export.');
       return;
     }
     var allCards = CARDS.concat(customCards.getAll());
@@ -1650,13 +1650,13 @@ class UI {
     });
     var json = JSON.stringify(enriched, null, 2);
     var blob = new Blob([json], { type: 'application/json' });
-    saveFile(blob, 'dx-dash-card-reports.json');
+    saveFile(blob, 'language-dash-word-reports.json');
   }
 
   downloadBackup() {
     var blob = new Blob([buildBackup(storage, customCards)], { type: 'application/json' });
     var self = this;
-    saveFile(blob, 'dx-dash-backup-' + new Date().toISOString().slice(0, 10) + '.json').then(function (how) {
+    saveFile(blob, 'language-dash-backup-' + new Date().toISOString().slice(0, 10) + '.json').then(function (how) {
       self._showToast(how === 'failed' ? 'Could not save the backup.' : (how === 'shared' ? 'Choose where to save your backup.' : 'Backup saved.'));
     });
   }
@@ -1811,15 +1811,15 @@ class UI {
     }).catch(function () { unavailable('Online sharing is unavailable right now.'); });
   }
 
-  /** Publish the player's custom cards and show a share code. */
+  /** Publish the player's custom words and show a share code. */
   shareDeck() {
     var self = this;
     var cards = customCards.getAll();
-    if (cards.length === 0) { this._showToast('Create some custom cards first.'); return; }
+    if (cards.length === 0) { this._showToast('Create some custom words first.'); return; }
     var name = window.prompt('Deck name:', 'My deck');
     if (!name || !name.trim()) return;
     var payload;
-    try { payload = JSON.parse(customCards.exportJSON()); } catch (e) { this._showToast('Could not read your cards.'); return; }
+    try { payload = JSON.parse(customCards.exportJSON()); } catch (e) { this._showToast('Could not read your words.'); return; }
     this._withOnlineService(function (lb) {
       return lb.publishDeck(name.trim(), payload.slice(0, 200)).then(function (res) {
         if (!res.success) { self._showToast(res.error || 'Could not share the deck.'); return; }
@@ -1885,10 +1885,10 @@ class UI {
       label.style.flex = '1';
       label.appendChild(createElement('div', { text: d.name }));
       label.firstChild.style.cssText = 'font-size:13px;font-weight:700';
-      label.appendChild(createElement('div', { text: d.count + ' cards \u00B7 code ' + d.code }));
+      label.appendChild(createElement('div', { text: d.count + ' words \u00B7 code ' + d.code }));
       label.lastChild.style.cssText = 'font-size:10px;color:var(--text-muted)';
       row.appendChild(label);
-      var add = createElement('button', { className: 'btn btn-outline btn-sm', text: 'Add to my cards', attributes: { type: 'button' } });
+      var add = createElement('button', { className: 'btn btn-outline btn-sm', text: 'Add to my words', attributes: { type: 'button' } });
       add.addEventListener('click', function () {
         var deck = getDeck(d.code);
         if (!deck) return;
@@ -2222,10 +2222,10 @@ class UI {
     var total = game.correct + game.wrong;
     var acc = total > 0 ? Math.round(game.correct / total * 100) : 0;
     var skinName = game.currentSkin ? game.currentSkin.name : 'Unknown';
-    var text = '⚡ Language Dash ⚡\n🏆 Score: ' + game.score + '\n✅ Accuracy: ' + acc + '%\n🔥 Streak: ' + game.bestStreak + '\n🪙 Coins: ' + game.coins + '\n💊 Speed: ' + game.userSpeed + '×\n🌍 Track: ' + skinName + '\n\nCan you beat my score? Play at:\n' + shareLink(appPublicUrl(), 'results');
+    var text = '⚡ Language Dash ⚡\n🏆 Score: ' + game.score + '\n✅ Accuracy: ' + acc + '%\n🔥 Streak: ' + game.bestStreak + '\n🪙 Coins: ' + game.coins + '\n🗣 ' + pairFlags() + ' Words right: ' + game.correct + '\n🌍 Track: ' + skinName + '\n\nCan you beat my score? Run the lexicon at:\n' + shareLink(appPublicUrl(), 'results');
 
     var self = this;
-    shareText({ title: 'Language Dash Score', text: text, kind: 'results', surface: 'postrun', score: game.score }).then(function (how) {
+    shareText({ title: 'Language Dash score', text: text, kind: 'results', surface: 'postrun', score: game.score }).then(function (how) {
       if (how === 'copied') self._showToast('Score copied \u2014 paste it anywhere to share.');
       else if (how === 'failed') window.alert('Could not share. Your score:\n\n' + text);
     });
@@ -2235,6 +2235,13 @@ class UI {
 
 // Screens split into their own files; attached here so `this` is still the UI controller.
 Object.assign(UI.prototype, postRunMethods, settingsMethods, studyMethods, browseMethods, profileMethods, homeMethods);
+
+/** "🇬🇧→🇪🇸": the language pair, for share text. */
+function pairFlags() {
+  var p = getPairOrDefault();
+  var k = getLanguage(p.known), t = getLanguage(p.target);
+  return (k ? k.flag : '') + '→' + (t ? t.flag : '');
+}
 
 export var ui = new UI();
 
