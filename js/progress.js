@@ -157,7 +157,7 @@ export function bonusSubjectFor(dateKey, subjects) {
   if (!subjects || !subjects.length) return '';
   var d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateKey || '');
   var day = d ? Math.floor(Date.UTC(Number(d[1]), Number(d[2]) - 1, Number(d[3])) / 86400000) : 0;
-  var order = subjects.slice().sort(function (a, b) { return hashText('dx-bonus:' + a) - hashText('dx-bonus:' + b) || (a < b ? -1 : 1); });
+  var order = subjects.slice().sort(function (a, b) { return hashText('ld-bonus:' + a) - hashText('ld-bonus:' + b) || (a < b ? -1 : 1); });
   return order[((day % order.length) + order.length) % order.length];
 }
 

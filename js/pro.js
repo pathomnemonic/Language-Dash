@@ -26,21 +26,21 @@ import { isNative, getNativePlatform } from './native.js';
 import { track } from './analytics/index.js';
 import { PREMIUM_ITEMS, itemProductId, premiumCents, formatUsd } from '../supabase/functions/_shared/premium.js';
 
-var CACHE_KEY = 'dx_pro';
-var USE_KEY = 'dx_pro_use';
-var DEBUG_KEY = 'dx_pro_debug';
-var SELL_KEY = 'dx_pro_sell';
-var LIB_KEY = 'dx_pro_lib';
+var CACHE_KEY = 'ld_pro';
+var USE_KEY = 'ld_pro_use';
+var DEBUG_KEY = 'ld_pro_debug';
+var SELL_KEY = 'ld_pro_sell';
+var LIB_KEY = 'ld_pro_lib';
 var FOREVER = 100 * 365 * 24 * 60 * 60 * 1000;
 var GRACE_MS = 3 * 24 * 60 * 60 * 1000;
 var STORE_DOUBT_MS = 6 * 60 * 60 * 1000;
-var SYNC_KEY = 'dx_pro_synced';
-var TRIAL_KEY = 'dx_pro_trialavail';
-var CANCEL_KEY = 'dx_pro_cancel_started';
+var SYNC_KEY = 'ld_pro_synced';
+var TRIAL_KEY = 'ld_pro_trialavail';
+var CANCEL_KEY = 'ld_pro_cancel_started';
 var SYNC_EVERY_MS = 12 * 60 * 60 * 1000;
 var SYNC_RETRY_MS = 10 * 60 * 1000;
-var SYNC_TRY_KEY = 'dx_pro_sync_try';
-var PENDING_KEY = 'dx_pro_pending';
+var SYNC_TRY_KEY = 'ld_pro_sync_try';
+var PENDING_KEY = 'ld_pro_pending';
 var PENDING_MS = 3 * 24 * 60 * 60 * 1000;
 
 export var PRO_PLAN_INFO = {
@@ -113,7 +113,7 @@ export function probeSellable(deps) {
   if (!isNative()) {
     // (a debug page can pretend the web can sell, to try the screens)
     var forced = false;
-    try { forced = /[?&]debug=1(&|$)/.test(location.search) && store().getItem('dx_pro_force_sell') === '1'; } catch (e) { forced = false; }
+    try { forced = /[?&]debug=1(&|$)/.test(location.search) && store().getItem('ld_pro_force_sell') === '1'; } catch (e) { forced = false; }
     var web = webCheckoutEnabled() || !!proWebUrl('x') || forced;
     setSellable(web);
     return Promise.resolve(web);
@@ -121,7 +121,7 @@ export function probeSellable(deps) {
   return proPlans(iap).then(function (plans) {
     var ok = plans.length > 0 || !!iap.product(proConfig().library);
     setSellable(ok);
-    if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('dx:pro-changed'));
+    if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('ld:pro-changed'));
     return ok;
   }).catch(function () { return false; });
 }
@@ -142,7 +142,7 @@ export function grantOwnedItems(ids, serverIds, uid) {
   }
   if (added.length) {
     try { storage.save(); } catch (e) { /* kept in memory; saved next time */ }
-    if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('dx:items-granted', { detail: { items: added } }));
+    if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('ld:items-granted', { detail: { items: added } }));
   }
   return added.length;
 }
@@ -187,7 +187,7 @@ export function clearPaymentPending() { try { var s = store(); if (s) s.removeIt
 export function forgetServerPro() {
   var c = readJson(CACHE_KEY, null);
   if (c && c.source !== 'store') { try { var s = store(); if (s) { s.removeItem(CACHE_KEY); s.removeItem(TRIAL_KEY); s.removeItem(SYNC_KEY); s.removeItem(SYNC_TRY_KEY); s.removeItem(PENDING_KEY); } } catch (e) { /* ignore */ } }
-  if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('dx:pro-changed'));
+  if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('ld:pro-changed'));
 }
 
 function cachedActive() { var c = readJson(CACHE_KEY, null); return !!(c && c.active); }
@@ -318,7 +318,7 @@ export function refreshPro(deps) {
     // a refunded or charged-back item is taken back (only when the server answered properly, twice in a row, for this account)
     if (itemUid && serverItems && storage.reconcilePaidItems) {
       var taken = storage.reconcilePaidItems(itemUid, serverItems, storeItems);
-      if (taken.length && typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('dx:items-revoked', { detail: { items: taken } }));
+      if (taken.length && typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('ld:items-revoked', { detail: { items: taken } }));
     }
     var before = isPro(now);
     var prev = readJson(CACHE_KEY, null);
@@ -337,9 +337,9 @@ export function refreshPro(deps) {
     writeJson(CACHE_KEY, next);
     var libBefore = libraryUnlocked();
     if (libraryOwned !== null) writeJson(LIB_KEY, { owned: !!libraryOwned });
-    if (libraryUnlocked() !== libBefore && typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('dx:library-changed'));
-    if (isPro(now) !== before && typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('dx:pro-changed'));
-    if (trialStarted && typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('dx:pro-trial-started'));
+    if (libraryUnlocked() !== libBefore && typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('ld:library-changed'));
+    if (isPro(now) !== before && typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('ld:pro-changed'));
+    if (trialStarted && typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('ld:pro-trial-started'));
     return proStatus();
   });
 }
@@ -353,7 +353,7 @@ export function iapVerifyEnabled() {
   return String(env.VITE_IAP_VERIFY || '') === '1' && !!env.VITE_SUPABASE_URL && isNative();
 }
 
-var VERIFIED_KEY = 'dx_iap_verified';
+var VERIFIED_KEY = 'ld_iap_verified';
 var VERIFY_EVERY_MS = 12 * 60 * 60 * 1000;
 
 /**
@@ -407,7 +407,7 @@ export function buyLibrary(deps) {
   return iap.order(proConfig().library).then(function (res) {
     if (res.ok) {
       writeJson(LIB_KEY, { owned: true });
-      if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('dx:library-changed'));
+      if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('ld:library-changed'));
     }
     return res;
   });
@@ -449,7 +449,7 @@ export function buyPlan(id, deps) {
       if (!st.active) {
         // trust the purchase for now; the next check will confirm it
         writeJson(CACHE_KEY, { active: true, source: 'store', plan: planName(id), trial: false, until: Date.now() + 2 * 24 * 60 * 60 * 1000, provenAt: Date.now() });
-        if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('dx:pro-changed'));
+        if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('ld:pro-changed'));
       }
       return res;
     });
@@ -588,7 +588,7 @@ export function probeItems(lb) {
     var next = r && r.ok ? r.items === true : (r && /unknown request|not set up|not switched on/i.test(r.error || '') ? false : null);
     if (next !== null && next !== _itemsCap) {
       _itemsCap = next;
-      if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('dx:items-capability'));
+      if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('ld:items-capability'));
     }
     return itemsAvailable();
   }).catch(function () { return itemsAvailable(); });
@@ -738,7 +738,7 @@ var _lastPassive = 0;
 
 /**
  * Ask before doing something that may be Pro-only. Returns true when it may go ahead. When it may not, the paywall is
- * opened (through the "dx:pro-gate" event, which proui.js listens for) and the hit is counted for analytics.
+ * opened (through the "ld:pro-gate" event, which proui.js listens for) and the hit is counted for analytics.
  * @param {string} feature
  * @param {{used?: number, record?: boolean, passive?: boolean, trigger?: string, firstRunAt?: number}} [o]
  *   record: count this as a use when allowed. passive: a gate the player did not choose to hit (a teaser, not a wall):
@@ -752,7 +752,7 @@ export function requireGate(feature, o) {
   var now = Date.now();
   if (!o.passive || now - _lastPassive > 20 * 60 * 1000) {
     if (o.passive) _lastPassive = now;
-    if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('dx:pro-gate', { detail: { feature: feature, trigger: o.trigger || feature, gate: g } }));
+    if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('ld:pro-gate', { detail: { feature: feature, trigger: o.trigger || feature, gate: g } }));
   }
   return false;
 }

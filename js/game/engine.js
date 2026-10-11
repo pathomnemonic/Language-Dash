@@ -582,7 +582,7 @@ class Game {
   }
 
   _getPostFX() {
-    // The ink-outline pass (postfx.js) runs on the high tier whatever the old "Glow effects" switch says: there is no glow any more
+    // The ink-outline pass (postfx.js) runs on the high tier. The old "Glow effects" switch now makes its lines bolder (there is no glow any more)
     if (storage.get('reducedMotion') || !useSceneryModels()) return null;
     if (!this._postfx) {
       try {
@@ -593,6 +593,7 @@ class Game {
         this._postfx = { degraded: true, render: function () {}, setSize: function () {}, dispose: function () {} };
       }
     }
+    if (this._postfx.setBold) this._postfx.setBold(!!storage.get('glowEffects'));
     if (this._postfx.degraded) this._noteSlowSession();
     return this._postfx.degraded ? null : this._postfx;
   }

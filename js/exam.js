@@ -350,7 +350,7 @@ function finishExam() {
   var examFlagged = st.flags.filter(Boolean).length;
   track('exam_ended', { questions: result.total, answered: result.total - result.unanswered, correct: result.correct, duration_s: durationSec, outcome: st.limitSec > 0 && durationSec >= st.limitSec ? 'timeout' : 'finished', flagged: examFlagged });
   // (main.js posts "scored X% on a Word Quiz" to friends' feeds when the player has a public profile)
-  document.dispatchEvent(new CustomEvent('dx:exam-finished', { detail: { accuracy: result.accuracy, total: result.total } }));
+  document.dispatchEvent(new CustomEvent('ld:exam-finished', { detail: { accuracy: result.accuracy, total: result.total } }));
   renderResults(st, result, durationSec);
 }
 

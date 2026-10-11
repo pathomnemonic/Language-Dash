@@ -7,7 +7,7 @@ import { openApp, hasWebGL } from './helpers.js';
 async function start(page, dashControl) {
   await openApp(page, '/?debug=1');
   test.skip(!(await hasWebGL(page)), 'WebGL unavailable in this environment');
-  await page.evaluate((m) => { window.__storage.data.settings.dashControl = m; window.__storage.save(); document.dispatchEvent(new CustomEvent('dx:controls-changed')); }, dashControl);
+  await page.evaluate((m) => { window.__storage.data.settings.dashControl = m; window.__storage.save(); document.dispatchEvent(new CustomEvent('ld:controls-changed')); }, dashControl);
   await page.locator('.btn-play').click();
   await page.waitForFunction(() => window.__game._state === 'playing', null, { timeout: 25000 });
   await page.waitForFunction(() => window.__game.gatesActive && !window.__game.answerLocked, null, { timeout: 20000 });

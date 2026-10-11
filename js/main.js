@@ -501,7 +501,7 @@ function addPostRunBox(builder) {
 /** Post at most one activity event per kind per window (an hour unless said otherwise). */
 function throttledActivity(kind, payload, windowMs) {
   if (!leaderboardModule) return;
-  var key = 'buzzword_activity_throttle';
+  var key = 'langdash_activity_throttle';
   var seen = {};
   try { seen = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) { seen = {}; }
   if (!seen || typeof seen !== 'object' || Array.isArray(seen)) seen = {}; // (stored text can be "null" or a list)
@@ -536,7 +536,7 @@ function postActivities(summary, result) {
 }
 
 // A finished Word Quiz goes to friends' feeds (only for a signed-in player with a public, named profile)
-document.addEventListener('dx:exam-finished', function (e) {
+document.addEventListener('ld:exam-finished', function (e) {
   if (!leaderboardModule || !leaderboardModule.leaderboard.isAuthenticated()) return;
   if (!storage.get('profileVisible') || !storage.get('profileName')) return;
   var d = (e && e.detail) || {};
@@ -906,7 +906,7 @@ function startStudyPlanRun(cardIds) {
 /** After someone went to cancel: tell them what really happened. */
 ui.getLeaderboard = function () { return leaderboardModule ? leaderboardModule.leaderboard : null; };
 ui.onOpenAccount = function () { if (profileCorner) profileCorner.open(); };
-document.addEventListener('dx:items-granted', function () { try { ui.renderShop(); } catch (e) { /* the Locker draws next time it opens */ } });
+document.addEventListener('ld:items-granted', function () { try { ui.renderShop(); } catch (e) { /* the Locker draws next time it opens */ } });
 
 function announceCancel(r) {
   var when = r.endsAt ? new Date(r.endsAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric' }) : '';
@@ -1253,7 +1253,7 @@ function askToRestoreProgress(found) {
     var r = storage.restoreLastGood();
     overlay.remove();
     ui._showToast(r.ok ? 'Your progress is back! 🎉' : 'Could not restore it. Your game is unchanged.', 3500);
-    if (r.ok) { try { ui.renderHome(); document.dispatchEvent(new CustomEvent('dx:coins-changed')); document.dispatchEvent(new CustomEvent('dx:profile-changed')); } catch (e) { /* the page redraws on its own */ } }
+    if (r.ok) { try { ui.renderHome(); document.dispatchEvent(new CustomEvent('ld:coins-changed')); document.dispatchEvent(new CustomEvent('ld:profile-changed')); } catch (e) { /* the page redraws on its own */ } }
   });
   no.addEventListener('click', function () {
     storage.discardLastGood();
@@ -1314,7 +1314,7 @@ function init() {
   var nativeRestore = (storage.recoverable ? Promise.resolve() : readNativeBackup().then(function (text) { if (text) storage.adoptBackup(text); })).catch(function () { /* the question is just not asked */ });
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flushNativeBackup(); });
   // Switches for mechanics that turn out broken in the field (see remoteconfig.js); the saved copy applies at once
-  loadRemoteConfig().then(function () { trackEvent('remote_config', { killed: [], experiments: 0, ok: true }); document.dispatchEvent(new CustomEvent('dx:pro-changed')); }).catch(function () { trackEvent('remote_config', { ok: false }); /* the saved copy stays */ });
+  loadRemoteConfig().then(function () { trackEvent('remote_config', { killed: [], experiments: 0, ok: true }); document.dispatchEvent(new CustomEvent('ld:pro-changed')); }).catch(function () { trackEvent('remote_config', { ok: false }); /* the saved copy stays */ });
   // Badges added or fixed in an update are awarded to anyone who already qualifies, shown a little after launch
   setTimeout(function () {
     try {
@@ -1326,8 +1326,8 @@ function init() {
   // Colors follow the time of day and the season (Settings -> Colors can turn that off)
   refreshTheme();
   setInterval(refreshTheme, 10 * 60 * 1000);
-  document.addEventListener('dx:theme-changed', refreshTheme);
-  document.addEventListener('dx:home-shown', maybeRerollTheme);
+  document.addEventListener('ld:theme-changed', refreshTheme);
+  document.addEventListener('ld:home-shown', maybeRerollTheme);
   // Dash: double-tap, an on-screen button, or off (Settings -> Look -> Dash control)
   var autoBtn = document.getElementById('autoBtn');
   if (autoBtn) {
@@ -1341,9 +1341,9 @@ function init() {
     dashBtn.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); game.addRushStack(); } });
   }
   applyDashControl();
-  document.addEventListener('dx:controls-changed', applyDashControl);
+  document.addEventListener('ld:controls-changed', applyDashControl);
   // Profile tab: the account section, and an invitation for signed-out players to make an account
-  document.addEventListener('dx:profile-opened', fillProfileAccount);
+  document.addEventListener('ld:profile-opened', fillProfileAccount);
   initTabSwipe(ui, ['screenStats', 'screenShop', 'screenHome', 'screenQuests', 'screenProfile']);
   // The 3D engine needs WebGL. If it cannot start (old browser, blocked GPU,
   // or ?webgl=off for diagnostics) the rest of the app must still work.
@@ -1372,9 +1372,9 @@ function init() {
   } catch (e) { webPayReturn = ''; }
   registerProProducts(); // (before the store starts: the tip jar and Pro share one connection)
   var syncLibrary = function () { setLibraryUnlocked(libraryUnlocked()); if (areCardsReady()) { ui.renderHome(); ui.renderSubjects(); } };
-  document.addEventListener('dx:items-revoked', function () { ui._showToast('A refunded item was returned to the store.', 4000); if (ui.renderShop) ui.renderShop(); if (ui.renderHome && areCardsReady()) ui.renderHome(); });
-  document.addEventListener('dx:pro-changed', syncLibrary);
-  document.addEventListener('dx:library-changed', syncLibrary);
+  document.addEventListener('ld:items-revoked', function () { ui._showToast('A refunded item was returned to the store.', 4000); if (ui.renderShop) ui.renderShop(); if (ui.renderHome && areCardsReady()) ui.renderHome(); });
+  document.addEventListener('ld:pro-changed', syncLibrary);
+  document.addEventListener('ld:library-changed', syncLibrary);
   installProUi({ toast: function (m) { ui._showToast(m); }, openAccount: function () { if (profileCorner) profileCorner.open(); } });
   refreshPro();
   probeSellable(); // is there anything to buy? (Pro only limits things when there is)
@@ -1484,7 +1484,7 @@ function init() {
       else if (event === 'SIGNED_IN') refreshPro({ lb: mod.leaderboard });
     });
     mod.leaderboard.init().then(function () { refreshPro({ lb: mod.leaderboard }); if (webPayReturn !== 'billing') checkCancelFollowThrough(mod.leaderboard).then(function (r) { if (r) announceCancel(r); }); });
-    document.addEventListener('dx:pro-trial-started', function () { ui._showToast('Your free 7-day Pro trial has started! 🎉', 4000); });
+    document.addEventListener('ld:pro-trial-started', function () { ui._showToast('Your free 7-day Pro trial has started! 🎉', 4000); });
     if (webPayReturn === 'success' && webPayItem) {
       // back from paying for a Locker item: wait for it to show up
       mod.leaderboard.init().then(function () {
@@ -1808,17 +1808,17 @@ function init() {
   }
   renderLevelChip(document.getElementById('homeLevel'));
   updateLockerDot();
-  document.addEventListener('dx:coins-changed', updateLockerDot);
+  document.addEventListener('ld:coins-changed', updateLockerDot);
   // another tab saved: show its numbers (coins, level) if Home is up
-  document.addEventListener('dx:data-refreshed', function () {
+  document.addEventListener('ld:data-refreshed', function () {
     var home = document.getElementById('screenHome');
-    if (home && home.classList.contains('active') && !game.running) { ui.renderHome(); document.dispatchEvent(new CustomEvent('dx:coins-changed')); }
+    if (home && home.classList.contains('active') && !game.running) { ui.renderHome(); document.dispatchEvent(new CustomEvent('ld:coins-changed')); }
   });
   // Players who already know the app are not walked through the lessons behind the red dots
   seedLessons(storage);
   // Red dots: new badges, quest rewards and the weekly reward waiting to be claimed
   updateAttentionDots(storage, storage.getDailyQuests());
-  document.addEventListener('dx:attention-changed', function () { updateAttentionDots(storage, storage.getDailyQuests()); });
+  document.addEventListener('ld:attention-changed', function () { updateAttentionDots(storage, storage.getDailyQuests()); });
   // A light tick under the thumb for the big Home buttons
   document.addEventListener('pointerdown', function (e) {
     if (e.target && e.target.closest && e.target.closest('.btn-play, .mode-btn, .side-btn')) audio.haptic('tap');
@@ -1829,13 +1829,13 @@ function init() {
   document.addEventListener('click', function (e) {
     var id = discoveryIdFor(e.target);
     if (id && markExplored(storage, id)) {
-      document.dispatchEvent(new CustomEvent('dx:attention-changed'));
+      document.dispatchEvent(new CustomEvent('ld:attention-changed'));
       // the first time a red-dotted menu is opened, it shows the player around (lessons.js)
       if (discoveryActive(storage)) startLesson(id, { ui: ui, isRunning: function () { return game.running || game.paused; } });
     }
   }, true);
-  document.addEventListener('dx:celebrate', function () { ui.showConfetti(true); });
-  document.addEventListener('dx:ranked-updated', function (e) {
+  document.addEventListener('ld:celebrate', function () { ui.showConfetti(true); });
+  document.addEventListener('ld:ranked-updated', function (e) {
     refreshHomeBadge(homeLeague);
     updateLockerDot();
     if (e.detail && (e.detail.promoted || (e.detail.outcome === 'win' && e.detail.settled))) {
@@ -2081,7 +2081,7 @@ function init() {
 
   // Daily study reminder (fires while the app is open or installed)
   setInterval(checkStudyReminder, 60000);
-  document.addEventListener('dx:reminders-changed', checkStudyReminder);
+  document.addEventListener('ld:reminders-changed', checkStudyReminder);
   setTimeout(checkStudyReminder, 3000);
 
   // Start home character animation

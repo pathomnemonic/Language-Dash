@@ -39,7 +39,7 @@ async function layoutProblems(page) {
 
 for (const [w, h] of PHONES) {
   test(`Home at ${w}x${h}: nothing hidden, nothing under the tab bar, Go Pro visible, no bonus-subject clutter`, async ({ page }) => {
-    await page.addInitScript(() => { try { localStorage.setItem('dx_pro_force_sell', '1'); } catch (e) { /* no storage */ } });
+    await page.addInitScript(() => { try { localStorage.setItem('ld_pro_force_sell', '1'); } catch (e) { /* no storage */ } });
     await open(page, w, h);
     await page.evaluate(() => window.__ui.show('screenHome'));
     await page.waitForTimeout(500);
@@ -91,7 +91,7 @@ for (const [w, h] of PHONES) {
 // Home must still keep its bottom buttons clear of the tab bar.
 for (const [w, h, scale, safe] of [[360, 640, 1.15, 0], [360, 640, 1.3, 0], [360, 600, 1.3, 0], [390, 780, 1.3, 34], [390, 844, 1, 34], [320, 568, 1.15, 0]]) {
   test(`Home keeps clear of the tab bar at ${w}x${h} with ${Math.round(scale * 100)}% text and a ${safe}px bottom inset`, async ({ page }) => {
-    await page.addInitScript(() => { try { localStorage.setItem('dx_pro_force_sell', '1'); } catch (e) { /* no storage */ } });
+    await page.addInitScript(() => { try { localStorage.setItem('ld_pro_force_sell', '1'); } catch (e) { /* no storage */ } });
     await open(page, w, h);
     await page.evaluate(([k, inset]) => {
       document.documentElement.style.setProperty('--safe-bottom', inset + 'px');
@@ -264,7 +264,7 @@ for (const [w, h] of [[360, 640], [390, 780], [320, 568]]) {
 
 // ───────── the Go Pro banner ─────────
 test('the trial banner shows "N days left" in full, even on the narrowest phone', async ({ page }) => {
-  await page.addInitScript(() => { try { localStorage.setItem('dx_pro_force_sell', '1'); localStorage.setItem('dx_pro', JSON.stringify({ active: true, source: 'server', plan: 'trial', trial: true, until: Date.now() + 7 * 86400000 - 3600000, provenAt: Date.now(), since: Date.now() })); } catch (e) { /* no storage */ } });
+  await page.addInitScript(() => { try { localStorage.setItem('ld_pro_force_sell', '1'); localStorage.setItem('ld_pro', JSON.stringify({ active: true, source: 'server', plan: 'trial', trial: true, until: Date.now() + 7 * 86400000 - 3600000, provenAt: Date.now(), since: Date.now() })); } catch (e) { /* no storage */ } });
   await open(page, 320, 568);
   await page.evaluate(() => window.__ui.show('screenHome'));
   await page.waitForTimeout(900);

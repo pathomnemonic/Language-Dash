@@ -327,7 +327,7 @@ class UI {
     if (shopEl && shopEl.classList.contains('active') && screenId !== 'screenShop' && this._lockerFresh && this._lockerFresh.length) {
       storage.set('lockerSeen', markSeen(storage.get('lockerSeen') || [], this._lockerFresh));
       this._lockerFresh = [];
-      document.dispatchEvent(new CustomEvent('dx:coins-changed'));
+      document.dispatchEvent(new CustomEvent('ld:coins-changed'));
     }
     // Leaving the profile: the badges that wore a red dot have now been seen
     var profileEl = document.getElementById('screenProfile');
@@ -344,7 +344,7 @@ class UI {
     document.body.setAttribute('data-screen', screenId); // the flying objects are a Home-only element
 
     if (screenId === 'screenHome') {
-      document.dispatchEvent(new CustomEvent('dx:home-shown'));
+      document.dispatchEvent(new CustomEvent('ld:home-shown'));
       this.renderHome();
       if (this.homeCharacter) this.homeCharacter.startAnimation();
     }
@@ -373,7 +373,7 @@ class UI {
       this.homeCharacter.stopAnimation();
     }
 
-    document.dispatchEvent(new CustomEvent('dx:attention-changed'));
+    document.dispatchEvent(new CustomEvent('ld:attention-changed'));
 
     var indicator = document.querySelectorAll('#tabIndicator span');
     document.querySelectorAll('.nav-item').forEach(function (n, idx) {
@@ -563,7 +563,7 @@ class UI {
           audio.play('secret');
           self._showToast('Secret found! +100,000 coins!');
           self.renderHome();
-          document.dispatchEvent(new CustomEvent('dx:coins-changed'));
+          document.dispatchEvent(new CustomEvent('ld:coins-changed'));
         }
       });
     }
@@ -646,7 +646,7 @@ class UI {
         reward: reward,
         onClose: function () {
           self.renderHome();
-          document.dispatchEvent(new CustomEvent('dx:coins-changed'));
+          document.dispatchEvent(new CustomEvent('ld:coins-changed'));
         }
       });
     }
@@ -688,7 +688,7 @@ class UI {
     this.renderStudyGoal();
     this._renderFiltersSummary();
     renderPal();
-    document.dispatchEvent(new CustomEvent('dx:attention-changed')); // the weekly claim button was just redrawn
+    document.dispatchEvent(new CustomEvent('ld:attention-changed')); // the weekly claim button was just redrawn
   }
 
   // ═══════════════════════════════════════════════════════
@@ -1334,7 +1334,7 @@ class UI {
   // ═══════════════════════════════════════════════════════
 
   showAchievementNotification(achievementIds) {
-    document.dispatchEvent(new CustomEvent('dx:attention-changed')); // the new badges now wear a red dot
+    document.dispatchEvent(new CustomEvent('ld:attention-changed')); // the new badges now wear a red dot
     var delay = 0;
     achievementIds.forEach(function (achId) {
       var ach = null;
@@ -2283,7 +2283,7 @@ export function scheduleHomeFit() {
   _homeFitFrame = window.requestAnimationFrame(function () { _homeFitFrame = null; fitHomeLayout(); });
 }
 if (typeof window !== 'undefined') {
-  ['resize', 'orientationchange', 'dx:pro-changed', 'dx:pro-trial-started', 'load'].forEach(function (ev) { window.addEventListener(ev, scheduleHomeFit); document.addEventListener(ev, scheduleHomeFit); });
+  ['resize', 'orientationchange', 'ld:pro-changed', 'ld:pro-trial-started', 'load'].forEach(function (ev) { window.addEventListener(ev, scheduleHomeFit); document.addEventListener(ev, scheduleHomeFit); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleHomeFit);
   window.setTimeout(scheduleHomeFit, 600); window.setTimeout(scheduleHomeFit, 2500);
   if (typeof ResizeObserver !== 'undefined') window.addEventListener('DOMContentLoaded', function () { var nav = document.getElementById('bottomNav'); if (nav) new ResizeObserver(scheduleHomeFit).observe(nav); });

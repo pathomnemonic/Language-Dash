@@ -199,7 +199,7 @@ describe('analytics core: sending', function () {
     // the queue is written shortly after (a timer in the real app)
     t.timers.forEach(function (fn) { fn(); });
     await t.a.hide();
-    var raw = JSON.parse(store.getItem('dx_an_q') || '[]');
+    var raw = JSON.parse(store.getItem('ld_an_q') || '[]');
     expect(raw.length).toBeGreaterThan(0);
     var t2 = make({ store: store });
     t2.a.init();

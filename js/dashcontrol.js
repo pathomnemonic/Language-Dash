@@ -54,7 +54,7 @@ export function attachDashPrompt(container, toast) {
   on.addEventListener('click', function () {
     storage.set('dashPromptSeen', true);
     storage.set('dashControl', 'double');
-    document.dispatchEvent(new CustomEvent('dx:controls-changed'));
+    document.dispatchEvent(new CustomEvent('ld:controls-changed'));
     if (toast) toast('Double-tap to dash is on. Change it in Settings → Look.');
     box.remove();
   });

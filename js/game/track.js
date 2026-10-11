@@ -787,22 +787,22 @@ export function updateSkyboxElements(skyboxElements, dt, move, time) {
 // ===== RUNNING LIGHTS =====
 
 function buildRunningLights(trackRoot, skin, trackRefs) {
-  var c = skin.colors;
   var positions = [];
   for (var side = -1; side <= 1; side += 2) {
     for (var z = -160; z < 20; z += RUNNING_LIGHT_SPACING) positions.push({ x: side * 4.5, z: z });
   }
-  // One instanced mesh for all the little lights (120 draw calls become 1). Each light's brightness
-  // is its instance color; additive blending makes a dim light a faint glow, as before.
+  // One instanced mesh for all the little studs (120 draw calls become 1). They are flat paper dots painted along the
+  // platform edge, not lights: the wave that used to run along them is now a ripple from cream to a warm grey.
   var mesh = new THREE.InstancedMesh(
-    new THREE.SphereGeometry(0.06, 4, 4),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }),
+    new THREE.CircleGeometry(0.11, 8),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }),
     positions.length
   );
   var m = new THREE.Matrix4();
-  var base = new THREE.Color(c.wallGlow);
+  var flat = new THREE.Matrix4().makeRotationX(-Math.PI / 2);
+  var base = new THREE.Color(PALETTE.card);
   for (var i = 0; i < positions.length; i++) {
-    m.makeTranslation(positions[i].x, 0.06, positions[i].z);
+    m.makeTranslation(positions[i].x, 0.045, positions[i].z).multiply(flat);
     mesh.setMatrixAt(i, m);
     mesh.setColorAt(i, base);
   }
@@ -823,7 +823,7 @@ export function updateRunningLights(runningLights, time, speed) {
   for (var i = 0; i < baseZ.length; i++) {
     var phase = (baseZ[i] + time * waveSpeed) / waveLength;
     var wave = (Math.sin(phase * Math.PI * 2) + 1) * 0.5;
-    var intensity = 0.15 + wave * (0.7 - 0.15);
+    var intensity = 0.55 + wave * 0.45;
     col.setRGB(base.r * intensity, base.g * intensity, base.b * intensity);
     mesh.setColorAt(i, col);
   }

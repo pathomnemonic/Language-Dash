@@ -27,7 +27,7 @@ async function open(seed = true) {
   if (seed) {
     await ctx.addInitScript(() => {
       try {
-        const k = 'buzzword_dash_v1';
+        const k = 'langdash_save_v1';
         const d = JSON.parse(localStorage.getItem(k) || 'null');
         if (!d) return;
         d.cards = d.cards || {}; d.cards.cardStats = d.cards.cardStats || {};

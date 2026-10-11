@@ -23,7 +23,7 @@ test.describe('Language Dash Pro', () => {
   });
 
   test('once something can be bought: 300 free cards, the unlock strip, the Pro row and the paywall', async ({ page }) => {
-    await page.addInitScript(() => { try { localStorage.setItem('dx_pro_force_sell', '1'); } catch (e) { /* ignore */ } });
+    await page.addInitScript(() => { try { localStorage.setItem('ld_pro_force_sell', '1'); } catch (e) { /* ignore */ } });
     await openApp(page, '/?debug=1');
     await page.waitForFunction(() => window.__pro, null, { timeout: 15000 });
     await expect.poll(() => page.evaluate(() => window.__pro.proLive()), { timeout: 8000 }).toBe(true);
@@ -45,7 +45,7 @@ test.describe('Language Dash Pro', () => {
     await expect(page.locator('#proPaywall')).toHaveCount(0);
     // Pro (the debug switch stands in for a purchase) opens every card and lifts the gate
     await page.evaluate(() => window.__pro.setProDebug(true));
-    await page.evaluate(() => document.dispatchEvent(new CustomEvent('dx:pro-changed')));
+    await page.evaluate(() => document.dispatchEvent(new CustomEvent('ld:pro-changed')));
     await expect.poll(() => page.evaluate(() => window.__cards.length), { timeout: 8000 }).toBeGreaterThan(3000);
     expect(await page.evaluate(() => window.__pro.checkGate('offline_pack').allowed)).toBe(true);
   });

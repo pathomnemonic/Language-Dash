@@ -768,7 +768,7 @@ export function pickReplacementQuest(offeredIds, oldId, progressOf, rand) {
 
 export function pickDailyQuests(dateKey, avoidIds) {
   var avoid = avoidIds || [];
-  var rand = seededRandom(hashString('dx-quests:' + dateKey));
+  var rand = seededRandom(hashString('ld-quests:' + dateKey));
   return QUEST_CATEGORIES.map(function (cat) {
     var all = QUESTS.filter(function (q) { return q.category === cat; });
     var fresh = all.filter(function (q) { return avoid.indexOf(q.id) < 0; });

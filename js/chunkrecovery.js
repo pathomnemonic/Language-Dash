@@ -6,7 +6,7 @@
  * app reloads once to pick up the new version, and tells the player if that does not help.
  */
 
-var KEY = 'dxChunkReload';
+var KEY = 'ldChunkReload';
 
 export function isChunkError(err) {
   var msg = String((err && (err.message || err.reason && err.reason.message)) || err || '');

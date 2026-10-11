@@ -32,7 +32,7 @@ async function player(name) {
   }
   await page.waitForTimeout(1500);
   await dismissDaily(page);
-  await page.evaluate((n) => { const k = 'buzzword_dash_v1'; const d = JSON.parse(localStorage.getItem(k)); d.profile = d.profile || {}; d.profile.name = n; localStorage.setItem(k, JSON.stringify(d)); }, name);
+  await page.evaluate((n) => { const k = 'langdash_save_v1'; const d = JSON.parse(localStorage.getItem(k)); d.profile = d.profile || {}; d.profile.name = n; localStorage.setItem(k, JSON.stringify(d)); }, name);
   return page;
 }
 const lobby = (p) => p.locator('#mpContent').innerText().catch(() => '(no lobby)');

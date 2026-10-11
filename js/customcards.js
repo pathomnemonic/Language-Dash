@@ -25,7 +25,7 @@ import {
   normalizeComparableText
 } from './cardschema.js';
 
-var CUSTOM_CARDS_KEY = 'buzzword_dash_custom_cards';
+var CUSTOM_CARDS_KEY = 'langdash_custom_words';
 var MAX_CUSTOM_CARDS = 5000; // (an Anki deck is often a few thousand cards)
 
 // Subscription listeners

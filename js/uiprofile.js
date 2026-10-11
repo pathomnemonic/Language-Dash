@@ -115,7 +115,7 @@ export var profileMethods = {
           storage.set('profilePicture', heroPictureId(m.id, style));
           self.renderProfile();
           self._reopenPicBox();
-          document.dispatchEvent(new CustomEvent('dx:profile-changed'));
+          document.dispatchEvent(new CustomEvent('ld:profile-changed'));
         });
         heroSel.appendChild(opt);
       });
@@ -134,7 +134,7 @@ export var profileMethods = {
         opt.addEventListener('click', function () {
           storage.set('profilePicture', iconId(symbol));
           self.renderProfile();
-          document.dispatchEvent(new CustomEvent('dx:profile-changed'));
+          document.dispatchEvent(new CustomEvent('ld:profile-changed'));
         });
         picSelector.appendChild(opt);
       });
@@ -160,7 +160,7 @@ export var profileMethods = {
         showcase.appendChild(chip);
       });
       showcaseHost.appendChild(showcase);
-      document.dispatchEvent(new CustomEvent('dx:attention-changed')); // (the screen refits to its new height)
+      document.dispatchEvent(new CustomEvent('ld:attention-changed')); // (the screen refits to its new height)
     }
     fillShowcase();
     container.appendChild(showcaseHost);
@@ -313,7 +313,7 @@ export var profileMethods = {
     container.appendChild(badgeSection);
 
     this.renderCalendar();
-    document.dispatchEvent(new CustomEvent('dx:profile-opened')); // main.js fills the account section
+    document.dispatchEvent(new CustomEvent('ld:profile-opened')); // main.js fills the account section
   },
 
   renderCalendar() {
@@ -352,8 +352,8 @@ export var profileMethods = {
       }
       self.renderQuests();
       self.renderHome();
-      document.dispatchEvent(new CustomEvent('dx:coins-changed'));
-      document.dispatchEvent(new CustomEvent('dx:attention-changed'));
+      document.dispatchEvent(new CustomEvent('ld:coins-changed'));
+      document.dispatchEvent(new CustomEvent('ld:attention-changed'));
     });
     row.appendChild(yes);
     row.appendChild(no);
@@ -386,7 +386,7 @@ export var profileMethods = {
           if (claim.success) { audio.play('coin'); self._showToast('\uD83E\uDE99 +' + claim.reward + ' coins!'); }
           self.renderQuests();
           self.renderHome();
-          document.dispatchEvent(new CustomEvent('dx:attention-changed'));
+          document.dispatchEvent(new CustomEvent('ld:attention-changed'));
         });
         missedBox.appendChild(b);
       });
@@ -470,7 +470,7 @@ export var profileMethods = {
             }
             self.renderQuests();
             self.renderHome();
-            document.dispatchEvent(new CustomEvent('dx:attention-changed'));
+            document.dispatchEvent(new CustomEvent('ld:attention-changed'));
           });
           questEl.classList.add('has-claim');
           rewardRow.appendChild(claimBtn);

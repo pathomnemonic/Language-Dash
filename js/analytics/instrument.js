@@ -56,7 +56,7 @@ function snapshot(storage, cards) {
     owned_items: owned.length, owned_maps: owned.filter(function (id) { return /^map_/.test(id); }).length,
     achievements: safe(function () { return storage.getAchievementCount(); }) || 0, subjects_selected: selected.length, subjects_total: (cards && cards.subjects) || 15,
     exam_filters: safe(function () { return storage.getSelectedExams(); }) || [], has_account: !!profile.hasAccount, has_name: !!storage.get('profileName'),
-    custom_cards: (cards && cards.custom) || 0, days_since_install: days(first || safe(function () { return Number(localStorage.getItem('dx_an_t0')); })), best_score: storage.get('bestScore') || 0,
+    custom_cards: (cards && cards.custom) || 0, days_since_install: days(first || safe(function () { return Number(localStorage.getItem('ld_an_t0')); })), best_score: storage.get('bestScore') || 0,
     daily_done: !!storage.get('dailyDone'), reminders_on: !!safe(function () { return storage.data.settings.reminders; })
   };
 }
@@ -70,7 +70,7 @@ export function installAnalytics(app) {
   setAppHooks({ platform: getNativePlatform, tier: getQuality, config: analyticsConfig });
   var consent = startAnalytics();
 
-  try { if (!localStorage.getItem('dx_an_t0')) localStorage.setItem('dx_an_t0', String(Date.now())); } catch (e) { /* no storage */ }
+  try { if (!localStorage.getItem('ld_an_t0')) localStorage.setItem('ld_an_t0', String(Date.now())); } catch (e) { /* no storage */ }
 
   runTracker = createRunTracker({ track: function (n, p) { return track(n, p); }, game: game });
 
@@ -217,7 +217,7 @@ export function installAnalytics(app) {
   wrap('addStudiedToday', function () {
     var goal = storage.get('dailyGoal') || 20;
     var done = storage.getStudiedToday();
-    var key = 'dx_an_goal_met';
+    var key = 'ld_an_goal_met';
     try {
       if (done >= goal && localStorage.getItem(key) !== storage.getTodayKey()) { localStorage.setItem(key, storage.getTodayKey()); track('daily_goal', { action: 'met', goal: goal, cards_today: done }); }
     } catch (e) { /* ignore */ }
@@ -230,7 +230,7 @@ export function installAnalytics(app) {
   storage.onProblem = reportProblem;
 
   // the study streak: grew, started, saved by a shield, or lost
-  var lastStreakKey = 'dx_an_streak';
+  var lastStreakKey = 'ld_an_streak';
   wrap('_advanceStudyStreak', function (r) {
     if (!r) return;
     var kind = r.shieldUsed ? 'shield_used' : r.streak === 1 ? 'started' : 'extended';
@@ -323,7 +323,7 @@ export function installAnalytics(app) {
   var MILESTONE_OF = { run_start: 'run_started', run_end: 'run_ended', purchase: 'purchase', item_equipped: 'equip', quest_claimed: 'quest_claim', map_changed: 'map_change',
     achievement_unlocked: 'achievement', share: 'share', flashcard_session: 'flashcards', exam_started: 'exam', custom_card: 'custom_card', account_event: 'account', level_up: 'level_up', powerup_collected: 'powerup' };
   function milestone(name) {
-    var t0 = safe(function () { return Number(localStorage.getItem('dx_an_t0')); }) || Date.now();
+    var t0 = safe(function () { return Number(localStorage.getItem('ld_an_t0')); }) || Date.now();
     trackOnce('ms_' + name, 'first_run_milestone', { milestone: name, seconds_since_install: Math.max(0, Math.round((Date.now() - t0) / 1000)), sessions_so_far: analytics.sessionCount() });
   }
   analytics.on(function (type, data) {
@@ -336,7 +336,7 @@ export function installAnalytics(app) {
     if (getNativePlatform() !== 'web') return 'native';
     return safe(function () { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; }) ? 'standalone' : 'browser';
   }
-  function installDays() { return days(safe(function () { return Number(localStorage.getItem('dx_an_t0')); })); }
+  function installDays() { return days(safe(function () { return Number(localStorage.getItem('ld_an_t0')); })); }
   var snapSent = false;
   function sessionSnapshot() {
     try {
@@ -355,7 +355,7 @@ export function installAnalytics(app) {
   function firstOpen() {
     if (snapSent) return;
     snapSent = true;
-    var att = safe(function () { return JSON.parse(localStorage.getItem('dx_an_first')); }) || {};
+    var att = safe(function () { return JSON.parse(localStorage.getItem('ld_an_first')); }) || {};
     trackOnce('first_open', 'app_first_open', {
       install_kind: getNativePlatform() === 'web' ? (displayMode() === 'standalone' ? 'pwa' : 'web') : getNativePlatform(), landing: att.landing, referrer_host: att.referrer_host, utm_source: att.utm_source,
       utm_medium: att.utm_medium, utm_campaign: att.utm_campaign, utm_content: att.utm_content, utm_term: att.utm_term, has_click_id: !!att.has_click_id, share_ref: att.share_ref,

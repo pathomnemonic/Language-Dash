@@ -165,14 +165,14 @@ describe('maps as level rewards', () => {
     old.progression.xp = xpAtLevel(100);
     old.progression.premiumKept = false;
     old.progression.ownedItems = old.progression.ownedItems.filter((i) => !i.startsWith('map_'));
-    localStorage.setItem('buzzword_dash_v1', JSON.stringify(old));
+    localStorage.setItem('langdash_save_v1', JSON.stringify(old));
     storage.load();
     expect(storage.ownsItem('map_aquarium_imaging_center')).toBe(true);
     expect(storage.ownsItem('map_dna_helix_tunnel')).toBe(true);
     // and a newcomer who levels up later is not given them
     const fresh = JSON.parse(JSON.stringify(old));
     fresh.progression.xp = 0; fresh.progression.premiumKept = true; fresh.progression.ownedItems = fresh.progression.ownedItems.filter((i) => !i.startsWith('map_'));
-    localStorage.setItem('buzzword_dash_v1', JSON.stringify(fresh));
+    localStorage.setItem('langdash_save_v1', JSON.stringify(fresh));
     storage.load();
     storage.set('xp', xpAtLevel(100));
     expect(storage.ownsItem('map_aquarium_imaging_center')).toBe(false);

@@ -118,8 +118,8 @@ function schedule() {
 export function mountFitScreens() {
   window.addEventListener('resize', schedule);
   window.addEventListener('orientationchange', schedule);
-  document.addEventListener('dx:screen-shown', schedule);
-  document.addEventListener('dx:attention-changed', schedule);
+  document.addEventListener('ld:screen-shown', schedule);
+  document.addEventListener('ld:attention-changed', schedule);
   // if a phone browser zoomed the page in around a text field, zoom back out once the field is left
   document.addEventListener('focusout', function () {
     setTimeout(function () {

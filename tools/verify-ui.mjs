@@ -197,7 +197,7 @@ const inView = (page, sel) => page.evaluate((s) => {
   };
   const { ctx, page, errors } = await open({ width: 420, height: 900 }, seed);
   await page.evaluate(() => {
-    const k = 'buzzword_dash_v1';
+    const k = 'langdash_save_v1';
     const d = JSON.parse(localStorage.getItem(k));
     d.cards.cardStats = d.cards.cardStats || {};
     ['n001', 'n002', 'n003', 'n004'].forEach((id) => { d.cards.cardStats[id] = { seen: 3, correct: 1, wrong: 2, due: Date.now() - 86400000, last: Date.now() - 2 * 86400000 }; });

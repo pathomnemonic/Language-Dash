@@ -117,7 +117,7 @@ describe('Read questions aloud', () => {
     t += 6000; // it took 6 seconds
     u.onend();
     Date.now = now;
-    const saved = Number(localStorage.getItem('dx_tts_wps'));
+    const saved = Number(localStorage.getItem('ld_tts_wps'));
     expect(saved).toBeGreaterThan(0);
     expect(saved).not.toBe(2.6);
   });

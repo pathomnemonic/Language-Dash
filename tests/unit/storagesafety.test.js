@@ -2,7 +2,7 @@
 // player is offered it back when the game starts empty.
 import { describe, it, expect, beforeEach } from 'vitest';
 
-const KEY = 'buzzword_dash_v1';
+const KEY = 'langdash_save_v1';
 const LAST = KEY + '_lastgood';
 let storage;
 
@@ -87,9 +87,9 @@ describe('storage keys and newer saves', () => {
 
   it('files each site under its own path so another copy of the game on the same host cannot touch it', async () => {
     const { storageKeyFor } = await import('../../js/storage.js');
-    expect(storageKeyFor('/')).toBe('buzzword_dash_v1');
-    expect(storageKeyFor('/buzzword-dash-v2/')).toBe('buzzword_dash_v1@buzzword-dash-v2');
-    expect(storageKeyFor('/buzzword-dash/')).not.toBe(storageKeyFor('/buzzword-dash-v2/'));
+    expect(storageKeyFor('/')).toBe('langdash_save_v1');
+    expect(storageKeyFor('/Language-Dash/')).toBe('langdash_save_v1@language-dash-v2');
+    expect(storageKeyFor('/language-dash/')).not.toBe(storageKeyFor('/Language-Dash/'));
   });
 
   it('never saves over a save from a newer version of the game, and keeps a copy of it', () => {

@@ -32,19 +32,19 @@ describe('service worker caches', () => {
     await sw.request('https://x.test/assets/cards-renal-Bnz5F6Lk.js');
     await sw.request('https://x.test/portraits/hero-face.webp');
     await sw.request('https://x.test/', 'navigate');
-    expect([...sw.stores['dx-assets'].keys()]).toEqual(['https://x.test/assets/cards-renal-Bnz5F6Lk.js']);
+    expect([...sw.stores['language-dash-assets'].keys()]).toEqual(['https://x.test/assets/cards-renal-Bnz5F6Lk.js']);
     expect([...sw.stores['dx-dash-b1'].keys()].sort()).toEqual(['https://x.test/', 'https://x.test/portraits/hero-face.webp']);
   });
 
   it('on activation drops old build caches but keeps the asset cache', async () => {
     const sw = load();
     sw.stores['dx-dash-old'] = new Map([['a', 1]]);
-    sw.stores['dx-assets'] = new Map([['https://x.test/assets/a-12345678.js', 1]]);
+    sw.stores['language-dash-assets'] = new Map([['https://x.test/assets/a-12345678.js', 1]]);
     let waited;
     sw.listeners.activate({ waitUntil: (p) => { waited = p; } });
     await waited;
-    expect(Object.keys(sw.stores).sort()).toEqual(['dx-assets']);
-    expect(sw.stores['dx-assets'].size).toBe(1);
+    expect(Object.keys(sw.stores).sort()).toEqual(['language-dash-assets']);
+    expect(sw.stores['language-dash-assets'].size).toBe(1);
   });
 
   it('ignores other origins and non-GET requests', async () => {

@@ -424,9 +424,9 @@ input:not([type]), textarea, select,
 select {
   appearance: none;
   -webkit-appearance: none;
-  background-image: var(--chev);
-  background-repeat: no-repeat;
-  background-position: right 11px center;
+  background-image: var(--chev) !important;
+  background-repeat: no-repeat !important;
+  background-position: right 11px center !important;
   padding-right: 32px;
   cursor: pointer;
 }

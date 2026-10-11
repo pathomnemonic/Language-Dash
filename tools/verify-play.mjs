@@ -21,7 +21,7 @@ async function newPage(seedCoins) {
   const ctx = await browser.newContext({ viewport: { width: 420, height: 800 }, hasTouch: true, isMobile: true });
   await ctx.addInitScript((coins) => {
     try {
-      const k = 'buzzword_dash_v1';
+      const k = 'langdash_save_v1';
       const d = JSON.parse(localStorage.getItem(k) || 'null');
       if (d) {
         d.progression.coins = coins;

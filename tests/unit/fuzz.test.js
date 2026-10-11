@@ -53,7 +53,7 @@ describe('saved data survives hostile storage', () => {
       else if (mode === 1) text = real.slice(0, Math.floor(r() * real.length)); // cut off
       else if (mode === 2) { const o = JSON.parse(real); const keys = Object.keys(o.progression); o.progression[keys[Math.floor(r() * keys.length)]] = [null, 'x', -5, NaN, {}, [], 1e99][Math.floor(r() * 7)]; text = JSON.stringify(o); }
       else { const o = JSON.parse(real); delete o[Object.keys(o)[Math.floor(r() * Object.keys(o).length)]]; text = JSON.stringify(o); }
-      localStorage.setItem('buzzword_dash_v1', text);
+      localStorage.setItem('langdash_save_v1', text);
       expect(() => storage.load(), text.slice(0, 80)).not.toThrow();
       // the game must still be playable afterwards
       expect(() => { storage.finalizeRun({ runId: 'f' + i, mode: 'endless', completed: true, score: 10, encountersCompleted: 1, correct: 1, wrong: 0, bestStreak: 1, durationMs: 1000, encounters: [], subjectsSeen: [] }); storage.getDailyQuests(); storage.checkAchievements(null); }).not.toThrow();
@@ -65,7 +65,7 @@ describe('saved data survives hostile storage', () => {
   it('a backup file full of nonsense is refused or cleaned, never half-applied', () => {
     storage.load();
     const coins = storage.get('coins');
-    const bad = ['{"app":"buzzword-dash","data":null}', '{"app":"buzzword-dash","data":[]}', '{"app":"buzzword-dash","data":{"schemaVersion":"2"}}', 'not json', '{"app":"other"}', '[]'];
+    const bad = ['{"app":"language-dash","data":null}', '{"app":"language-dash","data":[]}', '{"app":"language-dash","data":{"schemaVersion":"2"}}', 'not json', '{"app":"other"}', '[]'];
     bad.forEach((t) => { expect(storage.importBackup(t).ok).toBe(false); });
     expect(storage.get('coins')).toBe(coins);
   });

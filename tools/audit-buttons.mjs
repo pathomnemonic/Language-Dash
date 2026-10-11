@@ -114,7 +114,7 @@ async function signature(page) {
     const active = [...document.querySelectorAll('.screen.active, .active[role="dialog"], [role="dialog"].active, #dailyReward, #rankedResult')].map((e) => e.id || e.className).join(',');
     const html = document.body.innerHTML.replace(/style="[^"]*"/g, '').length;
     let ls = 0;
-    try { ls = (localStorage.getItem('buzzword_dash_v1') || '').length; } catch { /* ignore */ }
+    try { ls = (localStorage.getItem('langdash_save_v1') || '').length; } catch { /* ignore */ }
     const playing = window.__game ? window.__game._state : '';
     return JSON.stringify({ active, html, ls, playing, theme: document.documentElement.getAttribute('data-world') });
   });

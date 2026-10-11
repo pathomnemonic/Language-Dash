@@ -11,7 +11,7 @@
  * compared between variants.
  */
 
-var KEY = 'dx_an_exp';
+var KEY = 'ld_an_exp';
 
 /** A number from 0 up to (not including) 1, the same for the same text. */
 export function unitHash(text) {

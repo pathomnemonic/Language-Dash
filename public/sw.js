@@ -2,12 +2,12 @@
 // __BUILD_ID__ is replaced with the commit (or build time) by vite.config.js at build time.
 //
 // Two caches:
-//   dx-dash-<build>  the page and everything else; replaced on every deploy.
-//   dx-assets        the hashed files in /assets/ (their name changes whenever their content does, so an
+//   language-dash-<build>  the page and everything else; replaced on every deploy.
+//   language-dash-assets        the hashed files in /assets/ (their name changes whenever their content does, so an
 //                    old copy is never wrong). It survives deploys, so an update only downloads the
 //                    files that actually changed (for example one subject of the card database, not all fifteen).
-const CACHE = 'dx-dash-__BUILD_ID__';
-const ASSETS = 'dx-assets';
+const CACHE = 'language-dash-__BUILD_ID__';
+const ASSETS = 'language-dash-assets';
 const MAX_ASSETS = 150;
 const HASHED = /\/assets\/[^/]+-[A-Za-z0-9_-]{8}\.[a-z0-9]+$/;
 
@@ -21,7 +21,7 @@ function pruneAssets() {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE && k !== ASSETS).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => k.indexOf('language-dash-') === 0 && k !== CACHE && k !== ASSETS).map((k) => caches.delete(k)))) // (only our own caches: other games on this host keep theirs)
       .then(pruneAssets)
       .then(() => self.clients.claim())
   );

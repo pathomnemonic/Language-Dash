@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { storage } from '../../js/storage.js';
 
-function backup(data) { return JSON.stringify({ app: 'buzzword-dash', data: Object.assign({ schemaVersion: storage.data.schemaVersion }, data) }); }
+function backup(data) { return JSON.stringify({ app: 'language-dash', data: Object.assign({ schemaVersion: storage.data.schemaVersion }, data) }); }
 
 describe('hostile or damaged backups cannot break the app', () => {
   beforeEach(() => { localStorage.clear(); storage.load(); });

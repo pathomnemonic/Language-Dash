@@ -10,7 +10,7 @@
 
 import { isNative } from './native.js';
 
-var FILE = 'dxdash-save.json';
+var FILE = 'langdash-save.json';
 var DELAY_MS = 4000;
 var _timer = null;
 var _pending = null;

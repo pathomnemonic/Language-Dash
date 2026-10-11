@@ -8,7 +8,7 @@ let problems = 0;
 const bad = (m) => { problems++; console.log('  PROBLEM  ' + m); };
 async function open(viewport, settings) {
   const ctx = await browser.newContext({ viewport, hasTouch: viewport.width < 600, isMobile: viewport.width < 600 });
-  await ctx.addInitScript((s) => { try { const k = 'buzzword_dash_v1'; const d = JSON.parse(localStorage.getItem(k) || 'null'); if (d) { Object.assign(d.settings, s); localStorage.setItem(k, JSON.stringify(d)); } } catch { /* ignore */ } }, settings || {});
+  await ctx.addInitScript((s) => { try { const k = 'langdash_save_v1'; const d = JSON.parse(localStorage.getItem(k) || 'null'); if (d) { Object.assign(d.settings, s); localStorage.setItem(k, JSON.stringify(d)); } } catch { /* ignore */ } }, settings || {});
   const page = await ctx.newPage();
   page.errs = [];
   page.on('pageerror', (e) => page.errs.push(e.message));

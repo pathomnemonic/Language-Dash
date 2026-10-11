@@ -47,7 +47,7 @@ describe('Storage — fresh defaults', () => {
 
 describe('Storage — corrupt JSON recovery', () => {
   it('recovers from corrupt localStorage data', () => {
-    localStorage.setItem('buzzword_dash_v1', '{{{invalid json');
+    localStorage.setItem('langdash_save_v1', '{{{invalid json');
     storage.load();
     expect(storage.get('coins')).toBe(START);
   });
@@ -195,7 +195,7 @@ describe('Storage — backup and restore', () => {
     storage.set('coins', 555);
     expect(storage.importBackup('not json').ok).toBe(false);
     expect(storage.importBackup('{"app":"other","data":{}}').ok).toBe(false);
-    expect(storage.importBackup('{"app":"buzzword-dash","data":{"schemaVersion":999}}').ok).toBe(false);
+    expect(storage.importBackup('{"app":"language-dash","data":{"schemaVersion":999}}').ok).toBe(false);
     expect(storage.get('coins')).toBe(555);
   });
 });

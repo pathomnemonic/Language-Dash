@@ -42,7 +42,7 @@ describe('Pro screens while there is nothing to buy (or Pro is off)', () => {
   });
   it('a gate event opens nothing while dormant', () => {
     installProUi({});
-    document.dispatchEvent(new CustomEvent('dx:pro-gate', { detail: { feature: 'offline_pack' } }));
+    document.dispatchEvent(new CustomEvent('ld:pro-gate', { detail: { feature: 'offline_pack' } }));
     expect(document.getElementById('proPaywall')).toBeNull();
   });
 });
@@ -67,7 +67,7 @@ describe('Pro screens once switched on', () => {
   });
 
   it('a paying subscriber gets a Cancel subscription button; a trial or a lifetime owner does not', () => {
-    const put = (o) => localStorage.setItem('dx_pro', JSON.stringify(Object.assign({ active: true, source: 'server', until: Date.now() + 86400000 * 200, provenAt: Date.now(), since: Date.now() - 1000 }, o)));
+    const put = (o) => localStorage.setItem('ld_pro', JSON.stringify(Object.assign({ active: true, source: 'server', until: Date.now() + 86400000 * 200, provenAt: Date.now(), since: Date.now() - 1000 }, o)));
     put({ plan: 'yearly', trial: false });
     expect(openPaywall({ trigger: 'settings' }).querySelector('#proCancel')).toBeTruthy();
     put({ plan: 'trial', trial: true });
@@ -137,7 +137,7 @@ describe('Pro screens once switched on', () => {
     const { proGiftState } = await import('../../js/pro.js');
     storage.load();
     expect(proGiftState().eligible).toBe(false);
-    const put = (o) => localStorage.setItem('dx_pro', JSON.stringify(Object.assign({ active: true, source: 'server', plan: 'yearly', trial: false, until: Date.now() + 86400000 * 200, provenAt: Date.now(), since: Date.now() - 1000 }, o)));
+    const put = (o) => localStorage.setItem('ld_pro', JSON.stringify(Object.assign({ active: true, source: 'server', plan: 'yearly', trial: false, until: Date.now() + 86400000 * 200, provenAt: Date.now(), since: Date.now() - 1000 }, o)));
     put({ plan: 'trial', trial: true });
     expect(proGiftState().eligible).toBe(false); // not during the trial
     put({});
@@ -199,7 +199,7 @@ describe('Pro screens once switched on', () => {
   });
 
   it('someone on the free trial still sees the plans, with how long the trial has left', async () => {
-    localStorage.setItem('dx_pro', JSON.stringify({ active: true, source: 'server', plan: 'trial', trial: true, until: Date.now() + 3 * 86400000, provenAt: Date.now() }));
+    localStorage.setItem('ld_pro', JSON.stringify({ active: true, source: 'server', plan: 'trial', trial: true, until: Date.now() + 3 * 86400000, provenAt: Date.now() }));
     const iap = createIap({ platform: 'android', loadPlugin: () => Promise.resolve(fakePlugin()) });
     iap.add(['languagedash_pro_yearly', 'languagedash_pro_monthly'].map((id) => ({ id, kind: 'subscription' })));
     setIapForTest(iap);
@@ -224,7 +224,7 @@ describe('Pro screens once switched on', () => {
     iap.add([{ id: 'languagedash_pro_yearly', kind: 'subscription' }]);
     setIapForTest(iap);
     installProUi({});
-    document.dispatchEvent(new CustomEvent('dx:pro-gate', { detail: { feature: 'offline_pack', trigger: 'offline_pack' } }));
+    document.dispatchEvent(new CustomEvent('ld:pro-gate', { detail: { feature: 'offline_pack', trigger: 'offline_pack' } }));
     expect(document.getElementById('proPaywall')).toBeTruthy();
   });
 
@@ -243,7 +243,7 @@ describe('Pro screens once switched on', () => {
     const iap = createIap({ platform: 'android', loadPlugin: () => Promise.resolve(fakePlugin()) });
     iap.add([{ id: 'languagedash_pro_monthly', kind: 'subscription' }]);
     setIapForTest(iap);
-    localStorage.setItem('dx_pro_debug', '1');
+    localStorage.setItem('ld_pro_debug', '1');
     const o = openPaywall({ trigger: 'settings' });
     expect(o.textContent).toMatch(/You have Pro/);
     expect(o.textContent).toMatch(/Manage subscription/);

@@ -16,7 +16,7 @@ import { sanitizeExperiments } from './analytics/experiments.js';
 import { sanitizeProConfig, defaultProConfig } from './proconfig.js';
 
 export var KILLABLE = ['hazards', 'monster', 'powerups', 'mapChanges', 'rush', 'onlineFeatures'];
-var CACHE_KEY = 'dx_remote_config';
+var CACHE_KEY = 'ld_remote_config';
 var _killed = [];
 var _pro = defaultProConfig();
 var _analytics = { enabled: true, sample: 1, killed: [], rates: {}, flushMs: 15000, experiments: {} };

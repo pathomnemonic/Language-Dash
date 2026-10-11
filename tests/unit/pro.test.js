@@ -92,7 +92,7 @@ describe('only limits things when there is a way to pay', () => {
     GATE_FEATURES.forEach((f) => expect(checkGate(f, { used: 99999 })).toEqual({ allowed: true, mode: 'open' }));
     expect(libraryUnlocked()).toBe(true);
     const events = [];
-    document.addEventListener('dx:pro-gate', (e) => events.push(e));
+    document.addEventListener('ld:pro-gate', (e) => events.push(e));
     expect(requireGate('offline_pack')).toBe(true);
     expect(events).toEqual([]);
   });
@@ -182,7 +182,7 @@ describe('gates', () => {
   it('requireGate lets it through (counting it) or opens the paywall and reports the hit', () => {
     const seen = [];
     const on = (e) => seen.push(e.detail);
-    document.addEventListener('dx:pro-gate', on);
+    document.addEventListener('ld:pro-gate', on);
     expect(requireGate('explanations', { record: true })).toBe(true);
     expect(requireGate('offline_pack')).toBe(false);
     expect(seen).toEqual([expect.objectContaining({ feature: 'offline_pack' })]);
@@ -190,7 +190,7 @@ describe('gates', () => {
     expect(requireGate('explanations', { used: 99, passive: true })).toBe(false);
     expect(requireGate('explanations', { used: 99, passive: true })).toBe(false);
     expect(seen.filter((d) => d.feature === 'explanations').length).toBe(1);
-    document.removeEventListener('dx:pro-gate', on);
+    document.removeEventListener('ld:pro-gate', on);
   });
 });
 

@@ -19,7 +19,7 @@ fs.mkdirSync(outDir, { recursive: true });
 
 const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined, args: process.env.SOFTWARE_GL ? ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] : ['--use-angle=d3d11', '--ignore-gpu-blocklist', '--enable-gpu'] });
 const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
-await page.addInitScript(() => { try { localStorage.setItem('dx_lessons_off', '1'); } catch { /* ignore */ } });
+await page.addInitScript(() => { try { localStorage.setItem('ld_lessons_off', '1'); } catch { /* ignore */ } });
 await page.goto(base + '/?debug=1');
 
 const closeTutorial = async () => {
@@ -42,7 +42,7 @@ const applyShowcase = () => {
     const raw = sessionStorage.getItem('showcase');
     if (!raw) return;
     const o = JSON.parse(raw);
-    const key = 'buzzword_dash_v1';
+    const key = 'langdash_save_v1';
     const d = JSON.parse(localStorage.getItem(key) || 'null');
     if (!d) return;
     const p = d.progression;
@@ -68,7 +68,7 @@ const hideDots = async () => {
     const ids = ['home:filters', 'home:speed', 'home:flashcards', 'home:challenge', 'home:versus', 'home:friends', 'home:settings', 'home:streak', 'home:today',
       'tab:stats', 'tab:locker', 'tab:quests', 'tab:profile', 'settings:keys', 'settings:look', 'settings:rules', 'settings:study', 'locker:heroes', 'locker:trails', 'locker:maps', 'locker:monsters'];
     if (window.__storage) window.__storage.set('explored', ids); // (the red "new" dots would clutter a picture)
-    document.dispatchEvent(new CustomEvent('dx:attention-changed'));
+    document.dispatchEvent(new CustomEvent('ld:attention-changed'));
   });
   await page.waitForTimeout(400);
 };

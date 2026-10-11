@@ -15,8 +15,8 @@ describe('links sent to friends', () => {
   });
 
   it('on the website it is the page being used, without any #hash', () => {
-    const loc = { protocol: 'https:', hostname: 'pathomnemonic.github.io', origin: 'https://pathomnemonic.github.io', pathname: '/buzzword-dash-v2/' };
-    expect(publicUrl(loc, '')).toBe('https://pathomnemonic.github.io/buzzword-dash-v2/');
+    const loc = { protocol: 'https:', hostname: 'pathomnemonic.github.io', origin: 'https://pathomnemonic.github.io', pathname: '/Language-Dash/' };
+    expect(publicUrl(loc, '')).toBe('https://pathomnemonic.github.io/Language-Dash/');
   });
 
   it('a file or a non-web page falls back to the website, and a build can override it', () => {
@@ -27,7 +27,7 @@ describe('links sent to friends', () => {
 
   it('a challenge link built from it opens the website, not localhost', () => {
     const url = buildChallengeUrl(publicUrl({ protocol: 'https:', hostname: 'localhost', origin: 'https://localhost', pathname: '/' }, ''), { seed: 5, n: 15, from: 'Ada', score: 100, hash: 'a' });
-    expect(url).toMatch(/^https:\/\/pathomnemonic\.github\.io\/buzzword-dash-v2\/#c=/);
+    expect(url).toMatch(/^https:\/\/pathomnemonic\.github\.io\/language-dash-v2\/#c=/);
     expect(url).not.toContain('localhost');
   });
 });

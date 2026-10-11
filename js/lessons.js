@@ -16,7 +16,7 @@ var LESSON_DELAY_MS = 450; // the menu opens first (a screen draws, a pop-up sli
 
 /** The browser tests switch lessons off (they click through every menu); nothing else sets this. */
 function lessonsDisabled() {
-  try { return localStorage.getItem('dx_lessons_off') === '1'; } catch (e) { return false; }
+  try { return localStorage.getItem('ld_lessons_off') === '1'; } catch (e) { return false; }
 }
 
 /** Does this thing have a lesson? */

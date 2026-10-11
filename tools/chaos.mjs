@@ -107,7 +107,7 @@ const actions = {
   async doubleTap() { current = 'double and triple tap'; const x = 50 + rng() * 250, y = 100 + rng() * 500; await page.mouse.dblclick(x, y).catch(() => {}); await page.mouse.click(x, y, { clickCount: 3 }).catch(() => {}); },
   async corruptSave() {
     current = 'corrupt the save then reload';
-    await page.evaluate((junk) => { try { localStorage.setItem('buzzword_dash_v1', junk); } catch { /* full */ } }, pick(['{', 'null', '[]', '{"schemaVersion":2,"progression":{"coins":"NaN","xp":-3,"ownedItems":5}}', '\u0000']));
+    await page.evaluate((junk) => { try { localStorage.setItem('langdash_save_v1', junk); } catch { /* full */ } }, pick(['{', 'null', '[]', '{"schemaVersion":2,"progression":{"coins":"NaN","xp":-3,"ownedItems":5}}', '\u0000']));
     await actions.reload();
   },
   async dragSwipe() { current = 'swipe'; const x = 60 + rng() * 250, y = 200 + rng() * 300; await page.mouse.move(x, y); await page.mouse.down(); await page.mouse.move(x + (rng() - 0.5) * 300, y + (rng() - 0.5) * 300, { steps: 4 }); await page.mouse.up(); }

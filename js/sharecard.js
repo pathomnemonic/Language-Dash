@@ -216,7 +216,7 @@ export function renderShareCard(data) {
  */
 export function shareOrDownload(blob) {
   var file = null;
-  try { file = new File([blob], 'dx-dash-result.png', { type: 'image/png' }); } catch (e) { file = null; }
+  try { file = new File([blob], 'language-dash-result.png', { type: 'image/png' }); } catch (e) { file = null; }
   // Browsers that can share a file get the share sheet; everywhere else (including the phone app) saveFile
   // writes it out and opens the system share sheet or downloads it.
   if (file && typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
@@ -225,7 +225,7 @@ export function shareOrDownload(blob) {
       throw e;
     });
   }
-  return saveFile(blob, 'dx-dash-result.png').then(function (how) {
+  return saveFile(blob, 'language-dash-result.png').then(function (how) {
     if (how === 'failed') throw new Error('Could not save the image');
     return how;
   });

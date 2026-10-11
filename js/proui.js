@@ -429,7 +429,7 @@ export function mountProButton() {
     }
   };
   btn.addEventListener('click', function () { openPaywall({ trigger: 'home_button' }); });
-  ['dx:pro-changed', 'dx:pro-trial-started'].forEach(function (ev) { document.addEventListener(ev, paint); });
+  ['ld:pro-changed', 'ld:pro-trial-started'].forEach(function (ev) { document.addEventListener(ev, paint); });
   paint();
   setTimeout(paint, 1500);
   setTimeout(paint, 6000);
@@ -483,7 +483,7 @@ export function installProUi(deps) {
   if (_installed || typeof document === 'undefined') return;
   _installed = true;
   mountProButton();
-  document.addEventListener('dx:pro-gate', function (e) {
+  document.addEventListener('ld:pro-gate', function (e) {
     var d = (e && e.detail) || {};
     openPaywall({ trigger: 'gate_' + String(d.trigger || d.feature || 'feature').slice(0, 20), feature: d.feature });
   });

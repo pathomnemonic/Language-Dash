@@ -5,7 +5,7 @@
  * (or fetched again while offline) without touching the network.
  */
 
-var KEY = 'buzzword_decks_v1';
+var KEY = 'langdash_decks_v1';
 var MAX_DECKS = 10;
 
 function read() {

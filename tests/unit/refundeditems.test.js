@@ -35,7 +35,7 @@ describe('taking back a refunded item', () => {
     expect(storage.ownsItem(ITEM)).toBe(true);
     storage.equipItem(ITEM, 'trail');
     const heard = [];
-    document.addEventListener('dx:items-revoked', (e) => heard.push(e.detail.items));
+    document.addEventListener('ld:items-revoked', (e) => heard.push(e.detail.items));
 
     answer = listed([]);
     await refreshPro({ lb: lb() });

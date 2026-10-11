@@ -82,7 +82,7 @@ test.describe('Smoke tests', () => {
     // earn a badge: the profile buttons get a dot
     await page.evaluate(() => {
       window.__storage.unlockAchievement('ach_first_run');
-      document.dispatchEvent(new CustomEvent('dx:attention-changed'));
+      document.dispatchEvent(new CustomEvent('ld:attention-changed'));
     });
     await expect(page.locator('#profileCornerBtn .nav-dot')).toHaveCount(1);
 

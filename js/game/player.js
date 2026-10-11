@@ -23,6 +23,7 @@ import { storage } from '../storage.js';
 import { SHOP_ITEMS, AVATARS } from './shopdata.js';
 import { loadCharacterModel, buildModelCharacter } from './charactermodel.js';
 import { useCharacterModels } from './quality.js';
+import { paperizeMaterials } from './paper.js';
 
 // ===== HELPERS =====
 
@@ -1118,7 +1119,7 @@ export function buildPlayer() {
     var equipped = storage.get('equipped');
 
     if (avatar.isVehicle) {
-        return buildVehicle(avatar);
+        return printedLook(buildVehicle(avatar));
     }
 
     if (avatar.isModel && useCharacterModels()) {
@@ -1135,7 +1136,13 @@ export function buildPlayer() {
         });
     }
 
-    return buildHumanoid(avatar, equipped);
+    return printedLook(buildHumanoid(avatar, equipped));
+}
+
+/** The procedural characters are cel-shaded too, with the exact colours they were built with. */
+function printedLook(group) {
+    paperizeMaterials(group, { keepColors: true, keepBasic: true });
+    return group;
 }
 
 function buildHumanoid(avatar, equipped) {

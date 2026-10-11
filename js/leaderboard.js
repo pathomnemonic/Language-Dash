@@ -217,7 +217,7 @@ var leaderboard = {
     return loadSupabaseLib().then(function () {
       if (_client) return; // Already initialized
 
-      _client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      _client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { storageKey: 'langdash-auth' } }); // (its own session key, never shared with another game on this host)
 
       // Listen for auth state changes
       var authSubscription = _client.auth.onAuthStateChange(function (event, session) {

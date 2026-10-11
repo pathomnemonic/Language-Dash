@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import { PALETTE, toonMaterial } from './paper.js';
 
 // ─── Canonical Enums (Section 4, Architecture) ───
 
@@ -127,8 +128,9 @@ export var ALLOWED_TRANSITIONS = {
 
 export function buildHeartMesh() {
   var group = new THREE.Group();
-  var heartMat = new THREE.MeshStandardMaterial({ color: 0xff2255, emissive: 0xaa0022, emissiveIntensity: 0.55, roughness: 0.22, metalness: 0.1, envMapIntensity: 1.4 });
-  var glowMat = new THREE.MeshBasicMaterial({ color: 0xff4477, transparent: true, opacity: 0.4 });
+  // A stamp-red toon heart on a cream sticker (no glow halo)
+  var heartMat = toonMaterial(PALETTE.red);
+  var glowMat = new THREE.MeshBasicMaterial({ color: PALETTE.card, side: THREE.BackSide });
   var leftLobe = new THREE.Mesh(new THREE.SphereGeometry(0.18, 20, 16), heartMat);
   leftLobe.position.set(-0.12, 0.1, 0);
   group.add(leftLobe);
@@ -139,7 +141,7 @@ export function buildHeartMesh() {
   bottom.position.set(0, -0.12, 0);
   bottom.rotation.z = Math.PI;
   group.add(bottom);
-  var glow = new THREE.Mesh(new THREE.SphereGeometry(0.35, 10, 10), glowMat);
+  var glow = new THREE.Mesh(new THREE.SphereGeometry(0.36, 12, 10), glowMat); // the sticker: a pale shell seen from inside
   glow.position.set(0, 0, 0);
   group.add(glow);
   return group;

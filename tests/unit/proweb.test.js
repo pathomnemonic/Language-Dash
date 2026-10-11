@@ -120,7 +120,7 @@ describe('Pro on the website', () => {
       startProTrial: async () => { started++; return { ok: true, days: 7 }; }
     });
     const events = [];
-    document.addEventListener('dx:pro-trial-started', () => events.push(1), { once: true });
+    document.addEventListener('ld:pro-trial-started', () => events.push(1), { once: true });
     const st = await refreshPro({ lb });
     expect(started).toBe(1);
     expect(st).toMatchObject({ active: true, trial: true });
@@ -151,7 +151,7 @@ describe('Pro on the website', () => {
 });
 
 describe('trying to break it: a member who has paid keeps Pro through hiccups', () => {
-  const putPaid = (extra) => localStorage.setItem('dx_pro', JSON.stringify(Object.assign({ active: true, source: 'server', plan: 'yearly', trial: false, until: Date.now() + 200 * 86400000, provenAt: Date.now() - 3600000, since: Date.now() - 86400000 }, extra)));
+  const putPaid = (extra) => localStorage.setItem('ld_pro', JSON.stringify(Object.assign({ active: true, source: 'server', plan: 'yearly', trial: false, until: Date.now() + 200 * 86400000, provenAt: Date.now() - 3600000, since: Date.now() - 86400000 }, extra)));
 
   it('a server error is not read as "no Pro"', async () => {
     putPaid();
@@ -203,7 +203,7 @@ describe('trying to break it: a member who has paid keeps Pro through hiccups', 
     await refreshPro({ lb: mk() });
     await refreshPro({ lb: mk() });
     expect(synced).toBe(1);
-    localStorage.removeItem('dx_pro_synced');
+    localStorage.removeItem('ld_pro_synced');
     await refreshPro({ lb: mk({ isGuest: () => true }) });
     expect(synced).toBe(1);
   });
@@ -229,35 +229,35 @@ describe('cancelling: we check that they really did it, and never assume', () =>
     const r = await cancelSubscription(subLb({ ok: true, status: 'none' }), go);
     expect(r.ok).toBe(true);
     expect(go).toHaveBeenCalled();
-    expect(localStorage.getItem('dx_pro_cancel_started')).toBeTruthy();
+    expect(localStorage.getItem('ld_pro_cancel_started')).toBeTruthy();
   });
 
   it('afterwards, a subscription set to end counts as cancelled, with the date Pro ends', async () => {
-    localStorage.setItem('dx_pro_cancel_started', String(Date.now() - 60000));
+    localStorage.setItem('ld_pro_cancel_started', String(Date.now() - 60000));
     const ends = new Date(Date.now() + 20 * 86400000).toISOString();
     const r = await checkCancelFollowThrough(subLb({ ok: true, status: 'active', cancel_at_period_end: true, ends, plan: 'yearly' }));
     expect(r).toMatchObject({ cancelled: true });
     expect(r.endsAt).toBe(new Date(ends).getTime());
-    expect(localStorage.getItem('dx_pro_cancel_started')).toBeNull();
+    expect(localStorage.getItem('ld_pro_cancel_started')).toBeNull();
   });
 
   it('but a subscription that is still renewing means they did NOT cancel, and they are told so', async () => {
-    localStorage.setItem('dx_pro_cancel_started', String(Date.now() - 60000));
+    localStorage.setItem('ld_pro_cancel_started', String(Date.now() - 60000));
     const r = await checkCancelFollowThrough(subLb({ ok: true, status: 'active', cancel_at_period_end: false, ends: new Date(Date.now() + 5 * 86400000).toISOString() }));
     expect(r).toMatchObject({ cancelled: false });
   });
 
   it('when the billing system cannot be reached, nothing is assumed and it asks again next time', async () => {
-    localStorage.setItem('dx_pro_cancel_started', String(Date.now() - 60000));
+    localStorage.setItem('ld_pro_cancel_started', String(Date.now() - 60000));
     expect(await checkCancelFollowThrough(subLb({ ok: false, error: 'down' }))).toBeNull();
-    expect(localStorage.getItem('dx_pro_cancel_started')).toBeTruthy();
+    expect(localStorage.getItem('ld_pro_cancel_started')).toBeTruthy();
   });
 
   it('with nothing to check, or a stale note, it does nothing', async () => {
     expect(await checkCancelFollowThrough(subLb({ ok: true, status: 'none' }))).toBeNull();
-    localStorage.setItem('dx_pro_cancel_started', String(Date.now() - 5 * 86400000));
+    localStorage.setItem('ld_pro_cancel_started', String(Date.now() - 5 * 86400000));
     expect(await checkCancelFollowThrough(subLb({ ok: true, status: 'none' }))).toBeNull();
-    expect(localStorage.getItem('dx_pro_cancel_started')).toBeNull();
+    expect(localStorage.getItem('ld_pro_cancel_started')).toBeNull();
   });
 
   it('what the billing system says about a live subscription: renewing or ending', async () => {
@@ -332,7 +332,7 @@ describe('a payment on its way is never left locked, and Pro never follows the w
     expect(paymentPending()).toBe(true);
     const t0 = Date.now();
     await refreshPro({ lb, now: t0 });
-    localStorage.setItem('dx_pro_synced', String(t0)); // (the normal twice-a-day check would say "not due")
+    localStorage.setItem('ld_pro_synced', String(t0)); // (the normal twice-a-day check would say "not due")
     await refreshPro({ lb, now: t0 + 11 * 60000 });
     await refreshPro({ lb, now: t0 + 22 * 60000 });
     expect(synced).toBe(3);                              // ... but a payment on its way is asked about every ten minutes
@@ -377,7 +377,7 @@ describe('a payment on its way is never left locked, and Pro never follows the w
 
   it('a purchase made through the phone\'s own store stays when someone signs out of their login', async () => {
     const { forgetServerPro } = await import('../../js/pro.js');
-    localStorage.setItem('dx_pro', JSON.stringify({ active: true, source: 'store', plan: 'yearly', until: Date.now() + 86400000, provenAt: Date.now() }));
+    localStorage.setItem('ld_pro', JSON.stringify({ active: true, source: 'store', plan: 'yearly', until: Date.now() + 86400000, provenAt: Date.now() }));
     forgetServerPro();
     expect(isPro()).toBe(true);
   });

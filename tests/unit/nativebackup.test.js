@@ -29,9 +29,9 @@ describe('the second copy of the save in the phone\'s file storage', () => {
     const { nb } = await fresh();
     nb.scheduleNativeBackup(save(10));
     nb.scheduleNativeBackup(save(11));
-    expect(files['dxdash-save.json']).toBeUndefined();
+    expect(files['langdash-save.json']).toBeUndefined();
     await vi.advanceTimersByTimeAsync(4500);
-    expect(JSON.parse(files['dxdash-save.json']).progression.totalEncounters).toBe(11);
+    expect(JSON.parse(files['langdash-save.json']).progression.totalEncounters).toBe(11);
   });
 
   it('never lets a smaller save replace a fuller one, and ignores an empty one', async () => {
@@ -42,14 +42,14 @@ describe('the second copy of the save in the phone\'s file storage', () => {
     await vi.advanceTimersByTimeAsync(4500);
     nb.scheduleNativeBackup(save(0, 100));
     await vi.advanceTimersByTimeAsync(4500);
-    expect(JSON.parse(files['dxdash-save.json']).progression.totalEncounters).toBe(100);
+    expect(JSON.parse(files['langdash-save.json']).progression.totalEncounters).toBe(100);
   });
 
   it('writes at once when the app goes to the background', async () => {
     const { nb } = await fresh();
     nb.scheduleNativeBackup(save(7));
     await nb.flushNativeBackup();
-    expect(JSON.parse(files['dxdash-save.json']).progression.totalEncounters).toBe(7);
+    expect(JSON.parse(files['langdash-save.json']).progression.totalEncounters).toBe(7);
   });
 
   it('does nothing on the website', async () => {
@@ -63,7 +63,7 @@ describe('the second copy of the save in the phone\'s file storage', () => {
 
   it('is forgotten when the player resets their progress on purpose', async () => {
     const { nb } = await fresh();
-    files['dxdash-save.json'] = save(50);
+    files['langdash-save.json'] = save(50);
     await nb.clearNativeBackup();
     expect(files).toEqual({});
   });
@@ -72,7 +72,7 @@ describe('the second copy of the save in the phone\'s file storage', () => {
     const { nb, st } = await fresh();
     st.load();
     expect(st.recoverable).toBeNull();
-    files['dxdash-save.json'] = save(120);
+    files['langdash-save.json'] = save(120);
     const text = await nb.readNativeBackup();
     const offered = st.adoptBackup(text);
     expect(offered).toMatchObject({ answered: 120 });
@@ -102,9 +102,9 @@ describe('the second copy of the save in the phone\'s file storage', () => {
     st.data.progression.totalEncounters = 30; st.data.progression.bestScore = 40; st.data.progression.xp = 50;
     st.save();
     await vi.advanceTimersByTimeAsync(4500);
-    expect(JSON.parse(files['dxdash-save.json']).progression.totalEncounters).toBe(30);
+    expect(JSON.parse(files['langdash-save.json']).progression.totalEncounters).toBe(30);
     st.reset('progress');
     await vi.advanceTimersByTimeAsync(50);
-    expect(files['dxdash-save.json']).toBeUndefined();
+    expect(files['langdash-save.json']).toBeUndefined();
   });
 });

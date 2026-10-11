@@ -19,7 +19,7 @@ export var CONSENT_VERSION = 1;
 export var SESSION_GAP_MS = 30 * 60 * 1000;
 
 var K = {
-  id: 'dx_an_id', consent: 'dx_an_consent', queue: 'dx_an_q', once: 'dx_an_once', seq: 'dx_an_seq', install: 'dx_an_install', sessions: 'dx_an_sessions'
+  id: 'ld_an_id', consent: 'ld_an_consent', queue: 'ld_an_q', once: 'ld_an_once', seq: 'ld_an_seq', install: 'ld_an_install', sessions: 'ld_an_sessions'
 };
 var MAX_QUEUE = 500;
 var BATCH = 40;

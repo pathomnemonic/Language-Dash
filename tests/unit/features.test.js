@@ -220,7 +220,7 @@ describe('study streak, shields and weekly goal', () => {
     counts[dayKey(-5)] = 4; // the gap at -4 ends the run
     storage.data.progression.studyStreak = 0;
     storage.data.progression.lastStudyDate = null;
-    localStorage.setItem('buzzword_dash_v1', JSON.stringify(storage.data));
+    localStorage.setItem('langdash_save_v1', JSON.stringify(storage.data));
     storage.load();
     expect(storage.getStreakStatus().streak).toBe(3);
     expect(storage.get('bestStudyStreak')).toBe(3);

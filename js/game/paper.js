@@ -58,6 +58,7 @@ export function paperize(hex) {
   _c.setHSL(h, s, l, THREE.SRGBColorSpace);
   if (l > 0.88) _c.lerp(_paper, 0.25);
   else if (l < 0.14) _c.lerp(_ink, 0.5);
+  else _c.lerp(_paper, 0.06); // a breath of paper over everything, like ink printed on stock
   return _c.getHex();
 }
 
@@ -191,10 +192,10 @@ function isGlowMaterial(m) {
   return m.blending === THREE.AdditiveBlending;
 }
 
-function toonFrom(m) {
+function toonFrom(m, keepColors) {
   // Keep the map, the vertex colours, the opacity and the sidedness; take the (paperized) colour
   var t = new THREE.MeshToonMaterial({
-    color: paperize(m.color ? m.color.getHex() : 0xffffff),
+    color: keepColors ? (m.color ? m.color.getHex() : 0xffffff) : paperize(m.color ? m.color.getHex() : 0xffffff),
     gradientMap: toonRamp(),
     map: m.map || null,
     side: m.side,
@@ -239,7 +240,8 @@ function paperizeVertexColors(geo) {
  * materials keep their look but lose the neon. Characters' skinned meshes are handled in charactermodel.js.
  * Safe to call more than once (converted materials are skipped).
  * @param {THREE.Object3D} root
- * @param {{keepBasic?: boolean}} [opts] keepBasic: leave plain MeshBasicMaterial alone (UI-like meshes)
+ * @param {{keepBasic?: boolean, keepColors?: boolean}} [opts] keepBasic: leave plain MeshBasicMaterial alone (UI-like meshes);
+ *   keepColors: shade flat but do not move the colours (characters keep the exact colours their owners picked)
  */
 var _converted = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
 
@@ -247,6 +249,17 @@ export function paperizeMaterials(root, opts) {
   opts = opts || {};
   var cache = {};
   root.traverse(function (o) {
+    if (o.isInstancedMesh && o.instanceColor && !o.userData.instancePaper) {
+      // (balloons, bulbs and fish are drawn in bulk, each with its own colour)
+      o.userData.instancePaper = true;
+      var ic = o.instanceColor;
+      for (var k = 0; k < ic.count; k++) {
+        _c.setRGB(ic.getX(k), ic.getY(k), ic.getZ(k), THREE.LinearSRGBColorSpace);
+        _c.setHex(paperize(_c.getHex(THREE.SRGBColorSpace)), THREE.SRGBColorSpace);
+        ic.setXYZ(k, _c.r, _c.g, _c.b);
+      }
+      ic.needsUpdate = true;
+    }
     if (!o.material || o.userData.inkHull) return;
     var many = Array.isArray(o.material);
     var list = many ? o.material : [o.material];
@@ -279,7 +292,7 @@ export function paperizeMaterials(root, opts) {
         return basic;
       }
       if (m.isMeshStandardMaterial || m.isMeshLambertMaterial || m.isMeshPhongMaterial) {
-        var tm = toonFrom(m);
+        var tm = toonFrom(m, opts.keepColors);
         tm.userData.paper = true;
         cache[m.uuid] = tm;
         return tm;

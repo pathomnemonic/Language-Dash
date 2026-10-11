@@ -99,7 +99,7 @@ export function actionForKey(key) {
 
 function save(bindings) {
   storage.set('keyBindings', bindings);
-  if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('dx:keys-changed'));
+  if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('ld:keys-changed'));
 }
 
 /**

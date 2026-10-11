@@ -6,7 +6,7 @@
  * override it with VITE_SHARE_URL.
  */
 
-export var DEFAULT_PUBLIC_URL = 'https://pathomnemonic.github.io/buzzword-dash-v2/';
+export var DEFAULT_PUBLIC_URL = 'https://pathomnemonic.github.io/Language-Dash/';
 
 /** Is this host somewhere a friend cannot reach (this device, a home network, or a file)? */
 export function isPrivateHost(hostname) {

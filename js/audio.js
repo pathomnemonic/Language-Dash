@@ -1685,14 +1685,14 @@ class AudioEngine {
   _readWps() {
     if (this._wps) return this._wps;
     var saved = 0;
-    try { saved = Number(localStorage.getItem('dx_tts_wps')) || 0; } catch (e) { saved = 0; }
+    try { saved = Number(localStorage.getItem('ld_tts_wps')) || 0; } catch (e) { saved = 0; }
     this._wps = saved >= 1.4 && saved <= 4.5 ? saved : DEFAULT_WPS;
     return this._wps;
   }
 
   _saveWps(value) {
     this._wps = value;
-    try { localStorage.setItem('dx_tts_wps', String(Math.round(value * 100) / 100)); } catch (e) { /* best effort */ }
+    try { localStorage.setItem('ld_tts_wps', String(Math.round(value * 100) / 100)); } catch (e) { /* best effort */ }
   }
 
   /**

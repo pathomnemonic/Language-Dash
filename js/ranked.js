@@ -15,7 +15,7 @@
 
 import { leaderboard } from './leaderboard.js';
 
-var CACHE_KEY = 'dxdash_ranked_cache';
+var CACHE_KEY = 'langdash_ranked_cache';
 
 var _testClient = null;
 

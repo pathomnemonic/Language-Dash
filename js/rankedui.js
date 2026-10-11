@@ -314,7 +314,7 @@ function showResultCard(outcome, match, result) {
 
   // Let the rest of the app celebrate and refresh its league chip
   var promoted = result.ok && result.settled && tierStep(result.trophies) > tierStep(Math.max(0, result.trophies - result.delta));
-  document.dispatchEvent(new CustomEvent('dx:ranked-updated', { detail: { outcome: outcome, promoted: promoted, settled: !!(result.ok && result.settled) } }));
+  document.dispatchEvent(new CustomEvent('ld:ranked-updated', { detail: { outcome: outcome, promoted: promoted, settled: !!(result.ok && result.settled) } }));
 
   var close = el('button', 'btn btn-primary btn-block', 'Continue');
   close.type = 'button';

@@ -83,7 +83,7 @@ describe('starting monster and defaults', () => {
     const raw = JSON.parse(JSON.stringify(storage.data));
     raw.progression.equipped.monster = 'monster_classic';
     delete raw.progression.monsterDefaultSeen;
-    localStorage.setItem('buzzword_dash_v1', JSON.stringify(raw));
+    localStorage.setItem('langdash_save_v1', JSON.stringify(raw));
     storage.load();
     expect(storage.get('equipped').monster).toBe('monster_m_ghost');
     // the old monster is archived: nobody is left wearing it, but they still own it
@@ -174,7 +174,7 @@ describe('saved progress survives a reload', () => {
     storage.load();
     const raw = JSON.parse(JSON.stringify(storage.data));
     delete raw.settings.uiTheme;
-    localStorage.setItem('buzzword_dash_v1', JSON.stringify(raw));
+    localStorage.setItem('langdash_save_v1', JSON.stringify(raw));
     storage.load();
     expect(storage.get('uiTheme')).toBe('auto');
   });

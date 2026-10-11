@@ -79,7 +79,7 @@ export var homeMethods = {
     if (id === 'todaySheet') this._renderToday(document.getElementById('todayContent'));
     sheet.classList.add('active');
     trapFocus(sheet);
-    document.dispatchEvent(new CustomEvent('dx:attention-changed'));
+    document.dispatchEvent(new CustomEvent('ld:attention-changed'));
   },
 
   /** Close any open Home popup. Returns true when one was open. */
@@ -89,7 +89,7 @@ export var homeMethods = {
       var sheet = document.getElementById(id);
       if (sheet && sheet.classList.contains('active')) { sheet.classList.remove('active'); was = true; }
     });
-    if (was) { releaseFocusTrap(); document.dispatchEvent(new CustomEvent('dx:attention-changed')); }
+    if (was) { releaseFocusTrap(); document.dispatchEvent(new CustomEvent('ld:attention-changed')); }
     return was;
   },
 

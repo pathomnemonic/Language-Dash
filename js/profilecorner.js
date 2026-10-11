@@ -74,7 +74,7 @@ export function mountProfileCorner(deps) {
   }
 
   button.addEventListener('click', function () { deps.openProfileScreen(); });
-  document.addEventListener('dx:profile-changed', refresh);
+  document.addEventListener('ld:profile-changed', refresh);
 
   var subscribed = false;
   function watchAuth() {

@@ -97,15 +97,18 @@ function paintBubble() {
     ctx.font = '900 62px "Fraunces","Georgia",serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText('SHHH', 120, 106);
-    // the shush mark: lips with a finger across them
+    // the shush mark: pursed lips with a finger laid across them
     ctx.fillStyle = '#d9432c';
-    ctx.beginPath(); ctx.ellipse(250, 130, 34, 18, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(252, 140, 44, 22, 0, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = ink; ctx.lineWidth = 6; ctx.stroke();
-    ctx.fillStyle = '#f6eedc';
+    ctx.beginPath(); ctx.moveTo(214, 140); ctx.lineTo(290, 140); ctx.lineWidth = 4; ctx.stroke();
+    ctx.fillStyle = '#f2c7a0';
     ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(238, 40, 24, 100, 12); else ctx.rect(238, 40, 24, 100);
+    if (ctx.roundRect) ctx.roundRect(238, 34, 28, 118, 14); else ctx.rect(238, 34, 28, 118);
     ctx.fill();
     ctx.lineWidth = 6; ctx.stroke();
+    ctx.fillStyle = '#fffbf2';
+    ctx.beginPath(); ctx.ellipse(252, 52, 8, 11, 0, 0, Math.PI * 2); ctx.fill(); // the nail
     var tex = new THREE.CanvasTexture(canvas);
     tex.colorSpace = THREE.SRGBColorSpace;
     return tex;

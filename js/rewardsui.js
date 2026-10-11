@@ -17,7 +17,7 @@ function el(tag, className, text) {
 }
 
 function celebrate() {
-  document.dispatchEvent(new CustomEvent('dx:celebrate'));
+  document.dispatchEvent(new CustomEvent('ld:celebrate'));
 }
 
 // ---------- the level chip on Home ----------

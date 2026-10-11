@@ -34,7 +34,7 @@ import { CHARACTER_MODELS, RETIRED_CHARACTERS } from './game/modelcatalog.js';
 // ===== CONSTANTS =====
 // Every site on one host (github.io/<name>/) shares the same browser storage, so a save is filed under its own site's
 // path. Another copy of the game on the same host (an older version, a test site) can then never read it or overwrite it.
-var LEGACY_KEY = 'buzzword_dash_v1';
+var LEGACY_KEY = 'langdash_save_v1';
 
 /** The storage key for a site served from `base` ("/" keeps the original key). */
 export function storageKeyFor(base) {
@@ -2387,7 +2387,7 @@ class Storage {
    */
   exportBackup() {
     return JSON.stringify({
-      app: 'buzzword-dash',
+      app: 'language-dash',
       exportedAt: new Date().toISOString(),
       data: this.data
     }, null, 2);
@@ -2428,7 +2428,7 @@ class Storage {
     } catch (e) {
       return { ok: false, error: 'File is not valid JSON.' };
     }
-    var data = parsed && parsed.app === 'buzzword-dash' ? parsed.data : null;
+    var data = parsed && parsed.app === 'language-dash' ? parsed.data : null;
     if (!data || typeof data !== 'object' || Array.isArray(data)) {
       return { ok: false, error: 'This is not a Language Dash backup.' };
     }
@@ -2482,7 +2482,7 @@ class Storage {
       case 'all_local':
         this.data = deepClone(DEFAULTS);
         // Also clear custom cards storage
-        try { localStorage.removeItem('buzzword_dash_custom_cards'); } catch (e) { /* best-effort */ }
+        try { localStorage.removeItem('langdash_custom_words'); } catch (e) { /* best-effort */ }
         try { localStorage.removeItem(STORAGE_KEY + '_newer'); } catch (e) { /* best-effort */ }
         break;
     }
@@ -2549,7 +2549,7 @@ if (typeof window !== 'undefined' && typeof window.addEventListener === 'functio
       if (!incoming || incoming.schemaVersion !== SCHEMA_VERSION) return;
       storageInstance.data = deepMerge(incoming, DEFAULTS);
       storageInstance._ensureInvariants();
-      document.dispatchEvent(new CustomEvent('dx:data-refreshed'));
+      document.dispatchEvent(new CustomEvent('ld:data-refreshed'));
     } catch (err) { /* a half-written or foreign value: keep what we have */ }
   });
 }

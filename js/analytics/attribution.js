@@ -10,8 +10,8 @@
  * install can be traced back to the player whose share brought it.
  */
 
-var KEY_FIRST = 'dx_an_first';
-var KEY_LAST = 'dx_an_last';
+var KEY_FIRST = 'ld_an_first';
+var KEY_LAST = 'ld_an_last';
 
 var CLICK_IDS = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'ttclid', 'msclkid', 'twclid', 'dclid', 'li_fat_id', 'epik', 'rdt_cid', 'scid'];
 var SOCIAL = /(^|\.)(facebook|instagram|twitter|x|t|reddit|tiktok|youtube|youtu|linkedin|lnkd|discord|pinterest|snapchat|whatsapp|wa|telegram|t\.me|threads|tumblr|mastodon|bsky)\.(com|co|be|me|ee|in|app|social)$/i;

@@ -10,7 +10,7 @@ import { checkDataSanity } from '../../js/sanity.js';
 import { makeRng } from '../../tools/soak.mjs';
 import { mutate } from '../../tools/savemutate.mjs';
 
-const KEY = 'buzzword_dash_v1';
+const KEY = 'langdash_save_v1';
 let storage;
 let DEFAULTS;
 
@@ -195,11 +195,11 @@ describe('old and odd saves', () => {
 
   it('a backup import with a damaged body is refused or repaired, never half-applied', () => {
     const before = JSON.stringify(storage.data);
-    ['{', '{"app":"other"}', '{"app":"buzzword-dash","data":[]}', '{"app":"buzzword-dash","data":{"schemaVersion":99}}', '{"app":"buzzword-dash","data":null}'].forEach((text) => {
+    ['{', '{"app":"other"}', '{"app":"language-dash","data":[]}', '{"app":"language-dash","data":{"schemaVersion":99}}', '{"app":"language-dash","data":null}'].forEach((text) => {
       expect(storage.importBackup(text).ok, text).toBe(false);
     });
     expect(JSON.stringify(storage.data)).toBe(before);
-    const ok = storage.importBackup(JSON.stringify({ app: 'buzzword-dash', data: { schemaVersion: 2, progression: { coins: 'lots', xp: -5, ownedItems: 'all' } } }));
+    const ok = storage.importBackup(JSON.stringify({ app: 'language-dash', data: { schemaVersion: 2, progression: { coins: 'lots', xp: -5, ownedItems: 'all' } } }));
     expect(ok.ok).toBe(true);
     expect(checkDataSanity(storage.data, DEFAULTS)).toEqual([]);
   });
@@ -286,24 +286,24 @@ describe('the other things the app keeps in storage', () => {
   it('custom cards: any stored text gives a list of usable cards, never something else', async () => {
     const { customCards } = await import('../../js/customcards.js');
     JUNK.forEach((junk) => {
-      localStorage.setItem('buzzword_dash_custom_cards', junk);
+      localStorage.setItem('langdash_custom_words', junk);
       const all = customCards.getAll();
       expect(Array.isArray(all), JSON.stringify(junk)).toBe(true);
       all.forEach((c) => { expect(typeof c.id).toBe('string'); expect(Array.isArray(c.bw)).toBe(true); expect(typeof c.ans).toBe('string'); });
       expect(() => customCards.getById('x')).not.toThrow();
     });
-    localStorage.setItem('buzzword_dash_custom_cards', JSON.stringify([{ id: 'ok', bw: ['clue'], ans: 'Answer', d: ['a', 'b'] }, { id: 5 }, null, { id: 'nobw', ans: 'x' }, { id: '__proto__', bw: ['x'], ans: 'y' }, 'text']));
+    localStorage.setItem('langdash_custom_words', JSON.stringify([{ id: 'ok', bw: ['clue'], ans: 'Answer', d: ['a', 'b'] }, { id: 5 }, null, { id: 'nobw', ans: 'x' }, { id: '__proto__', bw: ['x'], ans: 'y' }, 'text']));
     expect(customCards.getAll().map((c) => c.id)).toEqual(['ok']);
   });
 
   it('shared decks: a damaged entry never hides the good ones or breaks the list', async () => {
     const deck = await import('../../js/deckcache.js');
     JUNK.forEach((junk) => {
-      localStorage.setItem('buzzword_decks_v1', junk);
+      localStorage.setItem('langdash_decks_v1', junk);
       expect(() => deck.listDecks(), JSON.stringify(junk)).not.toThrow();
       expect(() => deck.getDeck('ABCDE')).not.toThrow();
     });
-    localStorage.setItem('buzzword_decks_v1', JSON.stringify({ GOOD1: { name: 'Fine', cards: [{ id: 'a' }], savedAt: 5 }, BAD01: null, BAD02: { cards: 'no' }, BAD03: [], __proto__: { cards: [] } }));
+    localStorage.setItem('langdash_decks_v1', JSON.stringify({ GOOD1: { name: 'Fine', cards: [{ id: 'a' }], savedAt: 5 }, BAD01: null, BAD02: { cards: 'no' }, BAD03: [], __proto__: { cards: [] } }));
     expect(deck.listDecks().map((d) => d.code)).toEqual(['GOOD1']);
   });
 });

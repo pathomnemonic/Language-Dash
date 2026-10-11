@@ -25,7 +25,7 @@ function analyticsConfig() { return hooks.config(); }
 /** @returns {Storage} */
 function safeStore() {
   try {
-    if (typeof localStorage !== 'undefined') { localStorage.getItem('dx_an_probe'); return localStorage; }
+    if (typeof localStorage !== 'undefined') { localStorage.getItem('ld_an_probe'); return localStorage; }
   } catch (e) { /* blocked */ }
   var mem = {};
   return /** @type {Storage} */ (/** @type {unknown} */ ({ getItem: function (k) { return k in mem ? mem[k] : null; }, setItem: function (k, v) { mem[k] = String(v); }, removeItem: function (k) { delete mem[k]; } }));

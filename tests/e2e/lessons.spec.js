@@ -134,7 +134,7 @@ test.describe('The account invitation at the end of the how-to-play', () => {
         }
       };
     });
-    await page.addInitScript(() => { try { localStorage.setItem('dx_lessons_off', '1'); } catch (e) { /* ignore */ } });
+    await page.addInitScript(() => { try { localStorage.setItem('ld_lessons_off', '1'); } catch (e) { /* ignore */ } });
     await page.goto('/?debug=1');
     await expect(page.locator('#tutorialOverlay')).toHaveClass(/active/);
     await step(page, 'welcome');

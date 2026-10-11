@@ -1039,7 +1039,7 @@ export function spawnPowerup(scene, coinMeshes, planEntry, disabledTypes) {
   var icon = made.icon;
   if (icon) {
     icon.scale.setScalar(0.95);
-    icon.position.set(0, 0, 0.12);
+    icon.position.set(0, 0, 0.28); // well proud of the enamel, so a sprite never sinks into it as the badge sways
     face.add(icon);
   }
   group.add(face);

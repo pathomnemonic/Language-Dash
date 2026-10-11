@@ -5,7 +5,7 @@ import { chromium } from '@playwright/test';
 const base = process.argv[2] || 'http://localhost:4190';
 const browser = await chromium.launch({ args: ['--use-angle=d3d11', '--ignore-gpu-blocklist'] });
 const ctx = await browser.newContext({ viewport: { width: 420, height: 800 }, hasTouch: true, isMobile: true });
-await ctx.addInitScript(() => { try { const k = 'buzzword_dash_v1'; const d = JSON.parse(localStorage.getItem(k) || 'null'); if (d) { d.settings.quality = 'high'; localStorage.setItem(k, JSON.stringify(d)); } } catch { /* ignore */ } });
+await ctx.addInitScript(() => { try { const k = 'langdash_save_v1'; const d = JSON.parse(localStorage.getItem(k) || 'null'); if (d) { d.settings.quality = 'high'; localStorage.setItem(k, JSON.stringify(d)); } } catch { /* ignore */ } });
 const page = await ctx.newPage();
 const errs = [];
 page.on('pageerror', (e) => errs.push(e.message));

@@ -37,7 +37,7 @@ export function parseArgs(argv, env) {
 }
 
 var SCREENS = ['screenHome', 'screenStats', 'screenShop', 'screenQuests', 'screenProfile', 'screenSettings', 'screenMyCards', 'screenCardBrowser', 'screenFlashcard', 'screenExam', 'screenLeaderboard', 'screenCohorts', 'screenImportExport'];
-var AUX_KEYS = ['buzzword_dash_custom_cards', 'buzzword_decks_v1', 'bd_cloud_meta', 'dxdash_ranked_cache', 'buzzword_activity_throttle', 'dx_tts_wps', 'buzzword_dash_v1_damaged'];
+var AUX_KEYS = ['langdash_custom_words', 'langdash_decks_v1', 'bd_cloud_meta', 'langdash_ranked_cache', 'langdash_activity_throttle', 'ld_tts_wps', 'langdash_save_v1_damaged'];
 var JUNK = ['', '{', 'null', '[]', '{}', '123', '"text"', 'true', '[null,1,"x",{}]', '{"a":{"b":null}}', '\u0000', '{"__proto__":{"polluted":1}}', 'x'.repeat(100000)];
 var NOISE = /GPU stall|swiftshader|WebGL: INVALID|GroupMarkerNotSet|Failed to load resource|net::ERR|WebSocket connection|peerjs|supabase|\[vite\]/i;
 
@@ -95,7 +95,7 @@ export async function savefuzz(opts) {
     try {
       await page.evaluate(function (a) {
         localStorage.clear();
-        localStorage.setItem('buzzword_dash_v1', a.text);
+        localStorage.setItem('langdash_save_v1', a.text);
         Object.keys(a.aux).forEach(function (k) { localStorage.setItem(k, a.aux[k]); });
       }, { text: text, aux: aux });
       await page.goto(opts.url + '/?debug=1', { timeout: 40000 });

@@ -88,7 +88,7 @@ class InkPass extends Pass {
   setSize(width, height) {
     this.material.uniforms.texel.value.set(1 / width, 1 / height);
     // keep the line about one CSS pixel wide on dense screens, and not hair-thin at low resolution
-    this.material.uniforms.edgeWidth.value = Math.max(1, Math.min(2, height / 700));
+    this.material.uniforms.edgeWidth.value = Math.max(1, Math.min(2, height / 700)) * (this.bold ? 1.6 : 1);
   }
 
   render(renderer, writeBuffer, readBuffer) {
@@ -165,6 +165,14 @@ export function createPostFX(renderer, scene, camera, targetMs) {
       }
       last = now;
       composer.render();
+    },
+
+    /** Bolder ink lines (the old "Glow effects" switch now means this: a heavier, darker outline). */
+    setBold: function (on) {
+      var u = ink.material.uniforms;
+      u.inkAlpha.value = on ? 1.0 : 0.92;
+      ink.bold = !!on;
+      ink.setSize(size.x * pixelRatio, size.y * pixelRatio);
     },
 
     setSize: function (width, height, ratio) {

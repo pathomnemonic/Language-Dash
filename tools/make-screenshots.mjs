@@ -24,7 +24,7 @@ fs.mkdirSync(outDir, { recursive: true });
 const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined, args: process.env.SOFTWARE_GL ? ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] : ['--use-angle=d3d11', '--ignore-gpu-blocklist', '--enable-gpu'] });
 const page = await browser.newPage({ viewport: TABLET ? { width: 1032, height: 1376 } : { width: 390, height: 844 }, deviceScaleFactor: TABLET ? 1.5 : 2, hasTouch: true, isMobile: true });
 // (the little lessons behind the red dots would cover the screen when a tab is tapped for the first time)
-await page.addInitScript(() => { try { localStorage.setItem('dx_lessons_off', '1'); } catch { /* ignore */ } });
+await page.addInitScript(() => { try { localStorage.setItem('ld_lessons_off', '1'); } catch { /* ignore */ } });
 await page.goto(base + '/?debug=1');
 const dismissDaily = async (pg) => {
   const overlay = pg.locator('#dailyReward');
@@ -58,7 +58,7 @@ const hideDots = async (pg) => {
     const ids = ['home:filters', 'home:speed', 'home:flashcards', 'home:challenge', 'home:versus', 'home:friends', 'home:settings', 'home:streak', 'home:today',
       'tab:stats', 'tab:locker', 'tab:quests', 'tab:profile', 'settings:keys', 'settings:look', 'settings:rules', 'settings:study', 'locker:heroes', 'locker:trails', 'locker:maps', 'locker:monsters'];
     if (window.__storage) window.__storage.set('explored', ids);
-    document.dispatchEvent(new CustomEvent('dx:attention-changed'));
+    document.dispatchEvent(new CustomEvent('ld:attention-changed'));
   });
   await pg.waitForTimeout(400);
 };
@@ -79,7 +79,7 @@ const applyShowcase = () => {
     const raw = sessionStorage.getItem('showcase');
     if (!raw) return;
     const o = JSON.parse(raw);
-    const key = 'buzzword_dash_v1';
+    const key = 'langdash_save_v1';
     const d = JSON.parse(localStorage.getItem(key) || 'null');
     if (!d) return;
     const p = d.progression;
@@ -100,7 +100,7 @@ const setup = async (opts) => {
   await page.reload();
   await skip();
   await page.waitForTimeout(2500);
-  console.log('equipped', await page.evaluate(() => { const d = JSON.parse(localStorage.getItem('buzzword_dash_v1') || '{}'); return d.progression && d.progression.equipped.skin + ' ' + d.settings.quality; }));
+  console.log('equipped', await page.evaluate(() => { const d = JSON.parse(localStorage.getItem('langdash_save_v1') || '{}'); return d.progression && d.progression.equipped.skin + ' ' + d.settings.quality; }));
 };
 
 // Questions that read oddly out of context (management / "what to start" items) are skipped:
