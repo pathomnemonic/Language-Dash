@@ -123,7 +123,6 @@ function containsHTML(str) {
  * Validate a single card object.
  *
  * Options:
- *   - strict: boolean (default true) - if false, missing optional fields produce warnings not errors
  *   - requireDistractors: boolean (default true) - if false, allows missing distractors for flashcard-only cards
  *
  * @param {object} input - The card object to validate
@@ -134,7 +133,6 @@ export function validateCard(input, options) {
   var errors = [];
   var warnings = [];
   var opts = options || {};
-  var strict = opts.strict !== false;
   var requireDistractors = opts.requireDistractors !== false;
 
   if (!input || typeof input !== 'object') {

@@ -91,7 +91,7 @@ for (const [label, src] of [['My subjects', 'mine'], ['Due for review', 'due'], 
   const { ctx, page } = await open();
   await page.locator('#flashcardBtn').click();
   await page.locator('.pick-source', { hasText: label }).click();
-  if (src === 'subjects') await page.locator('.pick-chip', { hasText: 'Cardiology' }).first().click();
+  if (src === 'subjects') await page.locator('.pick-chip', { hasText: 'Basics' }).first().click();
   await page.locator('.pick-chip', { hasText: /^10$/ }).click();
   await page.getByRole('button', { name: /Flip cards/ }).click();
   const started = await page.locator('#flashcardContent').getByText(/Card 1 of/).waitFor({ timeout: 4000 }).then(() => true, () => false);

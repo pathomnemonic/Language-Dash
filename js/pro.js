@@ -45,17 +45,17 @@ var PENDING_MS = 3 * 24 * 60 * 60 * 1000;
 
 export var PRO_PLAN_INFO = {
   languagedash_pro_yearly: { label: 'Yearly', blurb: 'BEST VALUE', rank: 1 },
-  languagedash_pro_pass3m: { label: '3-Month Dedicated Pass', blurb: 'For your exam window', rank: 2 },
+  languagedash_pro_pass3m: { label: '3-Month Dedicated Pass', blurb: 'For a focused push', rank: 2 },
   languagedash_pro_monthly: { label: 'Monthly', blurb: 'Cancel any time', rank: 3 },
   languagedash_pro_lifetime: { label: 'Lifetime', blurb: 'Pay once, keep it', rank: 4 }
 };
 
 /** What Pro gives (shown on the paywall). Keep in step with the gates in proconfig.js. */
 export var PRO_BENEFITS = [
-  'All 3,010 cards (free is 300)',
-  'Detailed stats: subjects, weak spots, exam pacing, export',
-  'Anki import and unlimited custom cards',
-  'Every "why" explanation, unlimited exam-sim blocks',
+  'All 1,000 words (free is the 300 most common)',
+  'Detailed stats: topics, weak words, export',
+  'Anki import and unlimited My words',
+  'Every example and "why" note, unlimited Word Quiz rounds',
   'Play with no connection (offline pack)',
   'Keeps a solo developer making the game'
 ];
@@ -65,20 +65,20 @@ export var PRO_BENEFITS = [
  * `free` says what a free player has, so the difference is clear.
  */
 export var PRO_FEATURES = [
-  { id: 'card_library', icon: '🗂', title: '10× more cards: the whole bank', detail: 'All 3,010 cards across every subject and system, not just 300.', free: 'Free: 300 cards' },
+  { id: 'card_library', icon: '🗂', title: 'All 1,000 words', detail: 'Every one of the 1,000 most common words in every topic, not just the first 300.', free: 'Free: 300 words' },
   { id: 'monthly_gift', icon: '🎁', title: 'A free Locker item', detail: 'Pick any one hero, trail, monster or map in the shop, on the house.', free: 'Free: buy with coins' },
-  { id: 'mode_study', icon: '📖', title: 'Study mode', detail: 'Relaxed runs with a teaching point after every answer and no lives lost.', free: 'Free: not included' },
-  { id: 'mode_weakness', icon: '🎯', title: 'Weakness mode', detail: 'Runs built from the cards you miss most, until they stick.', free: 'Free: not included' },
+  { id: 'mode_study', icon: '📖', title: 'Study mode', detail: 'Relaxed runs with a word card after every answer and no lives lost.', free: 'Free: not included' },
+  { id: 'mode_weakness', icon: '🎯', title: 'Weakness mode', detail: 'Runs built from the words you miss most, until they stick.', free: 'Free: not included' },
   { id: 'mp_modes', icon: '⚔️', title: 'Every Versus mode', detail: 'Sudden Death and Race, on top of High Score.', free: 'Free: High Score only' },
-  { id: 'explanations', icon: '💡', title: 'Every "why" explanation', detail: 'See why the answer is right and why the others are not, after every miss.', free: 'Free: 8 a day' },
-  { id: 'exam_sim', icon: '⏱', title: 'Exam Sim', detail: 'Timed blocks with pacing, flagged questions and a score report.', free: 'Free: not included' },
-  { id: 'analytics_detail', icon: '📊', title: 'Detailed stats', detail: 'Subject and system breakdowns, weak spots, exam pacing, and export to a file.', free: 'Free: the basics' },
-  { id: 'custom_cards', icon: '✏️', title: 'Unlimited custom cards', detail: 'Write your own cards for anything your course throws at you.', free: 'Free: 25 cards' },
-  { id: 'anki_import', icon: '📥', title: 'Anki import', detail: 'Bring in your existing Anki decks and play them in the game.', free: 'Free: not included' },
-  { id: 'missed_cards', icon: '🩹', title: 'Cards I miss', detail: 'A flashcard deck built from the cards you get wrong most, until they stick.', free: 'Free: not included' },
-  { id: 'browse_cards', icon: '🔎', title: 'Browse every card', detail: 'Search the whole library by subject or text, flag mistakes and see your stats per card.', free: 'Free: not included' },
-  { id: 'my_cards', icon: '📝', title: 'My cards', detail: 'Your own cards, your Anki decks and saved decks, all in one place.', free: 'Free: not included' },
-  { id: 'offline_pack', icon: '✈️', title: 'Play with no connection', detail: 'Download your subjects once and study on a plane, a train or bad hospital wifi.', free: 'Free: online only' }
+  { id: 'explanations', icon: '💡', title: 'Every example and "why" note', detail: 'See an example, and what the other gates actually meant, after every miss.', free: 'Free: 8 a day' },
+  { id: 'exam_sim', icon: '⏱', title: 'Word Quiz', detail: 'Timed rounds with flagged words and a score report.', free: 'Free: not included' },
+  { id: 'analytics_detail', icon: '📊', title: 'Detailed stats', detail: 'Topic breakdowns, weak words, and export to a file.', free: 'Free: the basics' },
+  { id: 'custom_cards', icon: '✏️', title: 'Unlimited My words', detail: 'Add your own word pairs for anything your class or trip throws at you.', free: 'Free: 25 words' },
+  { id: 'anki_import', icon: '📥', title: 'Anki import', detail: 'Bring in your existing Anki vocabulary decks and play them in the game.', free: 'Free: not included' },
+  { id: 'missed_cards', icon: '🩹', title: 'Words I miss', detail: 'A flashcard deck built from the words you get wrong most, until they stick.', free: 'Free: not included' },
+  { id: 'browse_cards', icon: '🔎', title: 'Browse every word', detail: 'Search the whole library by topic or text, flag mistakes and see your stats per word.', free: 'Free: not included' },
+  { id: 'my_cards', icon: '📝', title: 'My words', detail: 'Your own word pairs, your Anki decks and saved decks, all in one place.', free: 'Free: not included' },
+  { id: 'offline_pack', icon: '✈️', title: 'Play with no connection', detail: 'Download your languages once and practise on a plane, a train or bad hotel wifi.', free: 'Free: online only' }
 ];
 
 function store() { try { return typeof localStorage !== 'undefined' ? localStorage : null; } catch (e) { return null; } }

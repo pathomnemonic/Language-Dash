@@ -2,14 +2,14 @@
 export const BG = '#0b1020';
 export const CYAN = '#22d3ee';
 export const WHITE = '#e8f7ff';
-export const TAGLINE = 'Run the list.';
+export const TAGLINE = 'Run the words.';
 
-/** The "Dx" monogram with a pulse line underneath. Centered in the 512 box. */
+/** The "LD" monogram with a speed line underneath. Centered in the 512 box. */
 export const MARK = `
 <g transform="translate(0 -40)" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M70 150H150a106 106 0 0 1 0 212H70Z" stroke="${WHITE}" stroke-width="46"/>
-  <path d="M300 214 420 362M420 214 300 362" stroke="${CYAN}" stroke-width="46"/>
-  <path d="M40 440H190L218 392 250 486 282 420 304 440H472" stroke="${CYAN}" stroke-width="22" opacity=".95"/>
+  <path d="M70 150V362H200" stroke="${WHITE}" stroke-width="46"/>
+  <path d="M270 150H330a106 106 0 0 1 0 212H270Z" stroke="${CYAN}" stroke-width="46"/>
+  <path d="M40 440H190L230 424H300L340 440H472" stroke="${CYAN}" stroke-width="22" opacity=".95"/>
 </g>`;
 
 /** Place the mark centered in a `size` square at `fraction` of its width. */

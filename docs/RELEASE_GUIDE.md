@@ -12,7 +12,7 @@ Everything that could be prepared without your accounts is done. This is the sho
 | Every policy form answered | `store/google-play/policy-answers.md`, `store/app-store/listing.md` |
 | Icons, feature graphic, screenshots at the exact sizes | `assets/store/` (see below) |
 | Privacy Policy, Terms, **Delete account** page (Google requires a web link) | `public/privacy.html`, `public/terms.html`, `public/delete-account.html` |
-| In-app account deletion, report and block, medical disclaimer | already in the app |
+| In-app account deletion, report and block, "not a language course" disclaimer | already in the app |
 | Where reports go and what to do with them | `docs/MODERATION.md` (`SELECT * FROM moderation_queue`) |
 
 Assets in `assets/store/`: `play-icon-512.png`, `feature-graphic.png` (1024x500), `screenshots/` (Google Play, 1080x1920), `appstore/` (1290x2796, iPhone 6.9"), `appstore-6.5/` (1284x2778), `appstore-icon-1024.png`.
@@ -43,7 +43,7 @@ Assets in `assets/store/`: `play-icon-512.png`, `feature-graphic.png` (1024x500)
   - If you changed nothing since the last release, the first build is version code 1. For every later upload bump `versionCode` and `versionName` in `android/app/build.gradle`.
 
 ### D. Create the app in Play Console (about 60–90 minutes, all copy and paste)
-- [ ] 9. Play Console → **Create app**: name `Language Dash: Board Exam Runner`, language English, **App** (not game), **Free**. Accept the declarations.
+- [ ] 9. Play Console → **Create app**: name `Language Dash: Word Runner`, language English, **App** (not game), **Free**. Accept the declarations.
 - [ ] 10. **Store presence → Main store listing**: paste from `store/google-play/listing.md`; upload `play-icon-512.png`, `feature-graphic.png` and all files in `assets/store/screenshots/`.
 - [ ] 11. **Policy and programs → App content**: go through every item with `store/google-play/policy-answers.md` open (privacy policy, ads, app access, **Data safety**, **account deletion link**, content rating, target audience).
 - [ ] 12. **Testing → Closed testing** (or Internal testing first, to check it installs): create a release, upload `app-release.aab`, paste the release notes, add testers (a Google Group or email list). Send testers the opt-in link.
@@ -60,7 +60,7 @@ You do not need a Mac: `codemagic.yaml` builds and signs the app on Codemagic's 
 
 ### A. Accounts (about 30 minutes, plus Apple's approval, often 1–2 days)
 - [ ] 1. Enroll in the **Apple Developer Program**: https://developer.apple.com/programs/enroll/ ($99/year).
-- [ ] 2. App Store Connect → **My Apps → + → New App**: iOS, name `Language Dash: Board Exam Runner`, primary language English, bundle ID `com.pathomnemonic.languagedash` (register it in Certificates, Identifiers & Profiles → Identifiers first if it is not in the list), SKU `languagedash`.
+- [ ] 2. App Store Connect → **My Apps → + → New App**: iOS, name `Language Dash: Word Runner`, primary language English, bundle ID `com.pathomnemonic.languagedash` (register it in Certificates, Identifiers & Profiles → Identifiers first if it is not in the list), SKU `languagedash`.
 - [ ] 3. App Store Connect → **Users and Access → Integrations → App Store Connect API → Generate API key** (access: App Manager). Download the `.p8` file (you can download it only once), and note the Key ID and Issuer ID.
 
 ### B. Cloud build (about 20 minutes, mostly waiting)
@@ -73,12 +73,12 @@ You do not need a Mac: `codemagic.yaml` builds and signs the app on Codemagic's 
 - [ ] 8. App Store Connect → the app: paste everything from `store/app-store/listing.md` (name, subtitle, promo text, description, keywords, URLs, category). Upload `assets/store/appstore/` screenshots (and `appstore-6.5/` if it asks).
 - [ ] 9. Fill **App Privacy** and **Age Rating** from the same file. Add the reviewer notes.
 - [ ] 10. When the TestFlight build appears (10–30 minutes after upload), open the version page → **Build → +** → pick it. Test it on your own iPhone through the TestFlight app first.
-- [ ] 11. **Add for Review → Submit.** Review takes 1–3 days. Medical-study apps are fine as long as they say they are educational and give no medical advice; both are in place.
+- [ ] 11. **Add for Review → Submit.** Review takes 1–3 days. Vocabulary-learning apps are fine as long as they describe themselves honestly (a word game, not a language course); that is in place.
 
 ---
 
 ## If something goes wrong
-- **Play rejects for "health" or "medical" content:** reply that it is a study game for exam prep, link the Terms page, and point to the in-app disclaimer (Settings → About).
+- **Play asks about content ratings or claims:** reply that it is a vocabulary game, link the Terms page, and point to the in-app note (Settings → About).
 - **Play asks how you moderate user content:** `docs/MODERATION.md` is the answer (report and block buttons, a review queue, removal of abusive accounts).
 - **Apple asks for a demo account:** none is needed; say the app works without signing in.
 - **Apple asks about "Sign in with Apple":** the app offers Continue with Apple next to Google and Microsoft, which is what Guideline 4.8 asks for, and deleting an account revokes the Apple login (see `docs/SIGNIN.md`). Make sure the Apple provider is switched on in Supabase before you submit, or the reviewer will see no Apple button.

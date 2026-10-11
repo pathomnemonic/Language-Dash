@@ -2,8 +2,8 @@
 
 Pro is on from day one. The reasoning, prices and numbers are in [MONETIZATION-STRATEGY.md](MONETIZATION-STRATEGY.md). This page is how it works and how to set it up.
 
-**Free:** the whole game, friends, leaderboards, and **300 cards (20 per subject)**.
-**Pro:** all 3,010 cards plus the study tools (detailed stats, Anki import, unlimited custom cards, every explanation, unlimited exam-sim blocks, offline pack).
+**Free:** the whole game, friends, leaderboards, and **the 300 most common words**.
+**Pro:** all 1,000 words plus the study tools (detailed stats, Anki import, unlimited custom cards, every explanation, unlimited Word Quiz rounds, offline pack).
 **Full Library:** a cheaper one-time purchase that unlocks only the cards.
 
 Files: `js/pro.js` (who has Pro, gates, buying), `js/proui.js` (paywall, "unlock all cards" strip, Settings row), `js/proconfig.js` (defaults and the remote switches), `js/iap.js` (the store connection shared with the tip jar), `js/freecards.js` (the 300 free card ids), `js/cardhub.js` (the playable pool follows the lock), `database/pro.sql` (web payments, codes, school seats), `tools/pick-free-cards.mjs` (how the 300 were chosen).
@@ -85,13 +85,13 @@ The Daily, challenges, the weekly Gauntlet and Versus deal from the free 300 for
 
 ## The free 300
 
-Chosen by `tools/pick-free-cards.mjs`: 20 per subject, spread across the three difficulty levels and the question types, never flashcard-only cards. The list in `js/freecards.js` is **fixed**: do not regenerate it after launch, or cards move in and out of the free set. A test checks it is 300 distinct existing cards, 20 per subject.
+Decided by rank (`js/freecards.js`): the 300 most common words, the same set for every language pair. The set is **fixed**: do not change it after launch, or cards move in and out of the free set. A test checks it is 300 distinct existing cards, 20 per subject.
 
 ## Where players meet Pro
 
-- A **"300 of 3,010 cards free · UNLOCK"** strip on the subject picker, the card browser and every third results screen.
+- A **"300 of 1,000 words free · UNLOCK"** strip on the topic picker, the word browser and every third results screen.
 - Locked sections of Stats ("🔒 Pro") and the report export.
-- A limit being hit (Anki import, offline pack, the 26th custom card, the 9th explanation of the day, the second exam block of the week).
+- A limit being hit (Anki import, offline pack, the 26th My words entry, the 9th "why" note of the day, the second Word Quiz round of the week).
 - Settings → About & help → Language Dash Pro.
 Never during a run, never on first launch.
 

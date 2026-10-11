@@ -104,7 +104,7 @@ const setup = async (opts) => {
 };
 
 // Questions that read oddly out of context (management / "what to start" items) are skipped:
-// the shots should show a classic vignette-to-diagnosis question.
+// the shots should show a word-to-word question (one hint, three gates).
 const ODD = /toast|pregnan|perioperative|management|treatment|prevention|prophyla|therapy|start|continu|counsel|screening|dose/i;
 const gateText = () => page.evaluate(() => {
   const ids = ['buzzText', 'ansText0', 'ansText1', 'ansText2'];
@@ -141,7 +141,7 @@ const multiplayerShot = async (name, caption, sub) => {
   const players = [];
   const make = async (skin, monster) => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 780 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
-    await ctx.addInitScript((o) => sessionStorage.setItem('showcase', JSON.stringify(o)), { skin, monster, subjects: ['Infectious Disease'], map: 'Neon ER' });
+    await ctx.addInitScript((o) => sessionStorage.setItem('showcase', JSON.stringify(o)), { skin, monster, subjects: ['Basics'], map: 'Neon ER' });
     await ctx.addInitScript(applyShowcase);
     const pg = await ctx.newPage();
     pg.on('dialog', (d) => d.accept());
@@ -197,12 +197,12 @@ const results = async (opts, name, caption, sub) => {
   await snap(name, caption, sub);
 };
 
-await run({ skin: 'avatar_m_nurse', monster: 'monster_m_demon', subjects: ['Infectious Disease'], map: 'Hospital Hallway' },
-  'run-1', 'Study that feels like a game', 'Run, dodge and pick the diagnosis', 10000);
+await run({ skin: 'avatar_m_nurse', monster: 'monster_m_demon', subjects: ['Basics'], map: 'Hospital Hallway' },
+  'run-1', 'Study that feels like a game', 'Run, dodge and pick the word', 10000);
 await run({ skin: 'avatar_intern', monster: 'monster_m_ghost', subjects: ['Neurology'], map: 'Neural Highway' },
   'run-2', 'Real board-style questions', 'Spot the buzzwords. Pick the Dx.', 10000);
 if (!TABLET) await multiplayerShot('multiplayer', 'Challenge a friend. Live.', 'Head-to-head, no account needed');
-await results({ skin: 'avatar_intern', monster: 'monster_m_yeti', subjects: ['Cardiology'], map: 'Cardiac Pulse' },
+await results({ skin: 'avatar_intern', monster: 'monster_m_yeti', subjects: ['Food & Drink'], map: 'Cardiac Pulse' },
   'review', 'Learn from every miss', 'Quick explanations, then it comes back');
 
 await setup({ skin: 'avatar_m_paramedic', monster: 'monster_classic', subjects: [], map: '' });

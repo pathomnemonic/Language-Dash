@@ -41,7 +41,7 @@ describe('storage.finalizeRun', () => {
 describe('flashcard sessions', () => {
   it('walks reveal → rate → complete and persists once', () => {
     const fm = new FlashcardMode();
-    expect(fm.start({ subjects: ['Neurology'], cardCount: 3 }).success).toBe(true);
+    expect(fm.start({ subjects: ['Basics'], cardCount: 3 }).success).toBe(true);
     for (let i = 0; i < 3; i++) {
       expect(fm.getCurrentCard().buzzwords.length).toBeGreaterThan(0);
       expect(fm.reveal().answer).toBeTruthy();

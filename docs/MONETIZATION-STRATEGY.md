@@ -4,7 +4,7 @@ _Researched October 2026. Sources are linked at the end. Where a number comes fr
 
 ## 1. The decision in one paragraph
 
-Language Dash is **freemium with a content cap**: everyone gets the full game, friends, leaderboards and **300 hand-spread cards (20 in each of the 15 subjects)**. **Language Dash Pro** unlocks the whole 3,010-card bank and the study tools. There are five ways in, ordered so the best-value one is the default: **Yearly with a 7-day free trial**, the **3-Month Dedicated Pass**, **Monthly**, **Lifetime**, and a cheaper **one-time "Full Library"** that unlocks only the cards. Nothing is limited anywhere there is no way to pay, so no one is ever locked out of something they cannot buy.
+Language Dash is **freemium with a content cap**: everyone gets the full game, friends, leaderboards and **the 300 most common words (the first 300 of the 1,000)**. **Language Dash Pro** unlocks the whole 1,000-word bank and the study tools. There are five ways in, ordered so the best-value one is the default: **Yearly with a 7-day free trial**, the **3-Month Dedicated Pass**, **Monthly**, **Lifetime**, and a cheaper **one-time "Full Library"** that unlocks only the cards. Nothing is limited anywhere there is no way to pay, so no one is ever locked out of something they cannot buy.
 
 ## 2. What the research says, and what we did with it
 
@@ -26,7 +26,7 @@ Prices are for the US storefront. Other storefronts use the stores' price tiers,
 | Product id | What | Price | Role |
 |---|---|---|---|
 | `languagedash_pro_yearly` | Pro, auto-renewing (the 7-day trial is the account's, see below) | **$19.99 / year** (about $1.67 a month) | The default. Priced between Quizlet ($35.99) and Duolingo ($59.99). |
-| `languagedash_pro_pass3m` | Pro for 3 months, auto-renewing | **$7.49 / 3 months** (about $2.50 a month) | The exam-window plan; low commitment. |
+| `languagedash_pro_pass3m` | Pro for 3 months, auto-renewing | **$7.49 / 3 months** (about $2.50 a month) | The focused-push plan (a trip, a course); low commitment. |
 | `languagedash_pro_monthly` | Pro, monthly | **$3.49 / month** | The anchor that makes Yearly look like a 52% saving. |
 | `languagedash_pro_lifetime` | Pro, one purchase, never expires | **$39.99** | Two years of the yearly plan; Brainscape sells lifetime at $199.99. Captures students who will not subscribe. |
 
@@ -41,13 +41,13 @@ Why Lifetime exists despite cannibalising recurring revenue: with education annu
 | | Free | Pro |
 |---|---|---|
 | The game, all maps' mechanics, hero/monster Locker (earned with coins), friends, feed, leaderboards, Versus, daily quests, streaks, flashcards, basic stats | yes | yes |
-| Cards | **300** (20 per subject, spread over difficulty and question type) | **All 3,010** |
+| Cards | **300** (the 300 most common words) | **All 1,000** |
 | Shared games (the Daily, challenges, Versus, the weekly Gauntlet) | dealt from the free 300 for **everyone** so every player has the same cards | same |
-| Detailed stats: subject breakdown, weakest concepts, exam-date pacing, report export | locked | yes |
+| Detailed stats: topic breakdown, weakest words, report export | locked | yes |
 | Anki / text deck import | locked | yes |
 | Custom cards | 25 | unlimited |
 | "Why" explanation after a miss (Study) | 8 a day | unlimited |
-| Exam-sim blocks | 1 a week | unlimited |
+| Word Quiz rounds | 1 a week | unlimited |
 | Offline pack | locked | yes |
 
 Free is deliberately generous in the game and the social loop (that is where the sharing comes from) and limited in the *study depth* (that is what a student will pay for). The limits are all in `public/remote-config.json` and can be loosened without a release.
@@ -69,10 +69,10 @@ Revenue per install improves with: higher conversion (better paywall, trial), a 
 
 ## 6. Risks and how they are handled
 
-- **Education renews badly.** Sell the exam window (Pass, Lifetime); lean on the leaderboard and streaks for the long tail.
-- **Free users who hit the cap and leave.** 300 cards is a lot of play (at 20 cards a day, 15 days before repeats; weaker students repeat anyway, which is the learning). The strip says "300 of 3,010" and never nags during a run.
+- **Education renews badly.** Sell the focused push (Pass, Lifetime); lean on the leaderboard and streaks for the long tail.
+- **Free users who hit the cap and leave.** 300 cards is a lot of play (at 20 cards a day, 15 days before repeats; weaker students repeat anyway, which is the learning). The strip says "300 of 1,000" and never nags during a run.
 - **Review risk.** Apple wants the price, period, trial terms and a clear way to cancel next to the buy button (the paywall shows them), a Restore Purchases button (present), and no tricks. Google wants the same. Pro must unlock real value (it does); tips unlock nothing.
-- **Trust in a medical product.** No "guaranteed pass" claims anywhere (see the compliance notes).
+- **Trust in a learning product.** No "guaranteed fluency" claims anywhere (see the compliance notes).
 - **Piracy and refunds.** Client-side entitlement can be spoofed on a rooted phone; receipt validation can be added later without changing the screens.
 - **Existing web users.** The web build only limits things when a payment link (`VITE_PRO_WEB_URL`) is configured. Until then the web stays fully free.
 
@@ -85,7 +85,6 @@ See `docs/PRO.md` for the exact store setup. In short: create the five products 
 - RevenueCat, [State of Subscription Apps 2025](https://www.revenuecat.com/state-of-subscription-apps-2025) and the [2026 Education report](https://www.revenuecat.com/state-of-subscription-apps-2026-education); [renewal rates by category](https://www.revenuecat.com/blog/growth/average-subscription-renewal-rates-by-app-category)
 - RevenueCat, [hard paywall vs freemium](https://www.revenuecat.com/blog/growth/hard-paywall-vs-freemium); Airbridge, [hard paywall vs freemium 2026](https://www.airbridge.io/en/blog/hard-paywall-vs-freemium-2026) and [paywall structural decisions](https://www.airbridge.io/en/blog/paywall-conversion-structural-decisions); Adapty, [freemium to premium](https://adapty.io/blog/freemium-to-premium-conversion-techniques)
 - RevenueCat, [paywall conversion boosters](https://www.revenuecat.com/blog/growth/paywall-conversion-boosters.md) and [paywall tests](https://www.revenuecat.com/blog/paywall-tests-grow-app-revenue/)
-- Lecturio, [Best USMLE Qbanks 2026](https://www.lecturio.com/blog/best-usmle-qbanks-2026-uworld-vs-amboss-vs-lecturio/); iatrox, [why AMBOSS costs what it costs](https://www.iatrox.com/blog/why-amboss-costs-what-it-costs-honest-breakdown)
 - [Is Anki free? costs](https://mandarinmosaic.com/blog/is-anki-free); [Quizlet Plus price](https://www.thepricer.org/how-much-does-quizlet-plus-cost/); [Duolingo Super price](https://www.thepricer.org/how-much-does-super-duolingo-cost/); [Brainscape pricing](https://softwarefinder.com/lms/brainscape/pricing); [Finch pricing](https://toolradar.com/tools/finch/pricing)
 - [Apple external purchase ruling summary](https://fkks.com/news/court-finds-apple-violated-order-resulting-in-key-changes-for-ios-external-purchase-methods) and [ppc.land](https://ppc.land/apple-forced-to-eliminate-commissions-on-external-purchases-after-contempt-ruling/)
 - Mobile CPI: [Segwise benchmarks](https://segwise.ai/blog/cpi-ipm-roas-benchmarks-optimizing-ad-spend/), [Mapendo](https://mapendo.co/blog/cost-per-install-2025-the-ultimate-report-to-grow-your-app-worldwide), [Superads education US](https://www.superads.ai/facebook-ads-costs/cost-per-app-install/education/united-states)

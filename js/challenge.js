@@ -8,7 +8,7 @@
 
 import { isLanguageCode } from './lang/languages.js';
 import { getPairOrDefault } from './lang/pair.js';
-import { pairMismatchMessage } from './multiplayer.js';
+import { pairMismatchMessage } from './pairmatch.js';
 
 export var CHALLENGE_SIZE = 15;
 var MAX_NAME = 30;

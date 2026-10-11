@@ -44,7 +44,7 @@ for (const code of CODES) {
     const w = e[0];
     if (typeof w !== 'string' || !w.trim()) return bad(code + ' #' + (i + 1) + ' (' + concepts[i].en + '): empty word');
     if (/\s/.test(w.trim()) && code !== 'en') bad(code + ' #' + (i + 1) + ' (' + concepts[i].en + '): "' + w + '" has a space (one word only)');
-    if (w !== w.trim() || /[()\/,;]/.test(w)) bad(code + ' #' + (i + 1) + ' (' + concepts[i].en + '): "' + w + '" has stray punctuation');
+    if (w !== w.trim() || /[()/,;]/.test(w)) bad(code + ' #' + (i + 1) + ' (' + concepts[i].en + '): "' + w + '" has stray punctuation');
     if (ROMAN.has(code) && !(typeof e[1] === 'string' && e[1].trim())) bad(code + ' #' + (i + 1) + ' (' + concepts[i].en + '): missing romanization');
     const k = keyOf(w, i);
     if (seen.has(k)) {

@@ -1,5 +1,5 @@
 /**
- * proui.js — the screens for Language Dash Pro: the paywall, the "unlock all cards" banner and the Settings row. Nothing here
+ * proui.js — the screens for Language Dash Pro: the paywall, the "unlock all words" banner and the Settings row. Nothing here
  * shows unless Pro is live (see pro.js proLive: switched on and something can actually be bought).
  */
 
@@ -89,7 +89,7 @@ export function openPaywall(o) {
   } else if (pricing) {
     box.appendChild(createElement('p', { text: 'Choose your plan', className: 'pro-step-title' }));
   } else {
-    var headline = createElement('p', { text: counts.total ? 'Go Pro for ' + moreCards(counts) + ' cards, plus every mode and study tool.' : 'Study smarter with every card, every mode and every study tool.' });
+    var headline = createElement('p', { text: counts.total ? 'Go Pro for ' + moreCards(counts) + ' words, plus every mode and study tool.' : 'Learn faster with every word, every mode and every study tool.' });
     headline.style.cssText = 'font-weight:800;font-size:16px';
     box.appendChild(headline);
   }
@@ -102,7 +102,7 @@ export function openPaywall(o) {
     var whatHead = createElement('h3', { text: 'WHAT YOU GET' });
     whatHead.style.cssText = 'margin:14px 0 2px;font-size:13px;letter-spacing:1px;color:var(--accent-gold,#ffd24a)';
     box.appendChild(whatHead);
-    if (counts.total) box.appendChild(createElement('p', { className: 'setting-sublabel', text: 'Free has ' + counts.free + ' of ' + counts.total.toLocaleString() + ' cards. Pro opens all of them.' }));
+    if (counts.total) box.appendChild(createElement('p', { className: 'setting-sublabel', text: 'Free has ' + counts.free + ' of ' + counts.total.toLocaleString() + ' words. Pro opens all of them.' }));
     box.appendChild(featureList(o.feature));
     var thanks = createElement('p', { text: 'Pro also keeps a solo developer making the game. 💜' });
     thanks.style.cssText = 'font-size:12px;opacity:.8;margin:2px 0 6px';
@@ -371,7 +371,7 @@ export function renderProTab(container) {
       var daysLeft = st.until ? Math.max(0, Math.ceil((st.until - Date.now()) / 86400000)) : 0;
       box.appendChild(createElement('p', { className: 'pro-step-title', text: 'Your free trial is on' + (daysLeft ? ': ' + daysLeft + (daysLeft === 1 ? ' day' : ' days') + ' left' : '') + '.' }));
     } else {
-      box.appendChild(createElement('p', { className: 'pro-step-title', text: counts.total ? 'Go Pro for ' + moreCards(counts) + ' cards, plus every mode and study tool.' : 'Study smarter with every card, every mode and every study tool.' }));
+      box.appendChild(createElement('p', { className: 'pro-step-title', text: counts.total ? 'Go Pro for ' + moreCards(counts) + ' words, plus every mode and study tool.' : 'Learn faster with every word, every mode and every study tool.' }));
     }
     var get = createElement('button', { className: 'btn btn-gold btn-block', text: st.active ? '💳 SEE PRICING' : '⚡ GET PRO', attributes: { type: 'button', id: 'proTabGet' } });
     get.addEventListener('click', function () { openPaywall({ trigger: 'settings_tab', pricing: st.active }); });
@@ -390,7 +390,7 @@ export function renderProSettings(container) {
   label.style.flex = '1';
   label.appendChild(createElement('div', { text: '⚡ Language Dash Pro' }));
   var st = proStatus();
-  label.appendChild(createElement('span', { className: 'setting-sublabel', text: st.active ? 'Active' + (st.trial ? ' (trial)' : '') + '. Thank you!' : 'Unlimited custom cards, every explanation, full exam reports and more.' }));
+  label.appendChild(createElement('span', { className: 'setting-sublabel', text: st.active ? 'Active' + (st.trial ? ' (trial)' : '') + '. Thank you!' : 'Unlimited My words, every example, full Word Quiz reports and more.' }));
   row.appendChild(label);
   var btn = createElement('button', { className: 'btn btn-gold btn-sm', text: st.active ? 'Manage' : 'See Pro', attributes: { type: 'button' } });
   btn.addEventListener('click', function () { openPaywall({ trigger: 'settings' }); });
@@ -424,8 +424,8 @@ export function mountProButton() {
       btn.setAttribute('aria-label', 'Language Dash Pro trial: keep Pro');
     } else {
       if (title) setText(title, 'GO PRO');
-      if (sub) setText(sub, '10× more cards and every study tool');
-      btn.setAttribute('aria-label', 'Go Pro: 10 times more cards and every study tool');
+      if (sub) setText(sub, '3× more words and every study tool');
+      btn.setAttribute('aria-label', 'Go Pro: 3 times more words and every study tool');
     }
   };
   btn.addEventListener('click', function () { openPaywall({ trigger: 'home_button' }); });
@@ -436,10 +436,10 @@ export function mountProButton() {
   return btn;
 }
 
-/** "10× more" (the whole bank against the free part of it). */
+/** "3× more" (the whole bank against the free part of it). */
 function moreCards(counts) {
-  var n = counts && counts.free > 0 ? Math.round(counts.total / counts.free) : 10;
-  return (n >= 2 ? n : 10) + '× more';
+  var n = counts && counts.free > 0 ? Math.round(counts.total / counts.free) : 3;
+  return (n >= 2 ? n : 3) + '× more';
 }
 
 var _locks = [];
@@ -491,7 +491,7 @@ export function installProUi(deps) {
 
 
 /**
- * A small "unlock all the cards" strip: shows how many cards are free and opens the paywall. Adds nothing when the whole
+ * A small "unlock all the words" strip: shows how many words are free and opens the paywall. Adds nothing when the whole
  * library is open (Pro owned, or nothing to buy).
  * @param {HTMLElement} container
  * @param {string} [trigger] what to call it in analytics
@@ -505,8 +505,8 @@ export function renderLibraryBanner(container, trigger) {
   if (old) old.remove();
   var box = createElement('div', { className: 'library-banner', attributes: { role: 'note' } });
   var text = createElement('div', { className: 'library-banner-text' });
-  text.appendChild(createElement('strong', { text: '🔒 ' + counts.free + ' of ' + counts.total.toLocaleString() + ' cards free' }));
-  text.appendChild(createElement('span', { text: 'Go Pro for ' + moreCards(counts) + ' cards and every study tool.' }));
+  text.appendChild(createElement('strong', { text: '🔒 ' + counts.free + ' of ' + counts.total.toLocaleString() + ' words free' }));
+  text.appendChild(createElement('span', { text: 'Go Pro for ' + moreCards(counts) + ' words and every study tool.' }));
   box.appendChild(text);
   var btn = createElement('button', { className: 'btn btn-gold btn-sm', text: 'UNLOCK', attributes: { type: 'button' } });
   btn.addEventListener('click', function () { openPaywall({ trigger: trigger || 'library_banner', feature: 'card_library' }); });

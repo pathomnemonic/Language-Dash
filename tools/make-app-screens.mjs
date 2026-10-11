@@ -96,7 +96,7 @@ const run = async (opts, name) => {
 };
 
 const landing = {};
-landing.run = await run({ skin: 'avatar_m_nurse', monster: 'monster_m_demon', subjects: ['Infectious Disease'], map: 'Hospital Hallway' }, 'run-a');
+landing.run = await run({ skin: 'avatar_m_nurse', monster: 'monster_m_demon', subjects: ['Basics'], map: 'Hospital Hallway' }, 'run-a');
 await run({ skin: 'avatar_intern', monster: 'monster_m_ghost', subjects: ['Neurology'], map: 'Neural Highway' }, 'run-b');
 
 await setup({ skin: 'avatar_m_paramedic', monster: 'monster_classic', subjects: [], map: '' });

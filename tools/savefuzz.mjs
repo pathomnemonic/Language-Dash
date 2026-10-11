@@ -44,7 +44,7 @@ var NOISE = /GPU stall|swiftshader|WebGL: INVALID|GroupMarkerNotSet|Failed to lo
 /** The save a player with a lot of progress would have, built the way the game builds it. Runs in the page. */
 function buildRichSave() {
   var s = window.__storage;
-  var subjects = ['Cardiology', 'Neurology', 'Nephrology', 'Pulmonology', 'Surgery'];
+  var subjects = ['Basics', 'Actions', 'Food & Drink', 'Talking', 'Small Words'];
   for (var i = 0; i < 14; i++) {
     var enc = [];
     for (var k = 0; k < 6; k++) enc.push({ cardId: 'c' + ((i * 6 + k) % 40), correct: (i + k) % 3 !== 0, subject: subjects[(i + k) % subjects.length] });

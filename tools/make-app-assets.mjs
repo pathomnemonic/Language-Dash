@@ -38,6 +38,6 @@ const banner = (w, h) => svg(w, h, `<rect width="${w}" height="${h}" fill="url(#
   mark(h, 0.74, w * 0.22, h / 2) +
   `<text x="${w * 0.43}" y="${h * 0.47}" font-family="Arial, Helvetica, sans-serif" font-size="${h * 0.19}" font-weight="900" fill="${WHITE}" letter-spacing="3">DX DASH</text>` +
   `<text x="${w * 0.43}" y="${h * 0.63}" font-family="Arial, Helvetica, sans-serif" font-size="${h * 0.075}" font-weight="600" fill="${CYAN}">${TAGLINE}</text>` +
-  `<text x="${w * 0.43}" y="${h * 0.78}" font-family="Arial, Helvetica, sans-serif" font-size="${h * 0.05}" fill="#9fb3d9">USMLE &amp; COMLEX board prep, at a sprint</text>`);
+  `<text x="${w * 0.43}" y="${h * 0.78}" font-family="Arial, Helvetica, sans-serif" font-size="${h * 0.05}" fill="#9fb3d9">1,000 words in 15 languages, at a sprint</text>`);
 await png('assets/store/feature-graphic.png', banner(1024, 500), 1024, 500);
 await png('public/og.png', banner(1200, 630), 1200, 630);

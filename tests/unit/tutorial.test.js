@@ -81,3 +81,40 @@ describe('profile button text', () => {
     expect(cornerInitial(null, '')).toBe('👤');
   });
 });
+
+import { getTutorialCardIds, refreshTutorialCardIds, TUTORIAL_CARD_IDS } from '../../js/tutorialrun.js';
+import { CARDS } from '../../js/cardhub.js';
+
+describe('the guided run uses the easiest words of the current deck', () => {
+  it('picks the first six usable cards by frequency rank', () => {
+    const ids = getTutorialCardIds();
+    expect(ids).toHaveLength(6);
+    const ranks = ids.map((id) => CARDS.find((c) => c.id === id).rank);
+    expect(ranks).toEqual(ranks.slice().sort((a, b) => a - b));
+    expect(ranks[0]).toBeLessThanOrEqual(3);
+    expect(ranks[5]).toBeLessThanOrEqual(12);
+  });
+  it('skips cards that cannot be played and sorts a shuffled list', () => {
+    const cards = [
+      { id: 'a-b-005', rank: 5, bw: ['x'], ans: 'y', d: ['p', 'q'] },
+      { id: 'a-b-001', rank: 1, bw: [], ans: 'y', d: ['p', 'q'] },
+      { id: 'a-b-002', rank: 2, bw: ['x'], ans: 'y', d: ['p'] },
+      { id: 'a-b-003', rank: 3, bw: ['x'], ans: 'y', d: ['p', 'q'] },
+      { id: 'a-b-004', rank: 4, bw: ['x'], ans: 'y', d: ['p', 'q'] }
+    ];
+    expect(getTutorialCardIds(cards)).toEqual(['a-b-003', 'a-b-004', 'a-b-005']);
+  });
+  it('keeps the TUTORIAL_CARD_IDS export working for main.js: a live array filled from the deck', () => {
+    expect(Array.isArray(TUTORIAL_CARD_IDS)).toBe(true);
+    refreshTutorialCardIds();
+    expect(TUTORIAL_CARD_IDS.slice()).toEqual(getTutorialCardIds());
+    expect(TUTORIAL_CARD_IDS.length).toBe(6);
+  });
+  it('the copy is about words, gates and the Hush, never diagnoses', () => {
+    const text = buildSteps(getControlText(false)).map((s) => s.title + ' ' + s.text).join(' ');
+    expect(text).toMatch(/Language Dash/);
+    expect(text).toMatch(/word/);
+    expect(text).toMatch(/Hush/);
+    expect(text).not.toMatch(/diagnos|medical|buzzword|Dx Dash|clue/i);
+  });
+});

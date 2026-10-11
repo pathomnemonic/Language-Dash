@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { buildExam, scoreExam, readinessLabel } from '../../js/exam.js';
 import { buildStudyPlan } from '../../js/studyplan.js';
-import { encodeChallenge, decodeChallenge, parseChallengeHash, buildChallengeUrl } from '../../js/challenge.js';
+import { encodeChallenge, decodeChallenge, parseChallengeHash, buildChallengeUrl, challengePairMismatch } from '../../js/challenge.js';
 
 let storage;
 
@@ -108,11 +108,25 @@ describe('study plan', () => {
 
 describe('challenges', () => {
   it('round-trips a challenge through its link token', () => {
-    const c = { seed: 12345, n: 15, from: 'Dr. Ünïcode', score: 4321, hash: 'abc123' };
+    const c = { seed: 12345, n: 15, from: 'Ana Ünïcode', score: 4321, hash: 'abc123' };
     const back = decodeChallenge(encodeChallenge(c));
-    expect(back).toEqual({ ...c, ids: null });
+    expect(back).toEqual({ ...c, ids: null, pair: null });
     expect(parseChallengeHash('#c=' + encodeChallenge(c)).seed).toBe(12345);
     expect(buildChallengeUrl('https://x.test/app/', c)).toMatch(/^https:\/\/x\.test\/app\/#c=/);
+  });
+
+  it('carries the language pair, so a friend on another pair is told which one to pick', () => {
+    const c = { seed: 12345, n: 5, from: 'Ana', score: 10, hash: 'abc', ids: ['en-es-001', 'en-es-002', 'en-es-003', 'en-es-004', 'en-es-005'] };
+    expect(decodeChallenge(encodeChallenge(c)).pair).toEqual({ known: 'en', target: 'es' });
+    const noIds = decodeChallenge(encodeChallenge({ ...c, ids: null, pair: { known: 'fr', target: 'ja' } }));
+    expect(noIds.pair).toEqual({ known: 'fr', target: 'ja' });
+    expect(challengePairMismatch(noIds, { known: 'fr', target: 'ja' })).toBe('');
+    expect(challengePairMismatch(noIds, { known: 'en', target: 'es' })).toBe('You and your friend need the same language pair (French \u2192 Japanese).');
+    expect(challengePairMismatch({ pair: null }, { known: 'en', target: 'es' })).toBe('');
+    // a made-up pair in a link is ignored
+    const forged = (o) => decodeChallenge(btoa(JSON.stringify({ v: 1, s: 5, n: 15, c: 1, ...o })).replace(/=+$/, ''));
+    expect(forged({ p: 'xx>yy' }).pair).toBeNull();
+    expect(forged({ p: 'en>en' }).pair).toBeNull();
   });
 
   it('rejects malformed or out-of-range tokens', () => {

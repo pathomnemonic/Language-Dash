@@ -7,7 +7,7 @@ Android, one iPhone from the last three years, one older iPhone, and one tablet 
 ## 1. First launch (5 min)
 - Fresh install: tutorial plays, starting coins are 300, the tutorial lets you buy the Pill Trail.
 - Daily reward appears once, after the tutorial, never on top of a run.
-- Offline: switch to airplane mode, open the app, play a full run, answer a flashcard, finish an exam block. All work.
+- Offline: switch to airplane mode, open the app, play a full run, answer a flashcard, finish a Word Quiz round. All work.
 
 ## 2. Performance (10 min)
 - Play a 5 minute Endless run on each of three maps. Smooth means no visible stutter at gates and map changes.

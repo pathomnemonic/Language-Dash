@@ -37,13 +37,13 @@ Do not rebuild `dist/` while Playwright is running; the preview server serves fi
 - Look things up through the exported tables (`QUEST_IDS`, `ACHIEVEMENT_IDS`, `GAME_MODES`...) and never hard-code the string next to `||` as a fallback: a wrong fallback hides the bug.
 - If a screen shows a count, name or warning, give it a button that does the obvious next thing, or make it plainly non-interactive.
 - A new setting must be read somewhere (the settings audit fails otherwise).
-- Card content is data, so it is tested like code: `cardquality.test.js` fails if any built-in card has a clue that gives the answer away (initials, acronym expansions, short words like "Rai", bracketed aliases) or fewer than three clues, and `node tools/audit-leaks.mjs` lists offenders by subject. See `docs/CARD-QUALITY.md` for why the old filter missed them.
+- Word content is data, so it is tested like code: `cardquality.test.js`, `cardcount.test.js` and `langdeck.test.js` fail if any card in the pairs they build has a missing hint, answer or romanization, a wrong gate equal to the answer or hint, or a duplicate id; `npm run validate:deck` checks all 210 pairs or fewer than three clues, and `node tools/audit-leaks.mjs` lists offenders by subject. See `docs/CARD-QUALITY.md` for why the old filter missed them.
 
 ## Section H: the "find what a person would only find in the field" tools
 
 | What | How | What it catches |
 | --- | --- | --- |
-| Time-zone, DST and clock tests | `npx vitest run tests/unit/timezones.test.js tests/unit/studystreak.test.js` | streaks, daily reward, weekly goal, calendar, exam countdown in 24 time zones around every clock change, a clock set back, travel |
+| Time-zone, DST and clock tests | `npx vitest run tests/unit/timezones.test.js tests/unit/studystreak.test.js` | streaks, daily reward, weekly goal, calendar, daily goals in 24 time zones around every clock change, a clock set back, travel |
 | Save torture | `npx vitest run tests/unit/savetorture.test.js` and `node tools/savefuzz.mjs --count 100` | damaged, old, huge, full-disk, two-tab saves; the whole app on damaged saves, every screen opened |
 | Fast-forward play bot | `node tools/botrun.mjs --runs 200 --seed 1` (needs a built app and `npx vite preview`) | thousands of runs: NaN, stuck runs, scene leaks, bad scores, exceptions, with random heroes, maps, power-ups, pauses, resizes |
 | Real-time soak | `node tools/soak.mjs --minutes 30` | memory and GPU object growth over time |

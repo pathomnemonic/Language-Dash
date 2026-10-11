@@ -13,7 +13,7 @@ describe('the tour steps', () => {
 
   it.skipIf(process.env.VITE_NO_BACKEND === '1')('walks Home first, with a section each for Versus and Flashcards, one line on Challenge (no PLAY lesson, no mode-by-mode walk), then the tabs', () => {
     const order = ids();
-    ['coins', 'filters', 'speed', 'speed-dial', 'versus-btn', 'versus', 'flashcards-btn', 'flashcards', 'challenge-btn', 'friends', 'settings', 'stats-tab', 'locker-tab', 'quests-tab', 'profile-tab', 'back-home'].forEach((id) => expect(order, id).toContain(id));
+    ['coins', 'filters', 'languages', 'languages-body', 'versus-btn', 'versus', 'flashcards-btn', 'flashcards', 'challenge-btn', 'friends', 'settings', 'stats-tab', 'locker-tab', 'quests-tab', 'profile-tab', 'back-home'].forEach((id) => expect(order, id).toContain(id));
     expect(order.indexOf('versus-btn')).toBeLessThan(order.indexOf('flashcards-btn'));
     expect(order.indexOf('flashcards-btn')).toBeLessThan(order.indexOf('challenge-btn'));
     ['play', 'ch-study', 'ch-weakness', 'ch-daily', 'ch-gauntlet', 'ch-friend', 'ch-exam'].forEach((id) => expect(order, id).not.toContain(id));
@@ -43,24 +43,33 @@ describe('the tour steps', () => {
     expect(missing.filter((id) => !['versus', 'profile', 'stats', 'preview', 'settings-screen', 'friends-screen', 'profile-pic'].includes(id))).toEqual([]);
   });
 
-  it('the tour walks through every filter, one section at a time, opening each by its real button', () => {
+  it('the tour walks through the word filters, one section at a time, opening each by its real button', () => {
     const byId = Object.fromEntries(steps.map((s) => [s.id, s]));
     const order = ids();
-    ['filters', 'filters-subjects', 'filters-subjects-list', 'filters-exam', 'filters-exam-body', 'filters-advanced', 'filters-advanced-body'].forEach((id) => expect(order, id).toContain(id));
+    ['filters', 'filters-subjects', 'filters-subjects-list', 'filters-exam', 'filters-exam-body'].forEach((id) => expect(order, id).toContain(id));
     expect(order.indexOf('filters')).toBeLessThan(order.indexOf('filters-subjects'));
-    expect(order.indexOf('filters-advanced-body')).toBeLessThan(order.indexOf('speed'));
-    ['filters', 'filters-subjects', 'filters-exam', 'filters-advanced'].forEach((id) => expect(byId[id].press, id).toBe('pass'));
-    ['filters-subjects-list', 'filters-exam-body', 'filters-advanced-body'].forEach((id) => expect(byId[id].press, id).toBe('next'));
-    expect(typeof byId['filters-advanced-body'].after).toBe('function'); // it tidies up and closes the pop-up
+    expect(order.indexOf('filters-exam-body')).toBeLessThan(order.indexOf('languages'));
+    ['filters', 'filters-subjects', 'filters-exam'].forEach((id) => expect(byId[id].press, id).toBe('pass'));
+    ['filters-subjects-list', 'filters-exam-body'].forEach((id) => expect(byId[id].press, id).toBe('next'));
+    expect(typeof byId['filters-exam-body'].after).toBe('function'); // it tidies up and closes the pop-up
+    // Language Dash has no advanced filters (question type, year, high-yield) and no speed dial
+    expect(order.some((id) => /advanced|speed/.test(id))).toBe(false);
   });
 
-  it('the tour teaches the speed dial: opens the sheet, lets the player drag it, then closes it', () => {
+  it('the tour teaches the Languages button: opens the sheet, then closes it', () => {
     const byId = Object.fromEntries(steps.map((s) => [s.id, s]));
-    expect(byId.speed.press).toBe('pass');
-    expect(byId['speed-dial'].interactive).toBe(true);
-    expect(byId['speed-dial'].text).toMatch(/slower/i);
-    expect(typeof byId['speed-dial'].after).toBe('function');
-    expect(ids().indexOf('speed-dial')).toBe(ids().indexOf('speed') + 1);
+    expect(byId.languages.press).toBe('pass');
+    expect(byId.languages.target()).toBe(document.getElementById('langBtn'));
+    expect(byId['languages-body'].text).toMatch(/pair/i);
+    expect(typeof byId['languages-body'].after).toBe('function');
+    expect(ids().indexOf('languages-body')).toBe(ids().indexOf('languages') + 1);
+  });
+
+  it('every lesson names steps that exist, and no copy is medical', () => {
+    const have = new Set(ids());
+    Object.values(LESSON_STEPS).flat().forEach((id) => expect(have.has(id), id).toBe(true));
+    const copy = steps.map((s) => s.title + ' ' + s.text).join(' ');
+    expect(copy).not.toMatch(/diagnos|USMLE|COMLEX|exam sim|medical|patient|cardiolog|Dx Dash/i);
   });
 
   it.skipIf(process.env.VITE_NO_BACKEND === '1')('Pro is mentioned only while it can be bought, and then only quietly', async () => {
@@ -72,9 +81,9 @@ describe('the tour steps', () => {
     setProConfigForTest({ enabled: true, gates: { exam_sim: { limit: 1, per: 'week' } } });
     setSellableForTest(true);
     const on = buildAllSteps({ ui: { show() {} } });
-    expect(on.find((s) => s.id === 'pro').text).toMatch(/10× more cards/);
+    expect(on.find((s) => s.id === 'pro').text).toMatch(/1,000 instead of 300/);
     expect(on.find((s) => s.id === 'challenge-btn').text).toMatch(/PRO tag/);
-    expect(on.find((s) => s.id === 'filters-subjects-list').text).toMatch(/Pro opens the whole bank/);
+    expect(on.find((s) => s.id === 'filters-subjects-list').text).toMatch(/Pro opens all 1,000/);
     expect(off.find((s) => s.id === 'filters-subjects-list').text).not.toMatch(/Pro/);
     setSellableForTest(false);
     setProConfigForTest(null);
@@ -87,8 +96,9 @@ describe('the tour steps', () => {
 
 import * as shopdata from '../../js/game/shopdata.js';
 const require_items = () => shopdata;
+const TOUR_NAME = () => require_items().LOCKER_ITEMS.filter((i) => i.type === 'trail' && i.price > 0).sort((a, b) => a.price - b.price)[0];
 
-describe('the tour always teaches with the Pill Trail, and never hands out coins', () => {
+describe('the tour always teaches with the cheapest trail, and never hands out coins', () => {
   let storage, ui, steps;
   beforeEach(async () => {
     localStorage.clear();
@@ -105,10 +115,10 @@ describe('the tour always teaches with the Pill Trail, and never hands out coins
   const applies = (id, ctx = {}) => !(step(id).skipIf && step(id).skipIf(ctx));
   const rowOf = (el) => el.closest('.shop-item').textContent;
 
-  it('a new player is walked through buying the Pill Trail (not the cheapest thing they can afford)', () => {
+  it('a new player is walked through buying the cheapest trail (not whatever they can afford)', () => {
     expect(storage.get('coins')).toBe(300);
     expect(applies('buy')).toBe(true);
-    expect(rowOf(step('buy').target())).toMatch(/Pill Trail/);
+    expect(rowOf(step('buy').target())).toContain(TOUR_NAME().name);
     expect(applies('preview')).toBe(false);
     // it is the cheapest trail in the Locker: nothing cheaper is passed over
     const { LOCKER_ITEMS } = require_items();
@@ -118,12 +128,12 @@ describe('the tour always teaches with the Pill Trail, and never hands out coins
 
   it('having bought it, the tour moves on to wearing it, and a second run buys nothing more', () => {
     step('buy').target().click();
-    expect(storage.ownsItem('trail_pills')).toBe(true);
+    expect(storage.ownsItem(TOUR_NAME().id)).toBe(true);
     const coinsAfter = storage.get('coins');
     ui.renderShop();
     expect(applies('buy')).toBe(false);
     // buying wears it at once, so there is nothing left to equip
-    expect(storage.get('equipped').trail).toBe('trail_pills');
+    expect(storage.get('equipped').trail).toBe(TOUR_NAME().id);
     expect(applies('equip')).toBe(false);
     ui.renderShop();
     // the tour again: nothing to buy, nothing to equip, the display step still makes sense, and no coins appear or go
@@ -135,7 +145,7 @@ describe('the tour always teaches with the Pill Trail, and never hands out coins
   });
 
   it('someone who owns it but wears something else is not pushed to equip or buy again', () => {
-    storage.data.progression.ownedItems.push('trail_pills');
+    storage.data.progression.ownedItems.push(TOUR_NAME().id);
     ui.renderShop();
     expect(applies('buy')).toBe(false);
     expect(applies('preview')).toBe(false);
@@ -148,7 +158,7 @@ describe('the tour always teaches with the Pill Trail, and never hands out coins
     ui.renderShop();
     expect(applies('buy')).toBe(false);
     expect(applies('preview')).toBe(true);
-    expect(step('preview').target().getAttribute('aria-label')).toMatch(/Pill Trail/);
+    expect(step('preview').target().getAttribute('aria-label')).toContain(TOUR_NAME().name);
     expect(applies('look', {})).toBe(false);
     expect(applies('look', { previewedTrail: true })).toBe(true);
     expect(storage.get('coins')).toBe(50);

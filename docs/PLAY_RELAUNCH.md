@@ -47,7 +47,7 @@ Do these now while testers run; none of them wait for the 14 days.
    - **Account deletion**: web link `https://pathomnemonic.github.io/Language-Dash/delete-account.html`, and say the app also has Delete my account in Settings
    - Content rating: complete the questionnaire (no violence beyond cartoon, no user-generated content shared publicly beyond display names and scores; reporting and blocking exist)
    - Target audience: **18 and over** (not for children)
-   - Health apps declaration: it is an exam study game, not a medical device and gives no medical advice
+   - Health apps declaration: not a health app; it is a vocabulary game
    - Government apps, financial features, news: **No**
 4. **Monetize with Play → Products** (only possible after the first bundle upload, which you have done):
    - **Subscriptions**: create three, product ids exactly `languagedash_pro_yearly`, `languagedash_pro_pass3m`, `languagedash_pro_monthly`, each with one auto-renewing base plan (1 year, 3 months, 1 month), prices as in `docs/PRO.md`, **no free trial**. Activate each.

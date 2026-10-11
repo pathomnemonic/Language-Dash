@@ -2,8 +2,8 @@
  * proconfig.js — what Language Dash Pro is and what it limits, with the remote config file (public/remote-config.json) able
  * to change any of it without a release.
  *
- * Pro ships ON. Free players get a taste of everything: 300 hand-spread cards (20 in each subject), the game, the
- * leaderboards and friends, the basic stats. Pro adds the whole 3,010-card library and the study tools. (If the build
+ * Pro ships ON. Free players get a taste of everything: the 300 most common words, the game, the
+ * leaderboards and friends, the basic stats. Pro adds the whole 1,000-word library and the study tools. (If the build
  * has no way to take payment, nothing is limited: see pro.js proLive.)
  *
  * A gate is "open" (no limit), "locked" (Pro only) or { limit, per } where per is "day", "week" or "total" (for
@@ -29,9 +29,9 @@ export var DEFAULT_GATES = {
   custom_cards: { limit: 25, per: 'total' },
   explanations: { limit: 8, per: 'day' },
   exam_sim: 'locked',
-  missed_cards: 'locked', // Flashcards → Cards I miss
-  browse_cards: 'locked', // Flashcards → Browse cards
-  my_cards: 'locked',     // Flashcards → My cards (writing cards, importing, saved decks)
+  missed_cards: 'locked', // Flashcards → Words I miss
+  browse_cards: 'locked', // Flashcards → Browse words
+  my_cards: 'locked',     // Flashcards → My words (writing word pairs, importing, saved decks)
   mode_study: 'locked',   // Challenge → Study
   mode_weakness: 'locked', // Challenge → Weakness
   mp_suddendeath: 'locked', // Versus → Sudden Death (High Score stays free)

@@ -6,16 +6,19 @@ describe('marketing ads', () => {
   it('every concept has a unique id, a real screenshot and a rendered file for each size', () => {
     var ids = CONCEPTS.map(function (c) { return c.id; });
     expect(new Set(ids).size).toBe(ids.length);
+    // (the screenshots and rendered PNGs are made by tools/make-ads.mjs and are not kept in the repository)
+    if (!existsSync('docs/marketing/assets')) return;
     CONCEPTS.forEach(function (c) {
       expect(existsSync('docs/marketing/assets/screens/' + c.screen + '.png')).toBe(true);
       ['feed', 'story', 'square', 'wide'].forEach(function (f) { expect(existsSync('docs/marketing/assets/static/' + c.id + '-' + f + '.png')).toBe(true); });
     });
   });
 
-  it('the exam-name disclaimer is on every ad that talks about boards or questions', () => {
+  it('every ad that talks about learning words carries the "not a language course" line, and none is medical', () => {
     CONCEPTS.forEach(function (c) {
       var text = c.head + ' ' + c.sub;
-      if (/\b(board|question|study)/i.test(text) && !/adhd|accessible/i.test(c.id)) expect(c.fine).toMatch(/not affiliated/i);
+      expect(text).not.toMatch(/board|diagnos|USMLE|COMLEX|exam|vignette/i);
+      if (/\b(word|learn)/i.test(text) && !/adhd|accessible/i.test(c.id)) expect(c.fine).toMatch(/not a language course/i);
     });
   });
 

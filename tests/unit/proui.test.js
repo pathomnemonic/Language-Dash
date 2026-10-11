@@ -118,7 +118,7 @@ describe('Pro screens once switched on', () => {
     expect(items.length).toBe(14);
     expect(items[0].textContent).toMatch(/Play with no connection/);
     expect(items[0].classList.contains('pro-feature-hit')).toBe(true);
-    expect(o.textContent).toMatch(/Free: 300 cards/);
+    expect(o.textContent).toMatch(/Free: 300 words/);
   });
 
   it('a button for a locked feature carries a PRO tag, and loses it once Pro is on', () => {
@@ -176,7 +176,7 @@ describe('Pro screens once switched on', () => {
     const btn = mountProButton();
     expect(btn.hidden).toBe(false);
     expect(btn.textContent).toMatch(/GO PRO/);
-    expect(btn.textContent).toMatch(/10× more cards/);
+    expect(btn.textContent).toMatch(/3× more words/);
     btn.click();
     expect(document.getElementById('proPaywall')).toBeTruthy();
   });

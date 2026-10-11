@@ -194,3 +194,26 @@ describe('lang/deck.js', () => {
     expect(computeCardPoolHash(base)).not.toBe(computeCardPoolHash([{ id: 'en-es-001', ans: 'z', d: ['b', 'c'] }]));
   });
 });
+
+import { hashCardPool, pairOfCardId, pairOfCards, pairLabel, pairMismatchMessage } from '../../js/multiplayer.js';
+
+describe('competitive fairness: the language pair is part of the shared-pool hash', () => {
+  it('reads the pair from card ids', () => {
+    expect(pairOfCardId('en-es-007')).toEqual({ known: 'en', target: 'es' });
+    expect(pairOfCardId('ja-ko-1000')).toEqual({ known: 'ja', target: 'ko' });
+    expect(pairOfCardId('custom_123_0_0')).toBeNull();
+    expect(pairOfCardId('xx-yy-001')).toBeNull();
+    expect(pairOfCards([{ id: 'custom_1' }, { id: 'fr-de-002' }])).toEqual({ known: 'fr', target: 'de' });
+    expect(pairLabel({ known: 'en', target: 'es' })).toBe('English → Spanish');
+  });
+  it('the same gates for two different pairs never share a hash', () => {
+    const a = [{ id: 'en-es-001', ans: 'yo', d: ['tú', 'él'] }];
+    const b = [{ id: 'en-fr-001', ans: 'yo', d: ['tú', 'él'] }];
+    expect(hashCardPool(a)).not.toBe(hashCardPool(b));
+    expect(hashCardPool(a)).toBe(hashCardPool(a.slice()));
+  });
+  it('says clearly which pair is needed', () => {
+    expect(pairMismatchMessage({ known: 'en', target: 'es' }, { known: 'en', target: 'fr' })).toBe('You and your friend need the same language pair (English → Spanish).');
+    expect(pairMismatchMessage(null, { known: 'en', target: 'fr' })).toMatch(/same language pair/);
+  });
+});

@@ -22,18 +22,18 @@ var FONTS = 'file://' + path.join(ROOT, 'css/fonts');
 var SCREEN = function (n) { return 'file://' + path.join(ASSETS, 'screens', n + '.png'); };
 var CHROME = process.env.CHROMIUM_PATH || (existsSync('/opt/pw-browsers/chromium-1194/chrome-linux/chrome') ? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' : undefined);
 
-var DISCLAIMER = 'Language Dash is a study aid, not affiliated with or endorsed by NBME, FSMB or NBOME.';
+var DISCLAIMER = 'Language Dash is a vocabulary game, not a language course and not a test of fluency.';
 
 /** id, headline (use [[word]] to highlight in gold), sub line, screen, accent, small print */
 export var CONCEPTS = [
-  { id: 'same-phone-time', head: 'Same phone time. [[Actually]] studying.', sub: 'Board-style questions as a runner game.', screen: 'run-b', accent: '#ffd23f', fine: DISCLAIMER },
-  { id: 'doomscroll-less', head: 'Doomscroll less. [[Diagnose]] more.', sub: '300 questions free. No ads.', screen: 'run-a', accent: '#7fe6ff', fine: DISCLAIMER },
-  { id: 'brain-rot', head: 'Brain rot friendly. [[Board-ready.]]', sub: 'It still teaches real vignettes.', screen: 'home', accent: '#ff7ac6', fine: DISCLAIMER },
-  { id: 'monster', head: 'The monster is your [[exam date.]]', sub: 'Run. Answer. Outrun it.', screen: 'run-b', accent: '#ff5d5d', fine: DISCLAIMER },
+  { id: 'same-phone-time', head: 'Same phone time. [[Actually]] learning.', sub: 'The 1,000 most common words, as a runner game.', screen: 'run-b', accent: '#ffd23f', fine: DISCLAIMER },
+  { id: 'doomscroll-less', head: 'Doomscroll less. [[Say]] more.', sub: '300 words free. No ads.', screen: 'run-a', accent: '#7fe6ff', fine: DISCLAIMER },
+  { id: 'brain-rot', head: 'Brain rot friendly. [[Travel-ready.]]', sub: 'It still teaches real, everyday words.', screen: 'home', accent: '#ff7ac6', fine: DISCLAIMER },
+  { id: 'monster', head: 'The Hush eats the words you [[forget.]]', sub: 'Run. Pick a gate. Outrun it.', screen: 'run-b', accent: '#ff5d5d', fine: DISCLAIMER },
   { id: 'streak', head: 'A streak that [[forgives]] you.', sub: 'Streak shields. Daily goal. Zero guilt.', screen: 'quests', accent: '#ffb347', fine: '' },
   { id: 'adhd-design', head: 'Study design with [[ADHD-friendly]] features.', sub: 'Short runs · instant feedback · rewards for every answer · reduced-motion mode', screen: 'home', accent: '#5af0a0', fine: 'Describes how the app is designed. It does not diagnose, treat or claim to help any condition.' },
-  { id: 'free-300', head: '[[300]] board questions. Free.', sub: '20 in every subject. Unlock all 3,010 with Pro.', screen: 'locker', accent: '#ffd23f', fine: DISCLAIMER },
-  { id: 'accessible', head: 'Study your way. [[Accessible]] by design.', sub: 'Dyslexia font · colorblind-safe · reduced motion · left-hand layout', screen: 'stats', accent: '#7fe6ff', fine: '' },
+  { id: 'free-300', head: '[[300]] words. Free.', sub: '15 languages. Unlock all 1,000 words with Pro.', screen: 'locker', accent: '#ffd23f', fine: DISCLAIMER },
+  { id: 'accessible', head: 'Learn your way. [[Accessible]] by design.', sub: 'Dyslexia font · colorblind-safe · reduced motion · left-hand layout', screen: 'stats', accent: '#7fe6ff', fine: '' },
   { id: 'beat-my-score', head: 'Beat my [[score.]] Seriously.', sub: 'Friends, study groups and a weekly Gauntlet.', screen: 'run-a', accent: '#c49bff', fine: DISCLAIMER }
 ];
 
@@ -81,7 +81,7 @@ function layout(c, f) {
     return '<div style="position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;display:flex;flex-direction:column;align-items:flex-start;gap:28px">' +
       '<div class="sub" style="font-size:' + ss + 'px">' + c.sub + '</div>' +
       '<div class="pill" style="position:static;font-size:' + ps + 'px;padding:12px 30px;border-width:5px">Free to start</div>' +
-      '<div class="logo" style="position:static;font-size:' + ls + 'px">DX DASH</div>' +
+      '<div class="logo" style="position:static;font-size:' + ls + 'px">LANGUAGE DASH</div>' +
       fine.replace('{F}', fs) + '</div>';
   }
   if (f === 'feed') {
@@ -110,8 +110,8 @@ export var VIDEOS = [
       [0, 2.2, '<div class="big shake">me: I\'ll <b>study</b> tonight</div>'],
       [1.4, 3.6, '<div class="big" style="top:1000px">also me:</div><div class="emoji" style="top:1180px">🧠🍟📱</div>'],
       [3.4, 6.2, '<div class="phoneBig"><img src="' + SCREEN('run-b') + '"></div><div class="stamp" style="top:260px">BRAIN ROT FRIENDLY</div>'],
-      [5.4, 8.6, '<div class="phoneBig" style="top:560px"><img src="' + SCREEN('run-a') + '"></div><div class="stamp" style="top:220px;background:#7fe6ff">CORRECT 💥 +COINS</div><div class="small" style="top:350px">(it still teaches real vignettes)</div>'],
-      [8.6, 12, '<div class="big" style="top:520px">Rot your brain <b>productively.</b></div><div class="pill2" style="top:1120px">FREE TO START</div><div class="logo2" style="top:1330px">DX DASH</div><div class="fine2">Language Dash is a study aid, not affiliated with NBME, FSMB or NBOME.</div>']
+      [5.4, 8.6, '<div class="phoneBig" style="top:560px"><img src="' + SCREEN('run-a') + '"></div><div class="stamp" style="top:220px;background:#7fe6ff">CORRECT 💥 +COINS</div><div class="small" style="top:350px">(it still teaches real words)</div>'],
+      [8.6, 12, '<div class="big" style="top:520px">Rot your brain <b>productively.</b></div><div class="pill2" style="top:1120px">FREE TO START</div><div class="logo2" style="top:1330px">LANGUAGE DASH</div><div class="fine2">Language Dash is a study aid, not affiliated with NBME, FSMB or NBOME.</div>']
     ]
   },
   {
@@ -120,7 +120,7 @@ export var VIDEOS = [
       [0, 3, '<div class="big" style="top:300px">It\'s 11:40pm.</div><div class="big" style="top:520px">You meant to do <b>one block.</b></div><div class="feed"><i></i><i></i><i></i><i></i></div>'],
       [3, 5.2, '<div class="big" style="top:420px">Same thumb.</div><div class="timer">0:45:12</div>'],
       [5, 9, '<div class="phoneBig" style="top:520px"><img src="' + SCREEN('run-b') + '"></div><div class="stamp" style="top:240px">DIFFERENT 5 MINUTES</div>'],
-      [9, 12, '<div class="big" style="top:560px">Make the scroll <b>count.</b></div><div class="pill2" style="top:1120px">FREE TO START</div><div class="logo2" style="top:1330px">DX DASH</div><div class="fine2">Language Dash is a study aid, not affiliated with NBME, FSMB or NBOME.</div>']
+      [9, 12, '<div class="big" style="top:560px">Make the scroll <b>count.</b></div><div class="pill2" style="top:1120px">FREE TO START</div><div class="logo2" style="top:1330px">LANGUAGE DASH</div><div class="fine2">Language Dash is a study aid, not affiliated with NBME, FSMB or NBOME.</div>']
     ]
   },
   {
@@ -131,7 +131,7 @@ export var VIDEOS = [
       [4.6, 7, '<div class="feat"><span>⚡️</span>Instant feedback</div>'],
       [6.8, 9.2, '<div class="feat"><span>🪙</span>A reward every answer</div>'],
       [9, 11.4, '<div class="feat"><span>🛡️</span>Streak shields</div>'],
-      [11.2, 14, '<div class="feat"><span>🎛️</span>Reduced-motion mode</div><div class="pill2" style="top:1120px">FREE TO START</div><div class="logo2" style="top:1330px">DX DASH</div><div class="fine2">Describes how the app is designed. It does not diagnose, treat or claim to help any condition.</div>']
+      [11.2, 14, '<div class="feat"><span>🎛️</span>Reduced-motion mode</div><div class="pill2" style="top:1120px">FREE TO START</div><div class="logo2" style="top:1330px">LANGUAGE DASH</div><div class="fine2">Describes how the app is designed. It does not diagnose, treat or claim to help any condition.</div>']
     ]
   }
 ];

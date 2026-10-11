@@ -8,7 +8,7 @@ The game is wrapped with [Capacitor](https://capacitorjs.com/): the same web cod
 
 - Android project (`android/`), app icon and splash screens in every size (generated from `assets/`), portrait lock, keep-screen-on, vibration permission.
 - Native behavior (`js/native.js`): Android back button (closes things in order, only leaves the app from Home), auto-pause when the app goes to the background, native haptics, status bar and splash handling, and email links (confirm address, reset password) that reopen the app.
-- Store requirements: in-app **account deletion** (Leaderboard → Account), **Privacy Policy** and **Terms of Use** pages (`public/privacy.html`, `public/terms.html`, linked in Settings), medical-education disclaimer, and the tip link hidden inside the apps (Apple and Google restrict external payment links).
+- Store requirements: in-app **account deletion** (Leaderboard → Account), **Privacy Policy** and **Terms of Use** pages (`public/privacy.html`, `public/terms.html`, linked in Settings), "not a language course" disclaimer, and the tip link hidden inside the apps (Apple and Google restrict external payment links).
 - Build tooling: `npm run app:build` (web build and sync), `npm run app:android` (also builds a debug APK), and GitHub Actions workflows `android.yml` (debug APK, plus a signed release bundle when secrets are set) and `ios.yml` (proves the iOS project builds).
 
 ## What only you can do

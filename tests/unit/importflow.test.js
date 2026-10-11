@@ -143,8 +143,8 @@ describe('using the importer screen like a person', () => {
     expect(status.textContent).toMatch(/Paste the AI/);   // empty box explains itself
     ai.value = aiReply;
     byText('Import as runner words').click();
-    expect(status.textContent).toMatch(/Imported 5 quiz cards/);
-    expect(customCards.getAll().length).toBe(before + 7);
+    expect(status.textContent).toMatch(/Imported 5 runner words/);
+    expect(customCards.getAll().length).toBe(before + 8);
     expect(paste).toBeTruthy();
     ankiImport.unmount();
   });

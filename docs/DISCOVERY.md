@@ -12,9 +12,9 @@ not affected.
 
 ## What a player sees (once released)
 
-- **Discover tab** in Friends: a study-buddy listing (exam, exam date, subjects, pace; time zone is read from the device)
+- **Discover tab** in Friends: a study-buddy listing (languages, goal, topics, pace; time zone is read from the device)
   that is **off until the player turns it on**, a ranked list of compatible players, and a search for public groups.
-- **Groups tab**: an owner can make a group public, tag its exam, and choose open joining or approval of each person.
+- **Groups tab**: an owner can make a group public, tag its language pair, and choose open joining or approval of each person.
 
 ## Safety built in
 
