@@ -241,8 +241,8 @@ export function buildAllSteps(ctx) {
     { id: 'back-home', title: 'Back to Home', target: tab('screenHome'), press: 'pass',
       text: 'That is everything. Tap Home to finish.' }
   ].filter(Boolean).filter(function (s) {
-    // (Versus and Friends need the backend: a build without one has neither button, so the tour skips them)
-    return FEATURES.backend || (s.id !== 'versus-btn' && s.id !== 'versus' && s.id !== 'friends');
+    // (Friends need the backend: a build without one has no Friends button, so the tour skips it; Versus is peer to peer and stays)
+    return FEATURES.backend || s.id !== 'friends';
   }).map(function (s) {
     if (typeof s.target === 'string') s.target = q(s.target);
     return s;

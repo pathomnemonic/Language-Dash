@@ -540,3 +540,15 @@ body.is-dying .side-card { opacity: 0; }
   .answer-choice { font-size: 18px; padding: 6px 8px 12px; }
   .answer-choice .lane-label { font-size: 11px; }
 }
+
+/* ---------- HUD tags that grow with their numbers ----------
+   The coin and score tags hold the numbers that get long (12,480 points, 3,250 coins), so they size to their content and
+   take the spare room; the small tags (streak, multiplier, hearts) keep their natural width. Nothing is cut off. */
+#hud .hud-row .hud-pill { flex: 0 0 auto; min-width: 0; }
+#hud .hud-row .hud-pill:has(#hudCoins), #hud .hud-row .hud-pill:has(#hudScore) { flex: 1 1 auto; min-width: max-content; }
+#hud .hud-row .hud-pill > span:not([aria-hidden]) { overflow: visible; }
+@media (max-width: 380px) {
+  #hud .hud-row { gap: 3px; }
+  #hud .hud-pill { padding: 3px 4px; font-size: 13px; }
+  #hud .hud-pill > span[aria-hidden], #hud .hud-pill .i { font-size: 13px; }
+}

@@ -86,6 +86,7 @@ import { track as trackEvent } from './analytics/index.js';
 import { skinTitle } from './game/skins.js';
 import { pairVoices } from './tts.js';
 import { setReadLangs } from './readaloud.js';
+import { planFeedback } from './lang/pacingplan.js';
 
 // A build with no backend (VITE_NO_BACKEND=1) has no Versus, Friends or leaderboards: CSS hides their buttons.
 if (!FEATURES.backend) document.documentElement.classList.add('no-backend');
@@ -1560,7 +1561,7 @@ function init() {
       clueLang: voices.known,
       answerLang: voices.target,
       clues: card.bw || [],
-      answers: gates.map(function (g) { return g.label; }),
+      answers: [], // only the hint is said now: the gate words stay silent (that would give the answer away); the right word is said after the gate
       secondsToLock: info && typeof info.secondsToLock === 'number' ? info.secondsToLock : 0
     });
   };
@@ -1568,6 +1569,8 @@ function init() {
   game.onEncounterResolve = function (card, wasCorrect, choice) {
     if (!wasCorrect) combo.miss(); // a miss takes one layer off the music, not all of them
     audio.cancelSpeech(); // the question is over
+    // Say the correct word in the language being learned (slower while a word is still new to the player)
+    if (!game._tutorial || storage.get('ttsEnabled')) audio.speakAnswer(card, { rate: planFeedback(card, wasCorrect, storage).speechRate });
     ui.showFeedback(card, wasCorrect, choice, game.mode === 'study' || !!game._tutorial);
     ui.flashScreen(wasCorrect);
     if (game.mode === 'study' && wasCorrect && !game._tutorial) {

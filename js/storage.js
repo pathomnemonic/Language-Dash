@@ -97,7 +97,7 @@ var DEFAULTS = {
     ambientVolume: 0.5,
 
     musicOn: true,
-    ttsEnabled: false,
+    ttsEnabled: true,
     characterVoices: true,     // the runner cheers when you score and sulks when you miss
     hapticsEnabled: true,
     dailyGoal: 20,

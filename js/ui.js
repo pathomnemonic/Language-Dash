@@ -112,6 +112,14 @@ function NAV_PARENT(screenId) {
 /** The question, the answers and the explanation must end above this share of the screen's height, which is where the player's head is. */
 export var HUD_LIMIT = 0.5;
 
+/** A number short enough for a small tag: 9,999 stays whole, 12,480 becomes 12.4k, 1,234,567 becomes 1.2M. */
+export function compactNumber(n) {
+  n = Math.floor(Number(n) || 0);
+  if (n < 10000) return String(n);
+  if (n < 1000000) return (Math.floor(n / 100) / 10) + 'k';
+  return (Math.floor(n / 100000) / 10) + 'M';
+}
+
 class UI {
   constructor() {
     this.characterPreview = null;
@@ -947,7 +955,7 @@ class UI {
 
   /** Just the score, for the steady tick of distance points (the rest of the bar changes only on answers and pick-ups). */
   updateHudScore(game) {
-    setText(document.getElementById('hudScore'), game.score);
+    setText(document.getElementById('hudScore'), compactNumber(game.score));
   }
 
   updateHud(game) {
@@ -956,8 +964,8 @@ class UI {
       streakPill.classList.toggle('hot', game.streak >= 5 && game.streak < 10);
       streakPill.classList.toggle('blaze', game.streak >= 10);
     }
-    setText(document.getElementById('hudCoins'), game.coins);
-    setText(document.getElementById('hudScore'), game.score);
+    setText(document.getElementById('hudCoins'), compactNumber(game.coins));
+    setText(document.getElementById('hudScore'), compactNumber(game.score));
     setText(document.getElementById('hudStreak'), game.streak);
     setText(document.getElementById('hudMulti'), game.multiplier);
     setText(document.getElementById('hudLives'), game.mode === 'study' ? '∞' : game.lives);
@@ -1122,7 +1130,7 @@ class UI {
   showFeedback(card, wasCorrect, choice, teachOnMiss) {
     this._teachOnMiss = teachOnMiss !== false;
     var fb = document.getElementById('feedbackEl');
-    this._fillPair(fb, card, wasCorrect ? '✓ ' : '✗ ');
+    this._fillPair(fb, card, wasCorrect ? '✓ ' : '✗ ', !!teachOnMiss); // (no tap-to-hear button while running: nobody can tap it in time, the word is said automatically)
     fb.className = 'show ' + (wasCorrect ? 'ok' : 'bad');
     // Only Study (which waits for you) and the tutorial show the word card as it happens; in a scored run
     // there is no time to read it, and the end-of-run review has it.
@@ -1141,7 +1149,7 @@ class UI {
    * Fill a container with the correct pair: "hint = word", the pronunciation line under it (when the word has one
    * and the player has pronunciation on), and a small 🔊 "hear it" button when the device can speak.
    */
-  _fillPair(el, card, prefix) {
+  _fillPair(el, card, prefix, hear) {
     clearElement(el);
     var pair = createElement('span', { className: 'fb-pair' });
     var hint = (card.bw || []).join(' • ');
@@ -1152,7 +1160,7 @@ class UI {
     pair.appendChild(word);
     el.appendChild(pair);
     if (card.ansRoman && getShowRoman()) el.appendChild(createElement('span', { className: 'fb-roman', text: card.ansRoman }));
-    if (canSpeak()) el.appendChild(this._hearButton(card));
+    if (hear !== false && canSpeak()) el.appendChild(this._hearButton(card));
   }
 
   /** A small 🔊 button that says the hint and then the word, each in its own language's voice. */

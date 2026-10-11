@@ -43,7 +43,9 @@ function flag(value) {
 }
 
 export var FEATURES = {
-  backend: !flag(import.meta.env && import.meta.env.VITE_NO_BACKEND),
+  // Accounts, friends, leaderboards and paid items need a Supabase project (docs/SILO.md). Until the build is given its URL and
+  // key none of that is shown, so nobody is offered a profile or friends list that cannot work yet.
+  backend: !flag(import.meta.env && import.meta.env.VITE_NO_BACKEND) && !!(import.meta.env && import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY),
   cohorts: flag(import.meta.env && import.meta.env.VITE_FEATURE_COHORTS),
   globalLeaderboard: flag(import.meta.env && import.meta.env.VITE_FEATURE_GLOBAL_LEADERBOARD),
   discovery: flag(import.meta.env && import.meta.env.VITE_FEATURE_DISCOVERY),

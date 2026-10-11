@@ -7,6 +7,9 @@
 
 import { storage } from '../storage.js';
 import { getNextSkin } from './skins.js';
+import { planFeedback } from '../lang/pacingplan.js';
+import { adaptPool, frontierRank } from '../lang/pacing.js';
+import { getPairOrDefault } from '../lang/pair.js';
 import { getCardPool, pickCard, nextSeededIndex, spawnGates, flashGateResult, stampGateCorrect } from './gates.js';
 import { monsterOnAnswer, monsterPolicy } from './monsterbehavior.js';
 import { HAZARDS } from './hazards.js';
@@ -56,6 +59,14 @@ if (this.seededCardOrder && !(this._modeConfig && Array.isArray(this._modeConfig
 if (poolResult.error || poolResult.cards.length === 0) {
     this._endRun(RUN_END_REASONS.NO_MATCHING_CARDS);
     return;
+}
+
+// A normal run adapts to the player's level in this language: the most common words first, the pool widening as words
+// are mastered (see lang/pacing.js). Seeded and planned runs, and a player who picked word levels, are not changed.
+if (!this.seededCardOrder && !(this._modeConfig && Array.isArray(this._modeConfig.planCardIds)) && !this._tutorial &&
+    !(storage.get('selectedExams') || []).length && this.mode !== GAME_MODES.WEAKNESS) {
+  var pairNow = getPairOrDefault();
+  poolResult = { cards: adaptPool(poolResult.cards, frontierRank(storage.get('cardStats') || {}, pairNow.known, pairNow.target), Math.random), error: poolResult.error };
 }
 
 var pickResult;
@@ -363,7 +374,10 @@ card = pickResult ? pickResult.card : null;
       }
     }
 
-    this.feedbackTimer = 1.2;
+    // How long the right word stays up adapts to the player: longer for words still new to them, after a miss, and for
+    // scripts they cannot read yet (see lang/pacing.js). Confident players on known words get a short reveal.
+    var plan = this._tutorial ? null : planFeedback(card, ok, storage);
+    this.feedbackTimer = plan ? plan.holdSeconds : 1.2;
     this.rushBonus = 0;
 
     // Emit encounter resolved
@@ -378,10 +392,10 @@ card = pickResult ? pickResult.card : null;
     } else if (!ok) {
       this.teachTimer = 0; // no explanation on screen mid-run: the end-of-run review has it
       this.waitingForNext = true;
-      this.nextEncounterTimer = 1.0;
+      this.nextEncounterTimer = Math.max(1.0, plan ? plan.nextDelay : 0);
     } else {
       this.waitingForNext = true;
-      this.nextEncounterTimer = 0.05;
+      this.nextEncounterTimer = Math.max(0.05, plan ? plan.nextDelay : 0);
     }
 
     // The tutorial brings the next question itself, and clears the gates once the result has been seen

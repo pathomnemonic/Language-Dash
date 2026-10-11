@@ -471,8 +471,7 @@
 .mode-btn::before { left: -7px; }
 .mode-btn::after { right: -7px; }
 .mode-btn .nav-dot { z-index: 3; }
-.no-backend .mode-row { grid-template-columns: repeat(2, 1fr); }
-.no-backend #leaderboardBtn, .no-backend #multiplayerBtn { display: none !important; }
+.no-backend #leaderboardBtn, .no-backend #profileCornerBtn, .no-backend .home-profile-btn { display: none !important; } /* friends and the account button need Supabase */
 
 /* ---------- the tab bar: a strip of paper tabs, the selected one a stamped red tab ---------- */
 .bottom-nav {

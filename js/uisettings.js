@@ -172,7 +172,7 @@ export var settingsMethods = {
         { key: 'masterVolume', label: '🔊 Master volume', desc: 'The overall loudness of everything.', type: 'range', min: 0, max: 1, step: 0.1, pct: true },
         { key: 'sfxVolume', label: '💥 Sound effects', desc: 'Jumps, coins, right and wrong gates, menus and rewards.', type: 'range', min: 0, max: 1, step: 0.1, pct: true },
         { key: 'musicVolume', label: '🎶 Music volume', desc: 'How loud the background music is.', type: 'range', min: 0, max: 1, step: 0.1, pct: true },
-        { key: 'ttsEnabled', label: '🗣 Say the words aloud', desc: 'Your device says the hint in your language and the gate words in the language you are learning, each in its own voice.', type: 'toggle' }
+        { key: 'ttsEnabled', label: '🗣 Say the words aloud', desc: 'On by default. Your device says the hint word as it appears, then the correct word in the language you are learning right after each gate (right or wrong), each in its own voice.', type: 'toggle' }
       ].concat(canVibrate() ? [
         { key: 'hapticsEnabled', label: '📳 Vibration', desc: 'A short buzz when you answer, collect a power-up or get caught. Turn off if you prefer your phone still.', type: 'toggle' }
       ] : []).concat(FEATURES.characterVoices ? [

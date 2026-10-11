@@ -27,7 +27,7 @@ import { storage } from './storage.js';
 import { isNative, nativeHaptic } from './native.js';
 import { say as sayCharacter } from './charactervoices.js';
 import { planReading, updateWps, countWords, DEFAULT_WPS } from './readaloud.js';
-import { speak, canSpeak, cancelSpeech as stopSpeaking } from './tts.js';
+import { speak, canSpeak, pairVoices, cancelSpeech as stopSpeaking } from './tts.js';
 
 // ===== HAPTIC LANGUAGE =====
 // Every important moment has its own buzz, so the game can be played by feel: a crisp tick when you are right, a heavy
@@ -811,7 +811,7 @@ class AudioEngine {
       ambientVolume: 0.5,
       voiceVolume: 0.7,
       musicOn: true,
-      ttsEnabled: false,
+      ttsEnabled: true,
       hapticsEnabled: true
     };
 
@@ -906,7 +906,7 @@ class AudioEngine {
       ambientVolume: storage.get('ambientVolume') ?? 0.5,
       voiceVolume: storage.get('voiceVolume') ?? 0.7,
       musicOn: storage.get('musicOn') ?? true,
-      ttsEnabled: storage.get('ttsEnabled') ?? false,
+      ttsEnabled: storage.get('ttsEnabled') ?? true,
       hapticsEnabled: storage.get('hapticsEnabled') ?? true
     };
     this._applyBusGains();
@@ -1660,7 +1660,7 @@ class AudioEngine {
     this._speaking = true;
     speak(plan.text, {
       rate: plan.rate,
-      lang: 'en-US',
+      lang: pairVoices().known,
       volume: Math.min(1, this._settings.masterVolume * Math.max(this._settings.voiceVolume, 0.5) * 1.3),
       onstart: function () { startedAt = Date.now(); self._duckMusic(true); },
       onend: function () {
@@ -1669,6 +1669,29 @@ class AudioEngine {
       }
     });
     return plan;
+  }
+
+  /**
+   * After a gate (right or wrong), say the correct word in the language being learned, in that language's voice.
+   * Slower for a word the player is still meeting, so the sound has time to land. Off with Settings -> Sound -> Say the words aloud.
+   * @param {{ans?: string}} card
+   * @param {{rate?: number}} [opts]
+   */
+  speakAnswer(card, opts) {
+    if (!this._settings.ttsEnabled || !canSpeak() || this._paused || !card || !card.ans) return false;
+    opts = opts || {};
+    var self = this;
+    this.cancelSpeech();
+    var voices = pairVoices();
+    this._speaking = true;
+    speak(String(card.ans), {
+      rate: opts.rate || 0.85,
+      lang: voices.target,
+      volume: Math.min(1, this._settings.masterVolume * Math.max(this._settings.voiceVolume, 0.5) * 1.3),
+      onstart: function () { self._duckMusic(true); },
+      onend: function () { self._duckMusic(false); }
+    });
+    return true;
   }
 
   /** Turn the music down while a question is read (the next mood update would otherwise undo it, so it is remembered). */

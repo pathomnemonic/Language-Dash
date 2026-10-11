@@ -26,7 +26,7 @@ export var HOME_DISCOVERIES = [
   { id: 'tab:locker', selector: '.nav-item[data-screen="screenShop"]', label: 'Locker: spend your coins' },
   { id: 'tab:quests', selector: '.nav-item[data-screen="screenQuests"]', label: 'Quests: daily goals' },
   { id: 'tab:profile', selector: '.nav-item[data-screen="screenProfile"]', label: 'Profile: your name and badges' }
-].filter(function (d) { return FEATURES.backend || (d.id !== 'home:versus' && d.id !== 'home:friends'); });
+].filter(function (d) { return FEATURES.backend || d.id !== 'home:friends'; });
 /** Every one of them shows a dot from the start: the how-to-play only covers the run and Home, the rest teach themselves from their dot. */
 export var HOME_DOT_LIMIT = 99;
 
