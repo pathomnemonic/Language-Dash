@@ -6,10 +6,11 @@
 //
 //   node tools/build-model.mjs <source.glb|gltf> <dest.glb> [--keep Clip1,Clip2] [--tex 512] [--rename Old=New,...]
 //
+// (the glTF sample Fox ships without normals, which lit as solid black: they are generated here.)
 // FBX sources are first converted with tools/fbx-to-glb.mjs.
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS, KHRMaterialsUnlit } from '@gltf-transform/extensions';
-import { dedup, prune, quantize, meshopt, resample, textureCompress } from '@gltf-transform/functions';
+import { dedup, prune, quantize, meshopt, resample, textureCompress, normals, weld } from '@gltf-transform/functions';
 import { MeshoptEncoder, MeshoptDecoder } from 'meshoptimizer';
 import sharp from 'sharp';
 import { statSync } from 'node:fs';
@@ -50,7 +51,7 @@ let dropped = 0;
 for (const anim of root.listAnimations()) if (!keep.has(anim.getName())) { anim.dispose(); dropped++; }
 
 await doc.transform(
-  resample(), dedup({ keepUniqueNames: true }), prune(),
+  weld(), normals({ overwrite: false }), resample(), dedup({ keepUniqueNames: true }), prune(),
   textureCompress({ encoder: sharp, resize: [texMax, texMax] }),
   quantize(), prune(), meshopt({ encoder: MeshoptEncoder, level: 'medium' })
 );

@@ -41,6 +41,7 @@ import { buildMonster } from './monsters.js';
 import { buildTrack, updateScrollers, updateRunningLights } from './track.js';
 import { updateAnimators } from './mapfx.js';
 import { SKINS } from './skins.js';
+import { gearOnBack } from './cosmetics.js';
 
 // Gesture constants
 var GESTURE_NONE = 0;
@@ -400,7 +401,10 @@ export class CharacterPreview {
      */
     _faceForTrail() {
         var trail = this.showTrail !== false && this.trailSystem && this.trailSystem.getConfig();
-        this.targetRotationY = trail && !this.previewMonsterId ? 0 : Math.PI;
+        // gear worn on the back is shown from behind (in the Wardrobe)
+        var gear = (this.previewOverrides && this.previewOverrides.gear) || (this.showWardrobe && (storage.get('equipped') || {}).gear);
+        var back = this.showWardrobe && gearOnBack(gear);
+        this.targetRotationY = (trail || back) && !this.previewMonsterId ? 0 : Math.PI;
     }
 
     previewItem(itemId, slot) {
@@ -423,6 +427,8 @@ export class CharacterPreview {
             this.previewOverrides = {};
         }
         this.previewOverrides[slot] = itemId;
+        if (slot === 'gear') { this.showWardrobe = true; this._faceForTrail(); }
+        else if (slot === 'hat' || slot === 'clothing') this.targetRotationY = Math.PI; // shown from the front
         this.rebuildCharacter();
     }
 

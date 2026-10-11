@@ -1075,6 +1075,7 @@ export var settingsMethods = {
     if (!cp) return;
     var tab = this._lockerTab;
     cp.showTrail = tab === 'trails';
+    cp.showWardrobe = tab === 'wardrobe';
     cp.clearPreview();
     if (tab === 'monsters') {
       var monster = (storage.get('equipped') || {}).monster;

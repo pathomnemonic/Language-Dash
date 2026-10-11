@@ -409,8 +409,8 @@ var CLOTHES = {
     torsoShell(g, c, { h: 0.8, y: 0.96 });
     [-1, 1].forEach(function (sd) {
       add(g, box(0.06, 0.8, 0.02), 0xfffbf2, { p: [sd * 0.11, 0.96, -0.3], noOutline: true });
-      add(g, box(0.28, 0.2, 0.2), c, { p: [sd * 0.46, 1.17, 0.0], r: [0, 0, sd * -0.6] });
-      add(g, box(0.28, 0.035, 0.205), 0xfffbf2, { p: [sd * 0.53, 1.07, 0.0], r: [0, 0, sd * -0.6], noOutline: true });
+      add(g, box(0.26, 0.4, 0.22), c, { p: [sd * 0.44, 1.06, 0.0], r: [0, 0, sd * -0.12] });
+      add(g, box(0.265, 0.035, 0.225), 0xfffbf2, { p: [sd * 0.45, 0.87, 0.0], r: [0, 0, sd * -0.12], noOutline: true });
     });
     add(g, new THREE.CircleGeometry(0.15, 16), 0xfffbf2, { p: [0, 1.05, 0.289], ds: true, noOutline: true });
     add(g, new THREE.CircleGeometry(0.1, 16), c, { p: [0, 1.05, 0.292], ds: true, noOutline: true });
@@ -434,7 +434,7 @@ var CLOTHES = {
     add(g, box(0.05, 0.8, 0.02), 0x1b2a41, { p: [0, 0.94, -0.33], noOutline: true });
     [-1, 1].forEach(function (sd) {
       add(g, box(0.16, 0.14, 0.04), 0x1b2a41, { p: [sd * 0.2, 0.72, -0.3], noOutline: true });
-      add(g, box(0.26, 0.2, 0.24), c, { p: [sd * 0.46, 1.15, 0.0], r: [0, 0, sd * -0.5] });
+      add(g, box(0.19, 0.36, 0.24), c, { p: [sd * 0.43, 1.08, 0.0] });
       add(g, torus(0.07, 0.035, Math.PI * 2, 6, 10), 0xe9dcc2, { p: [sd * 0.58, 1.01, 0.0], r: [0, Math.PI / 2, 0] });
     });
     add(g, torus(0.37, 0.035, Math.PI * 2, 6, 24), 0x1b2a41, { p: [0, 0.55, 0], r: [Math.PI / 2, 0, 0], s: [1.1, 0.86, 1], noOutline: true });
@@ -442,8 +442,8 @@ var CLOTHES = {
   cloth_linen: function (g, c) {
     torsoShell(g, c, { rt: 0.325, rb: 0.33, h: 0.78 });
     [-1, 1].forEach(function (sd) {
-      add(g, box(0.24, 0.22, 0.2), c, { p: [sd * 0.45, 1.15, 0.0], r: [0, 0, sd * -0.55] });
-      add(g, box(0.24, 0.035, 0.205), 0x8a9a6a, { p: [sd * 0.52, 1.07, 0.0], r: [0, 0, sd * -0.55], noOutline: true });
+      add(g, box(0.17, 0.34, 0.2), c, { p: [sd * 0.43, 1.1, 0.0] });
+      add(g, box(0.195, 0.035, 0.245), 0x8a9a6a, { p: [sd * 0.43, 0.92, 0.0], noOutline: true });
       add(g, box(0.06, 0.2, 0.025), 0xe4d4b0, { p: [sd * 0.07, 1.33, -0.27], r: [0.15, 0, sd * 0.4] });
     });
     for (var i = 0; i < 4; i++) add(g, sph(0.018, 6, 5), 0x7a5c3a, { p: [0, 1.2 - i * 0.14, -0.288], noOutline: true });
@@ -454,8 +454,8 @@ var CLOTHES = {
     add(g, new THREE.ConeGeometry(0.22, 0.34, 12, 1, true), c, { ds: true, p: [0, 1.22, 0.24], r: [-0.5, 0, 0] });
     add(g, torus(0.22, 0.045, Math.PI * 2, 6, 18), c, { p: [0, 1.38, 0.0], r: [Math.PI / 2, 0, 0] });
     [-1, 1].forEach(function (sd) {
-      add(g, box(0.26, 0.22, 0.24), c, { p: [sd * 0.47, 1.14, 0.0], r: [0, 0, sd * -0.5] });
-      add(g, box(0.27, 0.05, 0.25), 0xd9a63a, { p: [sd * 0.55, 1.03, 0.0], r: [0, 0, sd * -0.5], noOutline: true });
+      add(g, box(0.17, 0.34, 0.24), c, { p: [sd * 0.43, 1.1, 0.0] });
+      add(g, box(0.2, 0.05, 0.25), 0xd9a63a, { p: [sd * 0.43, 0.92, 0.0], noOutline: true });
     });
     for (var i = 0; i < 4; i++) add(g, cyl(0.025, 0.025, 0.02, 8), 0x1b2a41, { p: [0, 1.2 - i * 0.17, -0.31], r: [Math.PI / 2, 0, 0], noOutline: true });
     add(g, box(0.28, 0.1, 0.03), 0xd9a63a, { p: [0, 0.65, -0.34], noOutline: true });
@@ -463,8 +463,8 @@ var CLOTHES = {
   cloth_denim: function (g, c) {
     torsoShell(g, c, { rt: 0.335, rb: 0.32, h: 0.7, y: 0.99 });
     [-1, 1].forEach(function (sd) {
-      add(g, box(0.25, 0.22, 0.22), c, { p: [sd * 0.46, 1.16, 0.0], r: [0, 0, sd * -0.55] });
-      add(g, box(0.26, 0.04, 0.225), 0x8fb1d6, { p: [sd * 0.53, 1.07, 0.0], r: [0, 0, sd * -0.55], noOutline: true });
+      add(g, box(0.17, 0.34, 0.22), c, { p: [sd * 0.43, 1.1, 0.0] });
+      add(g, box(0.175, 0.04, 0.225), 0x8fb1d6, { p: [sd * 0.43, 0.95, 0.0], noOutline: true });
       add(g, box(0.11, 0.1, 0.04), 0x8fb1d6, { p: [sd * 0.17, 1.12, -0.285], noOutline: true });
       add(g, sph(0.015, 6, 5), 0xd9a63a, { p: [sd * 0.17, 1.12, -0.31], noOutline: true });
       add(g, box(0.1, 0.12, 0.05), c, { p: [sd * 0.1, 1.34, -0.25], r: [0.2, 0, sd * 0.5] });
@@ -476,7 +476,7 @@ var CLOTHES = {
   cloth_tracksuit: function (g, c) {
     torsoShell(g, c, { h: 0.8, y: 0.96 });
     [-1, 1].forEach(function (sd) {
-      add(g, box(0.25, 0.22, 0.22), c, { p: [sd * 0.46, 1.16, 0.0], r: [0, 0, sd * -0.55] });
+      add(g, box(0.17, 0.34, 0.22), c, { p: [sd * 0.43, 1.1, 0.0] });
       add(g, box(0.04, 0.5, 0.012), 0xfffbf2, { p: [sd * 0.36, 0.95, -0.15], r: [0, 0, 0], noOutline: true });
       add(g, box(0.04, 0.5, 0.012), 0xfffbf2, { p: [sd * 0.395, 0.95, -0.085], r: [0, 0, 0], noOutline: true });
       add(g, box(0.1, 0.55, 0.22), c, { p: [sd * 0.14, 0.35, 0.0] });
@@ -496,7 +496,7 @@ var CLOTHES = {
     }
     [-1, 1].forEach(function (sd) {
       add(g, box(0.09, 0.14, 0.11), c, { p: [sd * 0.3, 1.31, 0.0] });
-      add(g, box(0.26, 0.22, 0.2), 0xfffbf2, { p: [sd * 0.46, 1.16, 0.0], r: [0, 0, sd * -0.55] });
+      add(g, box(0.17, 0.34, 0.2), 0xfffbf2, { p: [sd * 0.43, 1.1, 0.0] });
     });
     add(g, new THREE.CircleGeometry(0.05, 6), 0xfffbf2, { p: [0.17, 0.82, -0.325], ds: true, noOutline: true });
   }
@@ -508,6 +508,11 @@ var CLOTHES = {
 export var HAT_IDS = Object.keys(HATS);
 export var GEAR_IDS = Object.keys(GEAR);
 export var CLOTHING_IDS = Object.keys(CLOTHES);
+
+/** Gear worn on the back (the Locker turns the runner round to show it). */
+export function gearOnBack(id) {
+  return ['gear_suitcase', 'gear_spyglass', 'gear_kite', 'gear_umbrella', 'gear_ukulele', 'gear_fan', 'gear_globe', 'gear_tube'].indexOf(id) >= 0;
+}
 
 /** Where a gear item rides on the body ('chest' or 'hip'). */
 export function gearSlot(id) { return GEAR_SLOT[id] || 'chest'; }
