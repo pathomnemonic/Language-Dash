@@ -2,10 +2,10 @@ import { describe, it, expect } from 'vitest';
 import * as THREE from 'three';
 import { LOCKER_ITEMS } from '../../js/game/shopdata.js';
 import { TRAIL_SETTINGS, TrailSystem } from '../../js/game/trails.js';
-import { TRAIL_SHAPES, getTrailGeometry, shapeWords } from '../../js/game/trailshapes.js';
+import { TRAIL_SHAPES, getTrailGeometry, shapeWords, shapeVariants } from '../../js/game/trailshapes.js';
 
 /**
- * "Hearts" used to stream pink circles. Every trail's description must now say what it really draws, and every
+ * A trail is never a coloured dot. Every trail's description must now say what it really draws, and every
  * trail must draw a shape of its own.
  */
 const trails = LOCKER_ITEMS.filter((i) => i.type === 'trail' && i.id !== 'trail_none');
@@ -52,7 +52,9 @@ describe('trails draw what their description says', () => {
       for (let i = 0; i < 90; i++) sys.update(1 / 60, 0, 0, 0, 5);
       const live = sys.pool.filter((p) => p.active);
       expect(live.length, t.id).toBeGreaterThan(0);
-      live.forEach((p) => expect(p.mesh.geometry, t.id).toBe(getTrailGeometry(TRAIL_SETTINGS[t.id].shape)));
+      const own = [];
+      for (let v = 0; v < shapeVariants(TRAIL_SETTINGS[t.id].shape); v++) own.push(getTrailGeometry(TRAIL_SETTINGS[t.id].shape, v));
+      live.forEach((p) => expect(own, t.id).toContain(p.mesh.geometry));
     });
   });
 });

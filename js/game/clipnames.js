@@ -13,12 +13,12 @@
  * to `fallback`, so every model still animates.
  */
 export var STATE_CLIPS = {
-  run: { match: [/^run$/i, /^running$/i, /^running_a$/i, /^fast_flying$/i, /^walk$/i, /^walking$/i, /^flying$/i, /^flying_idle$/i, /run/i, /walk/i, /fly/i], loop: true, scale: 1.0 },
+  run: { match: [/^run$/i, /^running$/i, /^running_a$/i, /^sprint$/i, /^gallop$/i, /^fast_flying$/i, /^walk$/i, /^slime_walk$/i, /^walking$/i, /^flying$/i, /^flying_idle$/i, /run/i, /walk/i, /fly/i], loop: true, scale: 1.0 },
   jump: { match: [/^jump$/i, /^jump_full_short$/i, /^runningjump$/i, /^walkjump$/i, /^jump_idle$/i, /jump/i, /hop/i, /^roll$/i], loop: false, scale: 1.5, clamp: true, fallback: 'run' }, // (a character with no jump clip tumbles in the air with its roll)
   slide: { match: [/^roll$/i, /^duck$/i, /slide/i, /crouch/i], loop: true, scale: 1.5, fallback: 'run' },
   celebrate: { match: [/^wave$/i, /^dance$/i, /^thumbsup$/i, /^clapping$/i, /^yes$/i, /victory|cheer|emote/i], loop: false, scale: 1.2, clamp: true, fallback: 'idle' },
   death: { match: [/^death$/i, /^death_a$/i, /die|dead|faint/i, /death/i, /^hitreact$/i, /^hitrecieve$/i], loop: false, scale: 1.0, clamp: true, fallback: 'idle' },
-  idle: { match: [/^idle$/i, /^standing$/i, /^flying_idle$/i, /^idle_neutral$/i, /idle/i, /stand/i, /hover/i], loop: true, scale: 1.0, fallback: 'run' },
+  idle: { match: [/^idle$/i, /^survey$/i, /^standing$/i, /^flying_idle$/i, /^idle_neutral$/i, /idle/i, /stand/i, /hover/i], loop: true, scale: 1.0, fallback: 'run' },
   wave: { match: [/^wave$/i, /^dance$/i, /hello/i], loop: false, scale: 1.0, fallback: 'idle' },
   // Used by monsters: the strike when it lunges at the runner
   attack: { match: [/^attack$/i, /^headbutt$/i, /^punch$/i, /^bite_front$/i, /^dragon_attack$/i, /attack/i, /bite|claw|slash|smash/i], loop: false, scale: 1.3, clamp: false, fallback: 'idle' }
@@ -26,21 +26,21 @@ export var STATE_CLIPS = {
 
 /**
  * Each hero's own way to celebrate a right answer, where its pack has a clip that suits it better than the generic
- * wave: the king flourishes his sword, the ninja throws a fist, the undead lash out. Keyed by the model's file name
- * (without .glb); patterns run against the clip's base name. A hero not listed (or whose clip is missing) keeps the wave.
+ * wave. Keyed by the model's file name (without .glb); patterns run against the clip's base name. A hero not listed
+ * (or whose clip is missing) keeps the generic celebrate/wave/idle choice.
  */
-export var HERO_CELEBRATE = {
-  king: [/^sword_slash$/i],
-  adventurer: [/^sword_slash$/i],
-  hooded: [/^sword_slash$/i],
-  ninja: [/^punch$/i],
-  orc: [/^punch$/i],
-  explorer: [/^punch$/i],
-  skeleton: [/^attack$/i],
-  zombie: [/^attack$/i]
+export var HERO_CELEBRATE = {};
+
+/**
+ * How fast a hero's run cycle plays, where its pack only ships a walk (the farm animals) or a slow gait. Keyed by the
+ * model's file name; a hero not listed plays its run at 1x.
+ */
+export var HERO_RUN_SCALE = {
+  llama: 1.9, zebra: 1.7, pug: 1.9, cow: 1.9, sheep: 1.9, horse: 1.7, pig: 1.9,
+  wolf: 1.4, cat: 1.5, dog: 1.5
 };
 
-/** The model file name a catalog path stands for: "characters/king.glb" -> "king". */
+/** The model file name a catalog path stands for: "heroes/fox.glb" -> "fox". */
 export function heroKeyFor(url) {
   var m = /([^/]+?)\.glb(\?.*)?$/i.exec(String(url || ''));
   return m ? m[1].toLowerCase() : '';

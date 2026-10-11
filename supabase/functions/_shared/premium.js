@@ -21,9 +21,9 @@ export var PREMIUM_ITEMS = {
   map_aquarium_imaging_center: 149,
   map_dna_helix_tunnel: 149,
   // trails
-  trail_fire: 99,          // Fire Trail
-  trail_neural: 99,        // Neural Sparks
-  trail_blood: 99          // Blood Cells
+  trail_lanterns: 99,       // Sky Lanterns
+  trail_fireflies: 99,      // Fireflies
+  trail_sakura: 99         // Cherry Blossoms
 };
 
 /** Is this item sold for money only? */

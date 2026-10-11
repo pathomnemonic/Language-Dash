@@ -142,11 +142,11 @@ describe('Pro screens once switched on', () => {
     expect(proGiftState().eligible).toBe(false); // not during the trial
     put({});
     expect(proGiftState().available).toBe(true);
-    expect(storage.claimProGift('trail_pills')).toBe(true);
-    expect(storage.ownsItem('trail_pills')).toBe(true);
-    expect(proGiftState()).toMatchObject({ eligible: true, available: false, used: true, item: 'trail_pills' });
-    expect(storage.claimProGift('trail_fire')).toBe(false); // spent for good, not "next month"
-    expect(storage.ownsItem('trail_fire')).toBe(false);
+    expect(storage.claimProGift('trail_leaves')).toBe(true);
+    expect(storage.ownsItem('trail_leaves')).toBe(true);
+    expect(proGiftState()).toMatchObject({ eligible: true, available: false, used: true, item: 'trail_leaves' });
+    expect(storage.claimProGift('trail_lanterns')).toBe(false); // spent for good, not "next month"
+    expect(storage.ownsItem('trail_lanterns')).toBe(false);
     const later = Date.now() + 400 * 86400000;
     expect(proGiftState(later).available).toBe(false);
   });

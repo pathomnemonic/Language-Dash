@@ -83,14 +83,14 @@ describe('a purchase, start to finish, through the real database', () => {
 
   it('lifetime, an item and the old library all arrive, and a refund of one takes back only that one', async () => {
     await handleEvent(session({ payment_intent: 'pi_l', subscription: null }, { plan: 'lifetime' }), deps());
-    await handleEvent(session({ payment_intent: 'pi_i', subscription: null }, { kind: 'item', item_id: 'trail_fire' }), deps());
+    await handleEvent(session({ payment_intent: 'pi_i', subscription: null }, { kind: 'item', item_id: 'trail_lanterns' }), deps());
     await handleEvent(session({ payment_intent: 'pi_b', subscription: null }, { plan: 'library' }), deps());
     let r = await mine(U);
     expect(r).toMatchObject({ active: true, plan: 'lifetime', library: true });
-    expect(r.items).toEqual(['trail_fire']);
+    expect(r.items).toEqual(['trail_lanterns']);
     expect(new Date(r.until).getTime()).toBeGreaterThan(Date.now() + 3000 * DAY * 1000);
 
-    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { user_id: U, kind: 'item', item_id: 'trail_fire' } } } }, deps());
+    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { user_id: U, kind: 'item', item_id: 'trail_lanterns' } } } }, deps());
     r = await mine(U);
     expect(r.items).toEqual([]);
     expect(r.active).toBe(true);
@@ -137,22 +137,22 @@ describe('a purchase, start to finish, through the real database', () => {
   it('paying twice for one item keeps the first payment\'s item, returns the second, and that refund takes nothing', async () => {
     const refunds = [];
     const d = deps({ refundPayment: async (pi) => { refunds.push(pi); } });
-    const pay = (pi) => session({ payment_intent: pi, subscription: null }, { kind: 'item', item_id: 'trail_fire' });
+    const pay = (pi) => session({ payment_intent: pi, subscription: null }, { kind: 'item', item_id: 'trail_lanterns' });
     expect((await handleEvent(pay('pi_a'), d)).action).toBe('item');
     expect((await handleEvent(pay('pi_a'), d)).action).toBe('item');                 // (the same event again)
     expect(refunds).toEqual([]);
     expect((await handleEvent(pay('pi_b'), d)).action).toBe('item_duplicate_refunded');
     expect(refunds).toEqual(['pi_b']);
-    const second = { id: 'ch_b', refunded: true, payment_intent: 'pi_b', metadata: { user_id: U, kind: 'item', item_id: 'trail_fire' } };
+    const second = { id: 'ch_b', refunded: true, payment_intent: 'pi_b', metadata: { user_id: U, kind: 'item', item_id: 'trail_lanterns' } };
     await handleEvent({ type: 'charge.refunded', data: { object: second } }, deps({ getCharge: async () => second }));
-    expect((await mine(U)).items).toEqual(['trail_fire']);                            // the first payment still owns it
-    const first = { id: 'ch_a', refunded: true, payment_intent: 'pi_a', metadata: { user_id: U, kind: 'item', item_id: 'trail_fire' } };
+    expect((await mine(U)).items).toEqual(['trail_lanterns']);                            // the first payment still owns it
+    const first = { id: 'ch_a', refunded: true, payment_intent: 'pi_a', metadata: { user_id: U, kind: 'item', item_id: 'trail_lanterns' } };
     await handleEvent({ type: 'charge.refunded', data: { object: first } }, deps({ getCharge: async () => first }));
     expect((await mine(U)).items).toEqual([]);                                        // refunding the first one does take it
   });
 
   it('one person\'s purchase never shows on another\'s account', async () => {
-    await handleEvent(session({ payment_intent: 'pi_i', subscription: null }, { kind: 'item', item_id: 'trail_fire' }), deps());
+    await handleEvent(session({ payment_intent: 'pi_i', subscription: null }, { kind: 'item', item_id: 'trail_lanterns' }), deps());
     await handleEvent(session({ subscription: 'sub_1' }, { plan: 'monthly' }), deps());
     const other = await mine(V);
     expect(other.active).toBe(false);
@@ -207,7 +207,7 @@ describe('payment events in any order', () => {
   const shuffle = (r, a) => { const x = a.slice(); for (let i = x.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [x[i], x[j]] = [x[j], x[i]]; } return x; };
 
   const KINDS = [
-    { id: 'trail_fire', meta: { kind: 'item', item_id: 'trail_fire' } },
+    { id: 'trail_lanterns', meta: { kind: 'item', item_id: 'trail_lanterns' } },
     { id: 'map_dna_helix_tunnel', meta: { kind: 'item', item_id: 'map_dna_helix_tunnel' } },
     { id: 'lifetime', meta: { plan: 'lifetime' } }
   ];

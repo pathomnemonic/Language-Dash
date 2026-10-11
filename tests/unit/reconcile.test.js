@@ -11,25 +11,25 @@ const empty = { items: [], entitlements: [] };
 
 describe('comparing Stripe with the database', () => {
   it('is quiet when everything matches', () => {
-    const db = { items: [{ user_id: 'u1', item_id: 'trail_fire' }], entitlements: [{ user_id: 'u2', plan: 'lifetime', until: future }] };
-    expect(reconcile([item('trail_fire', 'u1'), life('u2')], db, NOW)).toEqual([]);
+    const db = { items: [{ user_id: 'u1', item_id: 'trail_lanterns' }], entitlements: [{ user_id: 'u2', plan: 'lifetime', until: future }] };
+    expect(reconcile([item('trail_lanterns', 'u1'), life('u2')], db, NOW)).toEqual([]);
   });
 
   it('finds a payment that was never delivered', () => {
-    const out = reconcile([item('trail_fire', 'u1'), life('u2')], empty, NOW);
-    expect(out.map((o) => o.problem + ':' + o.what)).toEqual(['paid, not delivered:item trail_fire', 'paid, not delivered:lifetime']);
+    const out = reconcile([item('trail_lanterns', 'u1'), life('u2')], empty, NOW);
+    expect(out.map((o) => o.problem + ':' + o.what)).toEqual(['paid, not delivered:item trail_lanterns', 'paid, not delivered:lifetime']);
     expect(out[0]).toMatchObject({ user: 'u1', session: 'cs_trail_fire' });
   });
 
   it('finds a refunded or lost chargeback that is still held, and ignores a won one', () => {
-    const db = { items: [{ user_id: 'u1', item_id: 'trail_fire' }], entitlements: [{ user_id: 'u2', plan: 'lifetime', until: future }] };
-    const out = reconcile([item('trail_fire', 'u1', { refunded: true }), life('u2', { disputed: true, dispute: { status: 'lost' } })], db, NOW);
+    const db = { items: [{ user_id: 'u1', item_id: 'trail_lanterns' }], entitlements: [{ user_id: 'u2', plan: 'lifetime', until: future }] };
+    const out = reconcile([item('trail_lanterns', 'u1', { refunded: true }), life('u2', { disputed: true, dispute: { status: 'lost' } })], db, NOW);
     expect(out.map((o) => o.problem)).toEqual(['given back, still held', 'given back, still held']);
-    expect(reconcile([item('trail_fire', 'u1', { disputed: true, dispute: { status: 'won' } })], db, NOW)).toEqual([]);
+    expect(reconcile([item('trail_lanterns', 'u1', { disputed: true, dispute: { status: 'won' } })], db, NOW)).toEqual([]);
   });
 
   it('a refunded purchase that is already gone is fine', () => {
-    expect(reconcile([item('trail_fire', 'u1', { refunded: true })], empty, NOW)).toEqual([]);
+    expect(reconcile([item('trail_lanterns', 'u1', { refunded: true })], empty, NOW)).toEqual([]);
   });
 
   it('finds a live subscription whose member has no Pro, but not an ended one', () => {
@@ -40,7 +40,7 @@ describe('comparing Stripe with the database', () => {
   });
 
   it('skips unpaid or incomplete sessions and ones with no member', () => {
-    expect(reconcile([{ ...item('trail_fire', 'u1'), payment_status: 'unpaid' }, { ...item('trail_fire', 'u1'), status: 'open' }, { ...item('trail_fire', ''), client_reference_id: '', metadata: { kind: 'item', item_id: 'trail_fire' } }], empty, NOW)).toEqual([]);
+    expect(reconcile([{ ...item('trail_lanterns', 'u1'), payment_status: 'unpaid' }, { ...item('trail_lanterns', 'u1'), status: 'open' }, { ...item('trail_lanterns', ''), client_reference_id: '', metadata: { kind: 'item', item_id: 'trail_lanterns' } }], empty, NOW)).toEqual([]);
   });
 
   it('knows what counts as returned', () => {

@@ -89,7 +89,7 @@ describe('stripe-webhook', () => {
     const sig = await signPayload(raw, (over && over.secret) || SECRET, t);
     return post(raw, { 'stripe-signature': 't=' + t + ',v1=' + sig });
   };
-  const itemEvent = { id: 'evt_1', type: 'checkout.session.completed', data: { object: { client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { kind: 'item', item_id: 'trail_fire', user_id: 'u1' } } } };
+  const itemEvent = { id: 'evt_1', type: 'checkout.session.completed', data: { object: { client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } };
 
   it('refuses anything that is not a signed POST', async () => {
     const h = await boot('../../supabase/functions/stripe-webhook/index.js');
@@ -109,7 +109,7 @@ describe('stripe-webhook', () => {
     const res = await h(await signed(itemEvent));
     expect(res.status).toBe(200);
     expect(db.map((c) => c[0])).toEqual(['pro_link_customer', 'pro_grant_item', 'pro_event_once']);
-    expect(db[1][1]).toEqual({ p_user: 'u1', p_item: 'trail_fire', p_source: 'stripe', p_ref: null });
+    expect(db[1][1]).toEqual({ p_user: 'u1', p_item: 'trail_lanterns', p_source: 'stripe', p_ref: null });
   });
 
   it('does not hand back a purchase whose payment was already refunded', async () => {
@@ -153,10 +153,10 @@ describe('pro-checkout', () => {
 
   it('charges the catalog price for an item, whatever the page asks for', async () => {
     const h = await boot('../../supabase/functions/pro-checkout/index.js');
-    const r = await call(h, { action: 'item', item: 'trail_fire', price: 1, amount: 1, unit_amount: 1, user_id: 'someone-else', name: 'x' }, 'good');
+    const r = await call(h, { action: 'item', item: 'trail_lanterns', price: 1, amount: 1, unit_amount: 1, user_id: 'someone-else', name: 'x' }, 'good');
     expect(r.status).toBe(200);
     const sent = stripeCalls.find((c) => c.path === 'checkout/sessions').body;
-    expect(sent['line_items[0][price_data][unit_amount]']).toBe(String(PREMIUM_ITEMS.trail_fire));
+    expect(sent['line_items[0][price_data][unit_amount]']).toBe(String(PREMIUM_ITEMS.trail_lanterns));
     expect(sent['metadata[user_id]']).toBe('u1');           // the buyer is the signed-in account, never a value from the page
     expect(sent['client_reference_id']).toBe('u1');
     expect(sent['success_url'].startsWith('https://me.github.io/dx/')).toBe(true);
@@ -167,10 +167,10 @@ describe('pro-checkout', () => {
     expect((await call(h, { action: 'item', item: 'avatar_intern' }, 'good')).status).toBe(400);   // not a premium item
     expect((await call(h, { action: 'item', item: '__proto__' }, 'good')).status).toBe(400);
     expect((await call(h, { action: 'item', item: 'constructor' }, 'good')).status).toBe(400);
-    owned = ['trail_fire'];
-    expect((await call(h, { action: 'item', item: 'trail_fire' }, 'good')).status).toBe(409);
+    owned = ['trail_lanterns'];
+    expect((await call(h, { action: 'item', item: 'trail_lanterns' }, 'good')).status).toBe(409);
     owned = []; dbReady = false;
-    const r = await call(h, { action: 'item', item: 'trail_fire' }, 'good');
+    const r = await call(h, { action: 'item', item: 'trail_lanterns' }, 'good');
     expect(r.status).toBe(503);
     expect(r.body.error).toMatch(/not been charged/i);
     expect(stripeCalls.filter((c) => c.method === 'POST')).toEqual([]);
@@ -328,7 +328,7 @@ describe('iap-verify: phone-store purchases', () => {
     storeReply = { status: 200, body: { purchaseState: 1 } };
     const r = await call(h, { platform: 'android', product_id: 'languagedash_item_trail_fire', token: 'purchase-token-456' }, 'good');
     expect(r.body).toMatchObject({ ok: true, valid: false, revoked: true, granted: false });
-    expect(db.find((c) => c[0] === 'pro_revoke_item')[1]).toMatchObject({ p_user: 'u1', p_item: 'trail_fire' });
+    expect(db.find((c) => c[0] === 'pro_revoke_item')[1]).toMatchObject({ p_user: 'u1', p_item: 'trail_lanterns' });
     db.length = 0;
     storeReply = { status: 404, body: {} };
     const unknown = await call(h, { platform: 'android', product_id: 'languagedash_item_trail_fire', token: 'purchase-token-789' }, 'good');

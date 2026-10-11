@@ -166,11 +166,11 @@ describe('a damaged save never stops the game starting', () => {
 
 describe('old and odd saves', () => {
   it('a version-1 flat save (no schemaVersion) becomes a current one without losing coins, scores or items', () => {
-    localStorage.setItem(KEY, JSON.stringify({ coins: 777, bestScore: 4321, totalEncounters: 99, ownedItems: ['avatar_intern', 'trail_fire'], dailyStreak: 4, lastDaily: '2026-01-01', nightMode: true }));
+    localStorage.setItem(KEY, JSON.stringify({ coins: 777, bestScore: 4321, totalEncounters: 99, ownedItems: ['avatar_intern', 'trail_lanterns'], dailyStreak: 4, lastDaily: '2026-01-01', nightMode: true }));
     storage.load();
     expect(storage.get('coins')).toBe(777);
     expect(storage.get('bestScore')).toBe(4321);
-    expect(storage.get('ownedItems')).toContain('trail_fire');
+    expect(storage.get('ownedItems')).toContain('trail_lanterns');
     expect(storage.get('nightMode')).toBe(true);
     expect(checkDataSanity(storage.data, DEFAULTS)).toEqual([]);
   });

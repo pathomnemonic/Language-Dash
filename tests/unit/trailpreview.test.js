@@ -13,7 +13,7 @@ describe('trail preview', () => {
   it('shows the trail it is told to, without touching what is equipped', () => {
     const t = new TrailSystem(new THREE.Scene(), { quality: 'medium' });
     expect(t.getConfig()).toBeNull(); // nothing equipped
-    t.setOverride('trail_fire');
+    t.setOverride('trail_lanterns');
     expect(t.getConfig()).not.toBeNull();
     runFor(t, 0.5);
     expect(active(t).length).toBeGreaterThan(0);
@@ -24,9 +24,9 @@ describe('trail preview', () => {
 
   it('switching trail clears the old particles, and "no trail" shows nothing', () => {
     const t = new TrailSystem(new THREE.Scene(), { quality: 'medium' });
-    t.setOverride('trail_fire');
+    t.setOverride('trail_lanterns');
     runFor(t, 0.5);
-    t.setOverride('trail_hearts');
+    t.setOverride('trail_postcards');
     expect(active(t).length).toBe(0);
     t.setOverride('trail_none');
     runFor(t, 0.3);
@@ -34,18 +34,18 @@ describe('trail preview', () => {
   });
 
   it('with no override, the equipped trail shows', () => {
-    storage.data.progression.equipped.trail = 'trail_ekg';
+    storage.data.progression.equipped.trail = 'trail_planes';
     const t = new TrailSystem(new THREE.Scene(), { quality: 'medium' });
     expect(t.getConfig()).not.toBeNull();
   });
 
   it('particles are put away before they reach a close camera, and can stream either way', () => {
     const toward = new TrailSystem(new THREE.Scene(), { quality: 'high', direction: 1, clipZ: 2.6 });
-    toward.setOverride('trail_fire');
+    toward.setOverride('trail_lanterns');
     runFor(toward, 3);
     expect(Math.max(...toward.pool.map((p) => (p.active ? p.mesh.position.z : -Infinity)))).toBeLessThanOrEqual(2.7);
     const away = new TrailSystem(new THREE.Scene(), { quality: 'high', direction: -1 });
-    away.setOverride('trail_fire');
+    away.setOverride('trail_lanterns');
     runFor(away, 1);
     expect(Math.min(...away.pool.map((p) => (p.active ? p.mesh.position.z : Infinity)))).toBeLessThan(-1);
   });

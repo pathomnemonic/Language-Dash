@@ -14,13 +14,13 @@
  * - Supports quality levels: low, medium, high
  * - Supports reduced motion preference
  *
- * Each trail has a shape that matches its name (see trailshapes.js): hearts are hearts, notes are music notes,
- * pills are capsules, and so on, instead of coloured circles.
+ * Each trail is a drawing that matches its name (see trailshapes.js): paper planes, blossoms, ink splats, stamps,
+ * postcards, snowflakes, fireflies, streamers, speech bubbles, footprints, lanterns, maple leaves.
  */
 
 import * as THREE from 'three';
 import { storage } from '../storage.js';
-import { getTrailGeometry } from './trailshapes.js';
+import { getTrailGeometry, shapeVariants, getGlyphTexture } from './trailshapes.js';
 import { PALETTE, paperizeColor } from './paper.js';
 
 // ===== QUALITY PRESETS =====
@@ -33,53 +33,53 @@ var QUALITY_PRESETS = {
 // ===== TRAIL CONFIGURATIONS =====
 var TRAIL_CONFIGS = {
   trail_none: null,
-  trail_ekg: {
-    color1: 0x00ff44, color2: 0x00cc33, shape: 'ekg',
-    size: 0.35, spread: 0.12, type: 'line'
+  trail_planes: {
+    color1: 0xfffbf2, color2: 0x5da9d6, shape: 'plane',
+    size: 0.45, spread: 0.35, type: 'planes'
   },
-  trail_neural: {
-    color1: 0xcc77ff, color2: 0x8844ee, shape: 'star', glow: true,
-    size: 0.45, spread: 0.45, type: 'spark'
+  trail_fireflies: {
+    color1: 0xf2d24a, color2: 0xb8d94a, shape: 'firefly', blink: true,
+    size: 0.30, spread: 0.55, type: 'fireflies'
   },
-  trail_blood: {
-    color1: 0xff2222, color2: 0xbb0000, shape: 'cell',
-    size: 0.40, spread: 0.30, type: 'cell'
+  trail_sakura: {
+    color1: 0xf4a6b8, color2: 0xfde3ea, shape: 'blossom',
+    size: 0.38, spread: 0.40, type: 'petals'
   },
-  trail_dna: {
-    color1: 0x4488ff, color2: 0xff4488, shape: 'bead',
-    size: 0.30, spread: 0.40, type: 'helix'
+  trail_streamers: {
+    color1: 0xd9432c, color2: 0x0e8c8a, shape: 'streamer', palette: true,
+    size: 0.55, spread: 0.50, type: 'streamers'
   },
-  trail_fire: {
-    color1: 0xffaa00, color2: 0xff2200, shape: 'flame', glow: true,
-    size: 0.50, spread: 0.35, type: 'flame'
+  trail_lanterns: {
+    color1: 0xd9432c, color2: 0xf2b134, shape: 'lantern', flicker: true,
+    size: 0.42, spread: 0.40, type: 'lanterns'
   },
-  trail_rainbow: {
-    color1: 0xff44ff, color2: 0x44ffff, shape: 'ribbon', rainbow: true,
-    size: 0.40, spread: 0.40, type: 'ribbon'
+  trail_glyphs: {
+    color1: 0xffffff, color2: 0xffffff, shape: 'glyph', glyphs: true,
+    size: 0.52, spread: 0.40, type: 'glyphs'
   },
-  trail_confetti: {
-    color1: 0xff4444, color2: 0x44ff44, shape: 'confetti', confetti: true,
-    size: 0.40, spread: 0.50, type: 'burst'
+  trail_stamps: {
+    color1: 0xd9432c, color2: 0x0e8c8a, shape: 'stamp', palette: true,
+    size: 0.42, spread: 0.30, type: 'stamps'
   },
-  trail_hearts: {
-    color1: 0xff4488, color2: 0xff88aa, shape: 'heart',
-    size: 0.35, spread: 0.30, type: 'hearts'
+  trail_postcards: {
+    color1: 0xfffbf2, color2: 0xf2b134, shape: 'postcard', palette: true,
+    size: 0.46, spread: 0.30, type: 'cards'
   },
-  trail_lightning: {
-    color1: 0xffff44, color2: 0x44aaff, shape: 'bolt', glow: true,
-    size: 0.30, spread: 0.25, type: 'electric'
+  trail_snow: {
+    color1: 0xe8f4fb, color2: 0xa9d4ee, shape: 'snowflake',
+    size: 0.36, spread: 0.55, type: 'snow'
   },
-  trail_bubbles: {
-    color1: 0x88ddff, color2: 0xcceeff, shape: 'bubble', see: true,
-    size: 0.40, spread: 0.35, type: 'bubbles'
+  trail_footprints: {
+    color1: 0xb99560, color2: 0xa07f4e, shape: 'footprint', flat: true,
+    size: 0.5, spread: 0.12, type: 'prints'
   },
-  trail_music: {
-    color1: 0xff88ff, color2: 0x88ff88, shape: 'note',
-    size: 0.30, spread: 0.30, type: 'notes'
+  trail_ink: {
+    color1: 0x1b2a41, color2: 0x2f5d8c, shape: 'splat',
+    size: 0.42, spread: 0.40, type: 'splat'
   },
-  trail_pills: {
-    color1: 0xff4444, color2: 0xffffff, shape: 'pill', pills: true,
-    size: 0.30, spread: 0.25, type: 'pills'
+  trail_leaves: {
+    color1: 0xd9432c, color2: 0xf2b134, shape: 'maple',
+    size: 0.38, spread: 0.45, type: 'leaves'
   }
 };
 
@@ -90,6 +90,7 @@ var CONFETTI_COLORS = [PALETTE.red, PALETTE.marigold, PALETTE.leaf, PALETTE.sky,
 
 // ===== SHARED GEOMETRY (created once, reused by all particles) =====
 var _sharedSphereGeo = null;
+
 
 function getSharedSphereGeo() {
   if (!_sharedSphereGeo) {
@@ -214,31 +215,62 @@ export class TrailSystem {
       if (p.spin) p.mesh.rotation.z += p.spin * dt;
 
       // Type-specific animation
+      var age = p.maxLife - p.life;
       switch (config.type) {
-        case 'helix':
-          // two strands that wind around each other, with the beads of each strand opposite one another
-          var ang = p.phase + (p.maxLife - p.life) * 7;
-          p.mesh.position.x = p.baseX + Math.cos(ang) * 0.22;
-          p.mesh.position.y = p.baseY + Math.sin(ang) * 0.22;
+        case 'planes':
+          p.mesh.rotation.z = p.baseRot + Math.sin(age * 3 + p.phase) * 0.25; // a gliding wobble
+          p.vy += Math.sin(age * 2.2 + p.phase) * dt * 0.8;
           break;
-        case 'electric':
-          p.mesh.position.x += Math.sin(this.time * 20 + i) * 0.06;
+        case 'petals':
+        case 'leaves':
+          p.mesh.position.x += Math.sin(age * 3 + p.phase) * dt * 0.9; // flutters side to side as it falls
+          p.mesh.rotation.y = Math.sin(age * 4 + p.phase) * 1.0;
           break;
-        case 'bubbles':
-          p.vy += dt * 0.5;
-          var bubbleScale = scale * (1 + (1 - lifeRatio) * 0.5);
-          p.mesh.scale.set(bubbleScale, bubbleScale, bubbleScale);
+        case 'snow':
+          p.mesh.position.x += Math.sin(age * 1.7 + p.phase) * dt * 0.5;
           break;
-        case 'burst':
-          p.vx *= 1.01;
-          p.vz *= 1.01;
+        case 'fireflies':
+          p.mesh.position.x += Math.sin(age * 2.3 + p.phase) * dt * 0.8;
+          p.mesh.position.y += Math.cos(age * 1.9 + p.phase) * dt * 0.6;
+          p.mesh.material.opacity *= 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(age * 9 + p.phase)); // blinks
           break;
-        case 'hearts':
-          p.mesh.rotation.z = Math.sin(this.time * 4 + i) * 0.35; // a gentle sway
+        case 'lanterns':
+          p.mesh.position.x += Math.sin(age * 1.4 + p.phase) * dt * 0.4;
+          p.mesh.rotation.z = Math.sin(age * 2 + p.phase) * 0.15;
+          p.mesh.material.opacity *= 0.82 + 0.18 * Math.sin(age * 14 + p.phase); // the flame flickers
           break;
-        case 'flame':
-          p.mesh.scale.set(scale * (0.7 + lifeRatio * 0.3), scale * (1.1 + (1 - lifeRatio) * 0.3), scale);
+        case 'glyphs':
+          p.vy += dt * 0.4;
+          p.mesh.position.x += Math.sin(age * 2.5 + p.phase) * dt * 0.5;
+          p.mesh.rotation.z = Math.sin(age * 3 + p.phase) * 0.18;
           break;
+        case 'stamps': {
+          // thunk: lands big, shrinks to its size in a quarter second
+          var pop = 1 + Math.max(0, 0.25 - age) * 5;
+          p.mesh.scale.set(scale * pop, scale * pop, scale);
+          break;
+        }
+        case 'cards':
+          p.mesh.rotation.y += dt * p.flip; // tumbles end over end
+          break;
+        case 'splat': {
+          var splash = Math.min(1, age * 7); // the splat opens in a blink
+          var sc = scale * (0.3 + 0.7 * splash);
+          p.mesh.scale.set(sc, sc, sc);
+          break;
+        }
+        case 'streamers':
+          p.vx *= 1.005;
+          p.vz *= 1.005;
+          p.vy -= dt * 0.8;
+          p.mesh.rotation.y += dt * p.flip;
+          break;
+        case 'prints': {
+          var fade = Math.min(1, p.life / 0.8);
+          p.mesh.material.opacity = Math.min(0.9, lifeRatio * 1.6) * fade * 0.9;
+          p.mesh.scale.set(config.size * 4 * p.sx, config.size * 4, config.size * 4);
+          break;
+        }
       }
     }
   }
@@ -257,6 +289,9 @@ export class TrailSystem {
     p.mesh.visible = true;
     p.maxLife = 1.5 + Math.random() * 0.5;
     p.life = p.maxLife;
+    p.phase = Math.random() * Math.PI * 2;
+    p.baseRot = 0;
+    p.flip = 0;
 
     var spread = config.spread * intensity;
     p.mesh.position.set(
@@ -272,107 +307,115 @@ export class TrailSystem {
 
     // Type-specific spawn behavior
     switch (config.type) {
-      case 'burst':
-        var burstAngle = Math.random() * Math.PI * 2;
-        p.vx = Math.cos(burstAngle) * 2.0;
-        p.vz = Math.sin(burstAngle) * 2.0 + 1.5;
-        p.vy = Math.random() * 2.0;
-        break;
-      case 'hearts':
-        p.vx *= 0.5;
-        p.vy = 0.5 + Math.random() * 1.0;
-        p.vz = 1.5 + Math.random();
-        break;
-      case 'electric':
-        p.vx = (Math.random() - 0.5) * 3.0;
-        p.vy = (Math.random() - 0.5) * 0.5;
+      case 'planes':
+        p.vx = (Math.random() - 0.5) * 2.4;
+        p.vy = 0.2 + Math.random() * 0.8;
         p.vz = 3.0 + Math.random() * 2.0;
-        p.maxLife = 0.8 + Math.random() * 0.4;
+        p.baseRot = (Math.random() - 0.5) * 0.8;
+        break;
+      case 'petals':
+      case 'leaves':
+        p.vx *= 0.4;
+        p.vy = -0.2 - Math.random() * 0.5;
+        p.vz = 1.6 + Math.random() * 1.6;
+        p.maxLife = 1.8 + Math.random() * 0.6;
         p.life = p.maxLife;
         break;
-      case 'bubbles':
+      case 'snow':
         p.vx *= 0.3;
-        p.vy = 1.0 + Math.random() * 1.5;
-        p.vz = 1.0 + Math.random() * 1.5;
+        p.vy = -0.3 - Math.random() * 0.4;
+        p.vz = 1.2 + Math.random() * 1.5;
+        p.maxLife = 2 + Math.random() * 0.5;
+        p.life = p.maxLife;
         break;
-      case 'notes':
-        p.vx = (Math.random() - 0.5) * 2.0;
-        p.vy = 1.0 + Math.random() * 1.0;
-        p.vz = 1.5 + Math.random() * 1.5;
+      case 'fireflies':
+        p.vx *= 0.3;
+        p.vy = (Math.random() - 0.3) * 0.5;
+        p.vz = 0.9 + Math.random() * 1.3;
+        p.maxLife = 2 + Math.random() * 0.6;
+        p.life = p.maxLife;
         break;
-      case 'pills':
-        p.vx = (Math.random() - 0.5) * 1.5;
-        p.vy = -0.5 + Math.random() * 0.5;
-        p.vz = 2.0 + Math.random() * 2.0;
+      case 'lanterns':
+        p.vx *= 0.25;
+        p.vy = 0.5 + Math.random() * 0.7;
+        p.vz = 1.0 + Math.random() * 1.2;
+        p.maxLife = 2 + Math.random() * 0.5;
+        p.life = p.maxLife;
         break;
-      case 'line':
-        p.vy = 0;
-        p.vx = 0;
+      case 'glyphs':
+        p.vx *= 0.3;
+        p.vy = 0.8 + Math.random() * 1.2;
+        p.vz = 1.0 + Math.random() * 1.4;
         break;
-      case 'helix':
-        p.vx = 0;
-        p.vy = 0;
-        p.vz = 2.5;
+      case 'stamps':
+        p.vx = (Math.random() - 0.5) * 1.4;
+        p.vy = 0.3 + Math.random() * 0.7;
+        p.vz = 2.0 + Math.random() * 1.5;
+        p.baseRot = (Math.random() - 0.5) * 0.7;
         break;
-      case 'flame':
-        p.vx *= 0.4;
-        p.vy = 1.0 + Math.random() * 1.5;
-        p.vz = 1.5 + Math.random() * 1.5;
+      case 'cards':
+        p.vx = (Math.random() - 0.5) * 1.8;
+        p.vy = 0.2 + Math.random() * 0.6;
+        p.vz = 2.2 + Math.random() * 2.0;
+        p.flip = (Math.random() < 0.5 ? -1 : 1) * (3 + Math.random() * 3);
+        p.baseRot = (Math.random() - 0.5) * 1.2;
+        break;
+      case 'splat':
+        p.vx = (Math.random() - 0.5) * 1.6;
+        p.vy = (Math.random() - 0.2) * 1.0;
+        p.vz = 1.8 + Math.random() * 1.6;
+        p.baseRot = Math.random() * Math.PI * 2;
+        break;
+      case 'streamers': {
+        var burstAngle = Math.random() * Math.PI * 2;
+        p.vx = Math.cos(burstAngle) * 2.0;
+        p.vz = Math.sin(burstAngle) * 1.5 + 2.0;
+        p.vy = 0.6 + Math.random() * 1.8;
+        p.baseRot = Math.random() * Math.PI;
+        p.flip = (Math.random() - 0.5) * 8;
+        break;
+      }
+      case 'prints':
+        p.vx = 0; p.vy = 0;
+        p.vz = 3.2; // the ground slides past at track speed
+        p.maxLife = 1.8;
+        p.life = p.maxLife;
+        this._foot = this._foot ? 0 : 1; // left, right, left...
+        p.mesh.position.set(px + (this._foot ? 0.2 : -0.2), 0.04, pz + this.direction * 0.5);
         break;
     }
 
-    // The shape this trail is made of
-    p.mesh.geometry = getTrailGeometry(config.shape);
-    p.mesh.rotation.set(0, 0, 0);
+    // The shape this trail is made of (some shapes have variants: each speech bubble carries its own letter)
+    var variants = shapeVariants(config.shape);
+    p.mesh.geometry = getTrailGeometry(config.shape, variants > 1 ? Math.floor(Math.random() * variants) : 0);
+    p.mesh.rotation.set(0, 0, p.baseRot);
     p.spin = 0;
-    p.mesh.material.blending = THREE.NormalBlending; // printed ink, never additive glow (config.glow only marks which trails used to flare)
+    p.mesh.material.blending = THREE.NormalBlending; // printed ink, never additive glow
+    var tex = config.glyphs ? getGlyphTexture() : null;
+    if ((p.mesh.material.map || null) !== tex) { p.mesh.material.map = tex; p.mesh.material.needsUpdate = true; }
 
     // Color
     var t = Math.random();
     var c1 = new THREE.Color(config.color1);
     var c2 = new THREE.Color(config.color2);
-    if (config.rainbow) {
-      c1.setHSL((this.time * 0.9) % 1, 1, 0.55); // the ribbon cycles through every colour
-    } else if (config.confetti) {
+    if (config.palette) {
       c1.setHex(CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)]);
-    } else if (config.pills) {
-      c1.setHex(Math.random() < 0.5 ? config.color1 : config.color2); // red and white pills
-    } else if (config.type === 'helix') {
-      p.strand = this._strand = (this._strand || 0) ^ 1;
-      c1.setHex(p.strand ? config.color2 : config.color1);
     } else {
       c1.lerp(c2, t);
     }
-    p.mesh.material.color.copy(paperizeColor(c1));
-    p.mesh.material.opacity = config.see ? 0.55 : 0.95;
-    p.opacityScale = config.see ? 0.55 / 0.95 : 1;
+    if (config.glyphs) p.mesh.material.color.setHex(0xffffff);
+    else p.mesh.material.color.copy(paperizeColor(c1));
+    p.mesh.material.opacity = 0.95;
+    p.opacityScale = 1;
 
-    // Scale: size * 4 (reduced from 15x)
     var s = config.size * (0.8 + Math.random() * 0.4) * intensity * 4;
     p.mesh.scale.set(s, s, s);
 
     p.sx = 1;
     p.sy = 1;
-    if (config.type === 'line') {
-      p.sx = 1.4; p.sy = 1.4;
-    } else if (config.type === 'pills') {
-      p.sx = 0.9; p.sy = 0.9;
-      p.mesh.rotation.z = Math.random() * Math.PI;
-      p.spin = (Math.random() - 0.5) * 3;
-    } else if (config.type === 'burst') {
-      p.mesh.rotation.z = Math.random() * Math.PI;
-      p.spin = (Math.random() - 0.5) * 12; // confetti tumbles
-    } else if (config.type === 'cell') {
-      p.spin = (Math.random() - 0.5) * 2;
-    } else if (config.type === 'ribbon') {
-      p.sx = 1.8; p.sy = 1.8;
-    } else if (config.type === 'helix') {
-      p.baseX = p.mesh.position.x;
-      p.baseY = p.mesh.position.y;
-      p.phase = p.strand ? Math.PI : 0;
-    } else if (config.type === 'spark') {
-      p.spin = (Math.random() - 0.5) * 8;
-    }
+    if (config.type === 'prints') p.sx = this._foot ? -1 : 1;
+    if (config.type === 'petals' || config.type === 'leaves' || config.type === 'snow') p.spin = (Math.random() - 0.5) * 3;
+    if (config.type === 'splat' || config.type === 'fireflies') p.spin = 0;
   }
 
   // ===== LIFECYCLE =====

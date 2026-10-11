@@ -25,7 +25,7 @@ test.describe('premium Locker items', () => {
   test('with a ready backend: a price, a confirming tap, then the payment page', async ({ page }) => {
     await page.route('https://checkout.stripe.com/**', (r) => r.fulfill({ status: 200, contentType: 'text/html', body: '<h1>stripe</h1>' }));
     await openTrails(page, READY);
-    const btn = page.locator('[data-premium="trail_fire"]');
+    const btn = page.locator('[data-premium="trail_lanterns"]');
     await expect(btn).toContainText('$0.99');
     await btn.click();
     await expect(btn).toContainText(/Tap again/); // the first tap asks
@@ -35,7 +35,7 @@ test.describe('premium Locker items', () => {
 
   test('with an older backend: it says Soon, and every tap explains', async ({ page }) => {
     await openTrails(page, OLD);
-    const btn = page.locator('[data-premium="trail_fire"]');
+    const btn = page.locator('[data-premium="trail_lanterns"]');
     await expect(btn).toContainText('Soon', { timeout: 8000 });
     await btn.click();
     await expect(page.locator('.toast')).toContainText(/coming soon/i);
@@ -44,7 +44,7 @@ test.describe('premium Locker items', () => {
 
   test('a guest is asked to create an account, not left wondering', async ({ page }) => {
     await openTrails(page, GUEST);
-    const btn = page.locator('[data-premium="trail_fire"]');
+    const btn = page.locator('[data-premium="trail_lanterns"]');
     await expect(btn).toContainText('$0.99');
     await btn.click();
     await expect(page.locator('.toast')).toContainText(/Create a free account/i);
@@ -56,11 +56,11 @@ test.describe('premium Locker items', () => {
     const FLAKY = `(calls) => ({ isAuthenticated: () => true, isGuest: () => false, getUserId: () => 'u1', getMyPro: async () => ({ active: false, items: [] }),
       proFunction: async (a) => { calls.push([a]); if (a === 'capabilities') throw new Error('network'); return { error: 'Unknown request.' }; } })`;
     await openTrails(page, FLAKY);
-    const btn = page.locator('[data-premium="trail_fire"]');
+    const btn = page.locator('[data-premium="trail_lanterns"]');
     await btn.click();
     await btn.click();
     await expect(page.locator('.toast')).toContainText(/not switched on|not charged/i, { timeout: 8000 });
-    await expect(page.locator('[data-premium="trail_fire"]')).toContainText('Soon', { timeout: 8000 });
+    await expect(page.locator('[data-premium="trail_lanterns"]')).toContainText('Soon', { timeout: 8000 });
   });
 });
 

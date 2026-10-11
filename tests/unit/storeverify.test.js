@@ -16,7 +16,7 @@ describe('understanding the product ids the app sells', () => {
     expect(describeStoreProduct('languagedash_pro_yearly')).toEqual({ kind: 'subscription', plan: 'yearly' });
     expect(describeStoreProduct('languagedash_pro_lifetime')).toEqual({ kind: 'lifetime', plan: 'lifetime' });
     expect(describeStoreProduct('languagedash_library')).toEqual({ kind: 'library', plan: 'library' });
-    expect(describeStoreProduct('languagedash_item_trail_fire')).toEqual({ kind: 'item', item: 'trail_fire' });
+    expect(describeStoreProduct('languagedash_item_trail_fire')).toEqual({ kind: 'item', item: 'trail_lanterns' });
     expect(describeStoreProduct('languagedash_item_avatar_intern')).toBeNull();   // (not a premium item)
     expect(describeStoreProduct('languagedash_item_../../etc')).toBeNull();
     expect(describeStoreProduct('free_pro_for_all')).toBeNull();
@@ -126,10 +126,10 @@ describe('what the database is told', () => {
   it('a lifetime purchase is granted for ten years, an item with its purchase as the reference', () => {
     const l = grantFor({ kind: 'lifetime', plan: 'lifetime' }, { valid: true, revoked: false, expiresAt: 0 }, 'u1', 'k', NOW);
     expect(new Date(l.args.p_until).getTime() / 1000).toBe(NOW + 3650 * 86400 - 86400);
-    expect(grantFor({ kind: 'item', item: 'trail_fire' }, { valid: true, revoked: false }, 'u1', 'KEY', NOW)).toEqual({ rpc: 'pro_grant_item', args: { p_user: 'u1', p_item: 'trail_fire', p_source: 'store', p_ref: 'store:KEY' } });
+    expect(grantFor({ kind: 'item', item: 'trail_lanterns' }, { valid: true, revoked: false }, 'u1', 'KEY', NOW)).toEqual({ rpc: 'pro_grant_item', args: { p_user: 'u1', p_item: 'trail_lanterns', p_source: 'store', p_ref: 'store:KEY' } });
   });
   it('a refund takes back only what that purchase gave', () => {
-    expect(grantFor({ kind: 'item', item: 'trail_fire' }, { valid: false, revoked: true }, 'u1', 'KEY', NOW)).toEqual({ rpc: 'pro_revoke_item', args: { p_user: 'u1', p_item: 'trail_fire', p_ref: 'store:KEY' } });
+    expect(grantFor({ kind: 'item', item: 'trail_lanterns' }, { valid: false, revoked: true }, 'u1', 'KEY', NOW)).toEqual({ rpc: 'pro_revoke_item', args: { p_user: 'u1', p_item: 'trail_lanterns', p_ref: 'store:KEY' } });
     expect(grantFor({ kind: 'lifetime', plan: 'lifetime' }, { valid: false, revoked: true }, 'u1', 'k', NOW)).toEqual({ rpc: 'pro_revoke_plan', args: { p_user: 'u1', p_plan: 'lifetime' } });
   });
   it('an expired or pending purchase changes nothing', () => {

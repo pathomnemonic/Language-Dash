@@ -9,7 +9,7 @@ describe('nothing from the run stays on the runner while the death plays', () =>
     const scene = new THREE.Scene();
     const fx = new PowerUpFX(scene);
     const trail = new TrailSystem(scene, { quality: 'medium' });
-    trail.setOverride('trail_hearts');
+    trail.setOverride('trail_postcards');
     for (let i = 0; i < 60; i++) trail.update(1 / 60, 0, 0, 0, 5);
     // a magnet and a dash going at the moment of death
     fx.update(1 / 60, { x: 0, y: 0, z: 0 }, { shield: 0, double: 0, magnet: 5, autoPilot: 0, scoreFrenzy: 0 }, 2);

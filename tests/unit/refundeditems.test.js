@@ -7,7 +7,7 @@ import { storage } from '../../js/storage.js';
 // A refunded or charged-back item is taken back, but never on one odd answer, never for something bought another way,
 // and never for another account's list.
 
-const ITEM = 'trail_fire';
+const ITEM = 'trail_lanterns';
 let answer;
 let uid;
 function lb() {
@@ -71,13 +71,13 @@ describe('taking back a refunded item', () => {
   });
 
   it('never touches an item bought with coins, gifted, or listed for a different account', async () => {
-    storage.data.progression.ownedItems.push('trail_rainbow');
+    storage.data.progression.ownedItems.push('trail_glyphs');
     answer = listed([ITEM]);
     await refreshPro({ lb: lb() });
     answer = listed([]);
     await refreshPro({ lb: lb() });
     await refreshPro({ lb: lb() });
-    expect(storage.ownsItem('trail_rainbow')).toBe(true);  // (never listed by the server, so never the server's to take)
+    expect(storage.ownsItem('trail_glyphs')).toBe(true);  // (never listed by the server, so never the server's to take)
 
     // a different account signs in on this device: the last account's list means nothing for it
     storage.data.progression.ownedItems.push(ITEM);

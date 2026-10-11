@@ -6,6 +6,7 @@
 import { storage } from './storage.js';
 import { getPal, palMood, palLine, isPalMilestone, NO_PAL, DEFAULT_PAL } from './companions.js';
 import { FEATURES } from './features.js';
+import { palSvg } from './palart.js';
 
 var bubbleTimer = null;
 var pendingEvent = null;
@@ -61,7 +62,9 @@ export function renderPal() {
   var face = document.createElement('span');
   face.className = 'pal-emoji';
   face.setAttribute('aria-hidden', 'true');
-  face.textContent = pal.emoji;
+  var art = palSvg(pal.id);
+  if (art) face.innerHTML = art; // (our own static drawing, see palart.js)
+  else face.textContent = pal.emoji;
   btn.appendChild(face);
   var tag = document.createElement('span');
   tag.className = 'pal-tag';

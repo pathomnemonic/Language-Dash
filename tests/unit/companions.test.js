@@ -12,7 +12,7 @@ describe('study buddies', () => {
     expect(items.filter((i) => i.price === 0 && !i.premium).map((i) => i.id).sort()).toEqual([DEFAULT_PAL, NO_PAL].sort());
     expect(PALS.length).toBeGreaterThanOrEqual(8);
     expect(new Set(PALS.map((p) => p.emoji)).size).toBe(PALS.length);
-    expect(getPal('pal_owl').name).toBe('Búho');
+    expect(getPal('pal_bonsai').name).toBe('Bonsai');
     expect(getPal('nope')).toBeNull();
   });
 
@@ -45,7 +45,7 @@ describe('study buddies', () => {
       expect(palReminder(p, 0, () => 0)).toContain(p.name);
       expect(palReminder(p, 6)).toMatch(/\S/);
     });
-    expect(palLine(getPal('pal_dog'), 'greet', 3, () => 0)).not.toBe(palLine(getPal('pal_owl'), 'greet', 3, () => 0));
+    expect(palLine(getPal('pal_axolotl'), 'greet', 3, () => 0)).not.toBe(palLine(getPal('pal_teapot'), 'greet', 3, () => 0));
   });
 });
 
@@ -76,7 +76,7 @@ describe('a new player and the Collector badges', () => {
     localStorage.clear();
     const { storage } = await import('../../js/storage.js');
     storage.load();
-    const own = storage.data.progression.ownedItems.filter((id) => id !== 'pal_none' && id !== 'pal_cat');
+    const own = storage.data.progression.ownedItems.filter((id) => id !== 'pal_none' && id !== 'pal_snail');
     for (let n = 0; own.length + n < 10; n++) storage.data.progression.ownedItems.push('test_item_' + n);
     expect(storage.checkAchievements(null)).toContain('ach_collect_10');
   });

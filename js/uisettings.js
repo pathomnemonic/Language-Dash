@@ -22,6 +22,7 @@ import { SKINS, skinTitle, isMapUnlocked, isIndoorSkin } from './game/skins.js';
 import { levelFromXp } from './progress.js';
 import { mapUnlockLevel, UNLOCK_EVERY } from './game/mapunlocks.js';
 import { getPal, palLine } from './companions.js';
+import { palSvg } from './palart.js';
 import { getQuality } from './game/quality.js';
 import { THEME_CHOICES } from './theme.js';
 import { FEATURES } from './features.js';
@@ -807,6 +808,14 @@ export var settingsMethods = {
         var colorHex = item.color ? '#' + item.color.toString(16).padStart(6, '0') : '#333';
         var swatch = createElement('div', { text: item.icon || '' });
         swatch.style.cssText = 'width:36px;height:36px;border-radius:8px;background:' + colorHex + ';flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px';
+        if (type === 'pal' && palSvg(item.id)) {
+          // a pal wears its own drawing (palart.js: static markup of ours) on paper
+          swatch.textContent = '';
+          swatch.style.background = 'var(--card, #fffbf2)';
+          swatch.style.border = '2px solid var(--ink, #1b2a41)';
+          swatch.innerHTML = palSvg(item.id);
+          swatch.firstChild.style.cssText = 'width:30px;height:30px';
+        }
         row.appendChild(swatch);
 
         // Name
@@ -842,7 +851,7 @@ export var settingsMethods = {
           if (type === 'pal') {
             // a buddy has no 3D model: let it say hello in its own voice
             var palDef = getPal(item.id);
-            self._showToast(palDef ? palDef.emoji + ' ' + palDef.name + ': ' + palLine(palDef, 'greet', storage.getStreakStatus().streak) : 'No buddy on the Home screen');
+            self._showToast(palDef ? palDef.name + ': ' + palLine(palDef, 'greet', storage.getStreakStatus().streak) : 'No buddy on the Home screen');
             return;
           }
           trackEvent('item_previewed', { item_id: item.id, item_type: type, owned: storage.ownsItem(item.id), affordable: (storage.get('coins') || 0) >= (item.price || 0) });

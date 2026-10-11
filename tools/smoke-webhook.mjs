@@ -11,7 +11,7 @@
  * SUPABASE_SERVICE_ROLE_KEY). That proves the whole chain: signature check, secrets, database functions. It leaves the
  * test item behind; the last line prints the one SQL statement that removes it.
  *
- *   node tools/smoke-webhook.mjs --grant-test <member user id> [--item trail_fire]
+ *   node tools/smoke-webhook.mjs --grant-test <member user id> [--item trail_lanterns]
  *
  * Use it against a TEST project or a member you control: a "purchase" it makes is real as far as the database knows.
  */
@@ -38,7 +38,7 @@ var at = process.argv.indexOf('--grant-test');
 if (at > 0) {
   var user = process.argv[at + 1];
   var itemAt = process.argv.indexOf('--item');
-  var item = itemAt > 0 ? process.argv[itemAt + 1] : 'trail_fire';
+  var item = itemAt > 0 ? process.argv[itemAt + 1] : 'trail_lanterns';
   var DB = (process.env.SUPABASE_URL || '').replace(/\/+$/, '');
   var KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!user || !DB || !KEY) { console.error('--grant-test needs a user id, SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.'); process.exit(2); }

@@ -214,9 +214,9 @@ Create each of these in **Play Console → Monetize → In-app products** and **
 | `languagedash_item_monster_m_dragon` | non-consumable | 1.49 | Dragon Lecturer |
 | `languagedash_item_map_aquarium_imaging_center` | non-consumable | 1.49 | Aquarium Imaging Center |
 | `languagedash_item_map_dna_helix_tunnel` | non-consumable | 1.49 | DNA Helix Tunnel |
-| `languagedash_item_trail_fire` | non-consumable | 0.99 | Fire Trail |
-| `languagedash_item_trail_neural` | non-consumable | 0.99 | Neural Sparks |
-| `languagedash_item_trail_blood` | non-consumable | 0.99 | Blood Cells |
+| `languagedash_item_trail_lanterns` | non-consumable | 0.99 | Sky Lanterns |
+| `languagedash_item_trail_fireflies` | non-consumable | 0.99 | Fireflies |
+| `languagedash_item_trail_sakura` | non-consumable | 0.99 | Cherry Blossoms |
 
 ## Checking phone-store purchases on the server (optional, recommended)
 

@@ -41,30 +41,30 @@ describe('the premium catalog', () => {
       expect(PREMIUM_ITEMS[id]).toBeGreaterThanOrEqual(99);
       expect(PREMIUM_ITEMS[id]).toBeLessThanOrEqual(999);
     });
-    expect(isPremiumItem('trail_ekg')).toBe(false);
+    expect(isPremiumItem('trail_planes')).toBe(false);
     expect(isPremiumItem('constructor')).toBe(false);
-    expect(premiumCents('trail_fire')).toBe(99);
+    expect(premiumCents('trail_lanterns')).toBe(99);
     expect(formatUsd(299)).toBe('$2.99');
-    expect(itemProductId('trail_neural')).toBe('languagedash_item_trail_neural');
+    expect(itemProductId('trail_fireflies')).toBe('languagedash_item_trail_neural');
   });
 
   it('cannot be bought with coins or taken as the Pro gift', () => {
     storage.data.progression.coins = 1e6;
-    expect(storage.buyItem('trail_fire', 0)).toBe(false);
-    expect(storage.buyItem('trail_fire', 5000)).toBe(false);
-    expect(storage.ownsItem('trail_fire')).toBe(false);
-    expect(storage.claimProGift('trail_fire')).toBe(false);
+    expect(storage.buyItem('trail_lanterns', 0)).toBe(false);
+    expect(storage.buyItem('trail_lanterns', 5000)).toBe(false);
+    expect(storage.ownsItem('trail_lanterns')).toBe(false);
+    expect(storage.claimProGift('trail_lanterns')).toBe(false);
     expect(storage.get('proGiftItem')).toBe('');
   });
 });
 
 describe('what a member has paid for is theirs, and nothing takes it away', () => {
   it('grantOwnedItems only ever adds, and ignores anything odd', () => {
-    expect(grantOwnedItems(['trail_fire', 'trail_neural'])).toBe(2);
-    expect(grantOwnedItems(['trail_fire'])).toBe(0);
+    expect(grantOwnedItems(['trail_lanterns', 'trail_fireflies'])).toBe(2);
+    expect(grantOwnedItems(['trail_lanterns'])).toBe(0);
     expect(grantOwnedItems(['BAD ID', '', 7, null, '../x'])).toBe(0);
-    expect(storage.ownsItem('trail_fire')).toBe(true);
-    expect(storage.data.progression.ownedItems.filter((i) => i === 'trail_fire').length).toBe(1);
+    expect(storage.ownsItem('trail_lanterns')).toBe(true);
+    expect(storage.data.progression.ownedItems.filter((i) => i === 'trail_lanterns').length).toBe(1);
   });
 
   it('the server\'s list is merged on a refresh; a failed answer or an empty list never removes an item', async () => {
@@ -82,23 +82,23 @@ describe('what a member has paid for is theirs, and nothing takes it away', () =
     vi.stubEnv('VITE_SUPABASE_URL', 'https://x.supabase.co');
     let synced = false;
     const lb = acct({
-      getMyPro: async () => ({ active: false, items: synced ? ['trail_neural'] : [] }),
-      proFunction: async (a) => { if (a === 'sync') { synced = true; return { ok: true, granted: ['item:trail_neural'] }; } return { error: 'no' }; }
+      getMyPro: async () => ({ active: false, items: synced ? ['trail_fireflies'] : [] }),
+      proFunction: async (a) => { if (a === 'sync') { synced = true; return { ok: true, granted: ['item:trail_fireflies'] }; } return { error: 'no' }; }
     });
     await refreshPro({ lb });
-    expect(storage.ownsItem('trail_neural')).toBe(true);
+    expect(storage.ownsItem('trail_fireflies')).toBe(true);
     vi.unstubAllEnvs();
   });
 
   it('a purchase through the store (phone app) is picked up too', async () => {
     const iap = { start: async () => true, owned: (id) => id === 'languagedash_item_trail_blood', product: () => null, add() {}, price: () => null };
     await refreshPro({ iap });
-    expect(storage.ownsItem('trail_blood')).toBe(true);
+    expect(storage.ownsItem('trail_sakura')).toBe(true);
   });
 });
 
 describe('buying one', () => {
-  const item = LOCKER_ITEMS.find((i) => i.id === 'trail_fire');
+  const item = LOCKER_ITEMS.find((i) => i.id === 'trail_lanterns');
 
   it('needs a real account, and not a guest', async () => {
     const go = vi.fn();
@@ -109,9 +109,9 @@ describe('buying one', () => {
   });
 
   it('refuses an item that is not premium, or one already owned', async () => {
-    const coin = LOCKER_ITEMS.find((i) => i.id === 'trail_ekg');
+    const coin = LOCKER_ITEMS.find((i) => i.id === 'trail_planes');
     expect((await buyPremiumItem(coin, acct(), vi.fn())).ok).toBe(false);
-    grantOwnedItems(['trail_fire']);
+    grantOwnedItems(['trail_lanterns']);
     expect((await buyPremiumItem(item, acct(), vi.fn())).error).toMatch(/already own/);
   });
 
@@ -120,7 +120,7 @@ describe('buying one', () => {
     const calls = [];
     const ok = acct({ proFunction: async (a, x) => { calls.push([a, x]); return { url: 'https://checkout.stripe.com/c/pay_9' }; } });
     expect(await buyPremiumItem(item, ok, go)).toEqual({ ok: true, redirected: true });
-    expect(calls).toEqual([['item', { item: 'trail_fire', name: 'Fire Trail' }]]);
+    expect(calls).toEqual([['item', { item: 'trail_lanterns', name: 'Sky Lanterns' }]]);
     expect(go).toHaveBeenCalledWith('https://checkout.stripe.com/c/pay_9');
     const evil = acct({ proFunction: async () => ({ url: 'http://evil' }) });
     expect((await buyPremiumItem(item, evil, vi.fn())).ok).toBe(false);
@@ -138,10 +138,10 @@ describe('buying one', () => {
     vi.stubEnv('VITE_SUPABASE_URL', 'https://x.supabase.co');
     let n = 0; let synced = 0;
     const lb = acct({
-      getMyPro: async () => ({ active: false, items: ++n > 5 ? ['trail_fire'] : [] }),
+      getMyPro: async () => ({ active: false, items: ++n > 5 ? ['trail_lanterns'] : [] }),
       proFunction: async (a) => { if (a === 'sync') { synced++; return { ok: true, granted: [] }; } return { error: 'no' }; }
     });
-    const r = await waitForWebItem(lb, 'trail_fire', { wait: async () => {}, tries: 8 });
+    const r = await waitForWebItem(lb, 'trail_lanterns', { wait: async () => {}, tries: 8 });
     expect(r.owned).toBe(true);
     expect(synced).toBeGreaterThanOrEqual(1);
     vi.unstubAllEnvs();

@@ -103,10 +103,10 @@ describe('Language Dash Pro backend', () => {
     const H = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
     const J = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
     expect((await one(H, 'SELECT get_my_pro() AS r')).r.items).toEqual([]);
-    await db.query("SELECT pro_grant_item($1, 'trail_rainbow', 'stripe')", [H]);
-    await db.query("SELECT pro_grant_item($1, 'trail_rainbow', 'stripe')", [H]); // the same event twice
+    await db.query("SELECT pro_grant_item($1, 'trail_glyphs', 'stripe')", [H]);
+    await db.query("SELECT pro_grant_item($1, 'trail_glyphs', 'stripe')", [H]); // the same event twice
     await db.query("SELECT pro_grant_item($1, 'gear_wings', 'stripe')", [H]);
-    expect((await one(H, 'SELECT get_my_pro() AS r')).r.items).toEqual(['trail_rainbow', 'gear_wings']);
+    expect((await one(H, 'SELECT get_my_pro() AS r')).r.items).toEqual(['trail_glyphs', 'gear_wings']);
     expect((await one(J, 'SELECT get_my_pro() AS r')).r.items).toEqual([]); // not shared
     // they are reported whether or not Pro is active, and survive a lapse
     await db.query("SELECT pro_grant_until($1, now() + interval '30 days', 'monthly', 'stripe', false)", [H]);
@@ -120,7 +120,7 @@ describe('Language Dash Pro backend', () => {
     expect(await rejects(H, "SELECT pro_grant_item('" + H + "', 'avatar_m_king', 'x')")).toBe(true);
     expect(await rejects(H, "SELECT pro_revoke_item('" + H + "', 'gear_wings')")).toBe(true);
     // a refund takes back that one item
-    await db.query("SELECT pro_revoke_item($1, 'trail_rainbow')", [H]);
+    await db.query("SELECT pro_revoke_item($1, 'trail_glyphs')", [H]);
     expect((await one(H, 'SELECT get_my_pro() AS r')).r.items).toEqual(['gear_wings']);
     expect((await db.query("SELECT pro_has_item($1, 'gear_wings') AS h", [H])).rows[0].h).toBe(true);
   });

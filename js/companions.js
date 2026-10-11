@@ -8,7 +8,7 @@
  */
 
 export var NO_PAL = 'pal_none';
-export var DEFAULT_PAL = 'pal_cat';
+export var DEFAULT_PAL = 'pal_snail';
 
 /**
  * Tones: how a buddy talks. Each tone has lines for every mood. {name} is the buddy's name, {n} the study streak.
@@ -58,19 +58,19 @@ var TONES = {
 
 /** The buddies. `tone` picks how they talk. */
 export var PALS = [
-  { id: 'pal_cat', name: 'Maneki', emoji: '🐱', tone: 'sassy', price: 0, color: 0xffb066, desc: 'A lucky cat who has overheard every language' },
-  { id: 'pal_dog', name: 'Fetch', emoji: '🐶', tone: 'cheery', price: 400, color: 0xd9a066, desc: 'Fetches the right word, loudly' },
-  { id: 'pal_bunny', name: 'Lapin', emoji: '🐰', tone: 'cheery', price: 600, color: 0xffb3d1, desc: 'Hops between words and cheers for each one' },
-  { id: 'pal_fox', name: 'Raposa', emoji: '🦊', tone: 'sassy', price: 800, color: 0xff8a3f, desc: 'Clever, cheeky and a collector of idioms' },
-  { id: 'pal_panda', name: 'Mochi', emoji: '🐼', tone: 'sleepy', price: 1000, color: 0xdddddd, desc: 'Takes it slow, with snacks between verbs' },
-  { id: 'pal_owl', name: 'Búho', emoji: '🦉', tone: 'wise', price: 1200, color: 0xc9a06a, desc: 'Awake at all hours, full of etymology' },
-  { id: 'pal_frog', name: 'Kaeru', emoji: '🐸', tone: 'bold', price: 1500, color: 0x6fdc6f, desc: 'Leaps at every gate' },
-  { id: 'pal_octopus', name: 'Octo-Lingo', emoji: '🐙', tone: 'wise', price: 2000, color: 0xff7ab8, desc: 'Eight arms, eight phrasebooks' },
-  { id: 'pal_dragon', name: 'Lóng', emoji: '🐲', tone: 'bold', price: 3500, color: 0x6fd47a, desc: 'Breathes fire on forgotten words' },
-  { id: 'pal_parrot', name: 'Polly Glot', emoji: '🦜', tone: 'sassy', price: 700, color: 0x3ec96b, desc: 'Repeats everything you say, with a better accent' },
-  { id: 'pal_tortoise', name: 'Tortuga', emoji: '🐢', tone: 'wise', price: 900, color: 0x7fae5a, desc: 'A travelling tortoise: slow, steady, been everywhere' },
-  { id: 'pal_crane', name: 'Origami', emoji: '🦢', tone: 'sleepy', price: 1800, color: 0xf2f2ff, desc: 'A paper crane that folds itself into a new word each day' },
-  { id: 'pal_dictionary', name: 'Pocket Dictionary', emoji: '📖', tone: 'bold', price: 2500, color: 0x4466aa, desc: 'A pocket dictionary with legs. It will look it up for you.' }
+  { id: 'pal_snail', name: 'Snail Mail', emoji: '🐌', tone: 'sleepy', price: 0, color: 0xf2b134, desc: 'Carries every word to you in its own time. It always gets there.' },
+  { id: 'pal_axolotl', name: 'Axo', emoji: '🦎', tone: 'cheery', price: 400, color: 0xf6b3c4, desc: 'Smiles like it knows the subjunctive. Mexico City water-baby.' },
+  { id: 'pal_dumpling', name: 'Baozi', emoji: '🥟', tone: 'cheery', price: 700, color: 0xfff6e6, desc: 'Steamed, soft and stuffed with vocabulary.' },
+  { id: 'pal_llama', name: 'Llama Drama', emoji: '🦙', tone: 'sassy', price: 600, color: 0xf1e3c4, desc: 'Carried a phrasebook over the Andes and has opinions about it.' },
+  { id: 'pal_magpie', name: 'Magpie', emoji: '🐦', tone: 'sassy', price: 800, color: 0x1b2a41, desc: 'Collects shiny words and hides the best ones in your pockets.' },
+  { id: 'pal_kite', name: 'Kite', emoji: '🪁', tone: 'cheery', price: 900, color: 0xd9432c, desc: 'Rides every breeze to a new word, string and all.' },
+  { id: 'pal_capybara', name: 'Capy', emoji: '🦫', tone: 'sleepy', price: 1000, color: 0xb98a5a, desc: 'Sits in the hot spring, unbothered by irregular verbs.' },
+  { id: 'pal_bonsai', name: 'Bonsai', emoji: '🎍', tone: 'wise', price: 1300, color: 0x5cb87a, desc: 'A tiny tree that grows one leaf per word you learn.' },
+  { id: 'pal_teapot', name: 'Chai', emoji: '☕', tone: 'wise', price: 1500, color: 0x0e8c8a, desc: 'A teapot that whistles hello in every language it has ever steeped.' },
+  { id: 'pal_matryoshka', name: 'Babushka', emoji: '🪆', tone: 'wise', price: 1800, color: 0xd9432c, desc: 'A nesting doll: every word has a smaller word inside.' },
+  { id: 'pal_balloon', name: 'Montgolfier', emoji: '🎈', tone: 'bold', price: 2200, color: 0xf2b134, desc: 'A hot-air balloon who has seen every border from above.' },
+  { id: 'pal_train', name: 'Choo-Choo', emoji: '🚂', tone: 'bold', price: 2800, color: 0x0e8c8a, desc: 'A mini steam train that stops at every station you know.' },
+  { id: 'pal_inkling', name: 'Inkling', emoji: '✒️', tone: 'bold', price: 3500, color: 0x2f5d8c, desc: 'A blot of ink with big eyes, a quill and bigger plans.' }
 ];
 
 export function getPal(id) {

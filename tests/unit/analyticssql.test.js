@@ -223,9 +223,9 @@ describe('the views', () => {
     }
     // snapshots, purchases, shares, errors, perf, experiments, quests, ratings
     for (let i = 0; i < 10; i++) await addEvent(i, i < 6 ? 12 : 5, 'user_snapshot', { level: 1 + i, coins: 100 * i, streak_days: i % 4, runs_total: 3, owned_items: 8, days_since_install: 3 });
-    for (let i = 0; i < 4; i++) await addEvent(i, 12, 'purchase', { item_id: 'trail_pills', item_type: 'trail', price: 300, coins_before: 400, coins_after: 100, days_since_install: 0 });
-    await addEvent(0, 12, 'item_previewed', { item_id: 'trail_pills', item_type: 'trail', owned: false, affordable: true });
-    await addEvent(5, 12, 'purchase_blocked', { item_id: 'trail_pills', item_type: 'trail', price: 300, coins: 100, short_by: 200 });
+    for (let i = 0; i < 4; i++) await addEvent(i, 12, 'purchase', { item_id: 'trail_leaves', item_type: 'trail', price: 300, coins_before: 400, coins_after: 100, days_since_install: 0 });
+    await addEvent(0, 12, 'item_previewed', { item_id: 'trail_leaves', item_type: 'trail', owned: false, affordable: true });
+    await addEvent(5, 12, 'purchase_blocked', { item_id: 'trail_leaves', item_type: 'trail', price: 300, coins: 100, short_by: 200 });
     await addEvent(0, 12, 'share', { kind: 'challenge', method: 'native', ok: true });
     await addEvent(3, 12, 'error', { system: 'engine', operation: 'init', message: 'boom', fingerprint: 'abc123', in_run: true });
     await addEvent(1, 12, 'perf_load', { boot_ms: 1800, cards_ready_ms: 2500, first_paint_ms: 600, cached: false, connection: '4g', transfer_kb: 900 });
@@ -324,7 +324,7 @@ describe('the views', () => {
   });
 
   it('economy views add up coins in and out, and show what is wanted but unaffordable', async () => {
-    const items = (await q("SELECT * FROM analytics_v_items WHERE item = 'trail_pills'"))[0];
+    const items = (await q("SELECT * FROM analytics_v_items WHERE item = 'trail_leaves'"))[0];
     expect(Number(items.purchases)).toBe(4);
     expect(Number(items.tried_to_buy_without_coins)).toBe(1);
     expect(Number(items.avg_short_by)).toBe(200);

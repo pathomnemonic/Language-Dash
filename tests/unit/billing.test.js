@@ -237,7 +237,7 @@ describe('a payment is never lost to a missing field, a free renewal or an odd o
 
   it('a payment that finishes later (a bank debit) gives the purchase, exactly like one that finished at once', async () => {
     const t = fake();
-    const ev = { type: 'checkout.session.async_payment_succeeded', data: { object: { client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { kind: 'item', item_id: 'trail_fire', user_id: 'u1' } } } };
+    const ev = { type: 'checkout.session.async_payment_succeeded', data: { object: { client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } };
     expect((await handleEvent(ev, t.deps)).action).toBe('item');
     expect(t.calls.map((c) => c[0])).toEqual(['pro_link_customer', 'pro_grant_item']);
     const unpaid = fake();
@@ -251,7 +251,7 @@ describe('a payment is never lost to a missing field, a free renewal or an odd o
     const ev = { type: 'checkout.session.completed', data: { object: { client_reference_id: 'u1', payment_status: 'paid', payment_intent: 'pi_1', metadata: { plan: 'lifetime', user_id: 'u1' } } } };
     expect(await handleEvent(ev, t.deps)).toEqual({ handled: false, action: 'already_returned' });
     expect(t.calls).toEqual([]);
-    const item = { type: 'checkout.session.completed', data: { object: { client_reference_id: 'u1', payment_status: 'paid', payment_intent: 'pi_2', metadata: { kind: 'item', item_id: 'trail_fire', user_id: 'u1' } } } };
+    const item = { type: 'checkout.session.completed', data: { object: { client_reference_id: 'u1', payment_status: 'paid', payment_intent: 'pi_2', metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } };
     expect((await handleEvent(item, t.deps)).handled).toBe(false);
     expect(t.calls).toEqual([]);
   });
@@ -271,7 +271,7 @@ describe('a payment is never lost to a missing field, a free renewal or an odd o
     expect((await handleEvent(dispute('charge.dispute.closed', 'won'), t.deps)).action).toBe('lifetime_restored');
     expect(t.calls[0][0]).toBe('pro_grant_until');
     // an item, too
-    const itemMeta = { user_id: 'u1', kind: 'item', item_id: 'trail_fire' };
+    const itemMeta = { user_id: 'u1', kind: 'item', item_id: 'trail_lanterns' };
     let stage = { id: 'ch_2', disputed: true, dispute: { status: 'needs_response' }, metadata: itemMeta };
     t = fake({ getCharge: async () => stage });
     await handleEvent(dispute('charge.dispute.created'), t.deps);
@@ -316,24 +316,24 @@ describe('a payment is never lost to a missing field, a free renewal or an odd o
 
 
 describe('premium Locker items (real money)', () => {
-  const itemSession = (over) => ({ type: 'checkout.session.completed', data: { object: Object.assign({ client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { kind: 'item', item_id: 'trail_fire', user_id: 'u1' } }, over || {}) } });
+  const itemSession = (over) => ({ type: 'checkout.session.completed', data: { object: Object.assign({ client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } }, over || {}) } });
 
   it('a checkout charges the catalog price, once, in dollars, and creates a customer so it can be found again', () => {
-    const f = itemCheckoutParams('trail_fire', 'u1', ENV, { name: 'Fire Trail' });
+    const f = itemCheckoutParams('trail_lanterns', 'u1', ENV, { name: 'Sky Lanterns' });
     expect(f['mode']).toBe('payment');
     expect(f['line_items[0][price_data][unit_amount]']).toBe('99');
     expect(f['line_items[0][price_data][currency]']).toBe('usd');
-    expect(f['metadata[item_id]']).toBe('trail_fire');
+    expect(f['metadata[item_id]']).toBe('trail_lanterns');
     expect(f['payment_intent_data[metadata][kind]']).toBe('item');
     expect(f['customer_creation']).toBe('always');
-    expect(f['success_url']).toBe('https://me.github.io/dx/?pro=success&item=trail_fire');
-    expect(itemCheckoutParams('trail_fire', 'u1', ENV, { customer: 'cus_9' }).customer_creation).toBeUndefined();
+    expect(f['success_url']).toBe('https://me.github.io/dx/?pro=success&item=trail_lanterns');
+    expect(itemCheckoutParams('trail_lanterns', 'u1', ENV, { customer: 'cus_9' }).customer_creation).toBeUndefined();
   });
 
   it('refuses things that are not for sale, a missing member or a bad site address', () => {
-    expect(() => itemCheckoutParams('trail_ekg', 'u1', ENV)).toThrow(/not for sale/);
-    expect(() => itemCheckoutParams('trail_fire', '', ENV)).toThrow(/Sign in/);
-    expect(() => itemCheckoutParams('trail_fire', 'u1', { SITE_URL: 'http://x' })).toThrow(/site address/);
+    expect(() => itemCheckoutParams('trail_planes', 'u1', ENV)).toThrow(/not for sale/);
+    expect(() => itemCheckoutParams('trail_lanterns', '', ENV)).toThrow(/Sign in/);
+    expect(() => itemCheckoutParams('trail_lanterns', 'u1', { SITE_URL: 'http://x' })).toThrow(/site address/);
   });
 
   it('a paid item is granted (and a repeat of the event is harmless)', async () => {
@@ -341,7 +341,7 @@ describe('premium Locker items (real money)', () => {
     expect(await handleEvent(itemSession(), deps)).toEqual({ handled: true, action: 'item' });
     await handleEvent(itemSession(), deps);
     expect(calls.filter((c) => c[0] === 'pro_grant_item').map((c) => c[1])).toEqual([
-      { p_user: 'u1', p_item: 'trail_fire', p_source: 'stripe', p_ref: null }, { p_user: 'u1', p_item: 'trail_fire', p_source: 'stripe', p_ref: null }
+      { p_user: 'u1', p_item: 'trail_lanterns', p_source: 'stripe', p_ref: null }, { p_user: 'u1', p_item: 'trail_lanterns', p_source: 'stripe', p_ref: null }
     ]);
     expect(calls[0]).toEqual(['pro_link_customer', { p_customer: 'cus_1', p_user: 'u1' }]);
   });
@@ -353,9 +353,9 @@ describe('premium Locker items (real money)', () => {
     expect(out.action).toBe('item_duplicate_refunded');
     expect(refunded).toEqual(['pi_second']);
     // the refund event for that second payment names its own payment, so the database leaves the first one's item alone
-    const u = fake({ getCharge: async () => ({ id: 'ch_2', refunded: true, payment_intent: 'pi_second', metadata: { kind: 'item', item_id: 'trail_fire', user_id: 'u1' } }) });
+    const u = fake({ getCharge: async () => ({ id: 'ch_2', refunded: true, payment_intent: 'pi_second', metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } }) });
     await handleEvent({ type: 'charge.refunded', data: { object: { id: 'ch_2', refunded: true } } }, u.deps);
-    expect(u.calls).toEqual([['pro_revoke_item', { p_user: 'u1', p_item: 'trail_fire', p_ref: 'pi_second' }]]);
+    expect(u.calls).toEqual([['pro_revoke_item', { p_user: 'u1', p_item: 'trail_lanterns', p_ref: 'pi_second' }]]);
     // a normal repeat of the same event (same payment) is not a duplicate and refunds nothing
     const again = [];
     const v = fake({ refundPayment: async (pi) => { again.push(pi); }, rpc: async (n) => (n === 'pro_grant_item' ? 'already' : null) });
@@ -366,7 +366,7 @@ describe('premium Locker items (real money)', () => {
   it('an unpaid session, or one with no member, grants nothing', async () => {
     const { calls, deps } = fake();
     expect((await handleEvent(itemSession({ payment_status: 'unpaid' }), deps)).handled).toBe(false);
-    expect((await handleEvent(itemSession({ client_reference_id: '', metadata: { kind: 'item', item_id: 'trail_fire' } }), deps)).handled).toBe(false);
+    expect((await handleEvent(itemSession({ client_reference_id: '', metadata: { kind: 'item', item_id: 'trail_lanterns' } }), deps)).handled).toBe(false);
     expect(calls).toEqual([]);
   });
 
@@ -378,10 +378,10 @@ describe('premium Locker items (real money)', () => {
 
   it('a full refund takes back that item only; a partial one takes nothing; a subscription is untouched', async () => {
     const { calls, deps } = fake();
-    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { kind: 'item', item_id: 'trail_fire', user_id: 'u1' } } } }, deps);
-    expect(calls).toEqual([['pro_revoke_item', { p_user: 'u1', p_item: 'trail_fire', p_ref: null }]]);
+    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } }, deps);
+    expect(calls).toEqual([['pro_revoke_item', { p_user: 'u1', p_item: 'trail_lanterns', p_ref: null }]]);
     const t = fake();
-    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: false, metadata: { kind: 'item', item_id: 'trail_fire', user_id: 'u1' } } } }, t.deps);
+    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: false, metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } }, t.deps);
     expect(t.calls).toEqual([]);
   });
 });
@@ -404,7 +404,7 @@ describe('which charges count as given back', () => {
 describe('what the payer is told before paying', () => {
   it('both kinds of checkout show the terms link and that digital products are delivered at once', () => {
     const plan = checkoutParams('yearly', 'u1', ENV);
-    const item = itemCheckoutParams('trail_fire', 'u1', ENV);
+    const item = itemCheckoutParams('trail_lanterns', 'u1', ENV);
     for (const f of [plan, item]) {
       expect(f['custom_text[submit][message]']).toContain('https://me.github.io/dx/terms.html');
       expect(f['custom_text[submit][message]']).toMatch(/delivered to your account immediately/);

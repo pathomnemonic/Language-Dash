@@ -425,6 +425,7 @@
 .pal-buddy { position: absolute; left: 4px; bottom: -4px; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--card); border: var(--bw) solid var(--line); border-radius: 50%; box-shadow: var(--hard-sm); cursor: pointer; padding: 0; }
 .pal-buddy[hidden] { display: none; }
 .pal-emoji { font-size: 30px; line-height: 1; display: inline-block; transform-origin: 50% 90%; animation: palIdle 3.2s ease-in-out infinite; }
+.pal-emoji .pal-art { display: block; width: 36px; height: 36px; }
 .pal-tag { position: absolute; right: -4px; top: -6px; font-size: 14px; }
 .pal-happy .pal-emoji { animation: palHop 1.8s ease-in-out infinite; }
 .pal-cheer .pal-emoji { animation: palCheer 0.7s ease-in-out infinite; }

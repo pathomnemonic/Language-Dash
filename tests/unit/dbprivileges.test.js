@@ -288,7 +288,7 @@ describe('deleting an account while a subscription is still billing', () => {
     expect((await db.query(`SELECT count(*)::int AS n FROM auth.users WHERE id = '${A}'`)).rows[0].n).toBe(1);
 
     await db.query(`SELECT pro_grant_until('${B}', now() + interval '3000 days', 'lifetime', 'stripe', false)`);
-    await db.query(`SELECT pro_grant_item('${B}', 'trail_fire', 'stripe', 'pi_1')`);
+    await db.query(`SELECT pro_grant_item('${B}', 'trail_lanterns', 'stripe', 'pi_1')`);
     await db.query(`SELECT pro_link_customer('cus_B', '${B}')`);
     await as(B, () => db.query('SELECT delete_my_account()'));
     expect((await db.query(`SELECT count(*)::int AS n FROM auth.users WHERE id = '${B}'`)).rows[0].n).toBe(0);
