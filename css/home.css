@@ -605,11 +605,9 @@
 
 /* ==================================================================
    A calmer Home. Fewer boxes, one accent: the red PLAY ticket. Everything else is quiet paper and ink.
-   - red "new" dots stay on the tab bar only (they were on every button)
    - the route and word filters share one slim pass; today and the streak are plain lines, not more boxes
    - the three other ways to play are plain paper stubs (no colored fills), shorter, with more air around them
    ================================================================== */
-#screenHome .nav-dot { display: none !important; }
 .home-layout { gap: clamp(10px, 2vh, 22px); padding-left: calc(var(--safe-left) + 20px); padding-right: calc(var(--safe-right) + 20px); }
 
 /* the stamp: a little smaller so it breathes */
@@ -657,5 +655,3 @@
 #langBtn::before { display: none; }
 #langBtn:active { transform: none; }
 #langBtn .filters-summary { letter-spacing: 0.12em; }
-/* tab-bar dots: smaller */
-.nav-item .nav-dot { transform: scale(0.8); }
