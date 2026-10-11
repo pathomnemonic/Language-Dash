@@ -26,7 +26,7 @@ describe('study report', () => {
 
   it('reads as a short message with no personal details', () => {
     const text = reportToText(r);
-    expect(text).toContain('Dx Dash study report (2026-10-05)');
+    expect(text).toContain('Language Dash study report (2026-10-05)');
     expect(text).toContain('Study streak: 4 days (best 9)');
     expect(text).toContain('• Cardiology: 90% of 50 (Mastered)');
     expect(text).not.toMatch(/Secret Name|a@b\.c/);

@@ -1,5 +1,6 @@
 /**
- * holiday.js — Holiday Wards: the hospital decorated for whatever is happening on the calendar.
+ * holiday.js — Festival of Seasons (skin 'Holiday Wards'; the id and file name are kept from the original game): the
+ * town square dressed for whatever is happening on the calendar.
  *
  * One map, five looks, picked from today's date when the map is built:
  *   winter  (Dec 1 - Jan 6)   snow, lit pine trees, presents, snowmen, candy canes, falling snow

@@ -1,6 +1,6 @@
 {
-  "name": "Dx Dash",
-  "short_name": "Dx Dash",
+  "name": "Language Dash",
+  "short_name": "Language Dash",
   "description": "Run the list. An endless runner for USMLE & COMLEX board prep",
   "start_url": "./",
   "scope": "./",

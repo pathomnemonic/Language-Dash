@@ -1,8 +1,10 @@
 /**
- * farm.js — Vet and Farm Clinic: a country clinic where the patients are cows, pigs, sheep and chickens.
+ * farm.js — Bavarian Farmyard (skin 'Vet and Farm Clinic'; the id and file name are kept from the original game): a
+ * red barn, hay bales, an animal pen and opinionated cows, pigs, sheep and chickens.
  *
  * Every 16 units: a big red barn front, a stack of hay bales with crates of fresh vegetables, an animal pen, and the
- * clinic tent with a green cross. Moving: a windmill, a tractor rolling past, birds, butterflies and drifting clouds.
+ * blue-and-white milk stand with its churns and cheese wheels. Moving: a windmill, a tractor rolling past, birds,
+ * butterflies and drifting clouds.
  */
 
 import * as THREE from 'three';
@@ -99,11 +101,19 @@ function pen(g, S, z) {
 }
 
 function clinic(g, S, z) {
+  // (the name is kept from the original) the milk stand: a canopy with Bavarian blue-and-white diamonds, milk churns
+  // and cheese wheels on a table
   box(g, 1.4, 0.1, 3.2, WHITE, S.in(0.8), 2.6, z);
   [-1.5, 1.5].forEach(function (dz) { cyl(g, 0.06, 0.06, 2.6, 0xdcdcdc, S.in(0.35), 1.3, z + dz, { seg: 4 }); });
-  box(g, 0.1, 0.8, 2.6, 0x3fbf5a, S.in(0.2), 3.2, z);
-  box(g, 0.08, 0.12, 0.5, WHITE, S.in(0.27), 3.2, z); box(g, 0.08, 0.5, 0.12, WHITE, S.in(0.27), 3.2, z);
-  box(g, 0.9, 0.5, 1.8, WHITE, S.in(0.8), 0.25, z); // an exam table
+  box(g, 0.1, 0.8, 2.6, 0x3a86d9, S.in(0.2), 3.2, z);
+  for (var d = 0; d < 5; d++) box(g, 0.08, 0.34, 0.34, WHITE, S.in(0.27), 3.2, z - 1.0 + d * 0.5, { rx: Math.PI / 4 });
+  box(g, 0.9, 0.5, 1.8, 0xc58b4a, S.in(0.8), 0.25, z); // the table
+  [-0.5, 0.1].forEach(function (dz) {
+    cyl(g, 0.2, 0.17, 0.5, 0xdcdcdc, S.in(0.8), 0.75, z + dz, { seg: 8 });
+    cyl(g, 0.12, 0.2, 0.12, 0xdcdcdc, S.in(0.8), 1.06, z + dz, { seg: 8 });
+  });
+  cyl(g, 0.25, 0.25, 0.14, 0xf0c24a, S.in(0.8), 0.57, z + 0.65, { seg: 10 });
+  cyl(g, 0.2, 0.2, 0.12, 0xf4d070, S.in(0.8), 0.7, z + 0.65, { seg: 10 });
   cow(g, S.in(1.5), z + 0.2, S.turn + 2.4);
   chicken(g, S.in(1.2), z - 1.3);
 }

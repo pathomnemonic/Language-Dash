@@ -101,7 +101,7 @@ export function buildWallSegment(skin, side, z, height) {
       break;
 
     case "bone_pillars":
-      // Vertebrae-like segmented bone pillars
+      // Segmented carved-stone pillars (legacy wall style)
       var numSegments = 4;
       for (var seg = 0; seg < numSegments; seg++) {
         var segH = height / numSegments;
@@ -162,7 +162,7 @@ export function buildWallSegment(skin, side, z, height) {
       break;
 
     case "helix_strands":
-      // DNA double helix backbone running vertically
+      // Twin spiral of letters running vertically
       var strandMat1 = new THREE.MeshBasicMaterial({ color: c.wallA });
       var strandMat2 = new THREE.MeshBasicMaterial({ color: c.wallB });
       var rungMat = new THREE.MeshBasicMaterial({ color: c.archMain, transparent: true, opacity: 0.4 });
@@ -219,7 +219,7 @@ export function buildWallSegment(skin, side, z, height) {
       break;
 
     case "hospital_panels":
-      // Clean hospital wall panels with trim
+      // Clean panelled wall with trim
       var panel = new THREE.Mesh(
         roundedBox(0.22, height, 2),
         new THREE.MeshBasicMaterial({ color: c.wallA })
@@ -243,7 +243,7 @@ export function buildWallSegment(skin, side, z, height) {
       break;
 
     case "pill_shelves":
-      // Pharmacy shelf-like wall with pill bottle shapes
+      // Spice-market shelf wall with jar shapes
       var shelfPanel = new THREE.Mesh(
         roundedBox(0.5, height, 2),
         new THREE.MeshBasicMaterial({ color: c.wallA })
@@ -258,7 +258,7 @@ export function buildWallSegment(skin, side, z, height) {
         );
         shelf.position.set(x, 0.8 + sh * 1.0, z);
         g.add(shelf);
-        // Pill bottles on shelf
+        // Jars on the shelf
         for (var pb = 0; pb < 3; pb++) {
           var bottle = new THREE.Mesh(
             new THREE.CylinderGeometry(0.06, 0.06, 0.2, 6),
@@ -271,7 +271,7 @@ export function buildWallSegment(skin, side, z, height) {
       break;
 
     case "sterile_panels":
-      // Smooth OR-style walls with subtle glow
+      // Smooth glass-booth walls with subtle glow
       var sterileWall = new THREE.Mesh(
         roundedBox(0.2, height, 2),
         new THREE.MeshBasicMaterial({ color: c.wallA })
@@ -308,14 +308,14 @@ export function buildWallSegment(skin, side, z, height) {
       break;
 
     case "skeletal_xray":
-      // X-ray style transparent bone outlines
+      // Transparent poster-light panel outlines
       var xrayPanel = new THREE.Mesh(
         roundedBox(0.15, height, 2),
         new THREE.MeshBasicMaterial({ color: c.wallA, transparent: true, opacity: 0.2 })
       );
       xrayPanel.position.set(x, height / 2, z);
       g.add(xrayPanel);
-      // Bone outline (simplified long bone)
+      // Outline (a simplified long shape)
       var boneOutline = new THREE.Mesh(
         new THREE.CylinderGeometry(0.08, 0.06, height * 0.7, 6),
         new THREE.MeshBasicMaterial({ color: c.wallGlow, transparent: true, opacity: 0.5 })
@@ -427,7 +427,7 @@ export function buildArch(skin, z) {
       break;
 
     case "capillary_branches":
-      // Branching blood vessel network overhead
+      // Branching pipe network overhead
       var mainVessel = new THREE.Mesh(
         new THREE.CylinderGeometry(0.1, 0.1, 11, 6),
         new THREE.MeshBasicMaterial({ color: c.archMain })
@@ -455,7 +455,7 @@ export function buildArch(skin, z) {
       break;
 
     case "rib_arches":
-      // Curved rib bone spanning overhead
+      // Curved arch spanning overhead
       var rib = new THREE.Mesh(
         new THREE.TorusGeometry(5.5, 0.15, 8, 18, Math.PI),
         new THREE.MeshBasicMaterial({ color: c.archMain })
@@ -475,7 +475,7 @@ export function buildArch(skin, z) {
       break;
 
     case "organelle_bridges":
-      // ER-like folded membrane bridges
+      // Folded ribbon bridges
       for (var fold = 0; fold < 4; fold++) {
         var sheet = new THREE.Mesh(
           new THREE.PlaneGeometry(10, 0.4),
@@ -501,7 +501,7 @@ export function buildArch(skin, z) {
       break;
 
     case "base_pair_rungs":
-      // DNA base pair rungs connecting overhead strands
+      // Letter rungs connecting overhead strands
       var mainRung = new THREE.Mesh(
         new THREE.CylinderGeometry(0.03, 0.03, 10, 5),
         new THREE.MeshBasicMaterial({ color: c.archGlow, transparent: true, opacity: 0.4 })
@@ -528,7 +528,7 @@ export function buildArch(skin, z) {
       break;
 
     case "valve_leaflets":
-      // Heart valve leaflets overhead
+      // Hanging shutters overhead
       for (var vl = -1; vl <= 1; vl += 2) {
         var leaflet = new THREE.Mesh(
           new THREE.SphereGeometry(2.5, 10, 6, 0, Math.PI, 0, Math.PI / 3),
@@ -546,7 +546,7 @@ export function buildArch(skin, z) {
       break;
 
     case "fluorescent_bars":
-      // Hospital fluorescent light bars
+      // Fluorescent light bars
       var lightBar = new THREE.Mesh(
         roundedBox(10, 0.08, 0.3),
         new THREE.MeshBasicMaterial({ color: c.archGlow })
@@ -571,7 +571,7 @@ export function buildArch(skin, z) {
       break;
 
     case "rx_signs":
-      // Pharmacy Rx sign arches
+      // Shop-sign arches
       var signBar = new THREE.Mesh(
         roundedBox(11, 0.1, 0.1),
         new THREE.MeshBasicMaterial({ color: c.archMain })
@@ -643,7 +643,7 @@ export function buildArch(skin, z) {
       break;
 
     case "scan_frames":
-      // X-ray scan frame
+      // Scan frame
       var frame = new THREE.Mesh(
         roundedBox(10, 0.08, 0.08),
         new THREE.MeshBasicMaterial({ color: c.archMain })
@@ -777,7 +777,7 @@ export function buildGround(skin) {
       break;
 
     case "endothelium":
-      // Blood vessel inner lining with flowing stripes
+      // Canal lining with flowing stripes
       for (var ev = -2; ev <= 2; ev++) {
         var vStripe = new THREE.Mesh(
           new THREE.PlaneGeometry(0.8, 400),
@@ -840,7 +840,7 @@ export function buildGround(skin) {
       break;
 
     case "linoleum":
-      // Hospital floor tile grid
+      // Floor tile grid
       for (var tx = -6; tx <= 6; tx += 1.5) {
         var tileLine = new THREE.Mesh(
           new THREE.PlaneGeometry(0.02, 400),
@@ -862,7 +862,7 @@ export function buildGround(skin) {
       break;
 
     case "phosphate":
-      // DNA sugar-phosphate backbone pattern
+      // Twin ribbon pattern
       for (var dp = -3; dp <= 3; dp += 3) {
         var backbone = new THREE.Mesh(
           new THREE.PlaneGeometry(0.15, 400),
@@ -892,7 +892,7 @@ export function buildGround(skin) {
       break;
 
     case "endocardium":
-      // Heart inner lining with flowing curves
+      // Flowing-curve lining
       for (var hf = 0; hf < 5; hf++) {
         var flow = new THREE.Mesh(
           new THREE.PlaneGeometry(0.5 + hf * 0.3, 400),
@@ -946,7 +946,7 @@ export function buildGround(skin) {
       break;
 
     case "lightbox":
-      // X-ray lightbox grid
+      // Lightbox grid
       for (var lbx = -6; lbx <= 6; lbx += 3) {
         for (var lbz = -160; lbz < 20; lbz += 4) {
           var lightPanel = new THREE.Mesh(
@@ -1030,7 +1030,7 @@ export function buildAtmosphericParticle(skin) {
       break;
 
     case "blood_cells":
-      // Flattened discs resembling red blood cells
+      // Flattened floating discs
       mesh = new THREE.Mesh(
         new THREE.SphereGeometry(0.12, 12, 8),
         new THREE.MeshBasicMaterial({ color: c.particle, transparent: true, opacity: 0.4 })
@@ -1039,7 +1039,7 @@ export function buildAtmosphericParticle(skin) {
       break;
 
     case "calcium_dust":
-      // Small irregular bone dust particles
+      // Small irregular dust particles
       mesh = new THREE.Mesh(
         new THREE.IcosahedronGeometry(0.05, 1),
         new THREE.MeshBasicMaterial({ color: c.particle, transparent: true, opacity: 0.3 })
@@ -1055,7 +1055,7 @@ export function buildAtmosphericParticle(skin) {
       break;
 
     case "dust_motes":
-      // Tiny floating dust in hospital air
+      // Tiny floating dust in the air
       mesh = new THREE.Mesh(
         new THREE.SphereGeometry(0.03, 12, 8),
         new THREE.MeshBasicMaterial({ color: c.particle, transparent: true, opacity: 0.35 })
@@ -1063,7 +1063,7 @@ export function buildAtmosphericParticle(skin) {
       break;
 
     case "nucleotides":
-      // DNA building blocks — small colored cubes
+      // Letter blocks — small colored cubes
       var isA = Math.random() > 0.5;
       mesh = new THREE.Mesh(
         roundedBox(0.06, 0.06, 0.06),
@@ -1076,7 +1076,7 @@ export function buildAtmosphericParticle(skin) {
       break;
 
     case "capsule_bits":
-      // Tiny pill capsule fragments
+      // Tiny confetti fragments
       mesh = new THREE.Mesh(
         new THREE.CylinderGeometry(0.03, 0.03, 0.08, 6),
         new THREE.MeshBasicMaterial({ color: c.particle, transparent: true, opacity: 0.35 })
@@ -1093,7 +1093,7 @@ export function buildAtmosphericParticle(skin) {
       break;
 
     case "sterile_sparkles":
-      // Tiny bright sparkles in sterile OR air
+      // Tiny bright sparkles in the air
       mesh = new THREE.Mesh(
         new THREE.SphereGeometry(0.025, 12, 8),
         new THREE.MeshBasicMaterial({ color: c.particle, transparent: true, opacity: 0.7 })
@@ -1117,7 +1117,7 @@ export function buildAtmosphericParticle(skin) {
       return group;
 
     case "photons":
-      // X-ray photon scatter — tiny bright dots
+      // Scattered light — tiny bright dots
       mesh = new THREE.Mesh(
         new THREE.SphereGeometry(0.02, 12, 8),
         new THREE.MeshBasicMaterial({ color: c.particle })
@@ -1220,7 +1220,7 @@ export function buildWallGlowStrips(skin, side) {
   var c = skin.colors;
   var x = side * 5.5;
 
-  // The hospital corridor and the bright worlds have their own trim
+  // The Great Library rooms and the bright worlds have their own trim
   if (isHospitalHall(skin) || isWorld(skin)) return g;
 
   // Top glow strip

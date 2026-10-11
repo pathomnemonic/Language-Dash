@@ -13,7 +13,7 @@ var NOTIFICATION_ID = 4101;
 var _testPlugin = null;
 var _plugin = null;
 
-export var REMINDER_TITLE = 'Dx Dash';
+export var REMINDER_TITLE = 'Language Dash';
 export var REMINDER_BODY = 'Time to study. Keep your streak going! 🔥';
 
 function loadPlugin() {

@@ -28,7 +28,7 @@ describe('the rating ask on iPhone', () => {
     const text = container.textContent;
     expect(text).not.toMatch(/enjoying/i);
     expect(text).not.toMatch(/not really/i);
-    expect(container.textContent).toMatch(/Rate Dx Dash/);
+    expect(container.textContent).toMatch(/Rate Language Dash/);
     expect(container.textContent).toMatch(/Send feedback/);
   });
 

@@ -7,7 +7,7 @@ import { openApp, closeTutorial } from './helpers.js';
 test.describe('Smoke tests', () => {
   test('home screen loads with title', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/Dx Dash/);
+    await expect(page).toHaveTitle(/Language Dash/);
   });
 
   test('play button is visible', async ({ page }) => {

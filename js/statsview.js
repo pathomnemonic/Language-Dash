@@ -73,7 +73,7 @@ function section(id, icon, title, hint, build, gateFeature, lockedNote) {
     h.textContent = '🔒 Pro';
     d.classList.add('perf-locked');
     build = function (b) {
-      b.appendChild(el('div', 'perf-note', (lockedNote || 'This view is part of Dx Dash Pro: the full breakdown of how you are doing and where to aim next.') + ' It is part of Dx Dash Pro.'));
+      b.appendChild(el('div', 'perf-note', (lockedNote || 'This view is part of Language Dash Pro: the full breakdown of how you are doing and where to aim next.') + ' It is part of Language Dash Pro.'));
       var go = createElement('button', { className: 'btn btn-gold btn-sm', text: 'UNLOCK PRO', attributes: { type: 'button' } });
       go.addEventListener('click', function () { requireGate(gateFeature, { trigger: 'stats_' + id }); });
       b.appendChild(go);

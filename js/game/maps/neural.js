@@ -1,10 +1,13 @@
 /**
- * neural.js — Neural Highway: a bubblegum brain-wave speedway, where friendly neurons wave from the walls.
+ * neural.js — Shanghai Night Highway (skin 'Neural Highway'; the id and file name are kept from the original game):
+ * a violet circuit-board speedway under the stars, where friendly paper lanterns wave from the walls and a skyline
+ * glitters beyond.
  *
- * Every 16 units: a big smiling neuron with a chain of glowing myelin sausages, a synapse station where two little
- * neurons toss a spark across the gap, a row of brain lobes in four flavours, and a giant lightbulb that shouts IDEA!
- * Moving: signals racing along the axon rails, thought bubbles floating up, twinkling stars, and a pulsing brain in
- * sunglasses that rides past on the wall. The floor is a glossy violet circuit board, the ceiling a night of stars.
+ * Every 16 units: a big smiling lantern with a string of glowing lanterns, a relay station where two little lanterns
+ * toss a spark across the gap, a row of dumpling steamers in four flavours, and a giant lightbulb that shouts IDEA!
+ * Moving: glowing signals racing along the string-light rails, thought bubbles floating up, twinkling stars, and a
+ * lantern in sunglasses that rides past on the wall. The floor is a glossy violet circuit board, the ceiling a night
+ * of stars with a ribbon of light.
  */
 
 import * as THREE from 'three';
@@ -29,18 +32,17 @@ function wallPicture() {
     g.addColorStop(1, '#ffc7ef');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, w, h);
-    // brain folds: fat wavy ribbons (they divide the width, so the picture tiles)
-    ctx.lineCap = 'round';
-    [[0.3, 7, '#b79cff', 14, 0.0], [0.5, 5, '#ffa6e3', 12, 1.7], [0.7, 6, '#9fe7ff', 10, 3.1]].forEach(function (L) {
-      ctx.strokeStyle = L[2];
-      ctx.lineWidth = L[3];
-      ctx.beginPath();
-      for (var x = 0; x <= w; x += 6) {
-        var y = h * L[0] + Math.sin((x / w) * Math.PI * 2 * L[1] + L[4]) * 26 + Math.sin((x / w) * Math.PI * 2 * L[1] * 3 + L[4]) * 7;
-        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    // a skyline of towers with lit windows, with a slim spire (they divide the width, so the picture tiles)
+    var towers = [[0, 90, 150], [90, 70, 210], [160, 110, 120], [270, 50, 250], [320, 80, 170], [400, 100, 130], [500, 60, 230], [560, 90, 160], [650, 70, 200], [720, 110, 140], [830, 60, 240], [890, 134, 120]];
+    towers.forEach(function (t, ti) {
+      ctx.fillStyle = ti % 2 ? 'rgba(122,92,230,0.55)' : 'rgba(160,120,255,0.5)';
+      ctx.fillRect(t[0] + 4, h - 70 - t[2], t[1] - 8, t[2]);
+      for (var wy = 0; wy < t[2] - 20; wy += 24) for (var wx = 12; wx < t[1] - 18; wx += 22) {
+        ctx.fillStyle = (wy / 24 + wx / 22 + ti) % 3 < 1 ? '#ffe98a' : 'rgba(255,255,255,0.35)';
+        ctx.fillRect(t[0] + wx, h - 60 - t[2] + wy, 9, 12);
       }
-      ctx.stroke();
     });
+    ctx.fillStyle = '#ff6bd6'; ctx.fillRect(284, h - 70 - 300, 6, 60);
     // polka dots and sparkles
     for (var i = 0; i < 40; i++) {
       var px = (i * 197) % w, py = 20 + ((i * 89) % (h - 150));
@@ -80,7 +82,7 @@ function ceilingPicture() {
     g.addColorStop(0, '#4a2fb5'); g.addColorStop(1, '#6f3fd0');
     ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
     for (var i = 0; i < 46; i++) { ctx.fillStyle = 'rgba(255,255,255,' + (0.3 + (i % 4) * 0.2) + ')'; ctx.beginPath(); ctx.arc((i * 131) % w, (i * 97) % h, 1.5 + (i % 3), 0, Math.PI * 2); ctx.fill(); }
-    // an EEG trace running the whole length, glowing
+    // a ribbon of light running the whole length, glowing
     ctx.shadowColor = '#35e0d0'; ctx.shadowBlur = 14; ctx.strokeStyle = '#a8fff3'; ctx.lineWidth = 5;
     ctx.beginPath();
     for (var y = 0; y <= h; y += 4) { var x = w / 2 + Math.sin((y / h) * Math.PI * 2 * 4) * 70 + (y % 160 < 24 ? Math.sin((y % 160) / 24 * Math.PI) * 60 : 0); if (y === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
@@ -95,9 +97,9 @@ function sparkMat() { return _spark || (_spark = mat(0xffffff, { e: 0xfff2a0, ei
 
 // ---------- bays ----------
 
-function neuron(g, S, z) {
+function bigLantern(g, S, z) {
   var cz = z - 0.9;
-  // dendrites: pink branches that reach up and out along the wall, each ending in a bud
+  // tassels: pink ribbons that reach up and out along the wall, each ending in a bead
   [[-0.9, 0.55, 0.7], [0.1, 0.9, 1.0], [1.0, 0.45, 0.6], [-0.4, -0.6, 0.55]].forEach(function (d, i) {
     var len = 1.5 * d[2] + 0.5;
     cyl(g, 0.07, 0.12, len, PINK, S.in(0.15), 1.7 + d[1] * 0.9, cz + d[0], { rx: d[0] * 0.55, rz: d[1] * 0.3, seg: 6 });
@@ -105,16 +107,18 @@ function neuron(g, S, z) {
   });
   ball(g, 1.0, PINK, S.in(0.0), 1.55, cz, { seg: 10, sy: 0.95 });
   face(g, S.in(0.0), 1.55, cz, 1.0, S.turn, { open: true, lash: true });
-  // the axon runs from the body along the wall to the next one: a chain of lit myelin sausages
+  cyl(g, 0.5, 0.5, 0.14, YEL, S.in(0.0), 2.6, cz, { seg: 10 });
+  cyl(g, 0.5, 0.5, 0.14, YEL, S.in(0.0), 0.48, cz, { seg: 10 });
+  // a string of glowing little lanterns runs from the big one along the wall to the next
   for (var i = 0; i < 4; i++) {
     var sz = z - 1.5 + i * 1.0 + 0.0;
     capsule(g, 0.24, 0.5, YEL, S.in(0.12), 3.4, sz + 0.0, { mat: myelinMat() });
   }
   cyl(g, 0.05, 0.05, 4, PINK, S.in(0.12), 3.4, z, { rx: Math.PI / 2, seg: 5 });
-  sign(g, 'HI!', PINK, 0xffffff, 1.7, 0.7, S.in(0.1), 4.7, z, { ry: S.turn, border: 0xffffff });
+  sign(g, 'NI HAO!', PINK, 0xffffff, 1.7, 0.7, S.in(0.1), 4.7, z, { ry: S.turn, border: 0xffffff });
 }
 
-function synapse(g, S, z) {
+function relay(g, S, z) {
   [-1, 1].forEach(function (d) {
     var nz = z + d * 1.45;
     ball(g, 0.55, d < 0 ? BLUE : VIO, S.in(0.1), 1.2, nz, { seg: 10 });
@@ -124,13 +128,13 @@ function synapse(g, S, z) {
   ball(g, 0.14, 0xffffff, S.in(0.1), 1.2, z, { mat: sparkMat(), seg: 7 });
   [-0.5, 0.5].forEach(function (dz, i) { ball(g, 0.09, POP[i + 2], S.in(0.1), 0.85 + i * 0.5, z + dz, { seg: 5, bulb: true }); });
   box(g, 0.14, 0.5, 4.2, TEAL, S.in(0.06), 0.25, z);
-  sign(g, 'SYNAPSE', TEAL, 0x24127a, 2.6, 0.8, S.in(0.1), 3.6, z, { ry: S.turn, border: 0xffffff });
+  sign(g, 'RELAY', TEAL, 0x24127a, 2.6, 0.8, S.in(0.1), 3.6, z, { ry: S.turn, border: 0xffffff });
   bolt(g, 0.8, YEL, S.in(0.1), 4.9, z - 1.4, { ry: S.turn });
   bolt(g, 0.8, YEL, S.in(0.1), 4.9, z + 1.4, { ry: S.turn });
 }
 
-function lobes(g, S, z) {
-  var spec = [['F', BLUE], ['P', YEL], ['O', GREEN], ['T', PINK]];
+function steamers(g, S, z) {
+  var spec = [['B', BLUE], ['A', YEL], ['O', GREEN], ['!', PINK]];
   spec.forEach(function (s, i) {
     var lz = z - 1.5 + i * 1.0;
     ball(g, 0.52, s[1], S.in(0.4), 0.6, lz, { seg: 10, sy: 0.85 });
@@ -138,9 +142,9 @@ function lobes(g, S, z) {
     sign(g, s[0], 0xffffff, 0x24127a, 0.55, 0.55, S.in(0.1), 2.0, lz, { ry: S.turn, border: s[1] });
   });
   box(g, 0.1, 0.1, 4, 0xffffff, S.in(0.08), 2.4, z);
-  sign(g, 'LOBE LOUNGE', PINK, 0xffffff, 3.0, 0.8, S.in(0.1), 3.5, z, { ry: S.turn, border: 0xffffff });
-  // a sunglasses-wearing scoop of brain on top, because why not
-  ball(g, 0.5, PINK, S.in(0.12), 4.5, z, { seg: 10 });
+  sign(g, 'DIM SUM BAR', PINK, 0xffffff, 3.0, 0.8, S.in(0.1), 3.5, z, { ry: S.turn, border: 0xffffff });
+  // a sunglasses-wearing steamed bun on top, because why not
+  ball(g, 0.5, 0xfff0d8, S.in(0.12), 4.5, z, { seg: 10 });
   face(g, S.in(0.12), 4.5, z, 0.5, S.turn, { shades: true });
 }
 
@@ -161,9 +165,9 @@ function idea(g, S, z) {
 function bay(g, side, z, k) {
   var S = sideCtx(side);
   wallPanel(g, wallPicture(), side, z, H, 0.0, { r: 0.85 });
-  if (k === 0) neuron(g, S, z);
-  else if (k === 1) synapse(g, S, z);
-  else if (k === 2) lobes(g, S, z);
+  if (k === 0) bigLantern(g, S, z);
+  else if (k === 1) relay(g, S, z);
+  else if (k === 2) steamers(g, S, z);
   else idea(g, S, z);
 }
 
@@ -174,7 +178,7 @@ function center(g, z) {
 
 function arch(g, z, i) {
   lightString(g, POP, H - 0.7, z, { n: 13, sag: 0.55, phase: i });
-  // a hanging EEG wave of beads across the hall, and a bolt at each side
+  // a hanging wave of beads across the hall, and a bolt at each side
   for (var b = 0; b < 17; b++) {
     var t = b / 16;
     ball(g, 0.07, POP[(b + i) % 6], -4.8 + t * 9.6, H - 1.9 + Math.sin(t * Math.PI * 4 + i) * 0.35, z, { seg: 4, bulb: true });
@@ -184,10 +188,11 @@ function arch(g, z, i) {
 
 // ---------- the things that move ----------
 
-function brainRider() {
+function lanternRider() {
   var m = new THREE.Group();
-  ball(m, 0.85, PINK, 0, 1.5, 0, { seg: 12, sx: 1.15 });
-  [[-0.5, 0.1], [0.5, 0.1], [0, 0.55]].forEach(function (p, i) { ball(m, 0.4, i === 2 ? 0xff9ee8 : 0xff8fe0, p[0], 1.5 + p[1] + 0.7, 0, { seg: 8 }); });
+  ball(m, 0.85, 0xff4a5e, 0, 1.5, 0, { seg: 12, sx: 1.15 });
+  cyl(m, 0.4, 0.4, 0.14, YEL, 0, 2.38, 0, { seg: 10 });
+  cyl(m, 0.4, 0.4, 0.14, YEL, 0, 0.62, 0, { seg: 10 });
   face(m, 0, 1.45, 0.0, 0.8, 0, { shades: true, open: true });
   cyl(m, 0.14, 0.2, 0.7, 0x9aa0b8, 0, 0.35, 0, { seg: 8 });
   animated(m);
@@ -196,15 +201,15 @@ function brainRider() {
 }
 
 function extras() {
-  // signals racing along the axon rails on both walls
+  // signals racing along the string-light rails on both walls
   var sig = combine([{ geo: new THREE.CapsuleGeometry(0.1, 0.45, 3, 6), color: 0xffffff, matrix: xform(0, 0, 0, Math.PI / 2, 0, 0) }]);
   [-1, 1].forEach(function (side, i) {
     swarm({ geo: sig, material: glowMat(0.95), count: 12, seed: 4 + i, colors: [0xffffff, 0xa8fff3, 0xffb6ee, 0xffe98a], area: { x: [side * 5.3, side * 5.3], y: [3.4, 3.4], z: [-140, 8] }, k: 1, vz: [-9, -5], scale: [0.9, 1.4] });
     swarm({ geo: dotGeo(0.3), material: glowMat(0.38), count: 12, seed: 40 + i, colors: [0xffffff, 0xffd6f6, 0xcfe8ff], area: { x: [side * 4.7, side * 5.2], y: [0.8, 5.6], z: [-140, 8] }, k: 1, vy: [0.35, 0.9], wobble: 0.2, scale: [0.6, 1.5] });
     swarm({ geo: sparkleGeo(0.22), material: glowMat(0.9), count: 10, seed: 70 + i, colors: [0xffffff, 0xffe98a, 0x9ff4ff, 0xffb6ee], area: { x: [side * 4.4, side * 5.2], y: [1.0, 5.8], z: [-140, 8] }, k: 1, turn: 1.6, wobble: 0.1, scale: [0.7, 1.4] });
   });
-  features(brainRider, { x: -5.15, spacing: 64, count: 3, z0: -34, yaw: Math.PI / 2 });
-  features(brainRider, { x: 5.15, spacing: 64, count: 3, z0: -66, yaw: -Math.PI / 2 });
+  features(lanternRider, { x: -5.15, spacing: 64, count: 3, z0: -34, yaw: Math.PI / 2 });
+  features(lanternRider, { x: 5.15, spacing: 64, count: 3, z0: -66, yaw: -Math.PI / 2 });
   shimmer(myelinMat(), 0.35, 0.28, 2.6, 0);
   shimmer(sparkMat(), 0.85, 0.15, 3.0, 0);
 }

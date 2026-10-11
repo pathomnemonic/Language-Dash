@@ -1,8 +1,9 @@
 /**
- * sunset.js — Prescription Sunset: a beachfront boardwalk at golden hour, where the drugstore sells sunshine.
+ * sunset.js — Algarve Sunset (skin 'Prescription Sunset'; the id and file name are kept from the original game): a
+ * beachfront boardwalk at golden hour, with a lighthouse, a surf shack and an ice-pop cart.
  *
- * Every 16 units along the boardwalk: a pill-bottle lighthouse with a sweeping lamp, a lounge of striped umbrellas and a
- * palm, the Rx Surf Shack with its surfboards and tiki torches, and a cart selling capsule-shaped ice pops. The sun sits
+ * Every 16 units along the boardwalk: a striped lighthouse with a sweeping lamp, a lounge of striped umbrellas and a
+ * palm, the surf shack with its surfboards and tiki torches, and a cart selling ice pops. The sun sits
  * low over a glittering sea, the sky runs from violet to orange, and the sand is warm underfoot. This map keeps its
  * sunset: it does not pick a random time of day or weather like the other open-air maps.
  * Moving: gulls gliding, sailboats crossing the bay, kites bobbing, glitter on the waves, a lighthouse beam sweeping.
@@ -62,7 +63,7 @@ function lighthouse(g, S, z) {
   cyl(g, 0.5, 0.55, 0.7, 0xfff0a0, x, 3.9, z, { seg: 10, e: 0xfff0a0, ei: 0.8 });
   cone(g, 0.62, 0.55, WOOD, x, 4.5, z, { seg: 10 });
   face(g, x, 2.0, z, 0.7, S.turn, { open: true });
-  sign(g, 'Rx', 0xffffff, CORAL, 0.8, 0.5, S.in(0.1), 2.9, z - 1.1, { ry: S.turn });
+  sign(g, 'FARO', 0xffffff, CORAL, 0.8, 0.5, S.in(0.1), 2.9, z - 1.1, { ry: S.turn });
   [-1.3, 1.3].forEach(function (dz, i) { ball(g, 0.34, POP[i], S.in(0.5), 0.3, z + dz, { seg: 7, sy: 0.7 }); });
 }
 
@@ -103,7 +104,7 @@ function surfShack(g, S, z) {
     cyl(g, 0.05, 0.07, 1.6, 0x7a4a22, S.in(0.7), 0.8, z + dz, { seg: 5 });
     cone(g, 0.16, 0.4, 0xffb030, S.in(0.7), 1.8, z + dz, { seg: 6, mat: flameMat() });
   });
-  sign(g, 'Rx SURF SHOP', 0x16a8b8, 0xffffff, 2.8, 0.66, S.in(0.22), 3.2, z, { ry: S.turn, border: SUN });
+  sign(g, 'SURF SHOP', 0x16a8b8, 0xffffff, 2.8, 0.66, S.in(0.22), 3.2, z, { ry: S.turn, border: SUN });
 }
 
 function iceCart(g, S, z) {
@@ -113,7 +114,7 @@ function iceCart(g, S, z) {
   [-0.7, 0.7].forEach(function (dz) { cyl(g, 0.3, 0.3, 0.1, 0x2a2d3a, x, 0.3, z + dz, { rz: Math.PI / 2, seg: 8 }); });
   cyl(g, 0.03, 0.03, 2.2, 0xffffff, x, 2.0, z, { seg: 4 });
   for (var s = 0; s < 6; s++) cone(g, 1.05, 0.5, s % 2 ? 0xffffff : CORAL, x, 3.05, z, { seg: 6, ry: (s * Math.PI) / 3 });
-  // capsule-shaped ice pops standing in the tray
+  // ice pops standing in the tray
   for (var p = 0; p < 5; p++) {
     var pz = z - 0.7 + p * 0.35;
     cyl(g, 0.09, 0.09, 0.42, POP[p % 6], x, 1.5, pz, { seg: 6 });
@@ -124,7 +125,7 @@ function iceCart(g, S, z) {
   ball(g, 0.14, 0xffffff, S.in(0.1), 2.0, z + 1.4, { seg: 6, sy: 0.9 });
   ball(g, 0.09, 0xffffff, S.in(0.1), 2.2, z + 1.4, { seg: 5 });
   cone(g, 0.03, 0.12, 0xffb030, S.in(0.1) + (S.side < 0 ? 0.08 : -0.08), 2.2, z + 1.4, { seg: 3, rz: S.side * 1.6 });
-  sign(g, 'CAPSULE CONES', 0xffffff, CORAL, 2.8, 0.62, S.in(0.1), 4.3, z - 0.5, { ry: S.turn, border: CORAL });
+  sign(g, 'GELADOS', 0xffffff, CORAL, 2.8, 0.62, S.in(0.1), 4.3, z - 0.5, { ry: S.turn, border: CORAL });
   extrude(g, starShape(0.3, 0.14, 5), 0.06, SUN, S.in(0.12), 5.3, z, { ry: S.turn, bulb: true, curve: 2 });
 }
 

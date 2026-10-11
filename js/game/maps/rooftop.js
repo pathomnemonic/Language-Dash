@@ -1,9 +1,10 @@
 /**
- * rooftop.js — Rooftop Helipad Resort: a recovery resort on top of the hospital, high over a pastel city.
+ * rooftop.js — Paris Rooftop (skin 'Rooftop Helipad Resort'; the id and file name are kept from the original game):
+ * a sun deck on a rooftop, high over a pastel city.
  *
  * Every 16 units along the sun deck: loungers under striped umbrellas, a palm-lined juice bar, a pool with a diving
- * board, and a helipad corner. A glass rail lines the deck; a skyline stands beyond it (KayKit city buildings when the
- * models are loaded). Moving: helicopters, a hot-air balloon, drifting clouds, birds and the shimmering pool.
+ * board, and a round flower-bed corner. A glass rail lines the deck; a skyline stands beyond it (KayKit city buildings
+ * when the models are loaded). Moving: airships, a hot-air balloon, drifting clouds, birds and the shimmering pool.
  */
 
 import * as THREE from 'three';
@@ -84,12 +85,11 @@ function bay(g, side, z, k) {
     box(g, 0.3, 0.06, 1.2, 0xffffff, S.in(0.4), 0.9, z - 1.0);
     box(g, 0.1, 0.9, 0.1, 0xffffff, S.in(0.4), 0.45, z - 1.5);
   } else {
-    // the helipad sits half behind the rail, so only its inner edge shows (the lanes start 1.2 in from the wall)
-    cyl(g, 1.15, 1.15, 0.15, 0x6a7280, S.in(0), 0.08, z, { seg: 18 });
+    // the flower bed sits half behind the rail, so only its inner edge shows (the lanes start 1.2 in from the wall)
+    cyl(g, 1.15, 1.15, 0.15, 0x7a5a3a, S.in(0), 0.08, z, { seg: 18 });
     ring(g, 0.9, 0.06, 0xffffff, S.in(0), 0.17, z, { rx: Math.PI / 2, seg: 20, tube: 3 });
-    box(g, 0.12, 0.02, 0.8, 0xffffff, S.in(0.1), 0.17, z - 0.3);
-    box(g, 0.12, 0.02, 0.8, 0xffffff, S.in(0.1), 0.17, z + 0.3);
-    box(g, 0.5, 0.02, 0.12, SUN, S.in(0.1), 0.18, z);
+    for (var fl = 0; fl < 7; fl++) { var fa = fl * 0.9; ball(g, 0.14, PASTEL[fl % 6], S.in(0.1) + Math.cos(fa) * 0.3 * (S.side < 0 ? 1 : -1), 0.3 + (fl % 3) * 0.05, z + Math.sin(fa) * 0.5, { seg: 5 }); }
+    ball(g, 0.2, 0x3fbf5a, S.in(0.1), 0.25, z, { seg: 6, sy: 0.7 });
     umbrella(g, S.in(0.3), z + 1.6, PASTEL[4]);
   }
 }
@@ -111,18 +111,21 @@ function ground(g) {
 }
 
 function helicopter() {
+  // (the name is kept from the original) a little airship: a long pastel envelope with fins, a gondola and a propeller
   var h = new THREE.Group();
-  ball(h, 0.9, 0xff6a5e, 0, 0, 0, { seg: 8, sy: 0.8, sz: 1.3 });
-  box(h, 0.25, 0.25, 2.2, 0xff6a5e, 0, 0.1, 1.8);
-  box(h, 0.08, 0.7, 0.4, 0xffffff, 0, 0.45, 2.8);
+  ball(h, 0.9, 0xffb3c6, 0, 0, 0, { seg: 10, sy: 0.8, sz: 2.0 });
+  ball(h, 0.92, 0xffffff, 0, 0, 0, { seg: 10, sy: 0.8, sz: 2.0, sx: 0.35 });
+  box(h, 0.08, 0.9, 0.7, 0xff6a5e, 0, 0.5, 1.7);
+  box(h, 0.9, 0.08, 0.7, 0xff6a5e, 0, 0.1, 1.7);
+  box(h, 0.5, 0.3, 0.8, 0xb98a55, 0, -0.85, 0);
   var rotor = new THREE.Group();
-  box(rotor, 4.4, 0.05, 0.25, 0x2a2d3a, 0, 0, 0);
-  box(rotor, 0.25, 0.05, 4.4, 0x2a2d3a, 0, 0, 0);
-  rotor.position.y = 0.95;
+  box(rotor, 0.9, 0.05, 0.12, 0x2a2d3a, 0, 0, 0);
+  box(rotor, 0.12, 0.05, 0.9, 0x2a2d3a, 0, 0, 0);
+  rotor.position.set(0, 0, -1.9);
+  rotor.rotation.x = Math.PI / 2;
   h.add(rotor);
   animated(rotor);
   spin(rotor, 'y', 18, 0);
-  box(h, 0.9, 0.05, 0.05, 0xdddddd, 0, -0.9, 0.0, {});
   return h;
 }
 

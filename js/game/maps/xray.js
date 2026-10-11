@@ -1,10 +1,11 @@
 /**
- * xray.js — X-Ray Vision: a glowing radiology disco, where every light box shows a skeleton having a great time.
+ * xray.js — Berlin Disco Cellar (skin 'X-Ray Vision'; the id and file name are kept from the original game): a
+ * glowing underground disco with a mirror ball, lit poster boxes and big speakers.
  *
- * Every 16 units: a gallery of light boxes with cartoon x-rays (a grinning skull, a waving hand, a dancing rib cage), the
- * X-ray disco with its mirror ball and speakers, a CT scanner turned carnival ride, and a lead-apron boutique with a
- * camera that says SMILE. The walls glow white-blue, the floor is a light table with a cyan grid. Moving: mirror balls
- * spinning, skeleton hands waving, coloured beams sweeping the walls, floating bone confetti and sparkles.
+ * Every 16 units: a wall of lit poster boxes (a vinyl record, a HALLO speech bubble, a big heart note), the cellar
+ * disco with its mirror ball and speakers, a laser-tunnel ride, and a photo booth with a coat rack that says FOTO.
+ * The walls glow white-blue, the floor is a light table with a cyan grid. Moving: mirror balls spinning, white gloves
+ * waving, coloured beams sweeping the walls, floating glow-stick confetti and sparkles.
  */
 
 import * as THREE from 'three';
@@ -17,7 +18,7 @@ var CYAN = 0x39e6ff;
 var BLUE = 0x2f7bff;
 var PINK = 0xff5fc0;
 var LIME = 0xb6f04a;
-var BONE = 0xf3fbff;
+var GLOVE = 0xf3fbff;
 var NAVY = 0x0d2a5a;
 var NEON = [CYAN, PINK, LIME, 0xffe14a, BLUE];
 
@@ -29,9 +30,9 @@ function wallPicture() {
     ctx.strokeStyle = 'rgba(47,123,255,0.18)'; ctx.lineWidth = 2;
     for (var x = 0; x <= w; x += 64) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
     for (var y = 0; y <= h; y += 64) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
-    // big ghost bones in the wall
-    ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 12; ctx.lineCap = 'round';
-    for (var i = 0; i < 4; i++) { var cx = 128 + i * 256; ctx.beginPath(); ctx.moveTo(cx - 70, 120); ctx.lineTo(cx + 70, 200); ctx.stroke(); ctx.beginPath(); ctx.arc(cx - 70, 120, 11, 0, 7); ctx.arc(cx + 70, 200, 11, 0, 7); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill(); }
+    // big ghost sound waves in the wall: rings spreading from a speaker
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 10; ctx.lineCap = 'round';
+    for (var i = 0; i < 4; i++) { var cx = 128 + i * 256; for (var rr = 1; rr <= 3; rr++) { ctx.beginPath(); ctx.arc(cx, 150, rr * 26, -0.9, 0.9); ctx.stroke(); } ctx.beginPath(); ctx.arc(cx - 20, 150, 10, 0, 7); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill(); }
     // a neon cyan band along the bottom, with a row of little plus signs
     ctx.fillStyle = '#2f7bff'; ctx.fillRect(0, h - 70, w, 70);
     ctx.fillStyle = '#39e6ff'; ctx.fillRect(0, h - 76, w, 8);
@@ -61,32 +62,29 @@ function ceilingPicture() {
   });
 }
 
-/** A cartoon x-ray film: a dark blue sheet with a bright-lined skeleton. kind picks which part. */
+/** A lit poster: a dark blue sheet with a bright-lined drawing. kind picks which one (the name is kept from the original). */
 function filmTex(kind) {
   return canvasTex('xray_film' + kind, 256, 352, function (ctx, w, h) {
     ctx.fillStyle = '#071d3d'; ctx.fillRect(0, 0, w, h);
     var g = ctx.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, h * 0.7); g.addColorStop(0, 'rgba(60,150,255,0.35)'); g.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-    ctx.strokeStyle = '#e6fbff'; ctx.fillStyle = '#e6fbff'; ctx.lineWidth = 9; ctx.lineCap = 'round';
-    function bone(x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.beginPath(); ctx.arc(x1, y1, 9, 0, 7); ctx.arc(x2, y2, 9, 0, 7); ctx.fill(); }
+    ctx.strokeStyle = '#e6fbff'; ctx.fillStyle = '#e6fbff'; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.textAlign = 'center';
     if (kind === 0) {
-      // a grinning skull
-      ctx.beginPath(); ctx.arc(w / 2, 130, 78, 0, 7); ctx.fill();
-      ctx.fillRect(w / 2 - 44, 190, 88, 56);
-      ctx.fillStyle = '#071d3d'; ctx.beginPath(); ctx.arc(w / 2 - 28, 126, 20, 0, 7); ctx.arc(w / 2 + 28, 126, 20, 0, 7); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(w / 2, 150); ctx.lineTo(w / 2 - 9, 172); ctx.lineTo(w / 2 + 9, 172); ctx.fill();
-      ctx.fillRect(w / 2 - 38, 210, 76, 6); for (var t = -3; t <= 3; t++) ctx.fillRect(w / 2 + t * 11 - 2, 200, 4, 40);
-      ctx.fillStyle = '#e6fbff'; ctx.font = '900 30px Arial, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('SAY AHH', w / 2, 316);
+      // a vinyl record with a label
+      ctx.beginPath(); ctx.arc(w / 2, 150, 90, 0, 7); ctx.fill();
+      ctx.fillStyle = '#071d3d'; for (var rg = 1; rg <= 3; rg++) { ctx.beginPath(); ctx.arc(w / 2, 150, 90 - rg * 16, 0, 7); ctx.lineWidth = 3; ctx.strokeStyle = '#071d3d'; ctx.stroke(); }
+      ctx.fillStyle = '#ff5fa0'; ctx.beginPath(); ctx.arc(w / 2, 150, 28, 0, 7); ctx.fill();
+      ctx.fillStyle = '#071d3d'; ctx.beginPath(); ctx.arc(w / 2, 150, 5, 0, 7); ctx.fill();
+      ctx.fillStyle = '#e6fbff'; ctx.font = '900 34px Arial, sans-serif'; ctx.fillText('DISCO', w / 2, 316);
     } else if (kind === 1) {
-      // a waving hand: palm and five fingers
-      ctx.fillRect(w / 2 - 44, 186, 88, 90);
-      [[-44, 186, -76, 80], [-22, 182, -30, 54], [0, 180, 0, 40], [22, 182, 30, 54], [44, 190, 82, 110]].forEach(function (f) { bone(w / 2 + f[0], f[1], w / 2 + f[2], f[3]); });
-      bone(w / 2, 276, w / 2, 330);
-      ctx.fillStyle = '#e6fbff'; ctx.font = '900 30px Arial, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('HI!', w / 2, 40);
+      // a speech bubble that says hello
+      ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(36, 60, 184, 130, 36); else ctx.rect(36, 60, 184, 130); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(80, 186); ctx.lineTo(70, 240); ctx.lineTo(126, 188); ctx.fill();
+      ctx.fillStyle = '#071d3d'; ctx.font = '900 44px Arial, sans-serif'; ctx.fillText('HALLO!', w / 2, 140);
+      ctx.fillStyle = '#e6fbff'; ctx.font = '900 30px Arial, sans-serif'; ctx.fillText('Hi! Hola!', w / 2, 316);
     } else {
-      // a rib cage and spine, with a smiling heart in the middle
-      bone(w / 2, 40, w / 2, 320);
-      for (var r = 0; r < 5; r++) { ctx.beginPath(); ctx.arc(w / 2, 90 + r * 40, 70 - r * 6, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); ctx.beginPath(); ctx.arc(w / 2, 90 + r * 40, 70 - r * 6, Math.PI * 0.1, Math.PI * 0.9); ctx.stroke(); }
-      ctx.fillStyle = '#ff5fa0'; ctx.beginPath(); ctx.moveTo(w / 2, 190); ctx.bezierCurveTo(w / 2 - 40, 156, w / 2 - 20, 130, w / 2, 152); ctx.bezierCurveTo(w / 2 + 20, 130, w / 2 + 40, 156, w / 2, 190); ctx.fill();
+      // a music note and a smiling heart
+      ctx.beginPath(); ctx.arc(96, 250, 34, 0, 7); ctx.fill(); ctx.beginPath(); ctx.moveTo(128, 250); ctx.lineTo(128, 70); ctx.lineTo(196, 100); ctx.lineWidth = 12; ctx.stroke();
+      ctx.fillStyle = '#ff5fa0'; ctx.beginPath(); ctx.moveTo(w / 2, 210); ctx.bezierCurveTo(w / 2 - 40, 176, w / 2 - 20, 150, w / 2, 172); ctx.bezierCurveTo(w / 2 + 20, 150, w / 2 + 40, 176, w / 2, 210); ctx.fill();
     }
   });
 }
@@ -103,7 +101,7 @@ function lightBoxes(g, S, z) {
     box(g, 0.1, 0.08, 1.2, [CYAN, PINK, LIME][i], S.in(0.12), 3.2, z + dz, {});
   });
   box(g, 0.14, 0.3, 4, BLUE, S.in(0.06), 0.15, z);
-  sign(g, 'LIGHT BOX GALLERY', BLUE, 0xffffff, 3.3, 0.62, S.in(0.1), 4.5, z, { ry: S.turn, border: CYAN });
+  sign(g, 'POSTER WALL', BLUE, 0xffffff, 3.3, 0.62, S.in(0.1), 4.5, z, { ry: S.turn, border: CYAN });
   [-1.7, 1.7].forEach(function (dz, i) { ball(g, 0.3, i ? PINK : CYAN, S.in(0.5), 0.3, z + dz, { seg: 7, sy: 0.75 }); });
 }
 
@@ -116,27 +114,27 @@ function disco(g, S, z) {
   });
   // coloured floor tiles in front of the stage
   [0, 1, 2].forEach(function (i) { box(g, 0.6, 0.06, 0.9, NEON[i], S.in(0.8), 0.33, z - 1.0 + i * 1.0); });
-  neonSign(g, 'X-RAY DISCO', PINK, 0x0d2a5a, 3.0, 0.7, S.in(0.1), 3.9, z, { ry: S.turn });
+  neonSign(g, 'KELLER DISCO', PINK, 0x0d2a5a, 3.0, 0.7, S.in(0.1), 3.9, z, { ry: S.turn });
   bolt(g, 0.8, 0xffe14a, S.in(0.12), 5.0, z - 1.3, { ry: S.turn });
   bolt(g, 0.8, 0xffe14a, S.in(0.12), 5.0, z + 1.3, { ry: S.turn });
 }
 
 function scanner(g, S, z) {
-  // the gantry: a big white ring standing on the wall side, with colour segments, and a bed running through it
+  // the laser tunnel: a big white ring standing on the wall side, with colour segments, and a ride car running through it
   ring(g, 1.1, 0.34, 0xffffff, S.in(0.0), 1.45, z, { seg: 18, tube: 6 });
   ring(g, 1.1, 0.35, CYAN, S.in(0.0), 1.45, z + 0.05, { seg: 18, tube: 4, arc: Math.PI * 0.7, rz: 0.3 });
   ring(g, 1.1, 0.35, PINK, S.in(0.0), 1.45, z + 0.05, { seg: 18, tube: 4, arc: Math.PI * 0.7, rz: Math.PI + 0.3 });
   box(g, 1.0, 0.18, 3.6, 0xf4fbff, S.in(0.3), 0.7, z + 0.2);
   box(g, 0.9, 0.5, 3.4, BLUE, S.in(0.3), 0.4, z + 0.2);
-  // a patient in cheerful socks sticking out one end
+  // a rider with two glow sticks sticking out one end
   [-0.18, 0.18].forEach(function (d, i) { cyl(g, 0.1, 0.1, 0.4, [LIME, PINK][i], S.in(0.3) + d, 0.98, z + 1.9, { rx: Math.PI / 2, seg: 6 }); });
   ball(g, 0.24, 0xffd5b8, S.in(0.3), 0.98, z - 1.55, { seg: 8 });
   face(g, S.in(0.3), 0.98, z - 1.55, 0.24, 0, { open: true });
-  sign(g, 'SCAN-A-RIDE', LIME, NAVY, 2.5, 0.62, S.in(0.1), 3.8, z, { ry: S.turn, border: 0xffffff });
+  sign(g, 'LASER LANES', LIME, NAVY, 2.5, 0.62, S.in(0.1), 3.8, z, { ry: S.turn, border: 0xffffff });
 }
 
 function boutique(g, S, z) {
-  // lead aprons on a rack: grey with a big yellow star
+  // coat-check jackets on a rack: grey with a big yellow star
   box(g, 0.1, 0.1, 3.2, 0xdde8f0, S.in(0.45), 2.4, z);
   [-1.1, 0, 1.1].forEach(function (dz, i) {
     cyl(g, 0.02, 0.02, 0.3, 0xdde8f0, S.in(0.45), 2.2, z + dz, { seg: 3 });
@@ -144,15 +142,15 @@ function boutique(g, S, z) {
     box(g, 0.12, 0.3, 0.3, 0xffe14a, S.in(0.38), 1.6, z + dz, {});
   });
   box(g, 0.1, 0.08, 3.4, CYAN, S.in(0.3), 0.04, z);
-  // the camera on an arm
+  // the photo-booth camera on an arm
   cyl(g, 0.05, 0.05, 2.4, 0xdde8f0, S.in(0.8), 1.2, z + 1.8, { seg: 4 });
   box(g, 0.5, 0.4, 0.5, 0x22304a, S.in(0.8), 2.5, z + 1.8);
   cyl(g, 0.14, 0.14, 0.1, CYAN, S.in(0.8) + (S.side < 0 ? 0.28 : -0.28), 2.5, z + 1.8, { rz: Math.PI / 2, seg: 8 });
-  sign(g, 'SMILE!', 0xffe14a, NAVY, 1.9, 0.62, S.in(0.1), 3.7, z, { ry: S.turn, border: 0xffffff });
-  // a "radiation: fun" gauge
+  sign(g, 'FOTO!', 0xffe14a, NAVY, 1.9, 0.62, S.in(0.1), 3.7, z, { ry: S.turn, border: 0xffffff });
+  // a volume gauge
   ball(g, 0.55, 0xffffff, S.in(0.1), 4.7, z, { seg: 10, sz: 0.2 });
   box(g, 0.05, 0.4, 0.04, PINK, S.in(0.1) + (S.side < 0 ? 0.12 : -0.12), 4.75, z, { rz: 0.9 });
-  sign(g, 'FUN LEVEL: MAX', LIME, NAVY, 2.3, 0.45, S.in(0.1), 5.5, z, { ry: S.turn });
+  sign(g, 'VOLUME: MAX', LIME, NAVY, 2.3, 0.45, S.in(0.1), 5.5, z, { ry: S.turn });
 }
 
 function bay(g, side, z, k) {
@@ -188,12 +186,12 @@ function discoBall() {
   return m;
 }
 
-function skeletonHand() {
+function wavingGlove() {
   var m = new THREE.Group();
-  box(m, 0.5, 0.45, 0.14, BONE, 0, 0.0, 0);
-  [[-0.2, 0.38, 0.0], [-0.07, 0.48, 0.0], [0.07, 0.5, 0.0], [0.2, 0.44, 0.0]].forEach(function (f) { cyl(m, 0.05, 0.05, 0.5, BONE, f[0], f[1] + 0.22, 0, { seg: 4 }); ball(m, 0.06, BONE, f[0], f[1] + 0.48, 0, { seg: 4 }); });
-  cyl(m, 0.05, 0.05, 0.4, BONE, 0.32, 0.08, 0, { seg: 4, rz: -0.9 });
-  cyl(m, 0.07, 0.07, 1.4, BONE, 0, -0.95, 0, { seg: 5 });
+  box(m, 0.5, 0.45, 0.14, GLOVE, 0, 0.0, 0);
+  [[-0.2, 0.38, 0.0], [-0.07, 0.48, 0.0], [0.07, 0.5, 0.0], [0.2, 0.44, 0.0]].forEach(function (f) { cyl(m, 0.05, 0.05, 0.5, GLOVE, f[0], f[1] + 0.22, 0, { seg: 4 }); ball(m, 0.06, GLOVE, f[0], f[1] + 0.48, 0, { seg: 4 }); });
+  cyl(m, 0.05, 0.05, 0.4, GLOVE, 0.32, 0.08, 0, { seg: 4, rz: -0.9 });
+  cyl(m, 0.07, 0.07, 1.4, GLOVE, 0, -0.95, 0, { seg: 5 });
   m.position.y = 2.4;
   var holder = new THREE.Group();
   holder.add(m);
@@ -216,15 +214,15 @@ function sweep(color, side) {
 }
 
 function extras() {
-  var boneGeo = combine([{ geo: new THREE.CapsuleGeometry(0.04, 0.2, 2, 4), color: 0xffffff, matrix: xform(0, 0, 0, 0, 0, Math.PI / 2) }, { geo: new THREE.SphereGeometry(0.07, 4, 3), color: 0xffffff, matrix: xform(-0.16, 0, 0) }, { geo: new THREE.SphereGeometry(0.07, 4, 3), color: 0xffffff, matrix: xform(0.16, 0, 0) }]);
+  var glowStickGeo = combine([{ geo: new THREE.CapsuleGeometry(0.04, 0.2, 2, 4), color: 0xffffff, matrix: xform(0, 0, 0, 0, 0, Math.PI / 2) }, { geo: new THREE.SphereGeometry(0.07, 4, 3), color: 0xffffff, matrix: xform(-0.16, 0, 0) }, { geo: new THREE.SphereGeometry(0.07, 4, 3), color: 0xffffff, matrix: xform(0.16, 0, 0) }]);
   [-1, 1].forEach(function (side, i) {
-    swarm({ geo: boneGeo, material: new THREE.MeshBasicMaterial({ vertexColors: true }), count: 18, seed: 5 + i, colors: [0xffffff, 0xcfeeff, 0xffd0ec], area: { x: [side * 4.4, side * 5.3], y: [0.4, 6.0], z: [-140, 8] }, k: 1, vy: [-1.0, -0.4], wobble: 0.2, turn: 1.6, scale: [1, 1.8] });
+    swarm({ geo: glowStickGeo, material: new THREE.MeshBasicMaterial({ vertexColors: true }), count: 18, seed: 5 + i, colors: [0xffffff, 0xcfeeff, 0xffd0ec], area: { x: [side * 4.4, side * 5.3], y: [0.4, 6.0], z: [-140, 8] }, k: 1, vy: [-1.0, -0.4], wobble: 0.2, turn: 1.6, scale: [1, 1.8] });
     swarm({ geo: sparkleGeo(0.22), material: glowMat(0.9), count: 12, seed: 60 + i, colors: [0xffffff, 0x39e6ff, 0xff5fc0, 0xb6f04a], area: { x: [side * 4.4, side * 5.2], y: [1.0, 5.8], z: [-140, 8] }, k: 1, turn: 1.5, wobble: 0.1, scale: [0.7, 1.4] });
   });
   features(discoBall, { x: -4.9, spacing: 48, count: 4, z0: -16 });
   features(discoBall, { x: 4.9, spacing: 48, count: 4, z0: -40 });
-  features(skeletonHand, { x: -5.2, spacing: 64, count: 3, z0: -48, yaw: Math.PI / 2 });
-  features(skeletonHand, { x: 5.2, spacing: 64, count: 3, z0: -80, yaw: -Math.PI / 2 });
+  features(wavingGlove, { x: -5.2, spacing: 64, count: 3, z0: -48, yaw: Math.PI / 2 });
+  features(wavingGlove, { x: 5.2, spacing: 64, count: 3, z0: -80, yaw: -Math.PI / 2 });
   features(function (n) { return sweep([PINK, CYAN, LIME][n % 3], -1); }, { x: -4.9, spacing: 56, count: 3, z0: -28 });
   features(function (n) { return sweep([CYAN, LIME, PINK][n % 3], 1); }, { x: 4.9, spacing: 56, count: 3, z0: -56 });
   shimmer(boxLight(), 0.7, 0.18, 2.4, 0);

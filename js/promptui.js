@@ -21,12 +21,12 @@ export function getShareUrl() {
   return appPublicUrl();
 }
 
-var SHARE_TEXT = 'I have been studying with Dx Dash, a free endless runner for USMLE and COMLEX questions. Come run the list with me.';
+var SHARE_TEXT = 'I have been studying with Language Dash, a free endless runner for USMLE and COMLEX questions. Come run the list with me.';
 
 /** Share the game: the system share sheet if there is one, otherwise copy the link. @returns {Promise<'shared'|'copied'|'failed'>} */
 export function shareGame() {
   var url = getShareUrl();
-  return shareText({ title: 'Dx Dash', text: SHARE_TEXT, url: url ? shareLink(url, 'app') : undefined, kind: 'app', surface: 'postrun' });
+  return shareText({ title: 'Language Dash', text: SHARE_TEXT, url: url ? shareLink(url, 'app') : undefined, kind: 'app', surface: 'postrun' });
 }
 
 export function canShareGame() {
@@ -78,11 +78,11 @@ var COPY = {
     action: '👤 Make an account'
   },
   share: {
-    text: 'Know someone who is studying for boards? Send them Dx Dash. It is free.',
+    text: 'Know someone who is studying for boards? Send them Language Dash. It is free.',
     action: '📣 Share with a friend'
   },
   review: {
-    text: 'Are you enjoying Dx Dash?',
+    text: 'Are you enjoying Language Dash?',
     action: '😀 Yes, loving it'
   }
 };
@@ -129,7 +129,7 @@ export function attachPromptCard(deps) {
   // Apple's rules (5.6.1) ask apps to use the system rating box and not to screen people by mood first, so on iPhone the
   // rating ask is one plain step, and feedback is a separate, neutral button available to everyone.
   var plainRating = kind === 'review' && getNativePlatform() === 'ios';
-  if (plainRating) copy = { text: 'If Dx Dash is helping you study, a rating helps other students find it.', action: '⭐ Rate Dx Dash' };
+  if (plainRating) copy = { text: 'If Language Dash is helping you study, a rating helps other students find it.', action: '⭐ Rate Language Dash' };
   var box = document.createElement('div');
   box.className = 'prompt-card';
   box.setAttribute('data-prompt', kind);
@@ -177,7 +177,7 @@ export function attachPromptCard(deps) {
 
   /** Step two for a happy player: would they rate it? (The store's own rating box first, then the store page.) */
   function askToRate() {
-    text.textContent = 'Great to hear! Would you rate Dx Dash on the ' + (isIosBuild() ? 'App Store' : 'Play Store') + '? It takes a few seconds and helps other students find it.';
+    text.textContent = 'Great to hear! Would you rate Language Dash on the ' + (isIosBuild() ? 'App Store' : 'Play Store') + '? It takes a few seconds and helps other students find it.';
     while (row.firstChild) row.removeChild(row.firstChild);
     button('⭐ Sure, rate it', 'btn-gold', function () {
       track('rating_prompt', Object.assign({ step: 'store_opened' }, promptFacts));
@@ -213,7 +213,7 @@ export function attachPromptCard(deps) {
     while (box.firstChild) box.removeChild(box.firstChild);
     box.appendChild(buildFeedbackForm({
       mood: plainRating ? 'idea' : 'unhappy',
-      prompt: plainRating ? 'What would you like to tell us?' : 'Sorry about that. What went wrong, or what would make Dx Dash better?',
+      prompt: plainRating ? 'What would you like to tell us?' : 'Sorry about that. What went wrong, or what would make Language Dash better?',
       submit: deps.sendFeedback,
       trigger: 'rating_prompt',
       toast: deps.toast,

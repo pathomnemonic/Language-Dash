@@ -1,8 +1,9 @@
 /**
- * garden.js — Sunshine Rehab Garden: the walking path of a rehabilitation centre's garden on a perfect day.
+ * garden.js — Kyoto Tea Garden (skin 'Sunshine Rehab Garden'; the id and file name are kept from the original game):
+ * the walking path of a tea garden on a perfect day.
  *
- * Every 16 units: a vine-covered pergola, a flower bed with a bench, a big shady tree, and the physio corner with
- * parallel bars and a fountain. Low hedges line the path; beyond them are lawns, taller trees and the sky.
+ * Every 16 units: a vine-covered pergola, a flower bed with a bench, a big shady tree, and the tea-house corner with a
+ * red gate and a fountain. Low hedges line the path; beyond them are lawns, taller trees and the sky.
  * Moving: butterflies and birds, pinwheel flowers, drifting clouds and a slow garden windmill.
  */
 
@@ -74,14 +75,13 @@ function bigTree(g, S, z) {
   flowers(g, S.in(0.7), z + 1.4, PETALS, 8, 0.25);
 }
 
-function physio(g, S, z) {
-  // parallel bars: two rails on posts, a path of rubber mat
+function teaHouse(g, S, z) {
+  // a tea-house gate: two red posts and two crossbeams, over a path of stepping stones
   var x = S.in(0.7);
-  [-1.5, 1.5].forEach(function (dz) {
-    [-0.3, 0.3].forEach(function (dx) { cyl(g, 0.035, 0.035, 1.0, 0xc8d0dc, x + dx * S.side, 0.5, z + dz, { seg: 5, m: 0.6, r: 0.3 }); });
-  });
-  [-0.3, 0.3].forEach(function (dx) { cyl(g, 0.04, 0.04, 3.2, 0x3d8bff, x + dx * S.side, 1.0, z, { rx: Math.PI / 2, seg: 6 }); });
-  box(g, 1.0, 0.04, 3.4, 0x3fa8ff, x, 0.02, z);
+  [-1.3, 1.3].forEach(function (dz) { cyl(g, 0.1, 0.12, 2.6, 0xd9382f, x, 1.3, z + dz, { seg: 6 }); });
+  box(g, 0.3, 0.16, 3.4, 0x2a2d3a, x, 2.7, z);
+  box(g, 0.14, 0.12, 2.9, 0xd9382f, x, 2.35, z);
+  for (var st = 0; st < 4; st++) cyl(g, 0.28, 0.3, 0.05, 0xc8c4bc, x, 0.03, z - 1.2 + st * 0.8, { seg: 7 });
   // a small fountain further back
   var fz = z + 0.0;
   cyl(g, 0.7, 0.8, 0.45, 0xf4f6fa, S.out(1.6), 0.22, fz - 0.2, { seg: 12 });
@@ -99,7 +99,7 @@ function bay(g, side, z, k) {
   if (k === 0) pergola(g, S, z);
   else if (k === 1) flowerBed(g, S, z);
   else if (k === 2) bigTree(g, S, z);
-  else physio(g, S, z);
+  else teaHouse(g, S, z);
 }
 
 function center(g, z) {

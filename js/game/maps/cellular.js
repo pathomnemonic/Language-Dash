@@ -1,10 +1,11 @@
 /**
- * cellular.js — Cellular Matrix: a jelly-bright playground inside a living cell, where every organelle is a ride.
+ * cellular.js — Taipei Bubble Tea Plaza (skin 'Cellular Matrix'; the id and file name are kept from the original game):
+ * a jelly-bright plaza of giant bubble-tea cups, tapioca pearls and bouncy castles.
  *
- * Every 16 units: the nucleus bounce castle, the mitochondria power plant with its zigzag cristae, a stack of Golgi
- * pancakes, and an ER rollercoaster of ribosomes. The walls are a glossy membrane with a row of phospholipids, the
- * floor green jelly, the ceiling a bubbly canopy. Moving: vesicles bouncing past, bubbles rising, ribosomes drifting
- * and cytoplasm streaming slowly along the walls.
+ * Every 16 units: the giant boba cup with its fat straw, the striped bouncy castles of the pearl power plant, a stack of
+ * night-market pancakes, and a pearl rollercoaster dotted with tapioca. The walls are glossy green tile with a row of
+ * pearls and straws, the floor green jelly, the ceiling a bubbly canopy. Moving: bubbles bouncing past, more bubbles
+ * rising, little boba cups drifting and the plaza haze streaming slowly along the walls.
  */
 
 import * as THREE from 'three';
@@ -28,20 +29,20 @@ function wallPicture() {
     var g = ctx.createLinearGradient(0, 0, 0, h);
     g.addColorStop(0, '#9af5cf'); g.addColorStop(0.6, '#b8f7c8'); g.addColorStop(1, '#d4fbb0');
     ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-    // glossy bubbles and floating organelle outlines
+    // glossy bubbles floating about
     for (var i = 0; i < 22; i++) {
       var x = (i * 197) % w, y = 30 + (i * 83) % 210, r = 14 + (i % 4) * 9;
       var rg = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 2, x, y, r);
       rg.addColorStop(0, 'rgba(255,255,255,0.9)'); rg.addColorStop(0.5, 'rgba(255,255,255,0.18)'); rg.addColorStop(1, 'rgba(255,255,255,0.4)');
       ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
     }
-    // the phospholipid bilayer: round pink heads with two wiggly tails, a row of them along the bottom
+    // a row of tapioca pearls with straws along the bottom
     for (var p = 0; p < 32; p++) {
       var px = p * 32 + 16;
-      ctx.fillStyle = '#ff7ac8'; ctx.beginPath(); ctx.arc(px, h - 100, 11, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#ffe14a'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+      ctx.fillStyle = '#4a3226'; ctx.beginPath(); ctx.arc(px, h - 100, 11, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#ff9ad6'; ctx.lineWidth = 4; ctx.lineCap = 'round';
       [-4, 4].forEach(function (d) { ctx.beginPath(); ctx.moveTo(px + d, h - 90); ctx.quadraticCurveTo(px + d + 6, h - 66, px + d, h - 46); ctx.stroke(); });
-      ctx.fillStyle = '#ff7ac8'; ctx.beginPath(); ctx.arc(px, h - 14, 11, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#4a3226'; ctx.beginPath(); ctx.arc(px, h - 14, 11, 0, Math.PI * 2); ctx.fill();
       [-4, 4].forEach(function (d) { ctx.beginPath(); ctx.moveTo(px + d, h - 24); ctx.quadraticCurveTo(px + d - 6, h - 44, px + d, h - 56); ctx.stroke(); });
     }
   }));
@@ -74,20 +75,22 @@ function stripeTexture() {
   });
 }
 
-function nucleus(g, S, z) {
+function bobaCup(g, S, z) {
   var x = S.in(0.0);
-  ball(g, 1.15, 0xc9fff0, x, 1.2, z, { seg: 10, op: 0.45, sy: 0.95 });
-  ball(g, 0.75, PURPLE, x, 1.2, z, { seg: 8 });
-  ball(g, 0.28, PINK, S.in(0.0) + (S.side < 0 ? 0.35 : -0.35), 1.65, z + 0.25, { seg: 7 });
-  face(g, x, 1.2, z, 0.75, S.turn, { open: true, lash: true });
-  // nuclear pores: little rings around the shell
+  // a giant bubble-tea cup: milky tea, a heap of dark tapioca pearls, a dome lid and a fat straw
+  cyl(g, 1.0, 0.75, 1.9, 0xf0d2a6, x, 1.05, z, { seg: 12, op: 0.88 });
+  for (var pr = 0; pr < 9; pr++) { var pa = pr * 2.4; ball(g, 0.13, 0x3a2418, x + Math.cos(pa) * 0.38, 0.28 + (pr % 3) * 0.17, z + Math.sin(pa) * 0.38, { seg: 6 }); }
+  ball(g, 1.0, 0xc9fff0, x, 2.0, z, { seg: 10, op: 0.4, sy: 0.4 });
+  cyl(g, 0.09, 0.09, 1.6, PINK, x + (S.side < 0 ? 0.15 : -0.15), 2.7, z, { seg: 6, rz: 0.12 });
+  face(g, x, 1.2, z, 0.85, S.turn, { open: true, lash: true });
+  // little rings of colour around the cup
   for (var p = 0; p < 5; p++) { var a = p * 1.26; ring(g, 0.12, 0.03, YEL, x + (S.side < 0 ? 1 : -1) * Math.cos(a) * 0.9, 1.2 + Math.sin(a) * 0.75, z + (p % 2 ? 0.5 : -0.5), { ry: Math.PI / 2, seg: 8, tube: 3 }); }
-  sign(g, 'NUCLEUS HQ', PURPLE, 0xffffff, 2.5, 0.65, S.in(0.1), 3.4, z, { ry: S.turn, border: 0xffffff });
+  sign(g, 'BOBA HQ', PURPLE, 0xffffff, 2.5, 0.65, S.in(0.1), 3.4, z, { ry: S.turn, border: 0xffffff });
   [-1.4, 1.4].forEach(function (dz, i) { ball(g, 0.3, POP[i + 3], S.in(0.5), 0.3, z + dz, { seg: 7, sy: 0.7 }); });
   bolt(g, 0.7, YEL, S.in(0.12), 4.6, z, { ry: S.turn });
 }
 
-function mitochondria(g, S, z) {
+function bouncyCastles(g, S, z) {
   var tex = stripeTexture();
   [-1, 1].forEach(function (d, i) {
     var m = ball(g, 0.6, 0xffffff, S.in(0.2), 1.0 + i * 0.5, z + d * 1.1, { seg: 9, sx: 0.8, sy: 0.9, sz: 1.5, map: tex, r: 0.4 });
@@ -96,11 +99,11 @@ function mitochondria(g, S, z) {
   face(g, S.in(0.2), 1.0, z - 1.1, 0.6, S.turn, { open: true });
   face(g, S.in(0.2), 1.5, z + 1.1, 0.6, S.turn, { shades: true });
   bolt(g, 1.2, YEL, S.in(0.12), 3.2, z, { ry: S.turn });
-  sign(g, 'POWER PLANT', ORANGE, 0xffffff, 2.8, 0.65, S.in(0.1), 4.3, z, { ry: S.turn, border: YEL });
+  sign(g, 'PEARL POWER', ORANGE, 0xffffff, 2.8, 0.65, S.in(0.1), 4.3, z, { ry: S.turn, border: YEL });
   box(g, 0.14, 0.3, 4, MINT, S.in(0.06), 0.15, z);
 }
 
-function golgi(g, S, z) {
+function pancakes(g, S, z) {
   var x = S.in(0.35);
   for (var i = 0; i < 5; i++) {
     var c = POP[i % 6];
@@ -109,11 +112,11 @@ function golgi(g, S, z) {
   }
   face(g, x, 1.4, z, 0.9, S.turn, { open: true });
   [-1.7, 1.7].forEach(function (dz, i) { ball(g, 0.22, i ? PINK : SKY, S.in(0.5), 0.7 + i * 0.3, z + dz, { seg: 7, op: 0.85 }); ball(g, 0.1, 0xffffff, S.in(0.5), 0.7 + i * 0.3, z + dz, { seg: 5 }); });
-  sign(g, 'GOLGI GRILL', LIME, 0x1a6a40, 2.6, 0.65, S.in(0.1), 3.7, z, { ry: S.turn, border: 0xffffff });
+  sign(g, 'PANCAKE GRILL', LIME, 0x1a6a40, 2.6, 0.65, S.in(0.1), 3.7, z, { ry: S.turn, border: 0xffffff });
 }
 
 function rollercoaster(g, S, z) {
-  // the rough ER: a wavy ribbon of tube dotted with ribosomes
+  // a wavy ribbon of track dotted with tapioca pearls
   var prev = null;
   for (var i = 0; i <= 12; i++) {
     var t = i / 12;
@@ -127,16 +130,16 @@ function rollercoaster(g, S, z) {
   [-1.7, 1.7].forEach(function (dz) { cyl(g, 0.05, 0.05, 1.6, 0xe9fff4, S.in(0.3), 0.8, z + dz, { seg: 4 }); });
   face(g, S.in(0.2), 3.2, z, 0.5, S.turn, {});
   ball(g, 0.5, SKY, S.in(0.2), 3.2, z, { seg: 8 });
-  sign(g, 'ER COASTER', PINK, 0xffffff, 2.5, 0.65, S.in(0.1), 4.4, z, { ry: S.turn, border: 0xffffff });
+  sign(g, 'BOBA COASTER', PINK, 0xffffff, 2.5, 0.65, S.in(0.1), 4.4, z, { ry: S.turn, border: 0xffffff });
   box(g, 0.14, 0.3, 4, PINK, S.in(0.06), 0.15, z);
 }
 
 function bay(g, side, z, k) {
   var S = sideCtx(side);
   wallPanel(g, wallPicture(), side, z, H, 0.0, { r: 0.55 });
-  if (k === 0) nucleus(g, S, z);
-  else if (k === 1) mitochondria(g, S, z);
-  else if (k === 2) golgi(g, S, z);
+  if (k === 0) bobaCup(g, S, z);
+  else if (k === 1) bouncyCastles(g, S, z);
+  else if (k === 2) pancakes(g, S, z);
   else rollercoaster(g, S, z);
 }
 
@@ -146,14 +149,15 @@ function center(g, z) {
 }
 
 function arch(g, z, i) {
-  // a chain of glossy vesicles across the cell, with a few joined by a thread
+  // a chain of glossy bubbles across the plaza, with a few joined by a thread
   lightString(g, POP, H - 0.8, z, { n: 11, sag: 0.5, phase: i, r: 0.2 });
   [-1, 1].forEach(function (s, n) { ball(g, 0.34, POP[(i + n * 3) % 6], s * 4.6, H - 1.5, z, { seg: 8, op: 0.8 }); ball(g, 0.14, 0xffffff, s * 4.6, H - 1.5, z, { seg: 5 }); });
 }
 
-function organelle() {
+function bobaFriend() {
   var m = new THREE.Group();
-  ball(m, 0.6, PINK, 0, 1.4, 0, { seg: 10, sy: 0.95 });
+  ball(m, 0.6, 0xf0d2a6, 0, 1.4, 0, { seg: 10, sy: 0.95 });
+  cyl(m, 0.07, 0.07, 0.7, PINK, 0.1, 2.3, 0, { seg: 5, rz: 0.12 });
   face(m, 0, 1.4, 0, 0.6, 0, { open: true });
   animated(m);
   bob(m, 0.2, 2.4, 0);
@@ -168,9 +172,9 @@ function extras() {
     swarm({ geo: dotGeo(0.25), material: glowMat(0.4), count: 14, seed: 40 + i, colors: [0xffffff, 0xd8fff0, 0xfff0d8], area: { x: [side * 4.7, side * 5.2], y: [0.8, 5.6], z: [-140, 8] }, k: 1, vy: [0.4, 1.0], wobble: 0.2, scale: [0.6, 1.4] });
     swarm({ geo: sparkleGeo(0.2), material: glowMat(0.9), count: 8, seed: 70 + i, colors: [0xffffff, 0xffe14a, 0xff7ac8], area: { x: [side * 4.4, side * 5.2], y: [1.0, 5.8], z: [-140, 8] }, k: 1, turn: 1.5, wobble: 0.1, scale: [0.7, 1.3] });
   });
-  features(function () { return organelle(); }, { x: -5.0, spacing: 56, count: 3, z0: -24, yaw: Math.PI / 2 });
-  features(function () { return organelle(); }, { x: 5.0, spacing: 56, count: 3, z0: -52, yaw: -Math.PI / 2 });
-  // cytoplasm streams slowly along the walls
+  features(function () { return bobaFriend(); }, { x: -5.0, spacing: 56, count: 3, z0: -24, yaw: Math.PI / 2 });
+  features(function () { return bobaFriend(); }, { x: 5.0, spacing: 56, count: 3, z0: -52, yaw: -Math.PI / 2 });
+  // the plaza haze streams slowly along the walls
   var w = wallPicture();
   if (w) flow(w, 0.012, 0);
 }

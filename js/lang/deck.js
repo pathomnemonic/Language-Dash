@@ -35,7 +35,7 @@ function hashString(s) {
 
 /** Comparison key: case and punctuation never make two words "different". */
 export function wordKey(s) {
-  return String(s || '').normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
+  return String(s || '').normalize('NFC').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, '');
 }
 
 function pad(n) { return n < 10 ? '00' + n : n < 100 ? '0' + n : String(n); }

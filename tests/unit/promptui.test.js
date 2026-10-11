@@ -93,7 +93,7 @@ describe('the rating question: enjoying it? then rate; not enjoying it? then fee
   it('first asks whether the player is enjoying the game, and does not go to a store yet', async () => {
     const { attachPromptCard } = await import('../../js/promptui.js');
     expect(attachPromptCard(deps)).toBe('review');
-    expect(container.textContent).toMatch(/Are you enjoying Dx Dash\?/);
+    expect(container.textContent).toMatch(/Are you enjoying Language Dash\?/);
     expect(buttonWith(/Yes/)).toBeTruthy();
     expect(buttonWith(/Not really/)).toBeTruthy();
   });
@@ -135,7 +135,7 @@ describe('the rating question: enjoying it? then rate; not enjoying it? then fee
     setPlatformPluginsForTest({ AppLauncher });
     attachPromptCard(deps);
     buttonWith(/Yes/).click();
-    expect(container.textContent).toMatch(/Would you rate Dx Dash/);
+    expect(container.textContent).toMatch(/Would you rate Language Dash/);
     expect(AppLauncher.openUrl).not.toHaveBeenCalled();
     buttonWith(/Sure/).click();
     await vi.waitFor(() => expect(AppLauncher.openUrl).toHaveBeenCalledWith({ url: 'https://example.com/rate' }));

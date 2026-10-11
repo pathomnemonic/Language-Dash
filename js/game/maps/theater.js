@@ -1,9 +1,10 @@
 /**
- * theater.js — Surgical Theater: an old-time playhouse where the operation is the show.
+ * theater.js — Milan Opera House (skin 'Surgical Theater'; the id and file name are kept from the original game):
+ * an old-time opera house where the aria is the show.
  *
  * Every 16 units: red velvet curtains with gold tassels under a chasing marquee, a balcony box full of applauding
- * scrubs, a rig of stage lights, and the snack bar with a popcorn machine and the Golden Scalpel trophy. The floor is a
- * red carpet with gold stars, the ceiling a painted dome. Moving: spotlight beams sweeping the walls, confetti and
+ * opera-goers, a rig of stage lights, and the snack bar with a popcorn machine and the Golden Quill trophy. The floor
+ * is a red carpet with gold stars, the ceiling a painted dome. Moving: spotlight beams sweeping the walls, confetti and
  * rose petals falling, curtains swaying, and a marquee that chases its bulbs.
  */
 
@@ -19,7 +20,7 @@ var GOLD = 0xffc83d;
 var CREAM = 0xfff1d6;
 var TEAL = 0x2fd1c4;
 var PINK = 0xff7aa8;
-var SCRUB = 0x2fc4b8;
+var SCRUB = 0x2fc4b8; // (the teal of one of the opera-goers' gowns)
 
 function wallPicture() {
   return canvasTex('thr_wall', 1024, 410, function (ctx, w, h) {
@@ -115,7 +116,7 @@ function balcony(g, S, z) {
   box(g, 0.1, 0.55, 3.6, GOLD, S.in(0.88), 1.85, z);
   for (var i = 0; i < 6; i++) cyl(g, 0.03, 0.03, 0.55, GOLD, S.in(0.88), 1.85, z - 1.7 + i * 0.68, { seg: 3 });
   box(g, 0.9, 1.4, 3.6, DEEP, S.in(0.45), 0.7, z);
-  // the audience: three scrubs, clapping, in the box
+  // the audience: three opera-goers, clapping, in the box
   [-1.1, 0, 1.1].forEach(function (dz, i) {
     var x = S.in(0.4);
     seat(g, x, 1.65, z + dz, VELVET);
@@ -124,7 +125,7 @@ function balcony(g, S, z) {
     face(g, x, 2.5, z + dz, 0.24, S.turn, { open: i !== 1 });
     cone(g, 0.22, 0.22, [SCRUB, TEAL, 0x5fc8ff][i], x, 2.76, z + dz, { seg: 6 });
   });
-  sign(g, 'BOX SEATS', CREAM, VELVET, 2.2, 0.55, S.in(0.1), 3.8, z, { ry: S.turn, border: GOLD });
+  sign(g, 'LA SCALA BOX', CREAM, VELVET, 2.2, 0.55, S.in(0.1), 3.8, z, { ry: S.turn, border: GOLD });
   extrude(g, starShape(0.3, 0.14, 5), 0.06, GOLD, S.in(0.12), 4.7, z - 1.2, { ry: S.turn, bulb: true, curve: 2 });
   extrude(g, starShape(0.3, 0.14, 5), 0.06, GOLD, S.in(0.12), 4.7, z + 1.2, { ry: S.turn, bulb: true, curve: 2 });
 }
@@ -141,7 +142,7 @@ function lights(g, S, z) {
   cone(g, 0.3, 0.5, GOLD, S.in(0.5), 2.55, z - 1.5, { seg: 8, rz: Math.PI });
   cyl(g, 0.06, 0.06, 2.4, 0x22222c, S.in(0.5), 1.2, z + 1.5, { seg: 5 });
   cone(g, 0.3, 0.5, PINK, S.in(0.5), 2.55, z + 1.5, { seg: 8, rz: Math.PI });
-  sign(g, 'ON AIR', VELVET, CREAM, 1.6, 0.55, S.in(0.1), 3.4, z, { ry: S.turn, border: CREAM });
+  sign(g, 'BRAVO!', VELVET, CREAM, 1.6, 0.55, S.in(0.1), 3.4, z, { ry: S.turn, border: CREAM });
   box(g, 0.14, 0.3, 4, GOLD, S.in(0.06), 0.15, z);
 }
 
@@ -157,11 +158,11 @@ function snacks(g, S, z) {
     cyl(g, 0.33 - i * 0.04, 0.26 - i * 0.04, 0.5, i ? CREAM : VELVET, x, 0.25 + dy, z + 0.4, { seg: 8 });
     ball(g, 0.22, 0xfff6c8, x, 0.55 + dy, z + 0.4, { seg: 6 });
   });
-  // the Golden Scalpel trophy
+  // the Golden Quill trophy: a gold stand holding a feather quill
   cyl(g, 0.3, 0.36, 0.2, 0x40170d, S.in(0.4), 0.1, z + 1.4, { seg: 8 });
   cyl(g, 0.05, 0.1, 0.9, GOLD, S.in(0.4), 0.65, z + 1.4, { seg: 6, m: 0.6, r: 0.3 });
   cone(g, 0.12, 0.5, GOLD, S.in(0.4), 1.35, z + 1.4, { seg: 4, m: 0.6, r: 0.3 });
-  sign(g, 'GOLDEN SCALPEL', GOLD, VELVET, 2.8, 0.6, S.in(0.1), 3.6, z, { ry: S.turn, border: CREAM });
+  sign(g, 'GOLDEN QUILL', GOLD, VELVET, 2.8, 0.6, S.in(0.1), 3.6, z, { ry: S.turn, border: CREAM });
 }
 
 function bay(g, side, z, k) {

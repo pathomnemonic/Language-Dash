@@ -1,11 +1,12 @@
 /**
- * defib.js — Defibrillator Shock: an electric amusement park, all lightning-yellow and bumper cars.
+ * defib.js — Warsaw Spark Park (skin 'Defibrillator Shock'; the id and file name are kept from the original game): an
+ * electric amusement park, all lightning-yellow and bumper cars.
  *
- * Every 16 units: three smiling Tesla coils, a bumper-car lot, the CLEAR! station with its giant paddles and a charge
- * meter, and a battery bar with bolt-shaped straws. The walls are sunshine yellow with hazard stripes and electric-blue
- * zigzags, the floor a steel arena with cyan lane lines, the ceiling a yellow grid of bulbs. Moving: bumper cars
- * cruising the walls, coils pulsing, static fuzz and little bolts drifting by. Nothing flashes faster than twice a
- * second, and every bolt is decoration well outside the lanes.
+ * Every 16 units: three smiling Tesla coils, a bumper-car lot, the SPARK! station with its giant spark plates and a
+ * charge-o-meter, and a battery bar with bolt-shaped straws. The walls are sunshine yellow with hazard stripes and
+ * electric-blue zigzags, the floor a steel arena with cyan lane lines, the ceiling a yellow grid of bulbs. Moving:
+ * bumper cars cruising the walls, coils pulsing, static fuzz and little bolts drifting by. Nothing flashes faster than
+ * twice a second, and every bolt is decoration well outside the lanes.
  */
 
 import * as THREE from 'three';
@@ -111,21 +112,21 @@ function bumpers(g, S, z) {
   bolt(g, 0.8, BLUE, S.in(0.12), 4.9, z, { ry: S.turn });
 }
 
-function paddle(g, x, z, turn, c) {
+function sparkPlate(g, x, z, turn, c) {
   cyl(g, 0.09, 0.09, 1.5, DARK, x, 0.75, z, { seg: 6 });
   cyl(g, 0.5, 0.5, 0.18, STEEL, x, 1.7, z, { rz: Math.PI / 2, seg: 10, m: 0.3, r: 0.35 });
   cyl(g, 0.36, 0.36, 0.2, c, x, 1.7, z, { rz: Math.PI / 2, seg: 8 });
   bolt(g, 0.5, 0xffffff, x + (turn > 0 ? -0.12 : 0.12), 1.7, z, { ry: turn });
 }
 
-function clearStation(g, S, z) {
-  paddle(g, S.in(0.4), z - 1.2, S.turn, RED);
-  paddle(g, S.in(0.4), z + 1.2, S.turn, BLUE);
-  // the charge meter: a column of lit bars that climbs from green to red
+function sparkStation(g, S, z) {
+  sparkPlate(g, S.in(0.4), z - 1.2, S.turn, RED);
+  sparkPlate(g, S.in(0.4), z + 1.2, S.turn, BLUE);
+  // the charge-o-meter: a column of lit bars that climbs from green to red
   [LIME, LIME, YEL, YEL, 0xff9a2a, RED].forEach(function (c, i) { box(g, 0.2, 0.22, 0.8, c, S.in(0.15), 1.4 + i * 0.28, z, { }); });
   box(g, 0.24, 2.0, 0.9, DARK, S.in(0.08), 2.0, z);
-  neonSign(g, 'CLEAR!', RED, 0x20243a, 2.2, 0.8, S.in(0.1), 4.5, z, { ry: S.turn });
-  sign(g, '200 J', 0xffffff, DARK, 1.0, 0.4, S.in(0.1), 3.5, z, { ry: S.turn });
+  neonSign(g, 'SPARK!', RED, 0x20243a, 2.2, 0.8, S.in(0.1), 4.5, z, { ry: S.turn });
+  sign(g, 'MAX!', 0xffffff, DARK, 1.0, 0.4, S.in(0.1), 3.5, z, { ry: S.turn });
 }
 
 function battery(g, x, z, c, turn) {
@@ -147,7 +148,7 @@ function bay(g, side, z, k) {
   wallPanel(g, wallPicture(), side, z, H, 0.0, { r: 0.7 });
   if (k === 0) tesla(g, S, z);
   else if (k === 1) bumpers(g, S, z);
-  else if (k === 2) clearStation(g, S, z);
+  else if (k === 2) sparkStation(g, S, z);
   else batteryBar(g, S, z);
 }
 

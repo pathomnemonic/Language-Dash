@@ -1,5 +1,5 @@
 /**
- * uistudy.js — Flashcard study, study picker and plan, hands-free mode.
+ * uistudy.js — Flashcard study (front: the hint word; back: the word you are learning, its pronunciation and a 🔊 button), study picker, hands-free mode.
  *
  * Split out of ui.js. These methods are attached to UI.prototype (see the end of ui.js), so
  * `this` is the UI controller and nothing about how they are called has changed.
@@ -9,6 +9,9 @@ import { setText, createElement, clearElement } from './dom.js';
 import { SUBJECTS } from './cardhub.js';
 import { canSpeak, cancelSpeech } from './tts.js';
 import { storage } from './storage.js';
+import { CARD_BY_ID } from './cardhub.js';
+import { getLanguage } from './lang/languages.js';
+import { getPairOrDefault, getShowRoman } from './lang/pair.js';
 
 export var studyMethods = {
 
@@ -44,7 +47,7 @@ export var studyMethods = {
     // Progress bar
     var progressWrap = createElement('div');
     progressWrap.style.cssText = 'text-align:center;margin-bottom:10px';
-    var label = (fm.kind === 'missed_review' ? 'Missed review — ' : '') + 'Card ' + progress.current + ' of ' + progress.total;
+    var label = (fm.kind === 'missed_review' ? 'Missed review — ' : '') + 'Word ' + progress.current + ' of ' + progress.total;
     progressWrap.appendChild(this._flashcardText('div', label, 'font-size:11px;color:var(--text-muted)'));
 
     var barOuter = createElement('div', { className: 'fc-progress-bar' });
@@ -60,12 +63,17 @@ export var studyMethods = {
     var cardArea = createElement('div');
     cardArea.style.cssText = 'background:var(--bg-card-solid);border-radius:var(--radius-lg);padding:20px;text-align:center;border:var(--border-glow)';
     cardArea.appendChild(this._flashcardText('div', card.subject, 'font-size:10px;color:var(--text-muted);margin-bottom:8px'));
+    // FRONT: the hint word, in the language you know
+    var knownLang = getLanguage(getPairOrDefault().known);
     card.buzzwords.forEach(function (bw) {
-      cardArea.appendChild(self._flashcardText('div', '• ' + bw, 'font-size:16px;font-weight:700;margin:4px 0'));
+      var h = self._flashcardText('div', bw, 'font-size:24px;font-weight:800;margin:6px 0;line-height:1.4');
+      h.className = 'fc-hint';
+      if (knownLang) { h.setAttribute('lang', knownLang.code); h.setAttribute('dir', knownLang.rtl ? 'rtl' : 'ltr'); }
+      cardArea.appendChild(h);
     });
 
     if (!card.revealed) {
-      var revealBtn = createElement('button', { className: 'btn btn-primary btn-block', text: 'Show Answer', attributes: { id: 'fcRevealBtn' } });
+      var revealBtn = createElement('button', { className: 'btn btn-primary btn-block', text: 'Show the word', attributes: { id: 'fcRevealBtn' } });
       revealBtn.style.marginTop = '16px';
       revealBtn.addEventListener('click', function () {
         self._flashcardAnswer = fm.reveal();
@@ -76,7 +84,9 @@ export var studyMethods = {
       var ans = this._flashcardAnswer || fm.reveal() || {};
       var answerArea = createElement('div');
       answerArea.style.marginTop = '12px';
-      answerArea.appendChild(this._flashcardText('div', '✓ ' + ans.answer, 'font-size:18px;font-weight:800;color:var(--accent-green);margin-bottom:6px'));
+      // BACK: the word you are learning, its pronunciation line and a 🔊 button
+      var full = CARD_BY_ID.get(ans.cardId) || {};
+      answerArea.appendChild(this._answerLine({ bw: card.buzzwords, ans: ans.answer, ansRoman: full.ansRoman || '' }, 'font-size:26px;font-weight:800;color:var(--accent-green);margin-bottom:6px'));
       // (an imported flashcard's explanation is its answer: do not show the same text twice)
       if (ans.teachingPoint && ans.teachingPoint.trim() !== String(ans.answer || '').trim()) {
         answerArea.appendChild(this._flashcardText('p', ans.teachingPoint, 'font-size:12px;color:var(--text-secondary);margin:6px 0'));
@@ -88,7 +98,7 @@ export var studyMethods = {
 
       var btnRow = createElement('div');
       btnRow.style.cssText = 'display:flex;gap:8px;margin-top:16px';
-      var gotItBtn = createElement('button', { className: 'btn btn-green', text: '✅ Got it (→)', attributes: { id: 'fcGotBtn' } });
+      var gotItBtn = createElement('button', { className: 'btn btn-green', text: '✅ Knew it (→)', attributes: { id: 'fcGotBtn' } });
       gotItBtn.style.flex = '1';
       gotItBtn.addEventListener('click', function () { fm.rate('correct'); self._flashcardAnswer = null; self.renderFlashcardScreen(); });
       btnRow.appendChild(gotItBtn);
@@ -135,15 +145,15 @@ export var studyMethods = {
     header.appendChild(statsRow);
     container.appendChild(header);
 
-    // Missed cards
+    // Missed words
     if (missed.length > 0) {
-      container.appendChild(createElement('h3', { text: '❌ Missed Cards' }));
+      container.appendChild(createElement('h3', { text: '❌ Missed Words' }));
       container.lastChild.style.cssText = 'margin:10px 0 6px';
 
       missed.forEach(function (r) {
         var card = createElement('div', { className: 'review-card' });
         var h4 = createElement('h4');
-        setText(h4, '❌ ' + r.card.bw.join(' • '));
+        setText(h4, '❌ ' + r.card.bw.join(' • ') + ' = ' + r.card.ans + (r.card.ansRoman && getShowRoman() ? ' (' + r.card.ansRoman + ')' : ''));
         card.appendChild(h4);
 
         var tagRow = createElement('div');
@@ -203,14 +213,14 @@ export var studyMethods = {
     wrap.className = 'study-picker';
 
     wrap.appendChild(this._flashcardText('h3', 'What do you want to study?', 'font-size:16px;margin:6px 0 4px'));
-    wrap.appendChild(this._flashcardText('p', 'Choose the cards, then how to study them: flip cards yourself, or listen hands-free.', 'font-size:12px;color:var(--text-secondary);margin-bottom:10px'));
+    wrap.appendChild(this._flashcardText('p', 'Choose the words, then how to study them: flip cards yourself, or listen hands-free.', 'font-size:12px;color:var(--text-secondary);margin-bottom:10px'));
 
     var sources = [
-      ['mine', '🎯 My subjects', pools.mine.length + ' subject' + (pools.mine.length === 1 ? '' : 's') + ' chosen in Home. A random mix.'],
-      ['due', '⏰ Due for review', pools.due.length + ' card' + (pools.due.length === 1 ? '' : 's') + ' ready to see again (most overdue first).'],
-      ['missed', '🩹 Cards I miss', pools.missed.length + ' card' + (pools.missed.length === 1 ? '' : 's') + ' you get wrong the most.'],
-      ['fresh', '🆕 New cards', pools.fresh.length + ' card' + (pools.fresh.length === 1 ? '' : 's') + ' you have not seen yet.'],
-      ['subjects', '📚 Pick subjects', 'Choose exactly which subjects to study.']
+      ['mine', '🎯 My topics', pools.mine.length + ' topic' + (pools.mine.length === 1 ? '' : 's') + ' chosen in Home. A random mix.'],
+      ['due', '⏰ Due for review', pools.due.length + ' word' + (pools.due.length === 1 ? '' : 's') + ' ready to see again (most overdue first).'],
+      ['missed', '🩹 Words I miss', pools.missed.length + ' word' + (pools.missed.length === 1 ? '' : 's') + ' you get wrong the most.'],
+      ['fresh', '🆕 New words', pools.fresh.length + ' word' + (pools.fresh.length === 1 ? '' : 's') + ' you have not seen yet.'],
+      ['subjects', '📚 Pick topics', 'Choose exactly which topics to study.']
     ];
     var list = createElement('div');
     list.className = 'pick-list';
@@ -250,7 +260,7 @@ export var studyMethods = {
     renderDetail();
     wrap.appendChild(detail);
 
-    wrap.appendChild(this._flashcardText('div', 'How many cards?', 'font-size:12px;font-weight:700;margin:12px 0 4px'));
+    wrap.appendChild(this._flashcardText('div', 'How many words?', 'font-size:12px;font-weight:700;margin:12px 0 4px'));
     var counts = createElement('div');
     counts.className = 'pick-chips';
     [10, 20, 40, 80].forEach(function (n) {
@@ -268,10 +278,10 @@ export var studyMethods = {
     // Resolve the choice into subjects / explicit card ids, or explain what is missing
     var resolve = function () {
       var p = self._pickerPools();
-      if (pick.source === 'due') return p.due.length ? { ids: p.due.slice(0, pick.count) } : { error: 'Nothing is due yet. Play a few runs or flashcards first, and cards will come back here.' };
-      if (pick.source === 'missed') return p.missed.length ? { ids: p.missed.slice(0, pick.count) } : { error: 'No missed cards yet. Cards you get wrong will show up here.' };
-      if (pick.source === 'fresh') return p.fresh.length ? { ids: p.fresh.sort(function () { return Math.random() - 0.5; }).slice(0, pick.count) } : { error: 'You have seen every card in your subjects.' };
-      if (pick.source === 'subjects') return pick.subjects.length ? { subjects: pick.subjects.slice() } : { error: 'Pick at least one subject above.' };
+      if (pick.source === 'due') return p.due.length ? { ids: p.due.slice(0, pick.count) } : { error: 'Nothing is due yet. Play a few runs or flashcards first, and words will come back here.' };
+      if (pick.source === 'missed') return p.missed.length ? { ids: p.missed.slice(0, pick.count) } : { error: 'No missed words yet. Words you get wrong will show up here.' };
+      if (pick.source === 'fresh') return p.fresh.length ? { ids: p.fresh.sort(function () { return Math.random() - 0.5; }).slice(0, pick.count) } : { error: 'You have seen every word in your topics.' };
+      if (pick.source === 'subjects') return pick.subjects.length ? { subjects: pick.subjects.slice() } : { error: 'Pick at least one topic above.' };
       return { subjects: null };
     };
 
@@ -320,7 +330,7 @@ export var studyMethods = {
       }
     });
     if (!result.success) {
-      this._showToast((result.error && result.error.message) || 'No cards available for the selected filters.');
+      this._showToast((result.error && result.error.message) || 'No words available for the selected filters.');
       return;
     }
     this.show('screenFlashcard');
@@ -349,7 +359,7 @@ export var studyMethods = {
       }
     });
     if (!result.success) {
-      this._showToast((result.error && result.error.message) || 'No cards available for the selected filters.');
+      this._showToast((result.error && result.error.message) || 'No words available for the selected filters.');
       return;
     }
     var cards = fm.cards.slice();

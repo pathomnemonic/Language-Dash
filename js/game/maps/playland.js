@@ -1,5 +1,6 @@
 /**
- * playland.js — Pediatric Playland: the children's ward playroom, painted in every primary colour.
+ * playland.js — Alphabet Playroom (skin 'Pediatric Playland'; the id and file name are kept from the original game):
+ * a giant playroom painted in every primary colour.
  *
  * The room repeats every 16 units (four bays): a cubby wall of toys, a slide, a pyramid of letter blocks, and a ball
  * pit with a teepee. A mural of hills, a rainbow and a sun runs along the walls, the floor is a mat of pastel puzzle

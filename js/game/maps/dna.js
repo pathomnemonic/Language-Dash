@@ -1,10 +1,11 @@
 /**
- * dna.js — DNA Helix Tunnel: a candy-coloured carnival hall where a giant double helix turns on each wall.
+ * dna.js — Rosetta Hall (skin 'DNA Helix Tunnel'; the id and file name are kept from the original game): a
+ * candy-coloured carnival hall where a giant twin spiral of scripts turns on each wall.
  *
- * Every 16 units: a pyramid of lettered base-pair blocks, the Gene Machine claw game, a replication-fork slide, and a
- * stand selling chromosome pretzels. On both walls a glowing double helix of beads and rungs turns slowly as the world
- * scrolls by (A pairs with T, G with C, each in its own colour). The floor is striped with base pairs, the ceiling is
- * a sky of floating letters. Moving: the helices, nucleotides drifting past, sparkles, bubbles.
+ * Every 16 units: a pyramid of letter blocks, the Word Claw game, a spiral slide, and a stand selling pretzel
+ * letters. On both walls a glowing twin spiral of beads and rungs turns slowly as the world scrolls by (Latin A pairs
+ * with kana あ, Cyrillic Я with Hangul 한, each in its own colour). The floor is striped with letter pairs, the ceiling
+ * is a sky of floating letters. Moving: the spirals, letters drifting past, sparkles, bubbles.
  */
 
 import * as THREE from 'three';
@@ -19,7 +20,7 @@ var G = 0x4fb8ff;
 var C = 0x4fe8a8;
 var PAIRS = [[A, T], [G, C], [T, A], [C, G]];
 var BASES = [A, T, G, C];
-var LETTERS = ['A', 'T', 'G', 'C'];
+var LETTERS = ['A', 'あ', 'Я', '한'];
 var VIO = 0x8a5cf6;
 
 function wallPicture() {
@@ -27,7 +28,7 @@ function wallPicture() {
     var g = ctx.createLinearGradient(0, 0, 0, h);
     g.addColorStop(0, '#d9ccff'); g.addColorStop(0.65, '#efe6ff'); g.addColorStop(1, '#ffffff');
     ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-    // faint base-pair ladders in the background
+    // faint ladders of letters in the background
     for (var i = 0; i < 16; i++) {
       var x = i * 64 + 32;
       ctx.fillStyle = ['rgba(255,107,181,0.25)', 'rgba(255,225,74,0.3)', 'rgba(79,184,255,0.25)', 'rgba(79,232,168,0.3)'][i % 4];
@@ -44,7 +45,7 @@ function wallPicture() {
 function floorPicture() {
   return canvasTex('dna_floor', 576, 768, function (ctx, w, h) {
     ctx.fillStyle = '#e6dcff'; ctx.fillRect(0, 0, w, h);
-    // rungs of colour across the floor, a different pair every 96 px
+    // rungs of colour across the floor, a different pair of colours every 96 px
     for (var j = 0; j < 8; j++) {
       var p = PAIRS[j % 4];
       ctx.fillStyle = css(p[0]); ctx.fillRect(14, j * 96 + 40, w / 2 - 20, 16);
@@ -81,7 +82,7 @@ function blocks(g, S, z) {
     if (!tex) b.material = new THREE.MeshStandardMaterial({ color: BASES[p[2]] });
   });
   face(g, S.in(0.62), 2.2, z, 0.43, S.turn, { open: true });
-  sign(g, 'BASE PAIRS', VIO, 0xffffff, 2.6, 0.65, S.in(0.1), 4.4, z, { ry: S.turn, border: 0xffffff });
+  sign(g, 'LETTER BLOCKS', VIO, 0xffffff, 2.6, 0.65, S.in(0.1), 4.4, z, { ry: S.turn, border: 0xffffff });
   box(g, 0.14, 0.3, 4, VIO, S.in(0.06), 0.15, z);
 }
 
@@ -93,7 +94,7 @@ function clawMachine(g, S, z) {
   cyl(g, 0.03, 0.03, 0.8, 0x888899, x, 2.3, z, { seg: 3 });
   cone(g, 0.18, 0.3, 0xdddddd, x, 1.75, z, { seg: 4, rx: Math.PI });
   box(g, 1.04, 0.3, 1.64, T, x, 2.75, z);
-  sign(g, 'GENE MACHINE', G, 0xffffff, 2.8, 0.65, S.in(0.1), 4.1, z, { ry: S.turn, border: 0xffffff });
+  sign(g, 'WORD CLAW', G, 0xffffff, 2.8, 0.65, S.in(0.1), 4.1, z, { ry: S.turn, border: 0xffffff });
   bolt(g, 0.7, T, S.in(0.12), 5.0, z - 1.3, { ry: S.turn });
   bolt(g, 0.7, T, S.in(0.12), 5.0, z + 1.3, { ry: S.turn });
   [-1.7, 1.7].forEach(function (dz, i) { ball(g, 0.3, BASES[i + 2], S.in(0.5), 0.3, z + dz, { seg: 7, sy: 0.75 }); });
@@ -108,10 +109,10 @@ function forkSlide(g, S, z) {
     box(g, 0.5, 0.07, len, p[1], x, 1.1, z + 0.2 + (i ? 0.5 : -0.2), { rx: ang, r: 0.25 });
     box(g, 0.07, 0.2, len, 0xffffff, x - 0.28, 1.2, z + 0.2 + (i ? 0.5 : -0.2), { rx: ang });
   });
-  sign(g, 'REPLICATION FORK', C, 0x1a4a6a, 3.0, 0.62, S.in(0.1), 4.2, z, { ry: S.turn, border: 0xffffff });
+  sign(g, 'SPIRAL SLIDE', C, 0x1a4a6a, 3.0, 0.62, S.in(0.1), 4.2, z, { ry: S.turn, border: 0xffffff });
 }
 
-function chromosome(g, x, z, c1, c2, turn) {
+function pretzel(g, x, z, c1, c2, turn) {
   // an X: two crossed capsules, joined by a pinched waist (the centromere), with a face
   [[0.3, c1], [-0.3, c2]].forEach(function (p) {
     cyl(g, 0.17, 0.17, 1.3, p[1], x, 1.0, z, { rz: p[0], rx: 0, seg: 8 });
@@ -122,10 +123,10 @@ function chromosome(g, x, z, c1, c2, turn) {
 }
 
 function pretzels(g, S, z) {
-  [-1.3, 0, 1.3].forEach(function (dz, i) { chromosome(g, S.in(0.5), z + dz, [A, G, T][i], [T, C, A][i], S.turn); });
+  [-1.3, 0, 1.3].forEach(function (dz, i) { pretzel(g, S.in(0.5), z + dz, [A, G, T][i], [T, C, A][i], S.turn); });
   for (var s = 0; s < 8; s++) cone(g, 0.5, 0.3, s % 2 ? 0xffffff : A, S.in(0.35), 3.0, z - 1.6 + s * 0.46, { seg: 4, rz: S.side * 0.35, ry: 0.0 });
   [-1.7, 1.7].forEach(function (dz) { cyl(g, 0.05, 0.05, 3.0, 0xe8e8f0, S.in(0.8), 1.5, z + dz, { seg: 4 }); });
-  sign(g, 'CHROMOSOME PRETZELS', T, 0x4a2a8a, 3.4, 0.62, S.in(0.1), 4.2, z, { ry: S.turn, border: 0xffffff });
+  sign(g, 'PRETZEL LETTERS', T, 0x4a2a8a, 3.4, 0.62, S.in(0.1), 4.2, z, { ry: S.turn, border: 0xffffff });
 }
 
 function bay(g, side, z, k) {

@@ -1,5 +1,5 @@
 /**
- * ui.js — Main UI Controller for Dx Dash
+ * ui.js — Main UI Controller for Language Dash
  *
  * Agent 5 owns this file and js/dom.js [2].
  *
@@ -40,14 +40,15 @@ import { fitActiveScreens } from './fitscreen.js';
 import { shareLink, track as shareTrack } from './analytics/index.js';
 import { renderPal } from './palui.js';
 import { setText, createElement, clearElement } from './dom.js';
-import { SUBJECTS, CARDS, EXAM_FILTERS } from './cardhub.js';
+import { SUBJECTS, CARDS } from './cardhub.js';
+import { LEVELS } from './lang/topics.js';
 import { storage } from './storage.js';
 import { startTutorial } from './tutorial.js';
 import { missExplanation } from './explain.js';
 import { appPublicUrl } from './publicurl.js';
 import { shareText, copyText, saveFile } from './platform.js';
 import { buildBackup, restoreBackup } from './backup.js';
-import { speak, cancelSpeech } from './tts.js';
+import { speak, cancelSpeech, canSpeak, speakCard, pairVoices } from './tts.js';
 import { isGameTutorialOpen } from './tutorialrun.js';
 import { createColorWheel } from './colorwheel.js';
 import { audio } from './audio.js';
@@ -705,7 +706,7 @@ class UI {
     var noteEl = document.getElementById('subjectNote');
     if (noteEl) {
       if (selected.length === 0) {
-        setText(noteEl, 'All subjects active (none specifically selected)');
+        setText(noteEl, 'All topics active (none specifically selected)');
         noteEl.style.display = 'block';
       } else {
         noteEl.style.display = 'none';
@@ -792,29 +793,24 @@ class UI {
   }
 
   // ═══════════════════════════════════════════════════════
-  // EXAM FILTER
+  // WORD LEVEL (internally still the "exam filter": selectedExams holds level ids)
   // ═══════════════════════════════════════════════════════
 
   renderExamFilter() {
     var container = document.getElementById('examFilterContainer');
     if (!container) return;
-    var filters = (typeof EXAM_FILTERS !== 'undefined') ? EXAM_FILTERS : [];
-    if (filters.length === 0) {
-      clearElement(container);
-      return;
-    }
-
+    var self = this;
     clearElement(container);
+    if (LEVELS.length === 0) return;
 
     var section = createElement('div', { className: 'collapsible-section' });
     section.style.marginTop = '6px';
 
     var toggle = createElement('button', {
       className: 'collapsible-toggle',
-      attributes: { id: 'examFilterToggle' }
+      attributes: { id: 'examFilterToggle', type: 'button' }
     });
-    var toggleText = document.createTextNode('🎯 Exam Filter ');
-    toggle.appendChild(toggleText);
+    toggle.appendChild(document.createTextNode('🎯 Word level '));
     var arrow = createElement('span', {
       className: 'collapse-arrow',
       text: '▸',
@@ -829,20 +825,20 @@ class UI {
     });
     body.style.display = 'none';
 
-    var hint = createElement('div', { text: 'Leave empty for all exams' });
+    var hint = createElement('div', { text: 'The most common words come first. Leave empty for all 1,000.' });
     hint.style.cssText = 'font-size:10px;color:var(--text-muted);margin-bottom:6px';
     body.appendChild(hint);
 
     var scroll = createElement('div', { className: 'subject-scroll' });
 
-    this._filterChips(scroll, filters.map(function (ex) { return { id: ex, label: ex }; }),
+    this._filterChips(scroll, LEVELS.map(function (l) { return { id: l.id, label: l.label }; }),
       function () { return storage.get('selectedExams') || []; },
       function (ex) {
         var exams = (storage.get('selectedExams') || []).slice();
         var idx = exams.indexOf(ex);
         if (idx >= 0) exams.splice(idx, 1); else exams.push(ex);
         storage.set('selectedExams', exams);
-      }, 'exam', function () { self._renderFiltersSummary(); });
+      }, 'level', function () { self._renderFiltersSummary(); });
 
     body.appendChild(scroll);
     section.appendChild(body);
@@ -856,155 +852,35 @@ class UI {
   }
 
   // ═══════════════════════════════════════════════════════
-  // ADVANCED FILTERS
+  // ADVANCED FILTERS: gone. Language Dash has no question types, years or high-yield flag, so nothing is drawn
+  // (the container stays hidden) and any old saved values are cleared so they cannot silently narrow a run.
   // ═══════════════════════════════════════════════════════
 
   renderAdvancedFilters() {
     var container = document.getElementById('advancedFilterContainer');
-    if (!container) return;
-    var self = this;
-
-    var QTYPES = [
-      { id: 'buzzword_dx', label: '🩺 Dx' },
-      { id: 'dx_to_tx', label: '💊 Tx' },
-      { id: 'dx_to_workup', label: '🔬 Workup' },
-      { id: 'mechanism', label: '⚙️ Mechanism' },
-      { id: 'side_effect', label: '⚠️ Side Effect' },
-      { id: 'lab_dx', label: '🧪 Lab' },
-      { id: 'pharm', label: '💉 Pharm' },
-      { id: 'prevention', label: '🛡️ Prevention' },
-      { id: 'management', label: '📋 Mgmt' }
-    ];
-    var YEARS = [
-      { id: 1, label: 'M1' },
-      { id: 2, label: 'M2' },
-      { id: 3, label: 'M3' },
-      { id: 4, label: 'M4' }
-    ];
-
-    var selectedTypes = storage.get('selectedQuestionTypes') || [];
-    var selectedYears = storage.get('selectedYears') || [];
-    var highYieldOnly = storage.get('highYieldOnly') || false;
-    var activeCount = selectedTypes.length + selectedYears.length + (highYieldOnly ? 1 : 0);
-
-    clearElement(container);
-
-    var section = createElement('div', { className: 'collapsible-section' });
-    section.style.marginTop = '6px';
-
-    // Toggle button
-    var toggle = createElement('button', { className: 'collapsible-toggle' });
-    var toggleText = document.createTextNode('🔍 Filters ');
-    toggle.appendChild(toggleText);
-    var countSpan = createElement('span', {
-      text: activeCount > 0 ? '(' + activeCount + ' active)' : '',
-      attributes: { id: 'activeFilterCount' }
-    });
-    countSpan.style.cssText = 'font-size:10px;color:var(--accent-orange);font-weight:700';
-    toggle.appendChild(countSpan);
-    toggle.appendChild(document.createTextNode(' '));
-    var arrow = createElement('span', { className: 'collapse-arrow', text: '▸' });
-    toggle.appendChild(arrow);
-    section.appendChild(toggle);
-
-    var body = createElement('div', { className: 'collapsible-body' });
-    body.style.display = 'none';
-
-    // Question Type chips
-    var qtLabel = createElement('label', { text: '❓ Question Type' });
-    qtLabel.style.cssText = 'font-size:11px;font-weight:700;margin-top:8px;display:block';
-    body.appendChild(qtLabel);
-    var qtHint = createElement('div', { text: 'Leave empty for all types' });
-    qtHint.style.cssText = 'font-size:9px;color:var(--text-muted);margin-bottom:4px';
-    body.appendChild(qtHint);
-
-    var qtScroll = createElement('div', { className: 'subject-scroll' });
-    this._filterChips(qtScroll, QTYPES,
-      function () { return storage.get('selectedQuestionTypes') || []; },
-      function (id) { storage.toggleArrayItem('selectedQuestionTypes', id); },
-      'qtype', function () { self._updateFilterCount(); });
-    body.appendChild(qtScroll);
-
-    // Year chips
-    var yrLabel = createElement('label', { text: '🎓 Year' });
-    yrLabel.style.cssText = 'font-size:11px;font-weight:700;margin-top:8px;display:block';
-    body.appendChild(yrLabel);
-
-    var yrScroll = createElement('div', { className: 'subject-scroll' });
-    this._filterChips(yrScroll, YEARS,
-      function () { return storage.get('selectedYears') || []; },
-      function (id) { storage.toggleArrayItem('selectedYears', id); },
-      'year', function () { self._updateFilterCount(); });
-    body.appendChild(yrScroll);
-
-    // High-yield toggle
-    var hyRow = createElement('div', { className: 'setting-row' });
-    hyRow.style.padding = '8px 0';
-    var hyLabel = createElement('div', { text: '🔥 High-Yield Only' });
-    hyLabel.style.fontSize = '12px';
-    hyRow.appendChild(hyLabel);
-    var hyToggle = createElement('div', {
-      className: 'toggle' + (highYieldOnly ? ' on' : '')
-    });
-    hyToggle.addEventListener('click', function () {
-      var newVal = !storage.get('highYieldOnly');
-      storage.set('highYieldOnly', newVal);
-      hyToggle.classList.toggle('on');
-      self._updateFilterCount();
-    });
-    hyRow.appendChild(hyToggle);
-    body.appendChild(hyRow);
-
-    // Reset button
-    var resetBtn = createElement('button', {
-      className: 'btn btn-outline btn-sm',
-      text: 'Reset All Filters'
-    });
-    resetBtn.style.cssText = 'margin-top:4px;font-size:10px';
-    resetBtn.addEventListener('click', function () {
-      storage.set('selectedQuestionTypes', []);
-      storage.set('selectedYears', []);
-      storage.set('highYieldOnly', false);
-      storage.set('selectedExams', []);
-      self.renderExamFilter();
-      self.renderAdvancedFilters();
-    });
-    body.appendChild(resetBtn);
-
-    section.appendChild(body);
-    container.appendChild(section);
-
-    toggle.addEventListener('click', function () {
-      var isOpen = body.style.display !== 'none';
-      body.style.display = isOpen ? 'none' : 'block';
-      arrow.classList.toggle('open', !isOpen);
-    });
+    if (container) { clearElement(container); container.hidden = true; }
+    if ((storage.get('selectedQuestionTypes') || []).length) storage.set('selectedQuestionTypes', []);
+    if ((storage.get('selectedYears') || []).length) storage.set('selectedYears', []);
+    if (storage.get('highYieldOnly')) storage.set('highYieldOnly', false);
   }
 
-  /** The one-line summary on Home's "Question filters" row, e.g. "All subjects · USMLE · 2 filters". */
+  /** The one-line summary on Home's "Word filters" row, e.g. "All topics · First 300". */
   _renderFiltersSummary() {
     var el = document.getElementById('filtersSummary');
     if (!el) return;
-    var subjects = storage.get('selectedSubjects') || [];
-    var exams = storage.get('selectedExams') || [];
-    var advanced = (storage.get('selectedQuestionTypes') || []).length + (storage.get('selectedYears') || []).length + (storage.get('highYieldOnly') ? 1 : 0);
+    var topics = storage.get('selectedSubjects') || [];
+    var levels = storage.get('selectedExams') || [];
     var parts = [];
-    parts.push(subjects.length === 0 || subjects.length >= SUBJECTS.length ? 'All subjects' : subjects.length === 1 ? subjects[0] : subjects.length + ' subjects');
-    if (exams.length) parts.push(exams.length === 1 ? String(exams[0]) : exams.length + ' exams');
-    if (advanced) parts.push(advanced + (advanced === 1 ? ' filter' : ' filters'));
+    parts.push(topics.length === 0 || topics.length >= SUBJECTS.length ? 'All topics' : topics.length === 1 ? topics[0] : topics.length + ' topics');
+    if (levels.length) {
+      var names = levels.map(function (id) { var l = LEVELS.filter(function (x) { return x.id === id; })[0]; return l ? l.label : String(id); });
+      parts.push(names.length === 1 ? names[0] : names.length + ' levels');
+    }
     setText(el, parts.join(' · '));
   }
 
   _updateFilterCount() {
     this._renderFiltersSummary();
-    var selectedTypes = storage.get('selectedQuestionTypes') || [];
-    var selectedYears = storage.get('selectedYears') || [];
-    var highYieldOnly = storage.get('highYieldOnly') || false;
-    var activeCount = selectedTypes.length + selectedYears.length + (highYieldOnly ? 1 : 0);
-    var countEl = document.getElementById('activeFilterCount');
-    if (countEl) {
-      setText(countEl, activeCount > 0 ? '(' + activeCount + ' active)' : '');
-    }
   }
 
   // ═══════════════════════════════════════════════════════
@@ -1246,19 +1122,44 @@ class UI {
   showFeedback(card, wasCorrect, choice, teachOnMiss) {
     this._teachOnMiss = teachOnMiss !== false;
     var fb = document.getElementById('feedbackEl');
-    setText(fb, (wasCorrect ? '✓ ' : '✗ ') + card.ans);
+    this._fillPair(fb, card, wasCorrect ? '✓ ' : '✗ ');
     fb.className = 'show ' + (wasCorrect ? 'ok' : 'bad');
-    // Only Study (which waits for you) and the tutorial show the explanation as it happens; in a scored run
+    // Only Study (which waits for you) and the tutorial show the word card as it happens; in a scored run
     // there is no time to read it, and the end-of-run review has it.
     if (!wasCorrect && (this._teachOnMiss || this._teachOnMiss === undefined)) {
       var tb = document.getElementById('teachEl');
       if (requireGate('explanations', { record: true, passive: true })) setText(tb, missExplanation(card, choice));
-      else setText(tb, '🔒 Free explanations used up today. Go Pro for every "why", every time.');
+      else setText(tb, '🔒 Free word cards used up today. Go Pro for every word card, every time.');
       shareTrack('explain_viewed', { card_id: card.id, source: this.flashcardMode && this._flashcardActive && this._flashcardActive() ? 'flashcards' : 'study' });
       tb.classList.add('show');
     }
     this.hideAnswerChoices();
     this.fitQuestionHud();
+  }
+
+  /**
+   * Fill a container with the correct pair: "hint = word", the pronunciation line under it (when the word has one
+   * and the player has pronunciation on), and a small 🔊 "hear it" button when the device can speak.
+   */
+  _fillPair(el, card, prefix) {
+    clearElement(el);
+    var pair = createElement('span', { className: 'fb-pair' });
+    var hint = (card.bw || []).join(' • ');
+    pair.appendChild(document.createTextNode((prefix || '') + hint + ' = '));
+    var tl = getLanguage(getPairOrDefault().target);
+    var word = createElement('span', { className: 'fb-word', text: card.ans });
+    if (tl) { word.setAttribute('lang', tl.code); word.setAttribute('dir', tl.rtl ? 'rtl' : 'ltr'); }
+    pair.appendChild(word);
+    el.appendChild(pair);
+    if (card.ansRoman && getShowRoman()) el.appendChild(createElement('span', { className: 'fb-roman', text: card.ansRoman }));
+    if (canSpeak()) el.appendChild(this._hearButton(card));
+  }
+
+  /** A small 🔊 button that says the hint and then the word, each in its own language's voice. */
+  _hearButton(card) {
+    var btn = createElement('button', { className: 'hear-btn', text: '🔊', attributes: { type: 'button', 'aria-label': 'Hear it', title: 'Hear it' } });
+    btn.addEventListener('click', function (e) { e.stopPropagation(); speakCard(card); });
+    return btn;
   }
 
   showStudyTeaching(card) {
@@ -1714,7 +1615,7 @@ class UI {
 
   /** The groups on the Settings screen: a list of cards, each opening its own page. */
   _settingsSections() {
-    var pro = proLive() ? [{ id: 'pro', icon: '⚡', title: 'Dx Dash Pro', desc: isPro() ? 'Your membership, your gift and billing' : 'What Pro gets you, and the free 7-day trial' }] : [];
+    var pro = proLive() ? [{ id: 'pro', icon: '⚡', title: 'Language Dash Pro', desc: isPro() ? 'Your membership, your gift and billing' : 'What Pro gets you, and the free 7-day trial' }] : [];
     return pro.concat([
       { id: 'sound', icon: '🔊', title: 'Sound', desc: 'Music, effects, volume and reading aloud' },
       { id: 'look', icon: '🎨', title: 'Look & performance', desc: 'Colors, camera, graphics and frame rate' },
@@ -2065,15 +1966,11 @@ class UI {
 
   // ═══════════════════════════════════════════════════════
   // HANDS-FREE AUDIO REVIEW
-  // Reads each clue aloud, pauses to let you think, then reads the answer and
-  // teaching point. For commutes and workouts; it does not record ratings.
+  // Says the hint word aloud, pauses to let you think, then says the word twice in its own
+  // language's voice. For commutes and workouts; it does not record ratings.
   // ═══════════════════════════════════════════════════════
 
 
-
-  _hfSpeak(text) {
-    return speak(text, { rate: 0.95 });
-  }
 
   _hfSleep(ms) {
     var hf = this._hf;
@@ -2092,13 +1989,17 @@ class UI {
         hf.index = i;
         hf.phase = 'clue';
         self.renderFlashcardScreen();
-        await self._hfSpeak('Clue. ' + (card.bw || []).join('. '));
+        await speakCard(card, { only: 'known', rate: 0.95 });
         if (hf.cancel) break;
         await self._hfSleep(6000);
         if (hf.cancel) break;
         hf.phase = 'answer';
         self.renderFlashcardScreen();
-        await self._hfSpeak('Answer. ' + card.ans + '. ' + (card.tp && card.tp.trim() !== String(card.ans || '').trim() ? card.tp : ''));
+        await speakCard(card, { only: 'target', rate: 0.8 });
+        if (hf.cancel) break;
+        await self._hfSleep(900);
+        if (hf.cancel) break;
+        await speakCard(card, { only: 'target', rate: 0.8 });
         hf.heard++;
         if (hf.cancel) break;
         await self._hfSleep(1500);
@@ -2122,7 +2023,7 @@ class UI {
     wrap.style.textAlign = 'center';
     if (hf.finished) {
       wrap.appendChild(this._flashcardText('h2', '🎧 Session finished'));
-      wrap.appendChild(this._flashcardText('p', 'You listened to ' + hf.heard + ' card' + (hf.heard === 1 ? '' : 's') + '. It counts toward your daily goal.', 'margin:10px 0;color:var(--text-secondary)'));
+      wrap.appendChild(this._flashcardText('p', 'You listened to ' + hf.heard + ' word' + (hf.heard === 1 ? '' : 's') + '. It counts toward your daily goal.', 'margin:10px 0;color:var(--text-secondary)'));
       var again = createElement('button', { className: 'btn btn-green btn-block', text: '🎧 Another round', attributes: { type: 'button' } });
       again.addEventListener('click', function () { var last = self._hf.last || {}; self._hf = null; self.startHandsFree(last.subjects, last.cardIds, last.count); });
       var home = createElement('button', { className: 'btn btn-outline btn-block', text: '🏠 Home', attributes: { type: 'button' } });
@@ -2135,18 +2036,20 @@ class UI {
     }
 
     var card = hf.cards[hf.index];
-    wrap.appendChild(this._flashcardText('div', '🎧 Hands-free \u2014 card ' + (hf.index + 1) + ' of ' + hf.cards.length, 'font-size:11px;color:var(--text-muted);margin-bottom:8px'));
+    wrap.appendChild(this._flashcardText('div', '🎧 Hands-free \u2014 word ' + (hf.index + 1) + ' of ' + hf.cards.length, 'font-size:11px;color:var(--text-muted);margin-bottom:8px'));
     var box = createElement('div');
     box.style.cssText = 'background:var(--bg-card-solid);border-radius:var(--radius-lg);padding:20px;border:var(--border-glow)';
     box.appendChild(this._flashcardText('div', card.subj, 'font-size:10px;color:var(--text-muted);margin-bottom:8px'));
     (card.bw || []).forEach(function (bw) {
-      box.appendChild(self._flashcardText('div', '\u2022 ' + bw, 'font-size:16px;font-weight:700;margin:4px 0'));
+      var h = self._flashcardText('div', bw, 'font-size:22px;font-weight:800;margin:4px 0');
+      var kl = getLanguage(getPairOrDefault().known);
+      if (kl) { h.setAttribute('lang', kl.code); h.setAttribute('dir', kl.rtl ? 'rtl' : 'ltr'); }
+      box.appendChild(h);
     });
     if (hf.phase === 'answer') {
-      box.appendChild(this._flashcardText('div', '\u2713 ' + card.ans, 'font-size:18px;font-weight:800;color:var(--accent-green);margin-top:12px'));
-      if (card.tp && card.tp.trim() !== String(card.ans || '').trim()) box.appendChild(this._flashcardText('p', card.tp, 'font-size:12px;color:var(--text-secondary);margin-top:6px'));
+      box.appendChild(this._answerLine(card, 'font-size:24px;font-weight:800;color:var(--accent-green);margin-top:12px'));
     } else {
-      box.appendChild(this._flashcardText('div', 'Think of the diagnosis\u2026', 'font-size:12px;color:var(--text-muted);margin-top:12px'));
+      box.appendChild(this._flashcardText('div', 'Say it in your head\u2026 what is the word?', 'font-size:12px;color:var(--text-muted);margin-top:12px'));
     }
     wrap.appendChild(box);
     var stop = createElement('button', { className: 'btn btn-red btn-block', text: '\u23F9 Stop', attributes: { type: 'button' } });
@@ -2154,6 +2057,19 @@ class UI {
     stop.addEventListener('click', function () { self.stopHandsFree(); });
     wrap.appendChild(stop);
     container.appendChild(wrap);
+  }
+
+  /** The word you are learning (in its own script and direction), its pronunciation line and a 🔊 button. */
+  _answerLine(card, css) {
+    var wrap = createElement('div', { className: 'word-pair' });
+    wrap.style.cssText = css || '';
+    var tl = getLanguage(getPairOrDefault().target);
+    var main = createElement('div', { className: 'word-main', text: card.ans });
+    if (tl) { main.setAttribute('lang', tl.code); main.setAttribute('dir', tl.rtl ? 'rtl' : 'ltr'); }
+    wrap.appendChild(main);
+    if (card.ansRoman && getShowRoman()) wrap.appendChild(createElement('div', { className: 'fb-roman', text: card.ansRoman }));
+    if (canSpeak()) wrap.appendChild(this._hearButton(card));
+    return wrap;
   }
 
   _flashcardActive() {
@@ -2306,10 +2222,10 @@ class UI {
     var total = game.correct + game.wrong;
     var acc = total > 0 ? Math.round(game.correct / total * 100) : 0;
     var skinName = game.currentSkin ? game.currentSkin.name : 'Unknown';
-    var text = '⚡ Dx Dash ⚡\n🏆 Score: ' + game.score + '\n✅ Accuracy: ' + acc + '%\n🔥 Streak: ' + game.bestStreak + '\n🪙 Coins: ' + game.coins + '\n💊 Speed: ' + game.userSpeed + '×\n🌍 Track: ' + skinName + '\n\nCan you beat my score? Play at:\n' + shareLink(appPublicUrl(), 'results');
+    var text = '⚡ Language Dash ⚡\n🏆 Score: ' + game.score + '\n✅ Accuracy: ' + acc + '%\n🔥 Streak: ' + game.bestStreak + '\n🪙 Coins: ' + game.coins + '\n💊 Speed: ' + game.userSpeed + '×\n🌍 Track: ' + skinName + '\n\nCan you beat my score? Play at:\n' + shareLink(appPublicUrl(), 'results');
 
     var self = this;
-    shareText({ title: 'Dx Dash Score', text: text, kind: 'results', surface: 'postrun', score: game.score }).then(function (how) {
+    shareText({ title: 'Language Dash Score', text: text, kind: 'results', surface: 'postrun', score: game.score }).then(function (how) {
       if (how === 'copied') self._showToast('Score copied \u2014 paste it anywhere to share.');
       else if (how === 'failed') window.alert('Could not share. Your score:\n\n' + text);
     });

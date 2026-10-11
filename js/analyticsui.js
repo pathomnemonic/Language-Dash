@@ -39,9 +39,9 @@ function list(items) {
 export function maybeAskConsent(onDone) {
   if (!analyticsAvailable() || !analytics.needsPrompt() || typeof document === 'undefined') { if (onDone) onDone(); return null; }
   var opener = document.activeElement;
-  var overlay = createElement('div', { className: 'report-overlay', attributes: { id: 'analyticsConsent', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Help improve Dx Dash' } });
+  var overlay = createElement('div', { className: 'report-overlay', attributes: { id: 'analyticsConsent', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Help improve Language Dash' } });
   var box = createElement('div', { className: 'report-box' });
-  box.appendChild(createElement('h2', { text: '📊 Help improve Dx Dash?' }));
+  box.appendChild(createElement('h2', { text: '📊 Help improve Language Dash?' }));
   box.appendChild(createElement('p', { text: 'Share anonymous usage so we can fix hard questions, balance the game and find bugs. It is tied to a random ID on this device, never to your name.' }));
   var signals = analytics.signals();
   if (signals.doNotTrack || signals.gpc) box.appendChild(createElement('p', { text: 'Your browser asks sites not to track you, so this stays off unless you say yes.' }));

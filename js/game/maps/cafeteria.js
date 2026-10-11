@@ -1,5 +1,6 @@
 /**
- * cafeteria.js — Cafeteria Carnival: the hospital canteen on fair day.
+ * cafeteria.js — Tokyo Night Market (skin 'Cafeteria Carnival'; the id and file name are kept from the original game):
+ * awninged food stalls, a kaiten-style conveyor of dishes, ice cream and paper lanterns on a festival night.
  *
  * Every 16 units: a striped-awning snack stall with a giant popcorn bucket, a gleaming kitchen wall (stove, fridge,
  * sink), an ice-cream stand, and a diner corner with giant ketchup and mustard. A dish conveyor runs along both walls
@@ -185,7 +186,10 @@ function arch(g, z, i) {
   }
   [-1, 1].forEach(function (s, n) {
     cyl(g, 0.012, 0.012, 0.6, 0x777788, s * 4.4, y - 0.2, z, { seg: 3 });
-    ball(g, 0.35, CARNIVAL[(i + n * 2) % 6], s * 4.4, y - 0.95, z, { seg: 7, sy: 1.2 });
+    // a paper lantern: a glowing round body between two dark caps
+    ball(g, 0.35, CARNIVAL[(i + n * 2) % 6], s * 4.4, y - 0.95, z, { seg: 7, sy: 1.2, bulb: true });
+    cyl(g, 0.16, 0.16, 0.06, 0x2a2d3a, s * 4.4, y - 0.5, z, { seg: 6 });
+    cyl(g, 0.16, 0.16, 0.06, 0x2a2d3a, s * 4.4, y - 1.4, z, { seg: 6 });
   });
 }
 

@@ -1,8 +1,9 @@
 /**
- * pharmacy.js — Pharmacy Pop Factory: a candy-coloured factory where giant capsules roll off the line.
+ * pharmacy.js — Stroopwafel Factory (skin 'Pharmacy Pop Factory'; the id and file name are kept from the original
+ * game): a candy-coloured factory where giant stroopwafels roll off the line.
  *
- * Every 16 units: a conveyor line with a hopper, a glass tank of bubbling liquid, shelves of tall pill bottles, and a
- * giant "Rx" sign over spinning gears. Moving: the conveyor belt, capsules riding it, bubbles in the tanks and
+ * Every 16 units: a conveyor line with a hopper, a glass tank of bubbling syrup, shelves of tall syrup jars, and a
+ * giant STROOP sign over spinning gears. Moving: the conveyor belt, stroopwafels riding it, bubbles in the tanks and
  * gears turning on the far wall.
  */
 
@@ -23,12 +24,13 @@ function wallPicture() {
   return canvasTex('pharm_wall', 1024, 410, function (ctx, w, h) {
     ctx.fillStyle = '#bfeaff'; ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = '#ff9ccb'; ctx.fillRect(0, h - 120, w, 120);
-    // pills and capsules scattered on the wall
+    // stroopwafels scattered on the wall: golden discs with a waffle grid
     for (var i = 0; i < 22; i++) {
       var x = (i * 173) % w, y = 30 + (i * 67) % (h - 190), a = (i * 0.7) % 3.14;
       ctx.save(); ctx.translate(x, y); ctx.rotate(a);
-      ctx.fillStyle = ['#ff6fae', '#3fe0b0', '#4fb8ff', '#ffd23f'][i % 4]; ctx.fillRect(-26, -11, 26, 22);
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, -11, 26, 22);
+      ctx.fillStyle = ['#e8b060', '#f0c070', '#d99a45', '#f4cf86'][i % 4]; ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(150,90,30,0.55)'; ctx.lineWidth = 2;
+      for (var gl = -16; gl <= 16; gl += 8) { ctx.beginPath(); ctx.moveTo(gl, -18); ctx.lineTo(gl, 18); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-18, gl); ctx.lineTo(18, gl); ctx.stroke(); }
       ctx.restore();
     }
     ctx.fillStyle = '#4fb8ff'; ctx.fillRect(0, h - 128, w, 8);
@@ -89,7 +91,7 @@ function tank(g, S, z) {
   cyl(g, 0.1, 0.1, 4, SKY, S.in(0.12), 3.45, z, { rx: Math.PI / 2, seg: 6 });
 }
 
-function bottles(g, S, z) {
+function syrupJars(g, S, z) {
   box(g, 0.6, 0.08, 3.6, 0xffffff, S.in(0.35), 0.9, z);
   box(g, 0.6, 0.08, 3.6, 0xffffff, S.in(0.35), 2.0, z);
   box(g, 0.6, 0.08, 3.6, 0xffffff, S.in(0.35), 3.1, z);
@@ -101,9 +103,9 @@ function bottles(g, S, z) {
   }
 }
 
-function rxSign(g, S, z) {
+function stroopSign(g, S, z) {
   box(g, 0.2, 1.8, 3.0, 0xffffff, S.in(0.15), 3.4, z);
-  sign(g, 'Rx', 0x4fb8ff, 0xffffff, 2.6, 1.4, S.in(0.27), 3.4, z, { ry: S.turn, border: 0xff6fae });
+  sign(g, 'STROOP', 0x4fb8ff, 0xffffff, 2.6, 1.4, S.in(0.27), 3.4, z, { ry: S.turn, border: 0xff6fae });
   box(g, 1.0, 1.0, 1.4, MINT, S.in(0.6), 0.5, z + 0.0);
   ball(g, 0.4, PINK, S.in(0.6), 1.3, z, { seg: 8 });
 }
@@ -113,19 +115,18 @@ function bay(g, side, z, k) {
   wallPanel(g, wallPicture(), side, z, H, 0.0, { r: 0.8 });
   if (k === 0) line(g, S, z);
   else if (k === 1) tank(g, S, z);
-  else if (k === 2) bottles(g, S, z);
-  else rxSign(g, S, z);
+  else if (k === 2) syrupJars(g, S, z);
+  else stroopSign(g, S, z);
 }
 
 function center(g, z) { floorPanel(g, floorPicture(), z, 12); ceilingPanel(g, ceilingPicture(), z, 11.6, H); }
 
 function arch(g, z, i) {
-  // a giant capsule hangs on each side, with a string of pill-shaped flags across
+  // a string of little stroopwafel flags across: a golden disc with a syrup rim
   for (var f = 0; f < 9; f++) {
     var x = -4.6 + f * 1.15;
-    cyl(g, 0.14, 0.14, 0.4, POP[(f + i) % 6], x, H - 0.55, z, { rz: Math.PI / 2, seg: 6 });
-    ball(g, 0.14, POP[(f + i) % 6], x - 0.2, H - 0.55, z, { seg: 5 });
-    ball(g, 0.14, 0xffffff, x + 0.2, H - 0.55, z, { seg: 5 });
+    cyl(g, 0.26, 0.26, 0.05, 0xe8b060, x, H - 0.6, z, { rx: Math.PI / 2, seg: 10 });
+    cyl(g, 0.3, 0.3, 0.03, POP[(f + i) % 6], x, H - 0.6, z - 0.03, { rx: Math.PI / 2, seg: 10 });
   }
   cyl(g, 0.02, 0.02, 10.4, 0x9aa4b4, 0, H - 0.3, z, { rz: Math.PI / 2, seg: 3 });
 }
@@ -147,13 +148,12 @@ function gear() {
 function extras() {
   flow(beltMat().map, 0, 0.18);
   var cap = combine([
-    { geo: new THREE.CylinderGeometry(0.14, 0.14, 0.28, 8), color: 0xffffff, matrix: xform(0, 0, 0, Math.PI / 2, 0, 0) },
-    { geo: new THREE.SphereGeometry(0.14, 8, 5), color: 0xffffff, matrix: xform(0, 0, 0.14) },
-    { geo: new THREE.SphereGeometry(0.14, 8, 5), color: 0xffffff, matrix: xform(0, 0, -0.14) }
+    { geo: new THREE.CylinderGeometry(0.3, 0.3, 0.07, 12), color: 0xffffff },
+    { geo: new THREE.CylinderGeometry(0.32, 0.32, 0.02, 12), color: 0xc9783a, matrix: xform(0, 0.03, 0) }
   ]);
   [-1, 1].forEach(function (side, i) {
-    // capsules riding the belts (the belt is in every fourth bay; they travel the whole length for simplicity)
-    swarm({ geo: cap, count: 10, seed: 50 + i, colors: POP, area: { x: [side * 4.9, side * 4.9], y: [1.12, 1.12], z: [-140, 8] }, k: 0.6, scale: [1.2, 1.2], turn: 0 });
+    // stroopwafels riding the belts (the belt is in every fourth bay; they travel the whole length for simplicity)
+    swarm({ geo: cap, count: 10, seed: 50 + i, colors: [0xe8b060, 0xf0c070, 0xd99a45], area: { x: [side * 4.9, side * 4.9], y: [1.12, 1.12], z: [-140, 8] }, k: 0.6, scale: [1.2, 1.2], turn: 0 });
     var bub = combine([{ geo: new THREE.SphereGeometry(0.12, 6, 4), color: 0xffffff }]);
     swarm({ geo: bub, material: new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.5, depthWrite: false }), count: 22, seed: 90 + i, colors: [0xbff0ff, 0xffd0e8, 0xcfffe8], area: { x: [side * 4.5, side * 5.2], y: [0.6, 4.2], z: [-140, 8] }, k: 1, vy: [0.5, 1.0], wobble: 0.1, scale: [0.6, 1.6] });
   });

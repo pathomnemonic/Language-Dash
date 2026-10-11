@@ -1,9 +1,10 @@
 /**
- * nursery.js — Neonatal Cloud Nursery: a pastel sky-top nursery floating on clouds.
+ * nursery.js — Lullaby Clouds (skin 'Neonatal Cloud Nursery'; the id and file name are kept from the original game):
+ * a pastel sky walkway where every cloud hums a lullaby in a different language.
  *
- * Every 16 units: a fluffy cloud bank with a crib, a rainbow arch, a toy-block tower with a teddy, and a cloud with a
- * hanging mobile. The path is a soft cloud walkway. Moving: storks carrying bundles, twinkling stars, bubbles and
- * drifting clouds.
+ * Every 16 units: a fluffy cloud bank with a giant music box and floating notes, a rainbow arch, a stack of letter
+ * blocks with a teddy, and a cloud with a hanging mobile. The path is a soft cloud walkway. Moving: birds carrying
+ * little notes, twinkling stars, bubbles and drifting clouds.
  */
 
 import * as THREE from 'three';
@@ -44,12 +45,18 @@ function cloudBlob(g, x, y, z, s, color) {
 }
 
 function crib(g, S, z) {
+  // (the name is kept from the original) a giant music box on the cloud, with a winding key and notes drifting up
   var x = S.in(0.8);
-  box(g, 0.9, 0.08, 1.8, 0xfff6e8, x, 0.6, z);
-  box(g, 0.8, 0.14, 1.7, PINK, x, 0.72, z);
-  [-0.45, 0.45].forEach(function (dx) { for (var i = 0; i < 8; i++) cyl(g, 0.02, 0.02, 0.6, 0xffffff, x + dx, 1.0, z - 0.8 + i * 0.23, { seg: 4 }); box(g, 0.05, 0.05, 1.8, 0xffffff, x + dx, 1.3, z); });
-  [-0.9, 0.9].forEach(function (dz) { box(g, 0.9, 0.9, 0.06, 0xffffff, x, 0.95, z + dz); cyl(g, 0.04, 0.04, 0.6, 0xffffff, x - 0.45, 0.3, z + dz, { seg: 4 }); cyl(g, 0.04, 0.04, 0.6, 0xffffff, x + 0.45, 0.3, z + dz, { seg: 4 }); });
-  ball(g, 0.22, 0xffd6b0, x, 0.95, z - 0.3, { seg: 7 });
+  box(g, 0.9, 0.6, 1.5, 0xfff6e8, x, 0.6, z);
+  box(g, 0.94, 0.14, 1.54, PINK, x, 0.95, z);
+  box(g, 0.94, 0.5, 0.1, BUTTER, x, 1.3, z - 0.72, { rx: -0.5 });
+  cyl(g, 0.04, 0.04, 0.4, 0xd8a860, x + (S.side < 0 ? 0.5 : -0.5), 0.6, z, { rz: Math.PI / 2, seg: 5 });
+  ball(g, 0.12, 0xd8a860, x + (S.side < 0 ? 0.72 : -0.72), 0.6, z, { seg: 6 });
+  [[-0.3, 1.8, PINK], [0.2, 2.3, BLUE], [-0.1, 2.8, MINT]].forEach(function (n) {
+    ball(g, 0.16, n[2], x, n[1], z + n[0], { seg: 6, sy: 0.8 });
+    box(g, 0.04, 0.5, 0.04, n[2], x, n[1] + 0.28, z + n[0] + 0.13);
+    box(g, 0.04, 0.12, 0.2, n[2], x, n[1] + 0.52, z + n[0] + 0.22);
+  });
   cloudBlob(g, S.out(0.8), 0.2, z, 1.4);
 }
 

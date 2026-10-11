@@ -1,10 +1,12 @@
 /**
- * cardiac.js — Cardiac Pulse: a valentine carnival inside a very happy heart.
+ * cardiac.js — Verona Balcony Carnival (skin 'Cardiac Pulse'; the id and file name are kept from the original game):
+ * a valentine carnival of heart balloons, rose bushes and balconies.
  *
- * Every 16 units: a heart-shaped photo wall with rose bushes, the swinging valve doors, an ECG arcade game that says
- * BEAT IT, and a pair of flowing red-and-blue vessel slides. The walls are pink brocade with hearts, the floor a heart
- * checker with a lub-dub line down the middle, the ceiling a sky of clouds. Moving: heart balloons rising, big hearts
- * thumping along the walls, a heartbeat line scrolling across the monitors and petals drifting.
+ * Every 16 units: a heart-shaped photo wall with rose bushes and a TI AMO sign, the swinging shutter doors of a
+ * balcony house, a love-letter arcade game that says SERENADE, and a pair of flowing red-and-blue ribbon balconies.
+ * The walls are pink brocade with hearts, the floor a heart checker with a love-letter line down the middle, the
+ * ceiling a sky of clouds. Moving: heart balloons rising, big hearts thumping along the walls, love letters in many
+ * languages scrolling across the screens and petals drifting.
  */
 
 import * as THREE from 'three';
@@ -31,11 +33,11 @@ function wallPicture() {
       ctx.fillStyle = (r + c) % 2 ? 'rgba(255,255,255,0.55)' : 'rgba(255,61,94,0.35)';
       ctx.beginPath(); ctx.moveTo(x, y + 12); ctx.bezierCurveTo(x - 22, y - 6, x - 10, y - 22, x, y - 8); ctx.bezierCurveTo(x + 10, y - 22, x + 22, y - 6, x, y + 12); ctx.fill();
     }
-    // a heartbeat line across the picture
-    ctx.strokeStyle = '#ff3d5e'; ctx.lineWidth = 6; ctx.lineJoin = 'round'; ctx.beginPath();
-    ctx.moveTo(0, 250);
-    for (var k = 0; k < 4; k++) { var x0 = k * 256; ctx.lineTo(x0 + 70, 250); ctx.lineTo(x0 + 90, 232); ctx.lineTo(x0 + 110, 250); ctx.lineTo(x0 + 140, 250); ctx.lineTo(x0 + 152, 290); ctx.lineTo(x0 + 168, 190); ctx.lineTo(x0 + 184, 300); ctx.lineTo(x0 + 198, 250); ctx.lineTo(x0 + 256, 250); }
-    ctx.stroke();
+    // a ribbon of "I love you" in many tongues across the picture
+    ctx.fillStyle = 'rgba(196,22,58,0.88)'; ctx.fillRect(0, 214, w, 62);
+    ctx.fillStyle = '#ffe98a'; ctx.font = '700 32px Georgia, serif'; ctx.textBaseline = 'middle';
+    var loves = ['Ti amo', 'Te amo', "Je t'aime", 'Ich liebe dich', '愛してる', 'Я тебя люблю', 'Ik hou van je', '사랑해'];
+    for (var k = 0; k < 8; k++) ctx.fillText(loves[k], 6 + k * 128, 246);
     // red velvet wainscot with a gold rail
     ctx.fillStyle = '#c4163a'; ctx.fillRect(0, h - 92, w, 92);
     ctx.fillStyle = '#e0264d'; for (var p = 0; p < 16; p++) ctx.fillRect(p * 64 + 6, h - 82, 52, 66);
@@ -65,11 +67,17 @@ function ceilingPicture() {
   });
 }
 
+/** A screen of love letters scrolling by: little envelopes with hearts (the name is kept from the original). */
 function ekgTex() {
-  return canvasTex('card_ekg', 256, 64, function (ctx, w, h) {
+  return canvasTex('card_letters', 256, 64, function (ctx, w, h) {
     ctx.fillStyle = '#26102a'; ctx.fillRect(0, 0, w, h);
-    ctx.strokeStyle = '#ff7aa8'; ctx.lineWidth = 3; ctx.shadowColor = '#ff7aa8'; ctx.shadowBlur = 6; ctx.beginPath();
-    ctx.moveTo(0, 38); ctx.lineTo(52, 38); ctx.lineTo(64, 28); ctx.lineTo(76, 38); ctx.lineTo(96, 38); ctx.lineTo(104, 52); ctx.lineTo(114, 6); ctx.lineTo(124, 58); ctx.lineTo(134, 38); ctx.lineTo(256, 38); ctx.stroke();
+    for (var i = 0; i < 4; i++) {
+      var x = i * 64 + 8;
+      ctx.fillStyle = '#ffd6e4'; ctx.fillRect(x, 16, 48, 32);
+      ctx.strokeStyle = '#ff7aa8'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x, 16); ctx.lineTo(x + 24, 34); ctx.lineTo(x + 48, 16); ctx.stroke();
+      ctx.fillStyle = '#ff3d5e'; ctx.beginPath(); ctx.arc(x + 20, 40, 4, 0, Math.PI * 2); ctx.arc(x + 28, 40, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(x + 16, 42); ctx.lineTo(x + 24, 50); ctx.lineTo(x + 32, 42); ctx.fill();
+    }
   });
 }
 
@@ -90,25 +98,25 @@ function photoWall(g, S, z) {
   heart(g, S, S.in(0.3), 2.7, z, 1.4, RED, true);
   bush(g, S, z - 1.4, 5); bush(g, S, z + 1.4, 5);
   box(g, 0.14, 0.3, 4, ROSE, S.in(0.06), 0.15, z);
-  sign(g, 'LUB-DUB LOVE', RED, WHITE, 2.8, 0.65, S.in(0.1), 4.9, z, { ry: S.turn, border: WHITE });
+  sign(g, 'TI AMO', RED, WHITE, 2.8, 0.65, S.in(0.1), 4.9, z, { ry: S.turn, border: WHITE });
 }
 
-function valves(g, S, z) {
+function shutters(g, S, z) {
   var x = S.in(0.3);
   box(g, 0.4, 3.0, 0.2, GOLD, x, 1.5, z - 1.4);
   box(g, 0.4, 3.0, 0.2, GOLD, x, 1.5, z + 1.4);
   box(g, 0.4, 0.3, 3.0, GOLD, x, 3.1, z);
-  // two saloon doors, ajar, each with a heart on it
+  // two shutter doors, ajar, each with a heart on it
   [-1, 1].forEach(function (d) {
     box(g, 0.1, 1.5, 1.2, d < 0 ? RED : PINK, x, 1.2, z + d * 0.62, { ry: d * 0.35, r: 0.4 });
     heart(g, { turn: S.turn, side: S.side }, x + (S.side < 0 ? 0.08 : -0.08), 1.3, z + d * 0.62, 0.5, WHITE, false);
   });
-  sign(g, 'MITRAL VALVE', GOLD, ROSE, 2.7, 0.62, S.in(0.1), 4.3, z, { ry: S.turn, border: WHITE });
+  sign(g, 'BALCONY HOUSE', GOLD, ROSE, 2.7, 0.62, S.in(0.1), 4.3, z, { ry: S.turn, border: WHITE });
   cone(g, 0.3, 0.7, BLUSH, S.in(0.5), 0.35, z - 1.9, { seg: 6 });
   cone(g, 0.3, 0.7, BLUSH, S.in(0.5), 0.35, z + 1.9, { seg: 6 });
 }
 
-function arcade(g, S, z) {
+function serenade(g, S, z) {
   var x = S.in(0.4);
   box(g, 0.9, 2.6, 1.5, 0x3a1530, x, 1.3, z);
   var ekg = ekgTex();
@@ -116,13 +124,13 @@ function arcade(g, S, z) {
   box(g, 0.5, 0.1, 1.3, ROSE, x + (S.side < 0 ? 0.35 : -0.35), 1.1, z);
   ball(g, 0.1, GOLD, x + (S.side < 0 ? 0.4 : -0.4), 1.25, z - 0.3, { seg: 5 });
   [0.15, 0.4, 0.65].forEach(function (dz, i) { ball(g, 0.08, [RED, GOLD, BLUE][i], x + (S.side < 0 ? 0.4 : -0.4), 1.17, z + dz, { seg: 5 }); });
-  neonSign(g, 'BEAT IT!', PINK, 0x3a1530, 2.2, 0.7, S.in(0.1), 3.8, z, { ry: S.turn });
+  neonSign(g, 'SERENADE!', PINK, 0x3a1530, 2.2, 0.7, S.in(0.1), 3.8, z, { ry: S.turn });
   bolt(g, 0.7, GOLD, S.in(0.12), 4.8, z, { ry: S.turn });
   [-1.7, 1.7].forEach(function (dz, i) { ball(g, 0.3, i ? RED : PINK, S.in(0.5), 0.3, z + dz, { seg: 7, sy: 0.75 }); });
 }
 
-function vessels(g, S, z) {
-  [[-0.9, BLUE, 'O2 POOR'], [0.9, RED, 'O2 RICH']].forEach(function (p, i) {
+function balconies(g, S, z) {
+  [[-0.9, BLUE, 'BLUE RIBBON'], [0.9, RED, 'RED RIBBON']].forEach(function (p, i) {
     var x = S.in(0.4);
     cyl(g, 0.38, 0.38, 3.2, p[1], x, 1.6, z + p[0], { seg: 10, op: 0.8, e: p[1], ei: 0.25 });
     cyl(g, 0.42, 0.42, 0.14, WHITE, x, 0.1, z + p[0], { seg: 10 });
@@ -131,7 +139,7 @@ function vessels(g, S, z) {
   });
   face(g, S.in(0.4), 1.9, z - 0.9, 0.38, S.turn, { open: true });
   face(g, S.in(0.4), 1.9, z + 0.9, 0.38, S.turn, {});
-  sign(g, 'VESSEL SLIDES', RED, WHITE, 2.8, 0.62, S.in(0.1), 4.6, z, { ry: S.turn, border: WHITE });
+  sign(g, 'ROSE BALCONIES', RED, WHITE, 2.8, 0.62, S.in(0.1), 4.6, z, { ry: S.turn, border: WHITE });
   box(g, 0.14, 0.3, 4, ROSE, S.in(0.06), 0.15, z);
 }
 
@@ -139,9 +147,9 @@ function bay(g, side, z, k) {
   var S = sideCtx(side);
   wallPanel(g, wallPicture(), side, z, H, 0.0, { r: 0.85 });
   if (k === 0) photoWall(g, S, z);
-  else if (k === 1) valves(g, S, z);
-  else if (k === 2) arcade(g, S, z);
-  else vessels(g, S, z);
+  else if (k === 1) shutters(g, S, z);
+  else if (k === 2) serenade(g, S, z);
+  else balconies(g, S, z);
 }
 
 function center(g, z) {

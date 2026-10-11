@@ -1,5 +1,5 @@
 /* ================================================================
-   Dx Dash — arcade skin
+   Language Dash — arcade skin
    Loaded after style.css. Chunky "sticker" look: thick ink outlines,
    hard drop shadows, bright candy colors, big bouncy type, and buttons
    that press down like real arcade buttons.
@@ -2283,7 +2283,7 @@ body.is-dying .side-card { opacity: 0; }
 .quest-swap:active { transform: translateY(2px); box-shadow: none; }
 .quest-swap-short { color: var(--accent-orange, #ff8a1f); font-weight: 800; }
 
-/* Dx Dash Pro: the plan buttons and the "unlock all cards" strip */
+/* Language Dash Pro: the plan buttons and the "unlock all cards" strip */
 .pro-plan { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.2; }
 .pro-plan-main { font-weight: 900; }
 .pro-plan-sub { font-size: 10px; letter-spacing: .06em; opacity: .9; }
@@ -2655,3 +2655,38 @@ body.dyslexia .btn, body.dyslexia .mode-btn, body.dyslexia h3 { font-family: "Op
 .lang-welcome-card h2 { margin: 4px 0 6px; font-size: 26px; }
 .lang-logo { font: 800 15px/1 system-ui, sans-serif; letter-spacing: 5px; text-transform: uppercase; color: #22d3ee; margin-top: 12px; }
 .lang-sub { margin: 0 0 4px; opacity: .85; font-size: 14px; }
+
+/* ===== Language Dash: scripts that are tall, wide or right-to-left =====
+   The hint (#buzzText) and the gate words (#ansText0-2) carry lang= and dir= (see ui.js). Tall scripts get more
+   line-height so stacked marks are not clipped, capitals are switched off where they do not exist, long words wrap
+   instead of overflowing their gate, and each script has a system font stack to fall back on (no web fonts needed). */
+:root {
+  --font-ja: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", system-ui, sans-serif;
+  --font-zh: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", "Source Han Sans SC", system-ui, sans-serif;
+  --font-ko: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+  --font-hi: "Noto Sans Devanagari", "Kohinoor Devanagari", "Mangal", "Nirmala UI", system-ui, sans-serif;
+  --font-ar: "Noto Sans Arabic", "Geeza Pro", "Segoe UI", "Tahoma", system-ui, sans-serif;
+  --font-ru: system-ui, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+}
+[lang="ja"] { font-family: var(--font-ja); }
+[lang="zh"] { font-family: var(--font-zh); }
+[lang="ko"] { font-family: var(--font-ko); }
+[lang="hi"] { font-family: var(--font-hi); }
+[lang="ar"] { font-family: var(--font-ar); }
+[lang="ru"] { font-family: var(--font-ru); }
+#buzzText[lang], #answerRow [lang] { overflow-wrap: anywhere; min-width: 0; }
+#buzzText[lang="ja"], #buzzText[lang="zh"], #buzzText[lang="ko"], #buzzText[lang="ar"], #buzzText[lang="hi"], #buzzText[lang="ru"] { text-transform: none; line-height: 1.5; letter-spacing: 0; }
+#answerRow [lang="ja"], #answerRow [lang="zh"], #answerRow [lang="ko"], #answerRow [lang="ar"], #answerRow [lang="hi"], #answerRow [lang="ru"] { display: block; line-height: 1.45; letter-spacing: 0; padding-block: 1px; }
+#buzzText[lang="ja"], #buzzText[lang="zh"], #buzzText[lang="ko"], #buzzText[lang="ar"], #buzzText[lang="hi"],
+#answerRow [lang="ja"], #answerRow [lang="zh"], #answerRow [lang="ko"], #answerRow [lang="ar"], #answerRow [lang="hi"] { font-weight: 800; }
+.answer-choice { overflow: hidden; min-width: 0; }
+#buzzText[dir="rtl"], #answerRow [dir="rtl"] { direction: rtl; unicode-bidi: isolate; text-align: center; }
+.ans-roman { direction: ltr; unicode-bidi: isolate; text-transform: none; line-height: 1.25; font-family: system-ui, sans-serif; }
+.answer-choice .lane-label { direction: ltr; unicode-bidi: isolate; }
+/* the correct pair after an answer, and the "hear it" button */
+#feedbackEl .fb-pair { display: block; }
+#feedbackEl .fb-roman, .fb-roman { display: block; font-size: .62em; font-weight: 600; opacity: .9; letter-spacing: .02em; direction: ltr; unicode-bidi: isolate; text-transform: none; }
+.hear-btn { pointer-events: auto; cursor: pointer; font: inherit; font-size: 15px; line-height: 1; padding: 4px 9px; margin: 3px 0 0 6px; border-radius: 999px; border: 2px solid var(--ink, #1b0a40); background: var(--paper, #fff); color: var(--ink, #1b0a40); vertical-align: middle; }
+.hear-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.hear-btn[hidden] { display: none; }
+.word-pair { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 8px; }

@@ -1,9 +1,10 @@
 /**
- * aquarium.js — Aquarium Imaging Center: a glass tunnel under a sunlit reef, with scanners on the walls.
+ * aquarium.js — Aquarium of Tongues (skin 'Aquarium Imaging Center'; the id and file name are kept from the original
+ * game): a glass tunnel under a sunlit reef where the fish mumble in every language.
  *
- * Every 16 units: a round viewing window onto a coral reef, a kelp forest, an imaging ring (like an MRI) with a
- * scan screen, and a bed of shells, starfish and anemones. Light ripples across the sandy floor. Moving: schools of
- * fish, jellyfish, a manta ray, rising bubbles and the dancing caustic light.
+ * Every 16 units: a round viewing window onto a coral reef, a kelp forest, a porthole ring with a screen of
+ * chattering speech bubbles, and a bed of shells, starfish and anemones. Light ripples across the sandy floor.
+ * Moving: schools of fish, jellyfish, a manta ray, rising bubbles and the dancing caustic light.
  */
 
 import * as THREE from 'three';
@@ -73,13 +74,17 @@ function kelp(g, S, z) {
   box(g, 0.1, 0.4, 3.4, 0x1fb4d8, S.in(0.06), 0.25, z);
 }
 
-function scanner(g, S, z) {
+function fishChat(g, S, z) {
   ring(g, 1.2, 0.35, 0xf4f8ff, S.in(0.7), 1.4, z, { ry: Math.PI / 2, seg: 18, tube: 6 });
   ring(g, 1.0, 0.06, 0x4fe0ff, S.in(0.55), 1.4, z, { ry: Math.PI / 2, seg: 18, tube: 4, bulb: true });
   box(g, 0.3, 0.2, 1.6, 0xc9d3e0, S.in(0.8), 0.25, z);
   box(g, 0.1, 1.3, 1.9, 0x0f3a5a, S.in(0.1), 3.8, z);
-  box(g, 0.08, 1.1, 1.7, 0x4fe0ff, S.in(0.15), 3.8, z, { bulb: true, op: 0.8 });
-  for (var i = 0; i < 6; i++) box(g, 0.08, 0.1 + (i % 3) * 0.2, 0.1, 0xffffff, S.in(0.2), 3.8, z - 0.7 + i * 0.28, { bulb: true });
+  box(g, 0.08, 1.1, 1.7, 0x4fe0ff, S.in(0.15), 3.8, z, { bulb: true, op: 0.5 });
+  // speech bubbles chattering on the screen: fat ovals of different sizes, each with a little tail
+  [[-0.45, 0.2, 0.34], [0.1, -0.15, 0.4], [0.5, 0.25, 0.28]].forEach(function (b) {
+    ball(g, b[2], 0xffffff, S.in(0.22), 3.8 + b[1], z + b[0], { seg: 8, sx: 0.2, sy: 0.8, bulb: true });
+    ball(g, b[2] * 0.3, 0xffffff, S.in(0.22), 3.8 + b[1] - b[2] * 0.7, z + b[0] - b[2] * 0.4, { seg: 5, sx: 0.2, bulb: true });
+  });
 }
 
 function shells(g, S, z) {
@@ -97,7 +102,7 @@ function bay(g, side, z, k) {
   wallPanel(g, waterWall(), side, z, H, 0.0, { r: 0.6, env: 0.1 });
   if (k === 0) window_(g, S, z);
   else if (k === 1) kelp(g, S, z);
-  else if (k === 2) scanner(g, S, z);
+  else if (k === 2) fishChat(g, S, z);
   else shells(g, S, z);
 }
 

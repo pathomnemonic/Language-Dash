@@ -86,7 +86,7 @@ export function renderShareCard(data) {
   ctx.textAlign = 'center';
   ctx.fillStyle = '#ffffff';
   ctx.font = '900 84px "Arial Black", Impact, sans-serif';
-  ctx.fillText('DX DASH', W / 2, 150);
+  ctx.fillText('LANGUAGE DASH', W / 2, 150);
   ctx.font = '600 34px "Segoe UI", sans-serif';
   ctx.fillStyle = '#b9a8ff';
   ctx.fillText('USMLE & COMLEX Board Runner', W / 2, 205);
@@ -174,7 +174,7 @@ export function shareOrDownload(blob) {
   // Browsers that can share a file get the share sheet; everywhere else (including the phone app) saveFile
   // writes it out and opens the system share sheet or downloads it.
   if (file && typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
-    return navigator.share({ files: [file], title: 'Dx Dash result' }).then(function () { return 'shared'; }, function (e) {
+    return navigator.share({ files: [file], title: 'Language Dash result' }).then(function () { return 'shared'; }, function (e) {
       if (e && e.name === 'AbortError') return 'shared';
       throw e;
     });

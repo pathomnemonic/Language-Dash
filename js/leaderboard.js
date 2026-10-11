@@ -1224,7 +1224,7 @@ var leaderboard = {
     });
   },
 
-  // ===== DX DASH PRO (database/pro.sql) =====
+  // ===== LANGUAGE DASH PRO (database/pro.sql) =====
 
   /** Do I have Pro from the server (web payment, a code, a school seat)? Resolves to {active, until, plan, source, trial}. */
   getMyPro: function () {

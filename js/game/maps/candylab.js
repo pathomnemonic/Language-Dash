@@ -1,9 +1,10 @@
 /**
- * candylab.js — Candy Lab: a sweet-shop laboratory where the experiments are all sugar.
+ * candylab.js — Sweet Shop of Words (skin 'Candy Lab'; the id and file name are kept from the original game): a sweet
+ * shop where every jar holds a word and the recipes are all sugar.
  *
- * Every 16 units: giant swirl lollipops leaning on the wall, bubbling flasks of fizzy potion, shelves of jars full of
+ * Every 16 units: giant swirl lollipops leaning on the wall, bubbling pots of fizzy syrup, shelves of jars full of
  * gumdrops and gummy bears, and a tiered cake between candy-cane pillars. The floor is a pastel checker with sprinkles,
- * the ceiling pink frosting with gumdrop lights. Moving: sprinkles raining down, fizz rising from the flasks, big
+ * the ceiling pink frosting with gumdrop lights. Moving: sprinkles raining down, fizz rising from the pots, big
  * lollipops spinning on the wall and gummy bears bouncing by.
  */
 
@@ -101,7 +102,7 @@ function potions(g, S, z) {
   flask(g, S, z + 1.3, GRAPE, true);
   // a bubbling bench and a hanging recipe card
   box(g, 0.9, 0.12, 4, 0xffffff, S.in(0.5), 0.0 + 0.05, z);
-  sign(g, 'SUGAR RUSH', PINK, 0xffffff, 2.5, 0.65, S.in(0.1), 3.9, z, { ry: S.turn, border: 0xffffff });
+  sign(g, 'WORD JARS', PINK, 0xffffff, 2.5, 0.65, S.in(0.1), 3.9, z, { ry: S.turn, border: 0xffffff });
   ball(g, 0.25, LEMON, S.in(0.12), 4.8, z - 1.2, { seg: 6, bulb: true });
   ball(g, 0.25, MINT, S.in(0.12), 4.8, z + 1.2, { seg: 6, bulb: true });
 }

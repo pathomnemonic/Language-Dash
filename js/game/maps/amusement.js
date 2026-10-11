@@ -1,13 +1,15 @@
 /**
- * amusement.js — Anatomy Amusement Park: a fairground whose rides are the human body.
+ * amusement.js — Vienna Prater Fair (skin 'Anatomy Amusement Park'; the id and file name are kept from the original
+ * game): a fairground boardwalk with a ferris wheel, a carousel and a very tall drop tower.
  *
- * Every 16 units along the boardwalk: a ticket booth, a midway game with prize balloons, a heart-shaped balloon arch,
- * and a popcorn cart. A coaster track runs on stilts behind one side. Big rides pass in the distance: a heart-spoked
- * ferris wheel, a carousel, and a DNA drop tower. Moving: the rides, coaster cars, balloons, confetti, drifting clouds.
+ * Every 16 units along the boardwalk: a ticket booth, a midway game with prize balloons, a star-topped balloon arch,
+ * and a popcorn cart. A coaster track runs on stilts behind one side. Big rides pass in the distance: a star-hubbed
+ * ferris wheel, a carousel, and a twisting-spiral drop tower. Moving: the rides, coaster cars, balloons, confetti,
+ * drifting clouds.
  */
 
 import * as THREE from 'three';
-import { box, cyl, ball, cone, ring, extrude, heartShape, combine, xform, canvasTex, floorPanel, sideCtx, slab } from '../mapkit.js';
+import { box, cyl, ball, cone, ring, extrude, starShape, combine, xform, canvasTex, floorPanel, sideCtx, slab } from '../mapkit.js';
 import { animated, features, mover, spin, swarm, cloudBank } from '../mapfx.js';
 import { picket } from '../mapprops.js';
 
@@ -51,8 +53,8 @@ function ticketBooth(g, S, z) {
   cone(g, 0.95, 0.9, YELLOW, S.in(0.6), 2.9, z, { seg: 4, ry: Math.PI / 4 });
   marquee(g, S, z + 1.6, S.in(0.15), 3.5, 0.1, RED, YELLOW);
   box(g, 0.1, 0.5, 1.6, BLUE, S.in(0.1), 3.6, z - 0.0);
-  // a heart-shaped sign on top
-  extrude(g, heartShape(1.1), 0.12, RED, S.in(0.6), 3.9, z, { ry: S.turn, curve: 4 });
+  // a star-shaped sign on top
+  extrude(g, starShape(0.75, 0.34, 5), 0.12, RED, S.in(0.6), 3.9, z, { ry: S.turn, curve: 4 });
 }
 
 function midway(g, S, z) {
@@ -72,7 +74,7 @@ function balloonArch(g, S, z) {
     var t = i / 8;
     ball(g, 0.3, FAIR[i % 8], x, 2.3 + Math.sin(t * Math.PI) * 1.0, z - 1.5 + t * 3, { seg: 6, sy: 1.15 });
   }
-  extrude(g, heartShape(1.2), 0.14, RED, x, 3.8, z, { ry: S.turn, curve: 4 });
+  extrude(g, starShape(0.8, 0.36, 5), 0.14, RED, x, 3.8, z, { ry: S.turn, curve: 4 });
   ball(g, 0.3, PINK, x, 0.4, z + 1.6, { seg: 6 });
 }
 
@@ -128,7 +130,7 @@ function ferris() {
     box(wheel, 0.08, 6, 0.08, 0xffffff, 0, 0, 0, { rz: a });
     box(wheel, 1.0, 0.7, 0.8, FAIR[i % 8], Math.cos(a) * 6, Math.sin(a) * 6 - 0.6, 0);
   }
-  extrude(wheel, heartShape(2.6), 0.3, RED, 0, 0, 0, { curve: 5 });
+  extrude(wheel, starShape(1.8, 0.8, 5), 0.3, RED, 0, 0, 0, { curve: 5 });
   wheel.position.y = 7.5;
   f.add(wheel);
   box(f, 0.5, 7.5, 0.5, 0xd9dde4, -2.2, 3.7, 0, { rz: -0.3 });
@@ -158,7 +160,7 @@ function carousel() {
 
 function tower() {
   var t = new THREE.Group();
-  var helix = new THREE.Group();
+  var helix = new THREE.Group(); // a twisting spiral that turns around the tower
   for (var i = 0; i < 26; i++) {
     var a = i * 0.5;
     ball(helix, 0.22, BLUE, Math.cos(a) * 0.8, i * 0.4, Math.sin(a) * 0.8, { seg: 5 });

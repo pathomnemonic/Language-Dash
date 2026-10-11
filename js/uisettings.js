@@ -216,7 +216,7 @@ export var settingsMethods = {
             requestReminderPermission().then(function (res) {
               if (!res.ok) {
                 trackEvent('reminder_state', { action: res.reason === 'unsupported' ? 'unsupported' : 'permission_denied', native: isNative() });
-                self._showToast(res.reason === 'unsupported' ? 'This device cannot show notifications.' : 'Notifications were blocked. Turn them on for Dx Dash in your phone or browser settings.');
+                self._showToast(res.reason === 'unsupported' ? 'This device cannot show notifications.' : 'Notifications were blocked. Turn them on for Language Dash in your phone or browser settings.');
                 return;
               }
               trackEvent('reminder_state', { action: 'permission_granted', native: isNative() });
@@ -477,7 +477,7 @@ export var settingsMethods = {
         var rateRow = createElement('div', { className: 'setting-row' });
         var rateLabel = createElement('div');
         rateLabel.style.flex = '1';
-        rateLabel.appendChild(createElement('div', { className: 'setting-label-text', text: '⭐ Rate Dx Dash' }));
+        rateLabel.appendChild(createElement('div', { className: 'setting-label-text', text: '⭐ Rate Language Dash' }));
         rateLabel.appendChild(createElement('span', { className: 'setting-sublabel', text: 'Enjoying it? A rating on the store helps other students find the game.' }));
         rateRow.appendChild(rateLabel);
         var rateBtn = createElement('button', { className: 'btn btn-outline btn-sm', text: 'Rate', attributes: { type: 'button', id: 'settingsRateBtn' } });
@@ -508,7 +508,7 @@ export var settingsMethods = {
       content.appendChild(aboutRow);
       var disclaimer = createElement('div', {
         className: 'setting-sublabel',
-        text: 'Dx Dash is a study aid, not medical advice. Content may contain errors; verify important facts against authoritative sources.'
+        text: 'Language Dash is a study aid, not medical advice. Content may contain errors; verify important facts against authoritative sources.'
       });
       disclaimer.style.cssText = 'margin:4px 0 12px;line-height:1.4;font-size:11px';
       content.appendChild(disclaimer);
@@ -533,7 +533,7 @@ export var settingsMethods = {
         var tipLabel = createElement('div');
         tipLabel.style.flex = '1';
         tipLabel.appendChild(createElement('div', { text: '☕ Support the developer' }));
-        tipLabel.appendChild(createElement('span', { className: 'setting-sublabel', text: 'Dx Dash is free. Tips help keep it going.' }));
+        tipLabel.appendChild(createElement('span', { className: 'setting-sublabel', text: 'Language Dash is free. Tips help keep it going.' }));
         tipRow.appendChild(tipLabel);
         var tipBtn = createElement('button', { className: 'btn btn-gold btn-sm', text: 'Leave a tip', attributes: { type: 'button' } });
         tipBtn.addEventListener('click', function () { trackEvent('tip_prompt', { step: 'opened_settings' }); if (tipJarReady()) openTipJar(function (m) { self._showToast(m); }); else openTipPage(); });
@@ -756,7 +756,7 @@ export var settingsMethods = {
         var usedOn = LOCKER_ITEMS.filter(function (i) { return i.id === gs.item; })[0];
         setText(giftBar, gs.available
           ? '🎁 Your Pro gift: pick any one item below and tap 🎁 FREE. It is on the house, once.'
-          : '🎁 You used your Pro gift' + (usedOn ? ' on ' + usedOn.name : '') + '. Thank you for supporting Dx Dash!');
+          : '🎁 You used your Pro gift' + (usedOn ? ' on ' + usedOn.name : '') + '. Thank you for supporting Language Dash!');
       }
     }
 

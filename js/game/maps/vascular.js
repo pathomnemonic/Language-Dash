@@ -1,10 +1,12 @@
 /**
- * vascular.js — Vascular Rush: a splash-park water slide through the bloodstream.
+ * vascular.js — Monsoon Slide Park (skin 'Vascular Rush'; the id and file name are kept from the original game):
+ * a splash-park water slide in warm monsoon rain.
  *
- * Every 16 units: a lifeguard tower manned by a white blood cell, a splash pad of grinning red blood cells, a snack bar
- * that sells clot cones to platelets, and a flow tube with rings to swim through. The walls shimmer with sunlit ripples
- * that slide past, the floor is a coral-pink slide with white flow arrows, and bunting hangs across. Moving: red
- * cells tumbling by, bubbles and platelet sparkles rising, ripples sliding on the walls, and a beach ball bobbing.
+ * Every 16 units: a lifeguard tower manned by a lifeguard in a rain poncho, a splash pad of grinning pool floats, a
+ * snack bar that sells shaved-ice cones, and a flow tube with rings to swim through. The walls shimmer with sunlit
+ * ripples and falling raindrops that slide past, the floor is a coral-pink slide with white flow arrows, and bunting
+ * hangs across. Moving: pool floats tumbling by, bubbles and sparkles rising, ripples sliding on the walls, and a beach
+ * ball bobbing.
  */
 
 import * as THREE from 'three';
@@ -37,8 +39,8 @@ function wallPicture() {
       }
       ctx.stroke();
     }
-    // faint cell silhouettes and sparkles
-    for (var i = 0; i < 16; i++) { ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.beginPath(); ctx.ellipse((i * 211) % w, 40 + (i * 83) % 230, 26, 17, i, 0, Math.PI * 2); ctx.fill(); }
+    // faint raindrops falling and sparkles
+    for (var i = 0; i < 16; i++) { ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.beginPath(); ctx.ellipse((i * 211) % w, 40 + (i * 83) % 230, 7, 17, 0.12, 0, Math.PI * 2); ctx.fill(); }
     // a splash-park tile band at the bottom
     for (var c = 0; c < 32; c++) { ctx.fillStyle = c % 2 ? '#ffffff' : '#35d6e8'; ctx.fillRect(c * 32, h - 56, 32, 28); ctx.fillStyle = c % 2 ? '#35d6e8' : '#ffffff'; ctx.fillRect(c * 32, h - 28, 32, 28); }
     ctx.fillStyle = '#ffd23f'; ctx.fillRect(0, h - 62, w, 6);
@@ -79,8 +81,8 @@ function ceilingPicture() {
 
 var _wallTex = null;
 
-/** A red blood cell: a fat disc with a dimple and, on the side facing the runner, a face. */
-function bloodCell(g, S, x, y, z, s, withFace) {
+/** A pool float: a fat ring with a dimple and, on the side facing the runner, a face. */
+function poolFloat(g, S, x, y, z, s, withFace) {
   cyl(g, 0.55 * s, 0.55 * s, 0.26 * s, RED, x, y, z, { rz: Math.PI / 2, seg: 12 });
   ring(g, 0.5 * s, 0.14 * s, 0xff6a7c, x, y, z, { ry: Math.PI / 2, seg: 10, tube: 4 });
   if (withFace) face(g, x, y, z, 0.55 * s, S.turn, { open: true });
@@ -92,13 +94,13 @@ function lifeguard(g, S, z) {
   box(g, 0.9, 0.12, 1.0, BLUE, x, 2.6, z);
   box(g, 0.1, 0.9, 1.0, BLUE, x + S.side * 0.42, 3.0, z);
   box(g, 1.2, 0.08, 1.3, RED, x, 3.65, z, { rz: 0.0 });
-  // the white blood cell on duty: a pale ball with a whistle, a visor and a sunny face
+  // the lifeguard on duty: a pale ball in a rain poncho hood with a whistle, a visor and a sunny face
   ball(g, 0.5, 0xf4f0ff, x, 3.1, z, { seg: 12 });
   face(g, x, 3.1, z, 0.5, S.turn, { open: true });
   cyl(g, 0.2, 0.2, 0.04, YEL, x - S.side * 0.25, 3.5, z, { seg: 10 });
   ring(g, 0.34, 0.08, RED, S.in(0.2), 1.0, z + 1.4, { ry: Math.PI / 2, seg: 12, tube: 5 });
   ring(g, 0.34, 0.03, WHITE, S.in(0.2), 1.0, z + 1.4, { ry: Math.PI / 2, seg: 12, tube: 3 });
-  sign(g, 'WBC LIFEGUARD', WHITE, RED, 2.4, 0.6, S.in(0.1), 4.9, z, { ry: S.turn, border: RED });
+  sign(g, 'RAIN GUARD', WHITE, RED, 2.4, 0.6, S.in(0.1), 4.9, z, { ry: S.turn, border: RED });
   // a ladder
   box(g, 0.06, 2.2, 0.06, YEL, x + 0.0, 1.2, z - 0.7, { rx: 0.1 });
 }
@@ -107,11 +109,11 @@ function splashPad(g, S, z) {
   var x = S.in(0.5);
   [0, 1, 2].forEach(function (i) {
     var cz = z - 1.3 + i * 1.3;
-    bloodCell(g, S, S.in(0.0), 0.6 + (i % 2) * 0.05, cz, 1.0 + (i === 1 ? 0.2 : 0), true);
-    bloodCell(g, S, S.in(0.0), 1.55 + (i % 2) * 0.12, cz + 0.0, 0.8, false);
+    poolFloat(g, S, S.in(0.0), 0.6 + (i % 2) * 0.05, cz, 1.0 + (i === 1 ? 0.2 : 0), true);
+    poolFloat(g, S, S.in(0.0), 1.55 + (i % 2) * 0.12, cz + 0.0, 0.8, false);
   });
   box(g, 0.2, 0.3, 4, AQUA, S.in(0.06), 0.15, z);
-  sign(g, 'O₂ EXPRESS', AQUA, WHITE, 2.4, 0.65, S.in(0.1), 4.1, z, { ry: S.turn, border: WHITE });
+  sign(g, 'SPLASH EXPRESS', AQUA, WHITE, 2.4, 0.65, S.in(0.1), 4.1, z, { ry: S.turn, border: WHITE });
   drop(g, 0.28, AQUA, x, 4.9, z - 1.2, {});
   drop(g, 0.28, AQUA, x, 4.9, z + 1.2, {});
 }
@@ -123,12 +125,12 @@ function snackBar(g, S, z) {
   // a striped awning
   for (var i = 0; i < 7; i++) box(g, 0.95, 0.07, 0.5, i % 2 ? WHITE : RED, S.in(0.35), 2.9 - 0.0, z - 1.5 + i * 0.5, { rz: S.side * 0.25 });
   [[-1.55], [1.55]].forEach(function (p) { cyl(g, 0.05, 0.05, 2.0, 0xe8e8f0, x, 1.9, z + p[0], { seg: 5 }); });
-  // platelet cones: yellow scoops
+  // shaved-ice cones: yellow scoops
   for (var c = 0; c < 4; c++) {
     cone(g, 0.18, 0.4, 0xe9b866, x, 1.3, z - 1.2 + c * 0.8, { seg: 6, rx: Math.PI });
     ball(g, 0.2, c % 2 ? YEL : PINK, x, 1.65, z - 1.2 + c * 0.8, { seg: 7 });
   }
-  sign(g, 'CLOT CONES', YEL, RED, 2.6, 0.65, S.in(0.1), 4.4, z, { ry: S.turn, border: RED });
+  sign(g, 'SHAVED ICE', YEL, RED, 2.6, 0.65, S.in(0.1), 4.4, z, { ry: S.turn, border: RED });
   ball(g, 0.3, 0xffffff, S.in(0.5), 0.3, z + 1.9, { seg: 6 });
 }
 
@@ -161,7 +163,7 @@ function center(g, z) {
 function arch(g, z, i) {
   var b = bunting(10.4, FLAGS.slice(i % 2), 0.55, H - 0.6, z, 0.55);
   g.add(b);
-  [-1, 1].forEach(function (s) { bloodCell(g, { turn: s < 0 ? Math.PI / 2 : -Math.PI / 2 }, s * 4.7, H - 1.7, z, 0.5, false); });
+  [-1, 1].forEach(function (s) { poolFloat(g, { turn: s < 0 ? Math.PI / 2 : -Math.PI / 2 }, s * 4.7, H - 1.7, z, 0.5, false); });
 }
 
 function beachBall() {
@@ -177,14 +179,14 @@ function beachBall() {
 }
 
 function extras() {
-  // red cells tumbling through on both sides: one instanced disc, tumbling about the way they are going
+  // pool floats tumbling through on both sides: one instanced disc, tumbling about the way they are going
   var disc = combine([
     { geo: new THREE.CylinderGeometry(0.3, 0.3, 0.14, 12), color: 0xffffff, matrix: xform(0, 0, 0, 0, 0, Math.PI / 2) },
     { geo: new THREE.TorusGeometry(0.27, 0.07, 5, 12), color: 0xffffff, matrix: xform(0, 0, 0, 0, Math.PI / 2, 0) }
   ]);
-  var cellMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.45, emissive: 0x551018, emissiveIntensity: 0.4 });
+  var floatMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.45, emissive: 0x551018, emissiveIntensity: 0.4 });
   [-1, 1].forEach(function (side, i) {
-    swarm({ geo: disc, material: cellMat, count: 12, seed: 8 + i, colors: [RED, 0xff6a7c, 0xff3d52], area: { x: [side * 4.6, side * 5.2], y: [0.9, 5.6], z: [-140, 8] }, k: 1, vz: [-5, -2.5], turn: 1.4, wobble: 0.22, scale: [0.8, 1.5] });
+    swarm({ geo: disc, material: floatMat, count: 12, seed: 8 + i, colors: [RED, 0xff6a7c, 0xff3d52], area: { x: [side * 4.6, side * 5.2], y: [0.9, 5.6], z: [-140, 8] }, k: 1, vz: [-5, -2.5], turn: 1.4, wobble: 0.22, scale: [0.8, 1.5] });
     swarm({ geo: dotGeo(0.26), material: glowMat(0.4), count: 12, seed: 40 + i, colors: [0xffffff, 0xcff7ff, 0xffd6dd], area: { x: [side * 4.7, side * 5.2], y: [0.8, 5.6], z: [-140, 8] }, k: 1, vy: [0.4, 1.0], wobble: 0.2, scale: [0.6, 1.4] });
     swarm({ geo: sparkleGeo(0.2), material: glowMat(0.9), count: 8, seed: 70 + i, colors: [0xffe98a, 0xffffff, 0xffd0dc], area: { x: [side * 4.5, side * 5.2], y: [1.0, 5.6], z: [-140, 8] }, k: 1, turn: 1.5, wobble: 0.1, scale: [0.7, 1.3] });
   });

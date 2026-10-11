@@ -83,6 +83,8 @@ import { readNativeBackup, scheduleNativeBackup, flushNativeBackup, clearNativeB
 import { analytics } from './analytics/index.js';
 import { installAnalytics, reportRunEnd, reportFrame, instrumentLeaderboard } from './analytics/instrument.js';
 import { track as trackEvent } from './analytics/index.js';
+import { pairVoices } from './tts.js';
+import { setReadLangs } from './readaloud.js';
 
 // A build with no backend (VITE_NO_BACKEND=1) has no Versus, Friends or leaderboards: CSS hides their buttons.
 if (!FEATURES.backend) document.documentElement.classList.add('no-backend');
@@ -570,8 +572,8 @@ function shareChallenge(challenge) {
         hash: mp.hashCardPool(seededPool()),
         ids: challenge.ids || null
       });
-      var text = 'Beat my Dx Dash score of ' + (challenge.myScore || 0) + '!';
-      return shareText({ title: 'Dx Dash challenge', text: text, url: url, kind: 'challenge', surface: 'challenge', score: challenge.myScore || 0 }).then(function (res) {
+      var text = 'Beat my Language Dash score of ' + (challenge.myScore || 0) + '!';
+      return shareText({ title: 'Language Dash challenge', text: text, url: url, kind: 'challenge', surface: 'challenge', score: challenge.myScore || 0 }).then(function (res) {
         if (res === 'copied') ui._showToast('Challenge link copied \u2014 send it to a friend!');
         else if (res === 'failed') window.prompt('Copy this challenge link:', url);
       });
@@ -704,7 +706,7 @@ function attachTipPrompt() {
   box.style.cssText = 'margin:14px 0;padding:12px;border-radius:12px;border:1px solid rgba(255,215,0,0.4);text-align:center;background:rgba(255,215,0,0.06)';
   var text = document.createElement('div');
   text.style.cssText = 'font-size:12px;color:var(--text-secondary);margin-bottom:8px';
-  text.textContent = 'Enjoying Dx Dash? It is free and always will be. If it is helping your studying, a small tip helps keep it going.';
+  text.textContent = 'Enjoying Language Dash? It is free and always will be. If it is helping your studying, a small tip helps keep it going.';
   box.appendChild(text);
 
   var row = document.createElement('div');
@@ -908,7 +910,7 @@ document.addEventListener('dx:items-granted', function () { try { ui.renderShop(
 function announceCancel(r) {
   var when = r.endsAt ? new Date(r.endsAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric' }) : '';
   if (r.cancelled) ui._showToast(r.none ? 'Your subscription has ended.' : 'Your cancellation went through. You keep Pro' + (when ? ' until ' + when : ' until the end of the period you paid for') + '.', 6000);
-  else ui._showToast('You did not finish cancelling, so your subscription is still active' + (when ? ' and renews on ' + when : '') + '. Open Settings → Dx Dash Pro to cancel.', 7000);
+  else ui._showToast('You did not finish cancelling, so your subscription is still active' + (when ? ' and renews on ' + when : '') + '. Open Settings → Language Dash Pro to cancel.', 7000);
 }
 
 function startMode(mode) {
@@ -1505,7 +1507,7 @@ function init() {
           if (!mod.leaderboard.isAuthenticated() && waited < 8000) { waited += 500; setTimeout(go, 500); return; }
           ui._showToast('Thank you! Setting up your purchase…', 3000);
           waitForWebPayment(mod.leaderboard).then(function (r) {
-            ui._showToast(r.active ? 'Welcome to Dx Dash Pro! 🎉' : r.library ? 'All cards unlocked! 🎉' : 'Payment received. It can take a minute to show: open Settings → Dx Dash Pro and tap Check again.', 4000);
+            ui._showToast(r.active ? 'Welcome to Language Dash Pro! 🎉' : r.library ? 'All cards unlocked! 🎉' : 'Payment received. It can take a minute to show: open Settings → Language Dash Pro and tap Check again.', 4000);
           });
         };
         go();
@@ -1542,8 +1544,13 @@ function init() {
   game.onEncounterStart = function (card, gates, info) {
     ui.showBuzzwords(card);
     ui.showAnswerChoices(gates);
-    // Read the question aloud (when switched on), planned to be finished before the answer locks
+    // Read the question aloud (when switched on), planned to be finished before the answer locks.
+    // The hint is spoken in the voice of the language you know, the gate words in the one you are learning.
+    var voices = pairVoices();
+    setReadLangs({ clue: voices.known, answer: voices.target });
     audio.speakQuestion({
+      clueLang: voices.known,
+      answerLang: voices.target,
       clues: card.bw || [],
       answers: gates.map(function (g) { return g.label; }),
       secondsToLock: info && typeof info.secondsToLock === 'number' ? info.secondsToLock : 0
@@ -2105,10 +2112,10 @@ function checkStudyReminder() {
     tag: 'daily-reminder'
   };
   if (navigator.serviceWorker && navigator.serviceWorker.ready) {
-    navigator.serviceWorker.ready.then(function (reg) { reg.showNotification('Dx Dash', options); })
-      .catch(function () { new Notification('Dx Dash', options); });
+    navigator.serviceWorker.ready.then(function (reg) { reg.showNotification('Language Dash', options); })
+      .catch(function () { new Notification('Language Dash', options); });
   } else {
-    new Notification('Dx Dash', options);
+    new Notification('Language Dash', options);
   }
 }
 
@@ -2358,7 +2365,7 @@ if (import.meta.env && import.meta.env.PROD && 'serviceWorker' in navigator && !
   var registerSW = function () {
     registerServiceWorker(navigator.serviceWorker, function () {
       trackEvent('app_update_available', {});
-      showUserError('A new version of Dx Dash is ready.', {
+      showUserError('A new version of Language Dash is ready.', {
         title: 'Update available',
         info: true,
         actionLabel: 'Reload',
@@ -2366,7 +2373,7 @@ if (import.meta.env && import.meta.env.PROD && 'serviceWorker' in navigator && !
         durationMs: 15000
       });
     }).catch(function (e) {
-      console.warn('[Dx Dash] Service worker registration failed:', e.message);
+      console.warn('[Language Dash] Service worker registration failed:', e.message);
     });
   };
   if (document.readyState === 'complete') registerSW();

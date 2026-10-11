@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Dx Dash — An endless-runner game for USMLE and COMLEX board prep. Recognize medical buzzwords, choose the correct diagnosis lane, and build your streak.">
-  <title>Dx Dash — Run the list. USMLE &amp; COMLEX Board Runner</title>
-  <meta property="og:title" content="Dx Dash — Run the list.">
-  <meta property="og:description" content="An endless runner for USMLE and COMLEX board prep.">
+  <meta name="description" content="Language Dash — An endless-runner game for learning words in 15 languages. A word flashes, three gates rush at you: run through the one that means the same thing, and build your streak.">
+  <title>Language Dash — Run the lexicon. A Word Runner for 15 Languages</title>
+  <meta property="og:title" content="Language Dash — Run the lexicon.">
+  <meta property="og:description" content="An endless runner for learning words in 15 languages.">
   <meta property="og:image" content="https://pathomnemonic.github.io/buzzword-dash-v2/og.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#0b1020">
@@ -32,8 +32,8 @@
   <!-- Boot splash: shown instantly, removed once the app is ready (and after 8 s regardless) -->
   <div id="bootSplash" aria-hidden="true">
     <svg viewBox="0 0 512 512" width="110" height="110" fill="none" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(0 -40)"><path d="M70 150H150a106 106 0 0 1 0 212H70Z" stroke="#e8f7ff" stroke-width="46"/><path d="M300 214 420 362M420 214 300 362" stroke="#22d3ee" stroke-width="46"/><path d="M40 440H190L218 392 250 486 282 420 304 440H472" stroke="#22d3ee" stroke-width="22"/></g></svg>
-    <div class="boot-title">DX DASH</div>
-    <div style="font:600 13px system-ui,sans-serif;color:#22d3ee;margin-top:-8px">Run the list.</div>
+    <div class="boot-title">LANGUAGE DASH</div>
+    <div style="font:600 13px system-ui,sans-serif;color:#22d3ee;margin-top:-8px">Run the lexicon.</div>
     <div class="boot-bar"><span></span></div>
   </div>
   <script>setTimeout(function () { var s = document.getElementById('bootSplash'); if (s) s.remove(); }, 8000);</script>
@@ -45,8 +45,8 @@
   <div id="rushVignette" class="rush-vignette" aria-hidden="true"></div>
   <div id="mapFlash" class="map-flash" aria-hidden="true"></div>
 
-  <!-- ==================== REVENGE CARD BANNER ==================== -->
-  <div id="revengeCardBanner" role="status" aria-live="polite">🔥 REVENGE CARD!</div>
+  <!-- ==================== REVENGE BANNER ==================== -->
+  <div id="revengeCardBanner" role="status" aria-live="polite">🔥 REVENGE WORD!</div>
 
   <!-- ==================== HUD (gameplay only) ==================== -->
   <div id="hud" class="off" role="region" aria-label="Game heads-up display">
@@ -73,7 +73,7 @@
       <div id="buzzText">GET READY</div>
     </div>
 
-    <div id="answerRow" role="group" aria-label="Answer choices">
+    <div id="answerRow" role="group" aria-label="Word gates">
       <div class="answer-choice" id="ans0">
         <span class="lane-label">← LEFT</span>
         <span id="ansText0"></span>
@@ -168,8 +168,8 @@
         <div class="qr-teaching" id="qrTeaching"></div>
       </div>
       <div class="qr-buttons">
-        <button class="btn btn-primary" id="qrRevealBtn" type="button">Reveal Answer</button>
-        <button class="btn btn-outline" id="qrNextBtn" type="button" hidden>Next Card →</button>
+        <button class="btn btn-primary" id="qrRevealBtn" type="button">Reveal Word</button>
+        <button class="btn btn-outline" id="qrNextBtn" type="button" hidden>Next Word →</button>
       </div>
       <button class="btn btn-outline btn-block" id="qrCloseBtn" type="button">✕ Close Review</button>
     </div>
@@ -217,13 +217,13 @@
       </div>
 
       <header class="home-header">
-        <h1>Dx Dash</h1>
+        <h1>Language Dash</h1>
       </header>
 
       <!-- Go Pro: a wide gold button, shown while Pro can be bought (or a trial is running) -->
       <button class="home-pro-banner" id="homeProBanner" type="button" aria-haspopup="dialog" hidden>
         <span class="hpb-icon" aria-hidden="true">⚡</span>
-        <span class="hpb-text"><strong id="homeProTitle">GO PRO</strong><span id="homeProSub">10× more cards and every study tool</span></span>
+        <span class="hpb-text"><strong id="homeProTitle">GO PRO</strong><span id="homeProSub">The full word list and every study tool</span></span>
         <span class="hpb-go" aria-hidden="true">▸</span>
       </button>
 
@@ -232,7 +232,7 @@
         <button class="side-btn" id="filtersBtn" type="button" aria-haspopup="dialog" aria-controls="filtersSheet">
           <span class="side-icon" aria-hidden="true"><span class="ico ico-knobs">🎛</span></span>
           <span class="side-label">Filters</span>
-          <span class="filters-summary" id="filtersSummary">All subjects</span>
+          <span class="filters-summary" id="filtersSummary">All topics</span>
         </button>
         <div class="play-section">
           <button class="btn-play" data-mode="endless" type="button" aria-label="Play">
@@ -281,66 +281,66 @@
       <div class="sheet-list">
         <button class="sheet-entry" data-mode="daily" type="button">
           <span class="se-icon" aria-hidden="true">📅</span>
-          <span class="se-body"><strong>Daily 15</strong><span>A quick habit: today's 15 cards, one try a day. Counts toward your study streak.</span><em>Everyone gets the same 15 · resets daily · no leaderboard</em></span>
+          <span class="se-body"><strong>Daily 15</strong><span>A quick habit: today's 15 words, one try a day. Counts toward your study streak.</span><em>Everyone gets the same 15 · resets daily · no leaderboard</em></span>
         </button>
         <button class="sheet-entry" id="tournamentBtn" type="button">
           <span class="se-icon" aria-hidden="true">🛡️</span>
-          <span class="se-body"><strong>Weekly Gauntlet</strong><span>A real test: 30 cards and just one life. Clear it for a weekly badge and bonus coins. Retry all week.</span><em>Same 30 all week · 1 life · clear it, don't rank it</em></span>
+          <span class="se-body"><strong>Weekly Gauntlet</strong><span>A real test: 30 words and just one life. Clear it for a weekly badge and bonus coins. Retry all week.</span><em>Same 30 all week · 1 life · clear it, don't rank it</em></span>
         </button>
         <button class="sheet-entry" id="challengeBtn" type="button">
           <span class="se-icon" aria-hidden="true">🤝</span>
-          <span class="se-body"><strong>Friend challenge</strong><span>Play 15 fresh cards, then send a link. Friends play the same cards and compare scores.</span><em>You and friends · any time · no sign-up needed</em></span>
+          <span class="se-body"><strong>Friend challenge</strong><span>Play 15 fresh words, then send a link. Friends play the same words and compare scores.</span><em>You and friends · any time · no sign-up needed</em></span>
         </button>
         <button class="sheet-entry" id="cohortsBtn" type="button" hidden>
           <span class="se-icon" aria-hidden="true">🛡️</span>
-          <span class="se-body"><strong>Cohorts</strong><span>Team up with classmates and compete against other cohorts each week.</span><em>Teams · weekly war</em></span>
+          <span class="se-body"><strong>Cohorts</strong><span>Team up with fellow learners and compete against other cohorts each week.</span><em>Teams · weekly war</em></span>
         </button>
         <button class="sheet-entry" data-mode="study" type="button">
           <span class="se-icon" aria-hidden="true">📖</span>
-          <span class="se-body"><strong>Study</strong><span>Relaxed practice with a teaching point after every answer.</span><em>Solo · no lives lost · no pressure</em></span>
+          <span class="se-body"><strong>Study</strong><span>Relaxed practice with a word card after every answer.</span><em>Solo · no lives lost · no pressure</em></span>
         </button>
         <button class="sheet-entry" data-mode="weakness" type="button">
           <span class="se-icon" aria-hidden="true">🎯</span>
-          <span class="se-body"><strong>Weakness</strong><span>Drill the cards you miss most, until they stick.</span><em>Solo · your missed cards · extra room from the monster</em></span>
+          <span class="se-body"><strong>Weakness</strong><span>Drill the words you miss most, until they stick.</span><em>Solo · your missed words · extra room from the Hush</em></span>
         </button>
         <button class="sheet-entry" id="examBtn" type="button">
           <span class="se-icon" aria-hidden="true">📝</span>
-          <span class="se-body"><strong>Exam Sim</strong><span>A timed block of questions, like the real exam. No runner, no hints.</span><em>Solo · timed · full review at the end</em></span>
+          <span class="se-body"><strong>Word Quiz</strong><span>A timed block of words, no running. Just pick the right meaning.</span><em>Solo · timed · full review at the end</em></span>
         </button>
       </div>
       <button class="btn btn-outline btn-block sheet-close" type="button">✕ Close</button>
     </div>
   </div>
 
-  <!-- Flashcards: choose which cards, then flip them or listen hands-free -->
+  <!-- Flashcards: choose which words, then flip them or listen hands-free -->
   <div class="tutorial-overlay sheet-overlay" id="flashcardsSheet" role="dialog" aria-label="Flashcards" aria-modal="true">
     <div class="sheet-card">
       <h2>🃏 Flashcards</h2>
-      <p class="sheet-intro">No runner, no lives. Choose your cards, then flip them yourself or listen hands-free.</p>
+      <p class="sheet-intro">No runner, no lives. Choose your words, then flip them yourself or listen hands-free.</p>
       <div class="sheet-list" id="flashcardsList">
         <button class="sheet-entry" id="flashcardBtn" data-source="mine" type="button">
           <span class="se-icon" aria-hidden="true">📖</span>
-          <span class="se-body"><strong>Study my subjects</strong><span>A random mix from the subjects you picked in Question filters.</span><em>Flip cards or hands-free</em></span>
+          <span class="se-body"><strong>Study my topics</strong><span>A random mix from the topics you picked in Word filters.</span><em>Flip cards or hands-free</em></span>
         </button>
         <button class="sheet-entry" data-source="due" type="button">
           <span class="se-icon" aria-hidden="true">⏰</span>
-          <span class="se-body"><strong>Review due cards</strong><span id="fcDueText">Cards that are ready to see again, most overdue first.</span><em>Spaced repetition</em></span>
+          <span class="se-body"><strong>Review due words</strong><span id="fcDueText">Words that are ready to see again, most overdue first.</span><em>Spaced repetition</em></span>
         </button>
         <button class="sheet-entry" data-source="fresh" type="button">
           <span class="se-icon" aria-hidden="true">🆕</span>
-          <span class="se-body"><strong>New cards</strong><span id="fcFreshText">Cards you have not seen yet.</span><em>Discover something new</em></span>
+          <span class="se-body"><strong>New words</strong><span id="fcFreshText">Words you have not seen yet.</span><em>Discover something new</em></span>
         </button>
         <button class="sheet-entry" data-source="missed" type="button">
           <span class="se-icon" aria-hidden="true">🩹</span>
-          <span class="se-body"><strong>Cards I miss</strong><span id="fcMissedText">The cards you get wrong the most.</span><em>Targeted practice</em></span>
+          <span class="se-body"><strong>Words I miss</strong><span id="fcMissedText">The words you get wrong the most.</span><em>Targeted practice</em></span>
         </button>
         <button class="sheet-entry" id="cardBrowserBtn" type="button">
           <span class="se-icon" aria-hidden="true">🔎</span>
-          <span class="se-body"><strong>Browse cards</strong><span>Search every card by subject or text, flag mistakes and see your stats per card.</span><em>The library</em></span>
+          <span class="se-body"><strong>Phrasebook</strong><span>Search every word by topic or text, flag mistakes and see your stats per word.</span><em>The library</em></span>
         </button>
         <button class="sheet-entry" id="myCardsBtn" type="button">
           <span class="se-icon" aria-hidden="true">📝</span>
-          <span class="se-body"><strong>My cards</strong><span>Write your own cards, import Anki decks and manage saved decks.</span><em>Make it yours</em></span>
+          <span class="se-body"><strong>My words</strong><span>Write your own words, import Anki decks and manage saved decks.</span><em>Make it yours</em></span>
         </button>
       </div>
       <button class="btn btn-outline btn-block sheet-close" type="button">✕ Close</button>
@@ -374,46 +374,46 @@
     </div>
   </div>
 
-  <!-- ==================== QUESTION FILTERS (subjects, exam, advanced) ==================== -->
-  <div class="tutorial-overlay sheet-overlay" id="filtersSheet" role="dialog" aria-label="Question filters" aria-modal="true">
+  <!-- ==================== WORD FILTERS (topics and word level) ==================== -->
+  <div class="tutorial-overlay sheet-overlay" id="filtersSheet" role="dialog" aria-label="Word filters" aria-modal="true">
     <div class="sheet-card sheet-tall">
-      <h2>🎛 Question filters</h2>
-      <p class="muted" id="filtersIntro">Choose which questions you get. Your choices are saved.</p>
+      <h2>🎛 Word filters</h2>
+      <p class="muted" id="filtersIntro">Choose which words you get. Your choices are saved.</p>
 
-      <!-- Subjects -->
+      <!-- Topics -->
       <div class="collapsible-section">
         <button class="collapsible-toggle" id="subjectToggle" type="button" aria-expanded="false" aria-controls="subjectBody">
-          📚 Subjects <span class="collapse-arrow" id="subjectArrow" aria-hidden="true">▸</span>
+          📚 Topics <span class="collapse-arrow" id="subjectArrow" aria-hidden="true">▸</span>
         </button>
         <div class="collapsible-body" id="subjectBody" hidden>
           <div class="subject-controls">
             <button class="btn btn-outline btn-sm" id="selectAllSubjects" type="button">Select All</button>
             <button class="btn btn-outline btn-sm" id="deselectAllSubjects" type="button">Deselect All</button>
           </div>
-          <div class="subject-scroll" id="subjectScroll" role="group" aria-label="Subject selection"></div>
+          <div class="subject-scroll" id="subjectScroll" role="group" aria-label="Topic selection"></div>
           <div id="subjectNote" hidden></div>
         </div>
       </div>
 
-      <!-- Exam Filter -->
+      <!-- Word level -->
       <div id="examFilterContainer"></div>
-      <!-- Advanced Filters -->
-      <div id="advancedFilterContainer"></div>
+      <!-- Advanced filters (question type, year, high-yield) do not exist in Language Dash: nothing renders here -->
+      <div id="advancedFilterContainer" hidden></div>
       <button class="btn btn-primary btn-block sheet-close" type="button">Done</button>
     </div>
   </div>
 
   <!-- ==================== STATS ==================== -->
-  <div class="screen" id="screenStats" role="region" aria-label="Performance statistics">
+  <div class="screen" id="screenStats" role="region" aria-label="Your progress">
     <div class="screen-scroll">
       <div id="statsContent"></div>
     </div>
   </div>
 
   <!-- ==================== SHOP ==================== -->
-  <div class="screen" id="screenShop" role="region" aria-label="On-Call Locker">
+  <div class="screen" id="screenShop" role="region" aria-label="Locker">
     <div class="screen-scroll">
-      <h2>🧥 On-Call Locker</h2>
+      <h2>🧥 The Locker</h2>
       <p class="muted">Coins: <span id="shopCoins" class="gold bold">0</span></p>
       <div class="shop-gift" id="shopGiftBar" hidden></div>
       <div id="characterPreviewContainer" role="img" aria-label="Character preview"></div>
@@ -444,14 +444,14 @@
   </div>
 
   <!-- ==================== MY CARDS ==================== -->
-  <div class="screen" id="screenMyCards" role="region" aria-label="My Cards">
+  <div class="screen" id="screenMyCards" role="region" aria-label="My Words">
     <div class="screen-scroll">
-      <h2>📝 My Cards</h2>
-      <p class="muted">Create your own flashcards to add to the game.</p>
-      <button class="btn btn-green btn-block" id="addCardBtn" type="button">+ Create New Card</button>
+      <h2>📝 My Words</h2>
+      <p class="muted">Create your own words to add to the game.</p>
+      <button class="btn btn-green btn-block" id="addCardBtn" type="button">+ Create New Word</button>
       <div id="customCardList"></div>
       <div id="savedDecks"></div>
-      <button class="btn btn-primary btn-block" id="bringCardsBtn" type="button">📥 Bring in Anki, spreadsheet or AI cards</button>
+      <button class="btn btn-primary btn-block" id="bringCardsBtn" type="button">📥 Bring in Anki, spreadsheet or AI words</button>
       <div class="btn-row">
         <button class="btn btn-outline btn-sm" id="exportCardsBtn" type="button">📤 Export</button>
         <button class="btn btn-outline btn-sm" id="shareDeckBtn" type="button">🌐 Share Deck</button>
@@ -462,44 +462,44 @@
   </div>
 
   <!-- ==================== CARD EDITOR ==================== -->
-  <div class="screen" id="screenCardEditor" role="region" aria-label="Card Editor">
+  <div class="screen" id="screenCardEditor" role="region" aria-label="Word Editor">
     <div class="screen-scroll">
-      <h2 id="cardEditorTitle">📝 Create Card</h2>
+      <h2 id="cardEditorTitle">📝 Create Word</h2>
       <div class="card-form">
-        <label for="cardSubject">Subject</label>
+        <label for="cardSubject">Topic</label>
         <select id="cardSubject"></select>
 
-        <label for="cardBuzzwords">Buzzwords (one per line, 1–4 lines)</label>
-        <textarea id="cardBuzzwords" rows="4" placeholder="e.g.&#10;Young woman&#10;Butterfly rash&#10;Joint pain"></textarea>
+        <label for="cardBuzzwords">Hint word (in your language)</label>
+        <textarea id="cardBuzzwords" rows="2" placeholder="e.g. bread"></textarea>
 
-        <label for="cardAnswer">Correct Diagnosis</label>
-        <input id="cardAnswer" type="text" placeholder="e.g. Systemic Lupus Erythematosus">
+        <label for="cardAnswer">The word you are learning</label>
+        <input id="cardAnswer" type="text" placeholder="e.g. pan">
 
-        <label for="cardDistractor1">Wrong Answer 1</label>
-        <input id="cardDistractor1" type="text" placeholder="e.g. Rheumatoid Arthritis">
-        <input id="cardWhy1" type="text" placeholder="Why it's wrong (optional)" class="why-input">
+        <label for="cardDistractor1">Wrong gate 1</label>
+        <input id="cardDistractor1" type="text" placeholder="e.g. agua">
+        <input id="cardWhy1" type="text" placeholder="What this gate means (optional)" class="why-input">
 
-        <label for="cardDistractor2">Wrong Answer 2</label>
-        <input id="cardDistractor2" type="text" placeholder="e.g. Dermatomyositis">
-        <input id="cardWhy2" type="text" placeholder="Why it's wrong (optional)" class="why-input">
+        <label for="cardDistractor2">Wrong gate 2</label>
+        <input id="cardDistractor2" type="text" placeholder="e.g. leche">
+        <input id="cardWhy2" type="text" placeholder="What this gate means (optional)" class="why-input">
 
-        <label for="cardTeaching">Teaching Point</label>
-        <textarea id="cardTeaching" rows="3" placeholder="Brief explanation of why the correct answer is right..."></textarea>
+        <label for="cardTeaching">Word card note</label>
+        <textarea id="cardTeaching" rows="3" placeholder="An example, a memory trick, a note about the word (optional)"></textarea>
 
         <div id="cardErrors" role="alert" aria-live="polite"></div>
 
         <input type="hidden" id="cardEditId" value="">
-        <button class="btn btn-green btn-block" id="saveCardBtn" type="button">💾 Save Card</button>
+        <button class="btn btn-green btn-block" id="saveCardBtn" type="button">💾 Save Word</button>
         <button class="btn btn-outline btn-block" id="cancelCardBtn" type="button">Cancel</button>
       </div>
     </div>
   </div>
 
   <!-- ==================== IMPORT/EXPORT ==================== -->
-  <div class="screen" id="screenImportExport" role="region" aria-label="Import or Export Cards">
+  <div class="screen" id="screenImportExport" role="region" aria-label="Import or Export Words">
     <div class="screen-scroll">
-      <h2 id="importExportTitle">📤 Export Cards</h2>
-      <label for="importExportArea" class="sr-only">Card data</label>
+      <h2 id="importExportTitle">📤 Export Words</h2>
+      <label for="importExportArea" class="sr-only">Word data</label>
       <textarea id="importExportArea" rows="12" class="import-export-area"></textarea>
       <div id="importExportMsg" role="status" aria-live="polite"></div>
       <button class="btn btn-primary btn-block" id="importExportAction" type="button">Copy</button>
@@ -523,10 +523,10 @@
   </div>
 
   <!-- ==================== CARD BROWSER ==================== -->
-  <div class="screen" id="screenCardBrowser" role="region" aria-label="Card Browser">
+  <div class="screen" id="screenCardBrowser" role="region" aria-label="Phrasebook">
     <div class="screen-scroll">
-      <h2>📚 Card Browser</h2>
-      <p class="muted">Browse, search, and manage all cards.</p>
+      <h2>📚 Phrasebook</h2>
+      <p class="muted">Browse, search, and manage all your words.</p>
       <div id="cardBrowserContent"></div>
     </div>
   </div>
@@ -540,17 +540,17 @@
   </div>
 
   <!-- ==================== EXAM SIMULATION ==================== -->
-  <div class="screen" id="screenExam" role="region" aria-label="Exam simulation">
+  <div class="screen" id="screenExam" role="region" aria-label="Word Quiz">
     <div class="screen-scroll">
-      <h2>📝 Exam Simulation</h2>
+      <h2>📝 Word Quiz</h2>
       <div id="examContent"></div>
     </div>
   </div>
 
   <!-- ==================== FLASHCARD MODE ==================== -->
-  <div class="screen" id="screenFlashcard" role="region" aria-label="Flashcard Study">
+  <div class="screen" id="screenFlashcard" role="region" aria-label="Flashcards">
     <div class="screen-scroll">
-      <h2>📖 Flashcard Study</h2>
+      <h2>📖 Flashcards</h2>
       <div id="flashcardContent"></div>
     </div>
   </div>

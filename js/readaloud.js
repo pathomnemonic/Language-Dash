@@ -5,11 +5,14 @@
  * speed), and it must be finished before then: speech that is still going when the gates lock is useless, and
  * speech cut off halfway is worse. So the reading is planned from the time that is actually available:
  *
- *   1. Everything (the clues, then "Left: ..., Middle: ..., Right: ...") at a natural pace if there is time.
+ *   1. Everything (the hint word, then the three gate words) at a natural pace if there is time.
  *   2. Otherwise the same words faster, up to a rate that is still easy to follow.
- *   3. If even that is too slow, the answers are left for the eyes and only the clues are read,
- *      and if the clues alone do not fit, as many whole clues as do (never half a clue).
- *   4. If not even the first clue fits, nothing is read.
+ *   3. If even that is too slow, the gates are left for the eyes and only the hint is read.
+ *   4. If not even the hint fits, nothing is read.
+ *
+ * Language Dash speaks each word in its own voice: the hint in the language you know, the gate words in the one you
+ * are learning (see setReadLangs). A plan then also carries `segments` ({text, lang}) and the lane names
+ * ("Left", "Middle", "Right") are left out, because they would be said in the wrong language.
  *
  * How fast a device's voice really talks is measured (it varies a lot) and remembered, so the plan gets more
  * accurate as you play. These are pure functions, so they are tested without a speech engine.
@@ -28,6 +31,18 @@ export var PAUSE_SECONDS = 0.28;
 
 var LANE_WORDS = ['Left', 'Middle', 'Right'];
 
+var _langs = null;
+var _lastPlan = null;
+
+/**
+ * Say which voices the next questions use: {clue: 'en-US', answer: 'es-ES'} (BCP-47 tags), or null for one voice.
+ * Set once per question by main.js before the audio engine plans its reading.
+ */
+export function setReadLangs(langs) { _langs = langs && langs.clue && langs.answer ? { clue: langs.clue, answer: langs.answer } : null; }
+
+/** The voice segments of the reading just planned for this exact text (so the speaker can switch voices), or null. */
+export function segmentsFor(text) { return _lastPlan && _lastPlan.text === text ? _lastPlan.segments : null; }
+
 export function countWords(text) {
   return String(text || '').split(/[\s.,:;!?]+/).filter(function (w) { return w.length > 0; }).length;
 }
@@ -42,9 +57,11 @@ export function estimateSeconds(parts, wps) {
 /**
  * Decide what to say, and how fast, for a question that locks in `secondsToLock` seconds.
  * @param {object} q
- * @param {string[]} q.clues the clues, in order
+ * @param {string[]} q.clues the hint word(s), in order
  * @param {string[]} q.answers the three gate labels, left to right
  * @param {number} q.secondsToLock time until the answer locks
+ * @param {string} [q.clueLang] BCP-47 tag for the hint (with q.answerLang; defaults to setReadLangs)
+ * @param {string} [q.answerLang] BCP-47 tag for the gate words
  * @param {number} [q.wps] measured speaking speed at rate 1
  * @returns {{text: string, rate: number, parts: string[], withAnswers: boolean, clueCount: number}|null}
  */
@@ -55,7 +72,8 @@ export function planReading(q) {
   if (clues.length === 0 || !(budget > 0)) return null;
   var wps = q.wps || DEFAULT_WPS;
 
-  var answerParts = answers.map(function (a, i) { return LANE_WORDS[i] + ': ' + a; });
+  var langs = q.clueLang && q.answerLang ? { clue: q.clueLang, answer: q.answerLang } : _langs;
+  var answerParts = answers.map(function (a, i) { return langs ? String(a) : LANE_WORDS[i] + ': ' + a; });
 
   // Candidates, best first: everything, then the clues alone, then fewer and fewer whole clues
   var candidates = [{ parts: clues.concat(answerParts), withAnswers: answerParts.length > 0, clueCount: clues.length }];
@@ -68,13 +86,18 @@ export function planReading(q) {
     var natural = estimateSeconds(c.parts, wps);
     var rate = Math.max(NATURAL_RATE, natural / budget);
     if (rate <= MAX_RATE) {
-      return {
+      var plan = {
         text: c.parts.join('. ') + '.',
         rate: Math.ceil(rate * 100) / 100, // (rounded up: never a hair too slow to finish)
         parts: c.parts,
         withAnswers: c.withAnswers,
         clueCount: c.clueCount
       };
+      if (langs) {
+        plan.segments = c.parts.map(function (part, idx) { return { text: part, lang: idx < c.clueCount ? langs.clue : langs.answer }; });
+        _lastPlan = { text: plan.text, segments: plan.segments };
+      }
+      return plan;
     }
   }
   return null;

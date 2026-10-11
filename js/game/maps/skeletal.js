@@ -1,10 +1,11 @@
 /**
- * skeletal.js — Skeletal Corridor: the spooky-fun skeleton dance party, under a giant ribcage.
+ * skeletal.js — Calavera Fiesta (skin 'Skeletal Corridor'; the id and file name are kept from the original game): a
+ * friendly skeleton street party under marigold-orange lights.
  *
- * Every 16 units: a DJ booth run by a skull in sunglasses, a patch of glowing jack-o'-lanterns and candy, a coffin photo
- * booth, and a rainbow rib xylophone. Giant rib arches span the hall (they are what the corridor is named for), strung
- * with lights and bats. The floor is a purple-and-black checker with orange lane lines, the ceiling a night sky with a
- * big grinning moon. Moving: skeletons dancing along the walls, bats and friendly ghosts floating by, glowing sparkles.
+ * Every 16 units: a DJ booth run by a sugar skull in sunglasses, a patch of glowing lanterns and candy, a photo
+ * booth, and a rainbow marimba. Giant arches span the hall, strung with lights and papel picado. The floor is a
+ * purple-and-black checker with orange lane lines, the ceiling a night sky with a big grinning moon. Moving: skeletons
+ * dancing along the walls, paper birds and friendly ghosts floating by, glowing sparkles.
  */
 
 import * as THREE from 'three';
@@ -85,7 +86,7 @@ function booth(g, S, z) {
     cyl(g, 0.22, 0.22, 0.06, i ? TEAL : LIME, S.in(0.3) + (S.side < 0 ? 0.3 : -0.3), 0.6, z + dz, { rz: Math.PI / 2, seg: 9 });
     cyl(g, 0.16, 0.16, 0.06, 0xdddddd, S.in(0.3) + (S.side < 0 ? 0.3 : -0.3), 1.5, z + dz, { rz: Math.PI / 2, seg: 8 });
   });
-  neonSign(g, 'DJ BONES', LIME, 0x2a1060, 2.4, 0.7, S.in(0.1), 4.4, z, { ry: S.turn });
+  neonSign(g, 'DJ CALAVERA', LIME, 0x2a1060, 2.4, 0.7, S.in(0.1), 4.4, z, { ry: S.turn });
   ball(g, 0.4, 0xffffff, S.in(0.1), 5.4, z, { seg: 8, e: 0xffffff, ei: 0.5 });
 }
 
@@ -105,7 +106,7 @@ function patch(g, S, z) {
   // a candy bowl and a lantern sign
   cyl(g, 0.3, 0.22, 0.2, PINK, S.in(0.8), 0.6, z - 1.9, { seg: 8 });
   for (var c = 0; c < 4; c++) ball(g, 0.08, NEON[c], S.in(0.8), 0.78, z - 1.9 + (c - 1.5) * 0.08, { seg: 4 });
-  sign(g, 'TRICK OR TREAT', ORANGE, DEEP, 3.0, 0.65, S.in(0.1), 4.4, z, { ry: S.turn, border: LIME });
+  sign(g, 'DULCES!', ORANGE, DEEP, 3.0, 0.65, S.in(0.1), 4.4, z, { ry: S.turn, border: LIME });
 }
 
 function photobooth(g, S, z) {
@@ -118,7 +119,7 @@ function photobooth(g, S, z) {
   // curtains and a strip of bulbs
   [-1.1, 1.1].forEach(function (dz) { box(g, 0.14, 2.3, 0.9, VIOLET_CURTAIN, S.in(0.12), 1.15, z + dz); });
   for (var i = 0; i < 7; i++) ball(g, 0.09, NEON[i % 5], S.in(0.12), 2.5 + Math.sin(i) * 0.04, z - 1.5 + i * 0.5, { seg: 4, bulb: true });
-  neonSign(g, 'SAY CHEESE', PINK, 0x2a1060, 2.5, 0.7, S.in(0.1), 3.9, z, { ry: S.turn });
+  neonSign(g, 'FOTO!', PINK, 0x2a1060, 2.5, 0.7, S.in(0.1), 3.9, z, { ry: S.turn });
   skull(g, S.in(0.5), 2.7, z, 0.26, S.turn, false);
   // a stand of bone-white flags
   for (var f = 0; f < 4; f++) cone(g, 0.2, 0.3, f % 2 ? BONE : ORANGE, S.in(0.12), 4.9, z - 1.2 + f * 0.8, { seg: 3, rx: Math.PI });
@@ -142,7 +143,7 @@ function xylophone(g, S, z) {
     for (var r = 0; r < 4; r++) ring(g, 0.5 - r * 0.04, 0.05, BONE, S.in(0.1), 2.7 + r * 0.22, z, { ry: Math.PI / 2, arc: Math.PI * 1.5, seg: 8, tube: 3 });
     cyl(g, 0.05, 0.05, 1.0, BONE, S.in(0.1), 2.9, z, { seg: 4 });
   }
-  neonSign(g, 'RIB XYLOPHONE', TEAL, 0x2a1060, 3.0, 0.7, S.in(0.1), 4.7, z, { ry: S.turn });
+  neonSign(g, 'MARIMBA', TEAL, 0x2a1060, 3.0, 0.7, S.in(0.1), 4.7, z, { ry: S.turn });
 }
 
 function bay(g, side, z, k) {
@@ -160,7 +161,7 @@ function center(g, z) {
 }
 
 function arch(g, z, i) {
-  // a giant rib arch spanning the hall, strung with lights, a bat and a pumpkin lantern at the top
+  // a giant arch spanning the hall, strung with lights, a paper bat and a lantern at the top
   var c = NEON[i % 5];
   ring(g, 4.9, 0.14, BONE, 0, 0.9, z, { arc: Math.PI, seg: 22, tube: 5 });
   ring(g, 4.5, 0.09, c, 0, 0.9, z + 0.05, { arc: Math.PI, seg: 22, tube: 4, bulb: true });

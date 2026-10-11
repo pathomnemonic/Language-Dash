@@ -52,7 +52,7 @@ export function buildStudyReport(data, now) {
 /** The report as a short message. */
 export function reportToText(r) {
   var lines = [];
-  lines.push('Dx Dash study report (' + r.generated + ')');
+  lines.push('Language Dash study report (' + r.generated + ')');
   lines.push('Level ' + r.level + (r.rank ? ' · ' + r.rank : ''));
   lines.push('Study streak: ' + r.studyStreak + ' day' + (r.studyStreak === 1 ? '' : 's') + ' (best ' + r.bestStudyStreak + ')');
   lines.push('Answered: ' + r.answered + (r.accuracy === null ? '' : ' · ' + r.accuracy + '% correct') + ' · ' + r.cardsTouched + ' different cards seen');
