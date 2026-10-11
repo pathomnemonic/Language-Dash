@@ -26,6 +26,7 @@ import { buildPlayer, getPlayerLimbs } from './player.js';
 import { updateModelAnimation } from './charactermodel.js';
 import { setupEnvironment } from './materials.js';
 import { PROP_BUILDERS } from './props.js';
+import { PALETTE, toonMaterial, paperizeMaterials } from './paper.js';
 
 // ===== CONFIGURATION =====
 var FLYING_PROP_COUNT = 14;
@@ -146,8 +147,8 @@ export class HomeCharacter {
         }
 
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x120828);
-        this.scene.fog = new THREE.FogExp2(0x120828, 0.015);
+        this.scene.background = new THREE.Color(0xf1e6cb); // warm paper
+        this.scene.fog = new THREE.FogExp2(0xf1e6cb, 0.012);
         if (this.renderer) setupEnvironment(this.renderer, this.scene);
 
         this.camera = new THREE.PerspectiveCamera(
@@ -160,56 +161,62 @@ export class HomeCharacter {
         this.camera.lookAt(0, 1.2, 0);
 
         // ===== LIGHTING =====
-        var ambient = new THREE.AmbientLight(0x8877aa, 1.2);
+        var ambient = new THREE.AmbientLight(0xfff1dc, 1.5);
         this.scene.add(ambient);
 
-        var hemi = new THREE.HemisphereLight(0x8866cc, 0x112244, 0.5);
+        var hemi = new THREE.HemisphereLight(0xfff6e6, 0xcdb88e, 0.6);
         this.scene.add(hemi);
 
-        var keyLight = new THREE.DirectionalLight(0xffeedd, 1.8);
+        var keyLight = new THREE.DirectionalLight(0xfff0d8, 1.6);
         keyLight.position.set(5, 8, 10);
         this.scene.add(keyLight);
 
-        var fillLight = new THREE.DirectionalLight(0x6688ff, 0.3);
+        var fillLight = new THREE.DirectionalLight(0xffe4cc, 0.35);
         fillLight.position.set(-5, 4, 8);
         this.scene.add(fillLight);
 
-        var rimLight = new THREE.DirectionalLight(0x00eeff, 0.25);
+        var rimLight = new THREE.DirectionalLight(0xffffff, 0.2);
         rimLight.position.set(0, 5, -5);
         this.scene.add(rimLight);
 
         // ===== GROUND PLATFORM =====
-        // A solid plinth with a polished top and a glowing edge
+        // A round cream stamp-pad with a thick ink edge and a stamp-red ring, like a postmark on paper
         var plinth = new THREE.Mesh(
             new THREE.CylinderGeometry(2.0, 2.15, 0.28, 48),
-            new THREE.MeshStandardMaterial({ color: 0x2a1a55, metalness: 0.75, roughness: 0.28, envMapIntensity: 1.2 })
+            toonMaterial(PALETTE.card)
         );
         plinth.position.y = -0.44;
         this.scene.add(plinth);
+        var plinthInk = new THREE.Mesh(
+            new THREE.CylinderGeometry(2.0 + 0.07, 2.15 + 0.07, 0.28 + 0.1, 48),
+            new THREE.MeshBasicMaterial({ color: PALETTE.ink, side: THREE.BackSide })
+        );
+        plinthInk.position.y = -0.44;
+        this.scene.add(plinthInk);
         var glowEdge = new THREE.Mesh(
-            new THREE.TorusGeometry(2.0, 0.035, 10, 64),
-            new THREE.MeshBasicMaterial({ color: 0x00eeff })
+            new THREE.TorusGeometry(1.92, 0.035, 10, 64),
+            new THREE.MeshBasicMaterial({ color: PALETTE.red })
         );
         glowEdge.rotation.x = Math.PI / 2;
         glowEdge.position.y = -0.3;
         this.scene.add(glowEdge);
 
-        var ringGeo = new THREE.RingGeometry(1.9, 2.1, 48);
+        var ringGeo = new THREE.RingGeometry(1.5, 1.58, 48);
         var ringMat = new THREE.MeshBasicMaterial({
-            color: 0xbb66ff,
+            color: PALETTE.red,
             transparent: true,
-            opacity: 0.15
+            opacity: 0.55
         });
         var ring = new THREE.Mesh(ringGeo, ringMat);
         ring.rotation.x = -Math.PI / 2;
         ring.position.y = -0.29;
         this.scene.add(ring);
 
-        var ring2Geo = new THREE.RingGeometry(2.3, 2.4, 48);
+        var ring2Geo = new THREE.RingGeometry(2.3, 2.38, 48);
         var ring2Mat = new THREE.MeshBasicMaterial({
-            color: 0x00eeff,
+            color: PALETTE.ink,
             transparent: true,
-            opacity: 0.08
+            opacity: 0.25
         });
         var ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
         ring2.rotation.x = -Math.PI / 2;
@@ -377,6 +384,7 @@ export class HomeCharacter {
         var builderIndex = Math.floor(Math.random() * PROP_BUILDERS.length);
         var builder = PROP_BUILDERS[builderIndex];
         var prop = builder();
+        paperizeMaterials(prop);
 
         var side = Math.random() > 0.5 ? 1 : -1;
         var x = side * (3 + Math.random() * PROP_SPAWN_X_RANGE * 0.5);
@@ -455,7 +463,7 @@ export class HomeCharacter {
     // ===== PRIVATE: Ambient Particles =====
 
     _spawnAmbientParticles() {
-        var colors = [0xbb66ff, 0x00eeff, 0xff44aa, 0xffcc00, 0x44aaff, 0x00ff88];
+        var colors = [PALETTE.red, PALETTE.marigold, PALETTE.teal, PALETTE.sky, PALETTE.leaf, PALETTE.ink]; // confetti dust
 
         for (var i = 0; i < AMBIENT_PARTICLE_COUNT; i++) {
             var color = colors[i % colors.length];
@@ -514,7 +522,7 @@ export class HomeCharacter {
 
     _createBackgroundStars() {
         var starMat = new THREE.MeshBasicMaterial({
-            color: 0xaaaaff,
+            color: PALETTE.inkFaint,
             transparent: true,
             opacity: 0.15
         });

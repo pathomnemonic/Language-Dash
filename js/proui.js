@@ -318,7 +318,7 @@ export function renderRedeemRow(container) {
   var row = createElement('div');
   row.style.cssText = 'display:flex;gap:6px;margin-top:6px';
   var input = createElement('input', { attributes: { type: 'text', placeholder: 'Your code', 'aria-label': 'Redeem code', maxlength: '32', autocapitalize: 'characters', autocomplete: 'off', id: 'redeemInput' } });
-  input.style.cssText = 'flex:1;padding:8px;border-radius:8px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3)';
+  input.style.cssText = 'flex:1;padding:8px;border-radius:8px;background:var(--field);color:var(--ink);border:2px solid var(--line)';
   var go = createElement('button', { className: 'btn btn-outline btn-sm', text: 'Redeem', attributes: { type: 'button', id: 'redeemBtn' } });
   var msg = createElement('div', { className: 'setting-sublabel', attributes: { role: 'status' } });
   go.addEventListener('click', function () {

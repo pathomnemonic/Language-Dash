@@ -856,8 +856,8 @@ function _renderUI() {
   var muted = { fontSize: '12px', color: 'var(--text-secondary, #aaa)', lineHeight: '1.5' };
   var fieldStyle = {
     width: '100%', boxSizing: 'border-box', padding: '8px', borderRadius: '8px',
-    background: 'rgba(20,10,50,.6)', color: 'var(--text-primary, #fff)',
-    border: '1px solid rgba(187,102,255,.2)', fontSize: '12px', resize: 'vertical', fontFamily: 'inherit'
+    background: 'var(--field)', color: 'var(--ink)',
+    border: '2px solid var(--line)', fontSize: '12px', resize: 'vertical', fontFamily: 'inherit'
   };
 
   var section = _el('div', { className: 'anki-import-section' });

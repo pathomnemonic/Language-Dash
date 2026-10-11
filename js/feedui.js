@@ -158,7 +158,7 @@ export function renderFeedTab(body, ctx) {
     var head = createElement('div');
     head.style.cssText = 'display:flex;gap:8px;align-items:center';
     var pic = createElement('div', { className: 'pp-sm' });
-    pic.style.cssText = 'width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;flex:none;background:rgba(255,255,255,.08)';
+    pic.style.cssText = 'width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;flex:none;background:var(--paper-deep);border:2px solid var(--line)';
     fillProfilePicture(pic, e.avatar);
     head.appendChild(pic);
     var titles = createElement('div');

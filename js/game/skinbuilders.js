@@ -735,16 +735,7 @@ export function buildGround(skin) {
   ground.position.set(0, 0, -190);
   g.add(ground);
 
-  // Lane divider lines
-  for (var lx = -1; lx <= 1; lx += 2) {
-    var lane = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.06, 400),
-      new THREE.MeshBasicMaterial({ color: c.lane, transparent: true, opacity: 0.3 })
-    );
-    lane.rotation.x = -Math.PI / 2;
-    lane.position.set(lx * 1.5, 0.02, -190);
-    g.add(lane);
-  }
+  // (the lane dividers are station-platform floor paint now: see buildPlatformMarkings in track.js)
 
   // Skin-specific ground decorations
   switch (skin.groundType) {

@@ -149,7 +149,7 @@ function renderIdentity() {
       'aria-label': 'Display name', value: storage.get('profileName') || ''
     }
   });
-  input.style.cssText = 'flex:1;min-width:140px;padding:8px 10px;border-radius:10px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3)';
+  input.style.cssText = 'flex:1;min-width:140px;padding:8px 10px;border-radius:10px;background:var(--field);color:var(--ink);border:2px solid var(--line)';
   wrap.appendChild(input);
 
   wrap.appendChild(btn('Save', function () {
@@ -189,7 +189,7 @@ function syncProfile() {
 function renderGlobal(body) {
   body.appendChild(note('Only standard-rules runs appear here. Runs with power-ups, hazards or the monster turned off are for your own practice.'));
   var sel = createElement('select', { attributes: { 'aria-label': 'Game mode' } });
-  sel.style.cssText = 'padding:8px;border-radius:10px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3);margin-bottom:8px';
+  sel.style.cssText = 'padding:8px;border-radius:10px;background:var(--field);color:var(--ink);border:2px solid var(--line);margin-bottom:8px';
   BOARD_MODES.forEach(function (m) {
     var o = createElement('option', { text: lb().getModeLabel(m), attributes: { value: m } });
     if (m === _state.mode) o.selected = true;
@@ -199,7 +199,7 @@ function renderGlobal(body) {
   body.appendChild(sel);
 
   var periodSel = createElement('select', { attributes: { 'aria-label': 'Time period' } });
-  periodSel.style.cssText = 'padding:8px;border-radius:10px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3);margin:0 0 8px 6px';
+  periodSel.style.cssText = 'padding:8px;border-radius:10px;background:var(--field);color:var(--ink);border:2px solid var(--line);margin:0 0 8px 6px';
   [['week', 'This week'], ['all', 'All time']].forEach(function (p) {
     var o = createElement('option', { text: p[1], attributes: { value: p[0] } });
     if (p[0] === _state.period) o.selected = true;
@@ -352,7 +352,7 @@ function renderGroups(body) {
     var row = createElement('div');
     row.style.cssText = 'display:flex;gap:6px';
     var input = createElement('input', { attributes: { type: 'text', maxlength: String(maxlen), placeholder: placeholder, 'aria-label': placeholder } });
-    input.style.cssText = 'flex:1;padding:8px 10px;border-radius:10px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3)';
+    input.style.cssText = 'flex:1;padding:8px 10px;border-radius:10px;background:var(--field);color:var(--ink);border:2px solid var(--line)';
     row.appendChild(input);
     row.appendChild(btn(label, function () { return onSubmit(input.value.trim()); }, 'btn-primary'));
     return row;
@@ -417,7 +417,7 @@ function renderGroups(body) {
         var pct = Math.min(100, Math.round(total / goal * 100));
         goalBox.appendChild(note(total.toLocaleString() + ' / ' + goal.toLocaleString() + ' words practiced by the group this week' + (total >= goal ? ' \u2705' : '')));
         var bar = createElement('div', { attributes: { role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(goal), 'aria-valuenow': String(Math.min(total, goal)), 'aria-label': 'Group weekly goal' } });
-        bar.style.cssText = 'height:8px;border-radius:4px;background:rgba(255,255,255,0.12);overflow:hidden;margin:4px 0 8px';
+        bar.style.cssText = 'height:10px;border-radius:5px;border:2px solid var(--line);background:var(--card);overflow:hidden;margin:4px 0 8px';
         var fill = createElement('div');
         fill.style.cssText = 'height:100%;width:' + pct + '%;background:var(--accent-green)';
         bar.appendChild(fill);
@@ -432,7 +432,7 @@ function renderGroups(body) {
         var setRow = createElement('div');
         setRow.style.cssText = 'display:flex;gap:6px;margin-top:6px';
         var goalInput = createElement('input', { attributes: { type: 'number', min: '50', max: '100000', step: '50', placeholder: 'Words per week (50+)', 'aria-label': 'Weekly goal in words', value: goal ? String(goal) : '' } });
-        goalInput.style.cssText = 'flex:1;padding:8px 10px;border-radius:10px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3)';
+        goalInput.style.cssText = 'flex:1;padding:8px 10px;border-radius:10px;background:var(--field);color:var(--ink);border:2px solid var(--line)';
         setRow.appendChild(goalInput);
         setRow.appendChild(btn('Set goal', function () {
           var v = parseInt(goalInput.value, 10);
@@ -512,7 +512,7 @@ function renderFind(body) {
   var input = createElement('input', {
     attributes: { type: 'search', maxlength: '50', placeholder: 'Search by display name', 'aria-label': 'Search players', value: _state.searchTerm }
   });
-  input.style.cssText = 'flex:1;padding:8px 10px;border-radius:10px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3)';
+  input.style.cssText = 'flex:1;padding:8px 10px;border-radius:10px;background:var(--field);color:var(--ink);border:2px solid var(--line)';
   form.appendChild(input);
 
   function run() {

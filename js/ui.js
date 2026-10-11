@@ -247,10 +247,8 @@ class UI {
     if (rushStacks > 0) {
       this.vignetteEl.classList.add('active');
       var intensity = Math.min(rushStacks, 3);
-      var spread = 120 - intensity * 20;
-      var alpha = 0.3 + intensity * 0.15;
-      this.vignetteEl.style.boxShadow =
-        'inset 0 0 ' + spread + 'px ' + (spread / 2) + 'px rgba(255, 100, 0, ' + alpha + ')';
+      // a hard colored frame that gets thicker with each Rush stack (no soft glow)
+      this.vignetteEl.style.boxShadow = 'inset 0 0 0 ' + (4 + intensity * 3) + 'px var(--gold)';
     } else {
       this.vignetteEl.classList.remove('active');
       this.vignetteEl.style.boxShadow = 'none';
@@ -601,7 +599,7 @@ class UI {
   _showToast(message, holdMs) {
     audio.play('achievement');
     var popup = createElement('div', { className: 'toast', text: message, attributes: { role: 'status', 'aria-live': 'polite' } });
-    popup.style.cssText = 'position:fixed;top:40%;left:50%;transform:translateX(-50%) rotate(-1.5deg);font-size:18px;font-weight:900;color:#1b0a40;pointer-events:none;z-index:30;transition:all 1.2s ease-out;opacity:1;background:#fff6dc;padding:12px 22px;border-radius:16px;border:4px solid #1b0a40;box-shadow:0 5px 0 #1b0a40;text-align:center;max-width:86vw;';
+    popup.style.cssText = 'position:fixed;top:40%;left:50%;transform:translateX(-50%) rotate(-1.5deg);font-size:17px;font-weight:700;color:var(--ink);pointer-events:none;z-index:30;transition:all 1.2s ease-out;opacity:1;background:var(--card);padding:12px 20px;border-radius:8px;border:2.5px solid var(--line);box-shadow:4px 4px 0 var(--line);text-align:center;max-width:86vw;';
     document.body.appendChild(popup);
     var hold = Math.max(0, Number(holdMs) || 0);
     setTimeout(function () {
@@ -987,7 +985,7 @@ class UI {
     if (game.powerups.scoreFrenzy > 0) puRow.appendChild(createElement('div', { className: 'powerup-tag', text: '💎 ' + Math.ceil(game.powerups.scoreFrenzy) + 's' }));
     if (game.rushStacks > 0) {
       var rushTag = createElement('div', { className: 'powerup-tag', text: '⚡ Rush ×' + game.rushStacks });
-      rushTag.style.cssText = 'color:var(--accent-orange);border-color:rgba(255,136,0,0.4)';
+      rushTag.style.cssText = 'background:var(--red-fill);color:var(--on-fill)';
       puRow.appendChild(rushTag);
     }
 
@@ -1211,7 +1209,7 @@ class UI {
   showScorePopup(points) {
     if (prefersReducedMotion()) return;
     var popup = createElement('div', { text: typeof points === 'number' ? '+' + points : String(points) });
-    popup.style.cssText = 'position:fixed;top:35%;left:50%;transform:translateX(-50%);font-size:24px;font-weight:900;color:var(--accent-gold);text-shadow:0 0 10px rgba(255,215,64,0.5);pointer-events:none;z-index:6;transition:all 0.8s ease-out;opacity:1;';
+    popup.style.cssText = 'position:fixed;top:35%;left:50%;transform:translateX(-50%);font-size:22px;font-weight:900;color:var(--on-gold);background:var(--gold);padding:1px 12px;border:2.5px solid var(--line);border-radius:6px;box-shadow:3px 3px 0 var(--line);pointer-events:none;z-index:6;transition:all 0.8s ease-out;opacity:1;';
     document.body.appendChild(popup);
     requestAnimationFrame(function () { popup.style.top = '20%'; popup.style.opacity = '0'; });
     setTimeout(function () { if (popup.parentNode) popup.parentNode.removeChild(popup); }, 800);
@@ -1261,7 +1259,7 @@ class UI {
       var particle = createElement('div', { text: '✦' });
       var angle = (i / 6) * Math.PI * 2;
       var dist = 30 + Math.random() * 20;
-      particle.style.cssText = 'position:fixed;top:50%;left:50%;font-size:14px;color:var(--accent-gold);pointer-events:none;z-index:6;transition:all 0.4s ease-out;opacity:1;transform:translate(-50%,-50%);';
+      particle.style.cssText = 'position:fixed;top:50%;left:50%;font-size:14px;color:var(--gold);text-shadow:1px 1px 0 var(--line);pointer-events:none;z-index:6;transition:all 0.4s ease-out;opacity:1;transform:translate(-50%,-50%);';
       document.body.appendChild(particle);
       var dx = Math.cos(angle) * dist;
       var dy = Math.sin(angle) * dist;
@@ -1317,15 +1315,15 @@ class UI {
   showPowerupGlow(type) {
     if (prefersReducedMotion()) return;
     var colors = {
-      shield: 'rgba(68, 136, 255, 0.3)',
-      magnet: 'rgba(255, 170, 0, 0.3)',
-      double: 'rgba(170, 68, 255, 0.3)',
-      autoPilot: 'rgba(0, 238, 102, 0.3)',
-      scoreFrenzy: 'rgba(255, 68, 136, 0.3)'
+      shield: 'var(--sky)',
+      magnet: 'var(--gold)',
+      double: 'var(--plum)',
+      autoPilot: 'var(--teal)',
+      scoreFrenzy: 'var(--red)'
     };
-    var color = colors[type] || 'rgba(255, 255, 255, 0.2)';
+    var color = colors[type] || 'var(--card)';
     var glow = createElement('div');
-    glow.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:4;transition:opacity 0.8s ease-out;opacity:1;box-shadow:inset 0 0 60px 20px ' + color + ';';
+    glow.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:4;transition:opacity 0.8s ease-out;opacity:1;box-shadow:inset 0 0 0 8px ' + color + ';';
     document.body.appendChild(glow);
     requestAnimationFrame(function () { glow.style.opacity = '0'; });
     setTimeout(function () { if (glow.parentNode) glow.parentNode.removeChild(glow); }, 800);
@@ -1347,13 +1345,13 @@ class UI {
       setTimeout(function () {
         audio.play('achievement');
         var popup = createElement('div');
-        popup.style.cssText = 'position:fixed;bottom:110px;left:0;right:0;margin:0 auto;width:max-content;max-width:calc(100% - 32px);text-align:center;background:rgba(8,12,36,0.95);backdrop-filter:blur(10px);border:2px solid var(--accent-gold);border-radius:16px;padding:16px 24px;pointer-events:none;z-index:20;transition:all 1.5s ease-out;opacity:1;';
+        popup.style.cssText = 'position:fixed;bottom:110px;left:0;right:0;margin:0 auto;width:max-content;max-width:calc(100% - 32px);text-align:center;background:var(--card);color:var(--ink);border:2.5px solid var(--line);border-top:9px solid var(--gold);border-radius:8px;box-shadow:4px 4px 0 var(--line);padding:12px 22px;pointer-events:none;z-index:20;transition:all 1.5s ease-out;opacity:1;';
 
         popup.appendChild(createElement('div', { text: ach.icon }));
         popup.firstChild.style.cssText = 'font-size:28px;margin-bottom:4px';
 
         var titleEl = createElement('div', { text: 'Achievement Unlocked!' });
-        titleEl.style.cssText = 'font-size:14px;font-weight:800;color:var(--accent-gold)';
+        titleEl.style.cssText = 'font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-gold)';
         popup.appendChild(titleEl);
 
         var nameEl = createElement('div', { text: ach.name });
@@ -2172,7 +2170,7 @@ class UI {
 
   showConfetti(noBanner) {
     if (prefersReducedMotion()) return;
-    var colors = ['#ff4d6a', '#3dff9a', '#ffd23f', '#4db3ff', '#a566ff', '#ff5cad'];
+    var colors = ['#D9432C', '#F2B134', '#0E8C8A', '#5DA9D6', '#7B3F6E', '#2E9E5B'];
     for (var i = 0; i < 60; i++) {
       var piece = createElement('div', { className: 'confetti-piece' });
       piece.style.left = (10 + Math.random() * 80) + '%';

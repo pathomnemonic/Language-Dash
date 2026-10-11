@@ -4,7 +4,7 @@
  * ARCHITECTURE CONTRACT (§23, §30):
  * - Agent 13 owns this file.
  * - Each theme defines colors for: bg, ground, wall, glow, gate, accent.
- * - Night mode variants darken backgrounds and reduce glow intensity.
+ * - Night mode variants use the ink-navy "Night Train" page; nothing glows.
  * - getTheme() is called on run start and when night mode toggles.
  * - getSubjectTheme() supports topic-specific decorations.
  * - The keys are the SUBJECTS strings (see js/lang/topics.js); anything else gets the default theme.
@@ -14,139 +14,38 @@
 
 import { storage } from '../storage.js';
 
-var THEMES_NORMAL = {
-  "Talking": {
-    bg: 0x0a0828, ground: 0x0c0a30, wall: 0x2020aa,
-    glow: 0x8844ff, gate: 0x1a1060, accent: 0xaa66ff
-  },
-  "Body & Health": {
-    bg: 0x1a0808, ground: 0x200a0a, wall: 0xaa2020,
-    glow: 0xff4444, gate: 0x601020, accent: 0xff6666
-  },
-  "Shopping & Money": {
-    bg: 0x081820, ground: 0x0a1828, wall: 0x2080aa,
-    glow: 0x44ccff, gate: 0x103050, accent: 0x66eeff
-  },
-  "Feelings & Thinking": {
-    bg: 0x140828, ground: 0x180a30, wall: 0x8830aa,
-    glow: 0xcc66ff, gate: 0x401060, accent: 0xdd88ff
-  },
-  "Food & Drink": {
-    bg: 0x181008, ground: 0x201410, wall: 0xaa6620,
-    glow: 0xffaa44, gate: 0x604020, accent: 0xffcc66
-  },
-  "Travel & Places": {
-    bg: 0x081018, ground: 0x0a1420, wall: 0x2060aa,
-    glow: 0x44aaff, gate: 0x103060, accent: 0x66ccff
-  },
-  "Nature & Animals": {
-    bg: 0x081808, ground: 0x0a200a, wall: 0x20aa40,
-    glow: 0x44ff66, gate: 0x104020, accent: 0x66ff88
-  },
-  "Work & School": {
-    bg: 0x181808, ground: 0x201e0a, wall: 0xaaaa20,
-    glow: 0xffff44, gate: 0x605020, accent: 0xffff88
-  },
-  "Colors & Describing": {
-    bg: 0x180810, ground: 0x200a14, wall: 0xaa2060,
-    glow: 0xff44aa, gate: 0x601040, accent: 0xff66cc
-  },
-  "Home & Things": {
-    bg: 0x100818, ground: 0x140a20, wall: 0x6020aa,
-    glow: 0x9944ff, gate: 0x401060, accent: 0xbb66ff
-  },
-  "People & Family": {
-    bg: 0x180814, ground: 0x200a18, wall: 0xaa2080,
-    glow: 0xff44cc, gate: 0x601050, accent: 0xff88dd
-  },
-  "Small Words": {
-    bg: 0x081018, ground: 0x101828, wall: 0x4060aa,
-    glow: 0x66aaff, gate: 0x204060, accent: 0x88ccff
-  },
-  "Time & Numbers": {
-    bg: 0x0a0a10, ground: 0x101018, wall: 0x606080,
-    glow: 0xaaaacc, gate: 0x303050, accent: 0xccccee
-  },
-  "Actions": {
-    bg: 0x181008, ground: 0x201408, wall: 0xaa4420,
-    glow: 0xff6644, gate: 0x603020, accent: 0xff8866
-  },
-  "Basics": {
-    bg: 0x050816, ground: 0x0a1030, wall: 0x1a3060,
-    glow: 0x18ffff, gate: 0x102040, accent: 0x44ddff
-  },
-  "default": {
-    bg: 0x050816, ground: 0x0a1030, wall: 0x1a3060,
-    glow: 0x18ffff, gate: 0x102040, accent: 0x44ddff
-  }
+// Paper Passport colours (docs/DESIGN.md): every topic is one stamp colour on warm paper by day, and the same stamp
+// colour on "Night Train" ink-navy by night. Nothing neon, nothing purple by default.
+var PAPER = 0xf6eedc, PAPER_DEEP = 0xebddbf, CARD = 0xfffbf2;
+var INK = 0x1b2a41, NIGHT_PAGE = 0x101b2d;
+
+var STAMP = {
+  "Talking": 0x5da9d6, "Body & Health": 0xd9432c, "Shopping & Money": 0xf2b134, "Feelings & Thinking": 0xc4566a,
+  "Food & Drink": 0xe08a2c, "Travel & Places": 0x0e8c8a, "Nature & Animals": 0x2e9e5b, "Work & School": 0xb5983a,
+  "Colors & Describing": 0xe0607e, "Home & Things": 0xb7694a, "People & Family": 0xe27d66, "Small Words": 0x6c85a8,
+  "Time & Numbers": 0x4b5870, "Actions": 0xe8642c, "Basics": 0x0e8c8a, "default": 0x5da9d6
 };
 
-var THEMES_NIGHT = {
-  "Talking": {
-    bg: 0x040414, ground: 0x060518, wall: 0x151566,
-    glow: 0x5522aa, gate: 0x100a40, accent: 0x7744aa
-  },
-  "Body & Health": {
-    bg: 0x0d0404, ground: 0x100505, wall: 0x661212,
-    glow: 0xaa2222, gate: 0x400a10, accent: 0xaa4444
-  },
-  "Shopping & Money": {
-    bg: 0x040c10, ground: 0x050c14, wall: 0x144066,
-    glow: 0x228899, gate: 0x0a1830, accent: 0x449999
-  },
-  "Feelings & Thinking": {
-    bg: 0x0a0414, ground: 0x0c0518, wall: 0x551a66,
-    glow: 0x8844aa, gate: 0x280a40, accent: 0x9955aa
-  },
-  "Food & Drink": {
-    bg: 0x0c0804, ground: 0x100a08, wall: 0x664012,
-    glow: 0xaa7722, gate: 0x402810, accent: 0xaa8844
-  },
-  "Travel & Places": {
-    bg: 0x04080c, ground: 0x050a10, wall: 0x143866,
-    glow: 0x226699, gate: 0x0a1838, accent: 0x448899
-  },
-  "Nature & Animals": {
-    bg: 0x040c04, ground: 0x051005, wall: 0x126628,
-    glow: 0x22aa33, gate: 0x0a2810, accent: 0x44aa55
-  },
-  "Work & School": {
-    bg: 0x0c0c04, ground: 0x100f05, wall: 0x666612,
-    glow: 0xaaaa22, gate: 0x383010, accent: 0xaaaa55
-  },
-  "Colors & Describing": {
-    bg: 0x0c0408, ground: 0x10050a, wall: 0x661238,
-    glow: 0xaa2266, gate: 0x400a28, accent: 0xaa4488
-  },
-  "Home & Things": {
-    bg: 0x08040c, ground: 0x0a0510, wall: 0x381266,
-    glow: 0x6622aa, gate: 0x280a40, accent: 0x7744aa
-  },
-  "People & Family": {
-    bg: 0x0c040a, ground: 0x10050c, wall: 0x661250,
-    glow: 0xaa2288, gate: 0x400a30, accent: 0xaa5599
-  },
-  "Small Words": {
-    bg: 0x04080c, ground: 0x080c14, wall: 0x283866,
-    glow: 0x446699, gate: 0x142838, accent: 0x558899
-  },
-  "Time & Numbers": {
-    bg: 0x050508, ground: 0x08080c, wall: 0x383850,
-    glow: 0x666688, gate: 0x1a1a30, accent: 0x888899
-  },
-  "Actions": {
-    bg: 0x0c0804, ground: 0x100a04, wall: 0x662812,
-    glow: 0xaa4422, gate: 0x381810, accent: 0xaa5544
-  },
-  "Basics": {
-    bg: 0x03040c, ground: 0x050818, wall: 0x101838,
-    glow: 0x0c9999, gate: 0x081028, accent: 0x228899
-  },
-  "default": {
-    bg: 0x03040c, ground: 0x050818, wall: 0x101838,
-    glow: 0x0c9999, gate: 0x081028, accent: 0x228899
-  }
-};
+function mixHex(a, b, t) {
+  var r = Math.round(((a >> 16) & 255) * (1 - t) + ((b >> 16) & 255) * t);
+  var g = Math.round(((a >> 8) & 255) * (1 - t) + ((b >> 8) & 255) * t);
+  var bl = Math.round((a & 255) * (1 - t) + (b & 255) * t);
+  return (r << 16) | (g << 8) | bl;
+}
+
+function makeThemes(night) {
+  var out = {};
+  Object.keys(STAMP).forEach(function (k) {
+    var hue = STAMP[k];
+    out[k] = night
+      ? { bg: mixHex(NIGHT_PAGE, hue, 0.1), ground: mixHex(INK, hue, 0.12), wall: mixHex(INK, hue, 0.35), glow: mixHex(hue, PAPER, 0.15), gate: mixHex(INK, hue, 0.3), accent: mixHex(hue, PAPER, 0.25) }
+      : { bg: mixHex(PAPER, hue, 0.2), ground: mixHex(PAPER_DEEP, hue, 0.16), wall: mixHex(CARD, hue, 0.4), glow: hue, gate: mixHex(CARD, hue, 0.2), accent: hue };
+  });
+  return out;
+}
+
+var THEMES_NORMAL = makeThemes(false);
+var THEMES_NIGHT = makeThemes(true);
 
 /**
  * Get the active theme based on selected subjects and night mode.

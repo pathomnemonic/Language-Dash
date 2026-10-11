@@ -11,6 +11,7 @@
 
 import * as THREE from 'three';
 import { WORLD_BAY, LANE_EDGE, slab } from './mapkit.js';
+import { PALETTE } from './paper.js';
 import { playland } from './maps/playland.js';
 import { garden } from './maps/garden.js';
 import { cafeteria } from './maps/cafeteria.js';
@@ -120,7 +121,7 @@ export function buildWorldGround(skin) {
   var w = worldOf(skin);
   var base = slab(g, 14, 400, c.ground, 0, 0, -190, { r: 0.8, env: 0.3 });
   base.receiveShadow = false;
-  for (var lx = -1; lx <= 1; lx += 2) slab(g, 0.07, 400, c.lane, lx * 1.5, 0.02, -190, { bulb: true, op: 0.5 });
+  // (lane dividers are floor paint: buildPlatformMarkings in track.js)
   if (w.ground) w.ground(g, skin);
   return g;
 }
@@ -139,9 +140,9 @@ export function buildDaySky(skin) {
     transparent: true,
     fog: false,
     uniforms: {
-      top: { value: new THREE.Color(s.top || 0x4aa8f0) },
-      horizon: { value: new THREE.Color(s.horizon || skin.colors.bg) },
-      sunColor: { value: new THREE.Color(s.sun || 0xfff0c0) },
+      top: { value: new THREE.Color(s.top || 0x5da9d6) },
+      horizon: { value: new THREE.Color(s.horizon || skin.colors.bg).lerp(new THREE.Color(PALETTE.paper), 0.35) },
+      sunColor: { value: new THREE.Color(s.sun || 0xf2b134) },
       sunDir: { value: sunDir }
     },
     vertexShader: 'varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
@@ -150,9 +151,11 @@ export function buildDaySky(skin) {
       'void main(){',
       '  vec3 d = normalize(vDir);',
       '  float h = clamp(d.y, 0.0, 1.0);',
-      '  vec3 col = mix(horizon, top, pow(h, 0.3));',
-      '  float s = max(dot(d, sunDir), 0.0);',
-      '  col += sunColor * (pow(s, 5.0) * 0.28 + pow(s, 90.0) * 0.9);',
+      '  float band = floor(pow(h, 0.35) * 5.0) / 5.0;', // flat print bands instead of a smooth gradient
+      '  vec3 col = mix(horizon, top, band);',
+      '  float s = dot(d, sunDir);',
+      '  col = mix(col, sunColor, step(0.985, s));', // the sun is a flat disc, with no glow
+      '  col = mix(col, mix(sunColor, col, 0.7), step(0.972, s) * (1.0 - step(0.985, s)));', // and a printed ring around it
       '  col = mix(col, horizon, smoothstep(0.02, -0.25, d.y));',
       '  gl_FragColor = vec4(col, 1.0);',
       '  #include <tonemapping_fragment>',

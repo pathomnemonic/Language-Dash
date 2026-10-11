@@ -19,6 +19,8 @@
  * - getSkinByName() supports legacy lookups.
  */
 
+import { paperize } from './paper.js';
+
 export var SKINS = [
   {
     id: 'skin_neural_highway',
@@ -763,3 +765,15 @@ export function getSkinById(skinId) {
 export function getAllSkinIds() {
   return SKINS.map(function (s) { return s.id; });
 }
+
+// ===== PAPER PALETTE =====
+// Every map's colours are pulled toward the Paper Passport palette once, here (paper.js: no violet, no pure black, a
+// little less saturation), so the sky, haze, lights, floor and walls all share one printed look.
+SKINS.forEach(function (skin) {
+  [skin.colors, skin.sky].forEach(function (group) {
+    if (!group) return;
+    Object.keys(group).forEach(function (k) {
+      if (typeof group[k] === 'number' && k !== 'sunX' && k !== 'sunY') group[k] = paperize(group[k]);
+    });
+  });
+});

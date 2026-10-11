@@ -7,7 +7,7 @@
 
 import { storage } from '../storage.js';
 import { getNextSkin } from './skins.js';
-import { getCardPool, pickCard, nextSeededIndex, spawnGates, flashGateResult } from './gates.js';
+import { getCardPool, pickCard, nextSeededIndex, spawnGates, flashGateResult, stampGateCorrect } from './gates.js';
 import { monsterOnAnswer, monsterPolicy } from './monsterbehavior.js';
 import { HAZARDS } from './hazards.js';
 import { chooseCommittedLane } from './lanelock.js';
@@ -295,16 +295,10 @@ card = pickResult ? pickResult.card : null;
       this.jumpVel = 3;
       if (!this.jumping) this.jumping = true;
 
-      // Gate visual feedback
+      // Gate visual feedback: a green rubber stamp thunks onto the right sign (gates.js), and confetti pops off it
+      stampGateCorrect(this.gateMeshes, this.gates);
       for (var gi = 0; gi < this.gateMeshes.length; gi++) {
-        if (this.gates[gi].correct) {
-          this.gateMeshes[gi].children[0].material.color.setHex(0x00ff44);
-          this.gateMeshes[gi].children[0].material.opacity = 1.0;
-          this.gateMeshes[gi].scale.set(1.3, 1.3, 1.3);
-          this._spawnGateParticles(this.gateMeshes[gi].position, 0x00ff44, 10);
-        } else {
-          this.gateMeshes[gi].children[0].material.opacity = 0;
-        }
+        if (this.gates[gi].correct) this._spawnGateParticles(this.gateMeshes[gi].position, 0x2e9e5b, 10);
       }
 
       encounterResult.scoreAwarded = pointsEarned;
@@ -321,18 +315,7 @@ card = pickResult ? pickResult.card : null;
 
       this.stumbleTimer = 0.3;
 
-      // Gate visual feedback
-      for (var gwi = 0; gwi < this.gateMeshes.length; gwi++) {
-        if (this.gates[gwi].correct) {
-          this.gateMeshes[gwi].children[0].material.color.setHex(0x00cc55);
-          this.gateMeshes[gwi].children[0].material.opacity = 1.0;
-        } else if (gwi === lane) {
-          this.gateMeshes[gwi].children[0].material.color.setHex(0xff2222);
-          this.gateMeshes[gwi].children[0].material.opacity = 0.5;
-        } else {
-          this.gateMeshes[gwi].children[0].material.opacity = 0;
-        }
-      }
+      // Gate visual feedback: an ink cross on the chosen sign, the green stamp on the right one
       flashGateResult(this.gateMeshes, this.gates, lane);
       this._triggerShake();
 

@@ -582,7 +582,8 @@ class Game {
   }
 
   _getPostFX() {
-    if (storage.get('glowEffects') === false || storage.get('reducedMotion') || !useSceneryModels()) return null;
+    // The ink-outline pass (postfx.js) runs on the high tier whatever the old "Glow effects" switch says: there is no glow any more
+    if (storage.get('reducedMotion') || !useSceneryModels()) return null;
     if (!this._postfx) {
       try {
         var selfFx = this;
@@ -1489,15 +1490,6 @@ class Game {
       this.gateZ += move * VISUAL_SPEED;
       for (var gi = 0; gi < this.gateMeshes.length; gi++) {
         this.gateMeshes[gi].position.z = this.gateZ;
-        var approachProgress = 1.0 - Math.max(0, -this.gateZ) / Math.abs(this._gateSpawnZ || -60);
-        var gateScale = 1.0 + approachProgress * 0.08;
-        this.gateMeshes[gi].scale.set(gateScale, gateScale, gateScale);
-        var frame = this.gateMeshes[gi].children[0];
-        if (gi === this.currentLane) {
-          frame.material.opacity = 0.6 + approachProgress * 0.3;
-        } else {
-          frame.material.opacity = 0.4 - approachProgress * 0.15;
-        }
       }
       updateGateHighlights(this.gateMeshes, this.currentLane);
       if (this.gateZ >= 0) this._resolveEncounter();

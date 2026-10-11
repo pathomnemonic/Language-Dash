@@ -261,12 +261,11 @@ for (const size of SIZES) {
     const shot = await sharp(f.buf).resize(shotW, shotH, { fit: 'cover', position: 'top' })
       .composite([{ input: Buffer.from(`<svg width="${shotW}" height="${shotH}"><rect width="${shotW}" height="${shotH}" rx="56" fill="#fff"/></svg>`), blend: 'dest-in' }]).png().toBuffer();
     const fs0 = Math.min(TABLET ? Math.round(W / 15) : 86, Math.floor((W - 120) / (f.caption.length * 0.62)));
-    const font = 'font-family="Arial Rounded MT Bold, Trebuchet MS, Arial, sans-serif" font-weight="900" text-anchor="middle"';
+    const font = 'font-family="Fraunces, Georgia, serif" font-weight="900" text-anchor="middle"';
     const label = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${CAP}">
-      <g transform="translate(${W / 2} ${CAP * 0.46}) skewX(-8)">
-        <text x="0" y="8" ${font} font-size="${fs0}" fill="#1b0a40" stroke="#1b0a40" stroke-width="16" stroke-linejoin="round">${f.caption}</text>
-        <text x="0" y="0" ${font} font-size="${fs0}" fill="#ffd23f" stroke="#1b0a40" stroke-width="10" stroke-linejoin="round">${f.caption}</text>
-        <text x="0" y="0" ${font} font-size="${fs0}" fill="#ffd23f">${f.caption}</text>
+      <g transform="translate(${W / 2} ${CAP * 0.46}) rotate(-2)">
+        <text x="0" y="8" ${font} font-size="${fs0}" fill="#F2B134">${f.caption}</text>
+        <text x="0" y="0" ${font} font-size="${fs0}" fill="#1B2A41">${f.caption}</text>
       </g>
       <text x="${W / 2}" y="${CAP * 0.73}" font-family="Arial, Helvetica, sans-serif" font-size="${TABLET ? Math.round(W / 29) : 44}" font-weight="700" fill="${CYAN}" text-anchor="middle">${f.sub}</text></svg>`);
     await sharp({ create: { width: W, height: H, channels: 4, background: BG } })

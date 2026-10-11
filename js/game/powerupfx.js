@@ -27,6 +27,7 @@
  */
 
 import * as THREE from 'three';
+import { PALETTE, paperize } from './paper.js';
 
 // ===== QUALITY PRESETS =====
 var QUALITY_PRESETS = {
@@ -67,8 +68,38 @@ export class PowerUpFX {
     this._createScoreFrenzyEffect();
     this._createShardPool();
     this._createGateParticlePool();
+    this._printStyle();
 
     this.hideAll();
+  }
+
+  /**
+   * The printed look: the auras keep their shapes, but every colour moves onto the paper palette, wireframes and
+   * rings become navy ink lines, and shards are paper chips. (Nothing here is additive: it never glows.)
+   */
+  _printStyle() {
+    var self = this;
+    var tones = {
+      shield: PALETTE.sky, magnet: PALETTE.marigold, double: PALETTE.teal,
+      rushBoost: PALETTE.red, autoPilot: PALETTE.leaf, scoreFrenzy: PALETTE.red
+    };
+    Object.keys(this.effects).forEach(function (key) {
+      var fx = self.effects[key];
+      if (!fx || !fx.group) return;
+      var tone = tones[key] || PALETTE.sky;
+      fx.group.traverse(function (o) {
+        if (!o.material || o.material.userData.printed) return;
+        var m = o.material;
+        m.userData.printed = true;
+        if (m.wireframe) { m.color.setHex(PALETTE.ink); m.opacity = Math.min(1, m.opacity * 0.9); return; }
+        // fills take the effect's stamp colour; thin rings and sparks keep their own hue, moved onto the palette
+        var thin = o.geometry && o.geometry.type === 'TorusGeometry';
+        m.color.setHex(thin ? PALETTE.ink : paperize(m.color.getHex()));
+        if (!thin && m.opacity > 0.2) m.color.lerp(new THREE.Color(tone), 0.5);
+      });
+    });
+    this.shardPool.forEach(function (sh, i) { sh.mesh.material.color.setHex(i % 2 ? PALETTE.sky : PALETTE.card); });
+    this.gateParticlePool.forEach(function (gp) { gp.mesh.material.color.setHex(PALETTE.leaf); });
   }
 
   // ===== SHIELD =====
@@ -665,7 +696,7 @@ export class PowerUpFX {
               this.rushGhosts[rgi].mesh.visible = true;
               this.rushGhosts[rgi].mesh.material.opacity = 0.35;
               this.rushGhosts[rgi].mesh.material.color.setHex(
-                stacks >= 3 ? 0xff2200 : (stacks >= 2 ? 0xff4400 : 0xff6600)
+                stacks >= 3 ? PALETTE.red : (stacks >= 2 ? 0xe5683f : PALETTE.marigold)
               );
               var ghostScale = 0.8 + stacks * 0.15;
               this.rushGhosts[rgi].mesh.scale.set(ghostScale, ghostScale * 1.5, ghostScale);
@@ -859,7 +890,7 @@ export class PowerUpFX {
       gp.mesh.visible = true;
       gp.life = 0.4;
       gp.mesh.position.set(position.x, position.y, position.z);
-      gp.mesh.material.color.setHex(color || 0x00ff44);
+      gp.mesh.material.color.setHex(paperize(color || PALETTE.leaf));
       gp.mesh.material.opacity = 0.8;
       gp.mesh.scale.set(1, 1, 1);
 

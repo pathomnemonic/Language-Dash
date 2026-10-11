@@ -13,6 +13,7 @@ import { createGLTFLoader } from './gltfloader.js';
 import { clone as cloneModel } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { useSceneryModels } from './quality.js';
 import { markShared, mergeStatic } from './materials.js';
+import { paperizeMaterials, toonRamp } from './paper.js';
 
 /** The KayKit pack the bright maps use: one file, one shared material, one node per model ('rest__food_burger'). */
 export var KIT_FILE = 'kaykit/kaykit.glb';
@@ -77,6 +78,7 @@ export function preloadScenery() {
     return new Promise(function (resolve) {
       loader.load(baseUrl() + 'models/' + SCENERY_FILES[key], function (gltf) {
         gltf.scene.updateMatrixWorld(true);
+        paperizeMaterials(gltf.scene); // printed look: flat bands, paper colours
         mergeStatic(gltf.scene);
         markShared(gltf.scene);
         _cache[key] = { scene: gltf.scene, box: new THREE.Box3().setFromObject(gltf.scene, true) };
@@ -108,6 +110,7 @@ export function registerKit(gltf) {
     holder.add(node);
     holder.updateMatrixWorld(true);
     widenVertices(holder);
+    paperizeMaterials(holder);
     mergeStatic(holder);
     markShared(holder);
     _cache[node.name.replace('__', '/')] = { scene: holder, box: new THREE.Box3().setFromObject(holder, true) };
@@ -119,7 +122,8 @@ export function registerSceneryModel(key, buffer) {
   return new Promise(function (resolve, reject) {
     createGLTFLoader().parse(buffer, '', function (gltf) {
       gltf.scene.updateMatrixWorld(true);
-      mergeStatic(gltf.scene);
+      paperizeMaterials(gltf.scene); // printed look: flat bands, paper colours
+        mergeStatic(gltf.scene);
       markShared(gltf.scene);
       _cache[key] = { scene: gltf.scene, box: new THREE.Box3().setFromObject(gltf.scene, true) };
       resolve();
@@ -196,7 +200,7 @@ export function buildHanging(key, hang) {
   var top = hang.bottom + hang.fit.height;
   var cable = new THREE.Mesh(
     new THREE.CylinderGeometry(0.03, 0.03, 8 - top, 6),
-    new THREE.MeshStandardMaterial({ color: 0x2a2f3a, metalness: 0.6, roughness: 0.5 })
+    new THREE.MeshToonMaterial({ color: 0x1b2a41, gradientMap: toonRamp() })
   );
   cable.position.y = top + (8 - top) / 2;
   group.add(cable);

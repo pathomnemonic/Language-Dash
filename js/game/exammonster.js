@@ -2,8 +2,8 @@
  * exammonster.js — the Hush (the file and identifiers are kept from the original "exam monster")
  *
  * The Hush is the creeping silence that eats words, and it chases the player.
- * It's a dark, hushed creature with multiple glowing eyes, tentacles,
- * a droopy nightcap, orbiting question marks (the words it has swallowed), and a gaping mouth.
+ * It's a flat black-ink blot with cream paper eyes, ink drips, a droopy red nightcap, orbiting question marks
+ * (the words it has swallowed) and, on its back, a paper speech bubble with the shush mark. Nothing glows.
  *
  * Built entirely from Three.js primitives.
  *
@@ -15,6 +15,7 @@
  */
 
 import * as THREE from 'three';
+import { PALETTE, newToon } from './paper.js';
 
 /**
  * Dispose all geometry and materials within a group recursively.
@@ -47,79 +48,119 @@ function disposeGroup(obj) {
     }
 }
 
+// ===== THE HUSH: a flat black-ink blot with a speech bubble full of silence =====
+// Ink-navy shapes with cream paper eyes, a droopy red nightcap, and on its back (the side the camera sees) a big paper
+// speech bubble with a "shh" finger over lips. Nothing glows. Part names and groups are the ones the engine animates.
+
+function inkToon(color) { return newToon(color === undefined ? PALETTE.ink : color); }
+
+/** A sphere pushed in and out into a lumpy blot (deterministic, so every Hush is the same shape). */
+function blotGeometry(radius) {
+    var geo = new THREE.SphereGeometry(radius, 18, 14);
+    var pos = geo.attributes.position;
+    for (var i = 0; i < pos.count; i++) {
+        var x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+        var n = Math.sin(x * 3.1 + 1.3) * Math.cos(y * 2.7) * 0.08 + Math.sin(z * 3.7 + y * 2.1) * 0.07 + Math.sin(x * 5.3 + z * 4.1) * 0.03;
+        var k = 1 + n;
+        pos.setXYZ(i, x * k, y * k * (y < 0 ? 0.92 : 1), z * k);
+    }
+    geo.computeVertexNormals();
+    return geo;
+}
+
+function paintBubble() {
+    if (typeof document === 'undefined') return null;
+    var canvas = document.createElement('canvas');
+    canvas.width = 320;
+    canvas.height = 256;
+    var ctx = canvas.getContext && canvas.getContext('2d');
+    if (!ctx) return null;
+    var ink = '#1b2a41';
+    // the bubble: a rounded card with a tail, cream fill and a thick ink outline
+    function bubblePath() {
+        var x = 14, y = 14, w = 292, h = 186, r = 44;
+        ctx.beginPath();
+        ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(210, y + h); ctx.lineTo(236, 246); ctx.lineTo(160, y + h);
+        ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+    }
+    bubblePath();
+    ctx.fillStyle = '#fffbf2';
+    ctx.fill();
+    ctx.lineWidth = 12; ctx.lineJoin = 'round'; ctx.strokeStyle = ink;
+    ctx.stroke();
+    // "shhh" lettering
+    ctx.fillStyle = ink;
+    ctx.font = '900 62px "Fraunces","Georgia",serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('SHHH', 120, 106);
+    // the shush mark: lips with a finger across them
+    ctx.fillStyle = '#d9432c';
+    ctx.beginPath(); ctx.ellipse(250, 130, 34, 18, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = ink; ctx.lineWidth = 6; ctx.stroke();
+    ctx.fillStyle = '#f6eedc';
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(238, 40, 24, 100, 12); else ctx.rect(238, 40, 24, 100);
+    ctx.fill();
+    ctx.lineWidth = 6; ctx.stroke();
+    var tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+}
+
 export function buildExamMonster() {
     var g = new THREE.Group();
 
-    // ===== MAIN BODY: Large dark sphere =====
-    var bodyMat = new THREE.MeshStandardMaterial({
-        color: 0x1a0a2e,
-        roughness: 0.8,
-        emissive: 0x220044,
-        emissiveIntensity: 0.3
-    });
-    var body = new THREE.Mesh(
-        new THREE.SphereGeometry(1.2, 16, 16),
-        bodyMat
-    );
+    // ===== MAIN BODY: a big ink blot =====
+    var bodyMat = inkToon(PALETTE.ink);
+    var body = new THREE.Mesh(blotGeometry(1.2), bodyMat);
     body.name = 'monsterBody';
     g.add(body);
 
-    // Secondary body layer (slightly larger, translucent for aura)
+    // A pale second outline around the blot (a flat translucent shape, the old "aura"); the engine fades it in as danger grows
     var auraMat = new THREE.MeshBasicMaterial({
-        color: 0x330066,
+        color: PALETTE.ink,
         transparent: true,
-        opacity: 0.15
+        opacity: 0.15,
+        side: THREE.BackSide
     });
-    var aura = new THREE.Mesh(
-        new THREE.SphereGeometry(1.5, 12, 12),
-        auraMat
-    );
+    var aura = new THREE.Mesh(new THREE.SphereGeometry(1.42, 14, 12), auraMat);
     aura.name = 'monsterAura';
     g.add(aura);
 
-    // ===== EYES: Multiple glowing red eyes =====
-    var eyeMat = new THREE.MeshBasicMaterial({ color: 0xff2222 });
-    var eyeGlowMat = new THREE.MeshBasicMaterial({
-        color: 0xff0000,
-        transparent: true,
-        opacity: 0.4
-    });
+    // ===== EYES: flat cream paper eyes with ink pupils =====
+    var eyeMat = new THREE.MeshBasicMaterial({ color: PALETTE.card });
+    var pupilMat = new THREE.MeshBasicMaterial({ color: PALETTE.ink });
 
     var eyePositions = [
-        { x: -0.4, y: 0.5, z: -0.95, size: 0.12 },
-        { x: 0.4, y: 0.5, z: -0.95, size: 0.12 },
-        { x: -0.2, y: 0.7, z: -0.9, size: 0.08 },
-        { x: 0.2, y: 0.7, z: -0.9, size: 0.08 },
-        { x: -0.55, y: 0.3, z: -0.8, size: 0.07 },
-        { x: 0.55, y: 0.3, z: -0.8, size: 0.07 },
-        { x: 0, y: 0.85, z: -0.75, size: 0.06 },
-        { x: 0, y: 0.15, z: -1.05, size: 0.1 }
+        { x: -0.4, y: 0.5, z: -0.95, size: 0.16 },
+        { x: 0.4, y: 0.5, z: -0.95, size: 0.16 },
+        { x: -0.2, y: 0.76, z: -0.88, size: 0.09 },
+        { x: 0.2, y: 0.76, z: -0.88, size: 0.09 },
+        { x: -0.58, y: 0.26, z: -0.8, size: 0.08 },
+        { x: 0.58, y: 0.26, z: -0.8, size: 0.08 }
     ];
 
     var eyes = [];
     for (var ei = 0; ei < eyePositions.length; ei++) {
         var ep = eyePositions[ei];
-        var eye = new THREE.Mesh(
-            new THREE.SphereGeometry(ep.size, 8, 8),
-            eyeMat
-        );
+        var eye = new THREE.Mesh(new THREE.SphereGeometry(ep.size, 10, 8), eyeMat);
         eye.position.set(ep.x, ep.y, ep.z);
+        eye.scale.set(1, 1.15, 0.6);
         g.add(eye);
         eyes.push(eye);
-
-        // Eye glow
-        var eyeGlow = new THREE.Mesh(
-            new THREE.SphereGeometry(ep.size * 1.8, 6, 6),
-            eyeGlowMat.clone()
-        );
-        eyeGlow.position.set(ep.x, ep.y, ep.z);
-        g.add(eyeGlow);
+        var pupil = new THREE.Mesh(new THREE.SphereGeometry(ep.size * 0.5, 8, 6), pupilMat);
+        pupil.position.set(ep.x * 0.97, ep.y - ep.size * 0.1, ep.z - ep.size * 0.55);
+        g.add(pupil);
     }
 
-    // ===== MOUTH: Dark void with teeth =====
-    var mouthMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    // ===== MOUTH: a small round "shh" mouth =====
+    var mouthMat = new THREE.MeshBasicMaterial({ color: 0x0b1320 });
     var mouth = new THREE.Mesh(
-        new THREE.SphereGeometry(0.4, 10, 8, 0, Math.PI * 2, Math.PI * 0.3, Math.PI * 0.4),
+        new THREE.SphereGeometry(0.34, 12, 8, 0, Math.PI * 2, Math.PI * 0.3, Math.PI * 0.4),
         mouthMat
     );
     mouth.position.set(0, -0.3, -0.8);
@@ -127,47 +168,24 @@ export function buildExamMonster() {
     mouth.name = 'monsterMouth';
     g.add(mouth);
 
-    // Teeth (white triangles around the mouth)
-    var teethMat = new THREE.MeshBasicMaterial({ color: 0xeeeeee });
-    for (var ti = 0; ti < 8; ti++) {
-        var tooth = new THREE.Mesh(
-            new THREE.ConeGeometry(0.04, 0.12, 3),
-            teethMat
-        );
-        var tAngle = (ti / 8) * Math.PI * 1.5 - Math.PI * 0.75;
-        tooth.position.set(
-            Math.cos(tAngle) * 0.35,
-            -0.25 + Math.sin(tAngle) * 0.1,
-            -0.95
-        );
-        tooth.rotation.x = Math.PI;
-        if (ti > 3) tooth.rotation.x = 0;
-        g.add(tooth);
-    }
-
-    // ===== TENTACLES: Curved cylinders reaching forward =====
-    var tentacleMat = new THREE.MeshStandardMaterial({
-        color: 0x2a0a4e,
-        emissive: 0x110022,
-        emissiveIntensity: 0.2
-    });
+    // ===== DRIPS (the old tentacles): ink pseudopods with rounded ends =====
+    var tentacleMat = inkToon(0x24344f);
 
     var tentacles = [];
     var tentacleConfigs = [
-        { angle: 0, offsetY: -0.6, len: 1.8, radius: 0.08 },
-        { angle: Math.PI * 0.3, offsetY: -0.4, len: 1.5, radius: 0.06 },
-        { angle: -Math.PI * 0.3, offsetY: -0.4, len: 1.5, radius: 0.06 },
-        { angle: Math.PI * 0.6, offsetY: -0.2, len: 1.2, radius: 0.05 },
-        { angle: -Math.PI * 0.6, offsetY: -0.2, len: 1.2, radius: 0.05 },
-        { angle: Math.PI * 0.15, offsetY: 0.1, len: 1.6, radius: 0.07 },
-        { angle: -Math.PI * 0.15, offsetY: 0.1, len: 1.6, radius: 0.07 }
+        { angle: 0, offsetY: -0.6, len: 1.8, radius: 0.1 },
+        { angle: Math.PI * 0.3, offsetY: -0.4, len: 1.5, radius: 0.08 },
+        { angle: -Math.PI * 0.3, offsetY: -0.4, len: 1.5, radius: 0.08 },
+        { angle: Math.PI * 0.6, offsetY: -0.2, len: 1.2, radius: 0.07 },
+        { angle: -Math.PI * 0.6, offsetY: -0.2, len: 1.2, radius: 0.07 },
+        { angle: Math.PI * 0.15, offsetY: 0.1, len: 1.6, radius: 0.09 },
+        { angle: -Math.PI * 0.15, offsetY: 0.1, len: 1.6, radius: 0.09 }
     ];
 
     for (var tci = 0; tci < tentacleConfigs.length; tci++) {
         var tc = tentacleConfigs[tci];
         var tentGroup = new THREE.Group();
 
-        // Build tentacle from segments
         var segCount = 6;
         for (var seg = 0; seg < segCount; seg++) {
             var segRadius = tc.radius * (1 - seg / segCount * 0.6);
@@ -182,11 +200,8 @@ export function buildExamMonster() {
             tentGroup.add(tentSeg);
         }
 
-        // Tip sphere
-        var tip = new THREE.Mesh(
-            new THREE.SphereGeometry(tc.radius * 0.5, 6, 6),
-            new THREE.MeshBasicMaterial({ color: 0x6622aa })
-        );
+        // A round ink drop at the end
+        var tip = new THREE.Mesh(new THREE.SphereGeometry(tc.radius * 0.9, 8, 6), tentacleMat);
         tip.position.y = -tc.len;
         tentGroup.add(tip);
 
@@ -202,70 +217,40 @@ export function buildExamMonster() {
         tentacles.push(tentGroup);
     }
 
-    // ===== NIGHTCAP (a droopy, sleepy hat: the Hush puts words to sleep) =====
+    // ===== NIGHTCAP (a droopy, sleepy hat: the Hush puts words to sleep), now in stamp red and cream =====
     var capGroup = new THREE.Group();
-    var board = new THREE.Mesh(
-        new THREE.ConeGeometry(0.5, 1.0, 10),
-        new THREE.MeshStandardMaterial({ color: 0x2b2f5a })
-    );
+    var board = new THREE.Mesh(new THREE.ConeGeometry(0.5, 1.0, 10), newToon(PALETTE.red));
     board.position.y = 0.45;
     board.rotation.z = -0.25;
     capGroup.add(board);
 
-    var capBase = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.52, 0.55, 0.14, 10),
-        new THREE.MeshStandardMaterial({ color: 0x3a3f7a })
-    );
+    var capBase = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.55, 0.14, 10), newToon(PALETTE.card));
     capBase.position.y = -0.02;
     capGroup.add(capBase);
 
-    // Pom-pom at the tip
-    var tassel = new THREE.Mesh(
-        new THREE.SphereGeometry(0.1, 8, 8),
-        new THREE.MeshBasicMaterial({ color: 0xd8dcff })
-    );
+    var tassel = new THREE.Mesh(new THREE.SphereGeometry(0.11, 8, 8), newToon(PALETTE.card));
     tassel.position.set(-0.2, 0.98, 0);
     capGroup.add(tassel);
-    var tasselEnd = new THREE.Mesh(
-        new THREE.SphereGeometry(0.04, 6, 6),
-        new THREE.MeshBasicMaterial({ color: 0xffffff })
-    );
-    tasselEnd.position.set(-0.2, 1.08, 0);
-    capGroup.add(tasselEnd);
 
     capGroup.position.set(0, 1.3, 0);
     capGroup.rotation.z = 0.15;
     capGroup.rotation.x = -0.1;
     g.add(capGroup);
 
-    // ===== ORBITING QUESTION MARKS =====
+    // ===== ORBITING QUESTION MARKS (the words it has swallowed): ink-black glyphs =====
     var questionMarks = [];
-    var qmMat = new THREE.MeshBasicMaterial({ color: 0xff44aa });
+    var qmMat = new THREE.MeshBasicMaterial({ color: PALETTE.ink });
 
     for (var qi = 0; qi < 5; qi++) {
         var qmGroup = new THREE.Group();
 
-        // Question mark body (using a torus arc + sphere dot)
-        var qCurve = new THREE.Mesh(
-            new THREE.TorusGeometry(0.08, 0.025, 6, 10, Math.PI * 1.5),
-            qmMat
-        );
+        var qCurve = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.035, 6, 10, Math.PI * 1.5), qmMat);
         qmGroup.add(qCurve);
-
-        // Stem
-        var qStem = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.025, 0.025, 0.06, 4),
-            qmMat
-        );
-        qStem.position.set(0.08, -0.06, 0);
+        var qStem = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.07, 5), qmMat);
+        qStem.position.set(0.1, -0.07, 0);
         qmGroup.add(qStem);
-
-        // Dot
-        var qDot = new THREE.Mesh(
-            new THREE.SphereGeometry(0.03, 4, 4),
-            qmMat
-        );
-        qDot.position.set(0.08, -0.12, 0);
+        var qDot = new THREE.Mesh(new THREE.SphereGeometry(0.04, 5, 4), qmMat);
+        qDot.position.set(0.1, -0.15, 0);
         qmGroup.add(qDot);
 
         qmGroup.userData.orbitAngle = (qi / 5) * Math.PI * 2;
@@ -277,17 +262,10 @@ export function buildExamMonster() {
         questionMarks.push(qmGroup);
     }
 
-    // ===== PARTICLE EMITTERS (small glowing dots) =====
-    var particleMat = new THREE.MeshBasicMaterial({
-        color: 0x8822cc,
-        transparent: true,
-        opacity: 0.6
-    });
-    for (var pi = 0; pi < 12; pi++) {
-        var particle = new THREE.Mesh(
-            new THREE.SphereGeometry(0.03, 4, 4),
-            particleMat.clone()
-        );
+    // ===== INK SPECKS floating off the blot =====
+    var particleMat = new THREE.MeshBasicMaterial({ color: PALETTE.ink, transparent: true, opacity: 0.7 });
+    for (var pi = 0; pi < 10; pi++) {
+        var particle = new THREE.Mesh(new THREE.SphereGeometry(0.045, 5, 4), particleMat.clone());
         particle.position.set(
             (Math.random() - 0.5) * 3,
             (Math.random() - 0.5) * 3,
@@ -299,10 +277,9 @@ export function buildExamMonster() {
     }
 
     // ===== BACK VIEW (this is the side the player's camera sees) =====
-    // The monster faces the runner, so the camera looks at its back. Give
-    // that side real character: glowing spine ridge, a "SHHH" brand and
-    // clawed arms reaching past the body toward the player.
-    var ridgeMat = new THREE.MeshBasicMaterial({ color: 0xaa33ff });
+    // The monster faces the runner, so the camera looks at its back: a paper speech bubble full of silence, a drippy ridge
+    // of ink spikes and long ink arms with paper claws reaching past the body toward the player.
+    var ridgeMat = inkToon(0x24344f);
     var ridge = [];
     for (var ri = 0; ri < 7; ri++) {
         var spike = new THREE.Mesh(new THREE.ConeGeometry(0.11 - ri * 0.006, 0.55 - Math.abs(ri - 3) * 0.05, 5), ridgeMat);
@@ -313,34 +290,24 @@ export function buildExamMonster() {
         ridge.push(spike);
     }
 
-    var labelCanvas = document.createElement('canvas');
-    labelCanvas.width = 256;
-    labelCanvas.height = 96;
-    var lctx = labelCanvas.getContext('2d');
-    lctx.font = '900 72px Impact, "Arial Black", sans-serif';
-    lctx.textAlign = 'center';
-    lctx.textBaseline = 'middle';
-    lctx.lineWidth = 8;
-    lctx.strokeStyle = '#1a0033';
-    lctx.strokeText('SHHH', 128, 50);
-    lctx.fillStyle = '#ff3355';
-    lctx.fillText('SHHH', 128, 50);
+    var bubbleTex = paintBubble();
     var label = new THREE.Mesh(
-        new THREE.PlaneGeometry(1.5, 0.56),
-        new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(labelCanvas), transparent: true, depthWrite: false })
+        new THREE.PlaneGeometry(1.9, 1.52),
+        new THREE.MeshBasicMaterial({ map: bubbleTex, color: bubbleTex ? 0xffffff : PALETTE.card, transparent: true, depthWrite: false })
     );
-    label.position.set(0, 0.05, 1.23);
+    label.position.set(0, 0.1, 1.3);
     g.add(label);
 
+    // (the old pulsing ring): a thin ink ring behind the bubble that the engine pulses as the Hush closes in
     var backRing = new THREE.Mesh(
-        new THREE.TorusGeometry(0.95, 0.035, 6, 32),
-        new THREE.MeshBasicMaterial({ color: 0xff3366, transparent: true, opacity: 0.8 })
+        new THREE.TorusGeometry(1.05, 0.04, 6, 32),
+        new THREE.MeshBasicMaterial({ color: PALETTE.ink, transparent: true, opacity: 0.8 })
     );
-    backRing.position.set(0, 0.05, 1.1);
+    backRing.position.set(0, 0.05, 1.05);
     g.add(backRing);
 
-    var clawMat = new THREE.MeshStandardMaterial({ color: 0x2a0a4e, emissive: 0x330066, emissiveIntensity: 0.4 });
-    var boneMat = new THREE.MeshBasicMaterial({ color: 0xeeeeee });
+    var clawMat = inkToon(0x24344f);
+    var boneMat = newToon(PALETTE.card);
     for (var side = -1; side <= 1; side += 2) {
         var arm = new THREE.Group();
         var upper = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 1.3, 7), clawMat);

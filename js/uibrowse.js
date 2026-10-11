@@ -48,7 +48,7 @@ export var browseMethods = {
       var subjectSelect = createElement('select', {
         attributes: { id: 'cbSubjectFilter', 'aria-label': 'Filter by topic' }
       });
-      subjectSelect.style.cssText = 'padding:6px;border-radius:8px;background:rgba(30,15,70,0.6);color:#fff;border:1px solid rgba(187,102,255,0.15);font-size:11px';
+      subjectSelect.style.cssText = 'padding:6px;border-radius:8px;background:var(--field);color:var(--ink);border:2px solid var(--line);font-size:11px';
       subjectSelect.appendChild(createElement('option', { text: 'All Topics', attributes: { value: '' } }));
       SUBJECTS.forEach(function (s) {
         var opt = createElement('option', { text: s, attributes: { value: s } });
@@ -65,7 +65,7 @@ export var browseMethods = {
       var statusSelect = createElement('select', {
         attributes: { id: 'cbStatusFilter', 'aria-label': 'Filter by status' }
       });
-      statusSelect.style.cssText = 'padding:6px;border-radius:8px;background:rgba(30,15,70,0.6);color:#fff;border:1px solid rgba(187,102,255,0.15);font-size:11px';
+      statusSelect.style.cssText = 'padding:6px;border-radius:8px;background:var(--field);color:var(--ink);border:2px solid var(--line);font-size:11px';
       ['all', 'seen', 'unseen', 'disabled'].forEach(function (val) {
         var labels = { all: 'All Words', seen: 'Seen', unseen: 'Unseen', disabled: 'Disabled' };
         var opt = createElement('option', { text: labels[val], attributes: { value: val } });
@@ -278,7 +278,7 @@ export var browseMethods = {
       bulk.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin:6px 0';
       if (flashOnly.length) {
         var delFlash = createElement('button', { className: 'btn btn-outline btn-sm', text: '🗑 Delete imported flashcards (' + flashOnly.length + ')', attributes: { type: 'button' } });
-        delFlash.style.cssText = 'border-color:rgba(255,82,82,0.5);color:var(--accent-red)';
+        delFlash.style.cssText = 'border-color:var(--red);color:var(--accent-red)';
         delFlash.addEventListener('click', function () {
           if (!confirm('Delete all ' + flashOnly.length + ' flashcard-only words (the ones imported from Anki or a spreadsheet)? This cannot be undone.')) return;
           var n = customCards.removeWhere(function (c) { return Array.isArray(c.enabledModes) && c.enabledModes.length === 1 && c.enabledModes[0] === 'flashcard'; });
@@ -288,7 +288,7 @@ export var browseMethods = {
         bulk.appendChild(delFlash);
       }
       var delAll = createElement('button', { className: 'btn btn-outline btn-sm', text: '🗑 Delete all my words', attributes: { type: 'button' } });
-      delAll.style.cssText = 'border-color:rgba(255,82,82,0.5);color:var(--accent-red)';
+      delAll.style.cssText = 'border-color:var(--red);color:var(--accent-red)';
       delAll.addEventListener('click', function () {
         if (!confirm('Delete ALL ' + all.length + ' of your own words? This cannot be undone. (Save a backup first if unsure.)')) return;
         var n = customCards.removeWhere(function () { return true; });
@@ -338,7 +338,7 @@ export var browseMethods = {
       btnRow.appendChild(editBtn);
 
       var deleteBtn = createElement('button', { className: 'btn btn-outline btn-sm', text: '🗑️ Delete' });
-      deleteBtn.style.cssText = 'border-color:rgba(255,82,82,0.5);color:var(--accent-red)';
+      deleteBtn.style.cssText = 'border-color:var(--red);color:var(--accent-red)';
       deleteBtn.addEventListener('click', function () {
         if (confirm('Delete this word? This cannot be undone.')) {
           customCards.remove(card.id);

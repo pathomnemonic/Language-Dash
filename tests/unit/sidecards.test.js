@@ -30,7 +30,7 @@ describe('wide-screen side cards', () => {
     const text = document.getElementById('sideKeyList').textContent;
     expect(text.length).toBeGreaterThan(10);
     expect(document.getElementById('sideRun').getAttribute('aria-hidden')).toBe('true');
-    const css = readFileSync('css/arcade.css', 'utf8');
+    const css = readFileSync('css/run.css', 'utf8');
     expect(css).toMatch(/\.side-card \{ display: none; \}/);
   });
 });

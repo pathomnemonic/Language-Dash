@@ -72,7 +72,7 @@ function reportButton(ctx, kind, targetId) {
 
 function avatar(picture) {
   var pic = createElement('div');
-  pic.style.cssText = 'width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;flex:none;background:rgba(255,255,255,.08)';
+  pic.style.cssText = 'width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;flex:none;background:var(--paper-deep);border:2px solid var(--line)';
   fillProfilePicture(pic, picture);
   return pic;
 }
@@ -203,7 +203,7 @@ export function renderDiscoverTab(body, ctx) {
     var form = createElement('div');
     form.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px';
     var input = createElement('input', { attributes: { type: 'search', maxlength: '40', placeholder: 'Search group names', 'aria-label': 'Search groups', value: _query } });
-    input.style.cssText = 'flex:1;min-width:140px;padding:8px 10px;border-radius:10px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3)';
+    input.style.cssText = 'flex:1;min-width:140px;padding:8px 10px;border-radius:10px;background:var(--field);color:var(--ink);border:2px solid var(--line)';
     var exam = select([['', 'Any language']].concat(BUDDY_EXAMS.map(function (e) { return [e, e]; })), _examFilter);
     exam.setAttribute('aria-label', 'Language');
     var results = createElement('div');

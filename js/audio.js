@@ -61,6 +61,12 @@ const SCALES = {
   cBlues: [0, 3, 5, 6, 7, 10],
   cDorian: [0, 2, 3, 5, 7, 9, 10],
   cMixolydian: [0, 2, 4, 5, 7, 9, 10],
+  // travel scales (the Paper Passport sound): a koto-like Japanese pentatonic, its sister, Spanish/Mexican phrygian
+  // dominant, and a sunny lydian
+  hirajoshi: [0, 2, 3, 7, 8],
+  yo: [0, 2, 5, 7, 9],
+  phrygianDom: [0, 1, 4, 5, 7, 8, 10],
+  cLydian: [0, 2, 4, 6, 7, 9, 11],
   chromatic: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 };
 
@@ -79,17 +85,18 @@ function scaleNote(scale, baseNote, index) {
 export const SKIN_MUSIC = {
   // the menu track (it used to be the Neural Highway's tune): a mellow minor-key synth groove
   'Dx Dash Menu': {
-    bpm: 128, key: 48, scale: 'cMinorPentatonic',
-    bassPattern: [0, 0, -1, 0, 2, 2, -1, 3, 0, 0, -1, 2, 3, 3, -1, 0],
-    melodyPattern: [4, 5, 7, -1, 5, 4, -1, 7, 8, 7, 5, -1, 4, 5, -1, 7],
-    chordIntervals: [[0, 3, 7], [0, 3, 7], [2, 5, 9], [2, 5, 9]],
-    bassType: 'triangle', melodyType: 'sawtooth', padType: 'sine',
+    // a warm, unhurried travel tune: a marimba melody over a plucked bass in a sunny lydian mode (no chiptune, no minor key)
+    bpm: 104, key: 50, scale: 'cLydian',
+    bassPattern: [0, -1, -1, 0, 4, -1, -1, 4, 3, -1, -1, 3, 4, -1, 2, -1],
+    melodyPattern: [4, -1, 6, 7, -1, 9, 7, -1, 6, -1, 4, 2, -1, 4, 6, -1],
+    chordIntervals: [[0, 2, 4], [0, 2, 4], [3, 5, 7], [4, 6, 8]],
+    bassType: 'sine', melodyType: 'sine', padType: 'triangle',
     drumPattern: {
-      kick:  [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
-      snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+      kick:  [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+      snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1],
       hat:   [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0]
     },
-    filterFreq: 2000, filterQ: 2
+    filterFreq: 3200, filterQ: 0.8
   }
 };
 
@@ -116,7 +123,7 @@ SKIN_MUSIC['Vascular Rush'] = {
 };
 SKIN_MUSIC['Skeletal Corridor'] = {
   // spooky-fun ska: bouncy walking bass, off-beat stabs and a cheeky xylophone tune
-  bpm: 126, key: 48, scale: 'cDorian',
+  bpm: 126, key: 48, scale: 'phrygianDom',
   bassPattern: [0, -1, 2, -1, 3, -1, 2, -1, 4, -1, 3, -1, 2, -1, 0, -1],
   melodyPattern: [12, -1, 14, 15, -1, 14, 12, -1, 10, -1, 12, 14, -1, 12, 10, -1],
   chordIntervals: [[0, 3, 7], [0, 3, 7], [3, 7, 10], [-2, 2, 5]],
@@ -156,7 +163,7 @@ SKIN_MUSIC['DNA Helix Tunnel'] = {
 };
 SKIN_MUSIC['Prescription Sunset'] = {
   // beach bossa nova: a lazy offbeat bass, soft chords and a breezy melody
-  bpm: 100, key: 50, scale: 'cMajor',
+  bpm: 100, key: 50, scale: 'cLydian',
   bassPattern: [0, -1, -1, 4, 0, -1, -1, 4, 3, -1, -1, 5, 4, -1, -1, 2],
   melodyPattern: [11, -1, 9, -1, 12, -1, 11, 9, -1, 7, -1, 9, 11, -1, -1, -1],
   chordIntervals: [[0, 4, 7, 11], [-3, 0, 4, 7], [-4, 0, 3, 7], [-5, -1, 2, 5]],
@@ -313,7 +320,7 @@ SKIN_MUSIC['Pediatric Playland'] = {
 };
 SKIN_MUSIC['Sunshine Rehab Garden'] = {
   // a gentle morning stroll: lazy guitar-like plucks in a warm major key
-  bpm: 104, key: 53, scale: 'cMajor',
+  bpm: 104, key: 53, scale: 'yo',
   bassPattern: [0, -1, -1, 4, 0, -1, -1, 4, 3, -1, -1, 5, 4, -1, -1, 2],
   melodyPattern: [7, -1, 9, -1, 11, -1, 9, 7, 4, -1, 7, -1, 9, -1, -1, -1],
   chordIntervals: [[0, 4, 7], [-3, 0, 4], [-4, 0, 3], [-5, -1, 2]],
@@ -323,7 +330,7 @@ SKIN_MUSIC['Sunshine Rehab Garden'] = {
 };
 SKIN_MUSIC['Cafeteria Carnival'] = {
   // a fairground organ oompah: bouncy bass on the beat, bright square lead
-  bpm: 138, key: 55, scale: 'cMixolydian',
+  bpm: 138, key: 55, scale: 'hirajoshi',
   bassPattern: [0, -1, 4, -1, 0, -1, 4, -1, 5, -1, 3, -1, 4, -1, 2, -1],
   melodyPattern: [12, 11, 9, 7, 9, 11, 12, -1, 14, 12, 11, 9, 11, 12, -1, -1],
   chordIntervals: [[0, 4, 7], [0, 4, 7], [-2, 2, 5], [-2, 2, 5]],
@@ -592,48 +599,98 @@ class MusicGenerator {
     }
   }
 
+  /** A plucked upright / guitarrón-style bass: a round sine with a quick thumb of the string on top, no sustained buzz. */
   _playBass(freq, vol, t) {
     var ctx = this.ctx;
     var stepDur = (60 / this.config.bpm) / 4 / this.tempoMultiplier;
     var osc = ctx.createOscillator();
-    osc.type = this.config.bassType || 'triangle';
+    osc.type = 'sine';
     osc.frequency.setValueAtTime(freq, t);
     var gain = ctx.createGain();
-    gain.gain.setValueAtTime(vol * 0.12, t);
-    gain.gain.setValueAtTime(vol * 0.10, t + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + stepDur * 1.8);
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(vol * 0.16, t + 0.006);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + stepDur * 2.2);
     osc.connect(gain);
     gain.connect(this.outputGain);
     osc.start(t);
-    osc.stop(t + stepDur * 2);
+    osc.stop(t + stepDur * 2.4);
+    // the pluck: the octave above, gone almost at once
+    var tick = ctx.createOscillator();
+    tick.type = 'triangle';
+    tick.frequency.setValueAtTime(freq * 2, t);
+    var tickGain = ctx.createGain();
+    tickGain.gain.setValueAtTime(vol * 0.06, t);
+    tickGain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+    tick.connect(tickGain);
+    tickGain.connect(this.outputGain);
+    tick.start(t);
+    tick.stop(t + 0.09);
   }
 
+  /**
+   * The lead is always a plucked or struck instrument, chosen by the track's melodyType:
+   *   sine -> marimba (a bar with a bright fourth partial that dies at once)
+   *   triangle -> kalimba (a soft metal tine, a little octave ring)
+   *   square / sawtooth -> a plucked string (koto, oud): bright at the pluck, mellowing as it rings
+   */
   _playMelody(freq, vol, t) {
     var ctx = this.ctx;
     var stepDur = (60 / this.config.bpm) / 4 / this.tempoMultiplier;
-    var osc = ctx.createOscillator();
-    osc.type = this.config.melodyType || 'sawtooth';
-    osc.frequency.setValueAtTime(freq, t);
-    var osc2 = ctx.createOscillator();
-    osc2.type = this.config.melodyType || 'sawtooth';
-    osc2.frequency.setValueAtTime(freq * 1.003, t);
-    var gain = ctx.createGain();
-    gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(vol * 0.06, t + 0.01);
-    gain.gain.setValueAtTime(vol * 0.05, t + 0.03);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + stepDur * 1.2);
-    var gain2 = ctx.createGain();
-    gain2.gain.setValueAtTime(0, t);
-    gain2.gain.linearRampToValueAtTime(vol * 0.03, t + 0.01);
-    gain2.gain.exponentialRampToValueAtTime(0.001, t + stepDur * 1.2);
-    osc.connect(gain);
-    osc2.connect(gain2);
-    gain.connect(this.melodyFilter);
-    gain2.connect(this.melodyFilter);
-    osc.start(t);
-    osc.stop(t + stepDur * 1.5);
-    osc2.start(t);
-    osc2.stop(t + stepDur * 1.5);
+    var kind = this.config.melodyType || 'sine';
+    var body = ctx.createGain();
+    body.connect(this.melodyFilter);
+    var o1 = ctx.createOscillator();
+    var o2 = ctx.createOscillator();
+    var g2 = ctx.createGain();
+    var ring;
+    if (kind === 'sine') {
+      o1.type = 'sine'; o2.type = 'sine';
+      o1.frequency.setValueAtTime(freq, t);
+      o2.frequency.setValueAtTime(freq * 4, t);
+      ring = stepDur * 2.4;
+      body.gain.setValueAtTime(0, t);
+      body.gain.linearRampToValueAtTime(vol * 0.11, t + 0.003);
+      body.gain.exponentialRampToValueAtTime(0.001, t + ring);
+      g2.gain.setValueAtTime(vol * 0.05, t);
+      g2.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+    } else if (kind === 'triangle') {
+      o1.type = 'triangle'; o2.type = 'sine';
+      o1.frequency.setValueAtTime(freq, t);
+      o2.frequency.setValueAtTime(freq * 2.01, t);
+      ring = stepDur * 2.0;
+      body.gain.setValueAtTime(0, t);
+      body.gain.linearRampToValueAtTime(vol * 0.09, t + 0.004);
+      body.gain.exponentialRampToValueAtTime(0.001, t + ring);
+      g2.gain.setValueAtTime(vol * 0.035, t);
+      g2.gain.exponentialRampToValueAtTime(0.001, t + ring * 0.6);
+    } else {
+      // plucked string: a saw through a filter that closes as the note rings
+      o1.type = 'sawtooth'; o2.type = 'triangle';
+      o1.frequency.setValueAtTime(freq, t);
+      o2.frequency.setValueAtTime(freq * 1.004, t);
+      ring = stepDur * 2.2;
+      var pluck = ctx.createBiquadFilter();
+      pluck.type = 'lowpass';
+      pluck.frequency.setValueAtTime(3400, t);
+      pluck.frequency.exponentialRampToValueAtTime(700, t + 0.22);
+      pluck.connect(body);
+      body.gain.setValueAtTime(0, t);
+      body.gain.linearRampToValueAtTime(vol * 0.05, t + 0.003);
+      body.gain.exponentialRampToValueAtTime(0.001, t + ring);
+      g2.gain.setValueAtTime(vol * 0.03, t);
+      g2.gain.exponentialRampToValueAtTime(0.001, t + ring);
+      o1.connect(pluck);
+      o2.connect(g2);
+      g2.connect(body);
+      o1.start(t); o1.stop(t + ring + 0.05);
+      o2.start(t); o2.stop(t + ring + 0.05);
+      return;
+    }
+    o1.connect(body);
+    o2.connect(g2);
+    g2.connect(body);
+    o1.start(t); o1.stop(t + ring + 0.05);
+    o2.start(t); o2.stop(t + ring + 0.05);
   }
 
   _playPad(intervals, vol, t) {
@@ -644,13 +701,13 @@ class MusicGenerator {
       var noteMidi = scaleNote(this.scale, this.config.key, intervals[i]);
       var freq = midiToFreq(noteMidi);
       var osc = ctx.createOscillator();
-      osc.type = this.config.padType || 'sine';
+      osc.type = (this.config.padType === 'square' || this.config.padType === 'sawtooth') ? 'triangle' : (this.config.padType || 'sine'); // soft pad: no buzzing waves
       osc.frequency.setValueAtTime(freq, t);
       var detune = (i - intervals.length / 2) * 5;
       osc.detune.setValueAtTime(detune, t);
       var gain = ctx.createGain();
       gain.gain.setValueAtTime(0, t);
-      gain.gain.linearRampToValueAtTime(vol * 0.025, t + 0.1);
+      gain.gain.linearRampToValueAtTime(vol * 0.022, t + 0.16);
       gain.gain.setValueAtTime(vol * 0.02, t + chordDur * 0.6);
       gain.gain.exponentialRampToValueAtTime(0.001, t + chordDur * 0.95);
       osc.connect(gain);
@@ -683,16 +740,18 @@ class MusicGenerator {
     osc.stop(t + 0.2);
   }
 
+  /** The backbeat is a shaker with a wood-block click, not a snare. */
   _playSnare(vol, t) {
     var ctx = this.ctx;
     var noise = ctx.createBufferSource();
-    noise.buffer = getNoiseBuffer(ctx, 0.08);
+    noise.buffer = getNoiseBuffer(ctx, 0.09);
     var noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = 'highpass';
-    noiseFilter.frequency.value = 3000;
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.value = 5200;
     var noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(vol * 0.10, t);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+    noiseGain.gain.setValueAtTime(0.0001, t);
+    noiseGain.gain.linearRampToValueAtTime(vol * 0.07, t + 0.012);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
     noise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
     noiseGain.connect(this.outputGain);
@@ -701,15 +760,15 @@ class MusicGenerator {
 
     var osc = ctx.createOscillator();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(180, t);
-    osc.frequency.exponentialRampToValueAtTime(80, t + 0.04);
+    osc.frequency.setValueAtTime(980, t);
+    osc.frequency.exponentialRampToValueAtTime(720, t + 0.03);
     var oscGain = ctx.createGain();
-    oscGain.gain.setValueAtTime(vol * 0.08, t);
-    oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+    oscGain.gain.setValueAtTime(vol * 0.06, t);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
     osc.connect(oscGain);
     oscGain.connect(this.outputGain);
     osc.start(t);
-    osc.stop(t + 0.1);
+    osc.stop(t + 0.08);
   }
 
   /**

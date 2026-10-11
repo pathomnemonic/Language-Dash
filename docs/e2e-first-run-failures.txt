@@ -1,0 +1,27 @@
+  1) [chromium] › tests/e2e/a11y.spec.js:62:3 › Accessible names › the Locker tabs, Settings tabs and Versus 
+  10) [chromium] › tests/e2e/gameplay.spec.js:105:3 › Settings and screens › a Word Quiz can be completed 
+  11) [chromium] › tests/e2e/gameplay.spec.js:94:3 › Settings and screens › a flashcard session can be started and answered 
+  12) [chromium] › tests/e2e/gameplay.spec.js:143:3 › Without WebGL › the app still works and explains that the runner is unavailable 
+  13) [chromium] › tests/e2e/gameplay.spec.js:121:3 › Without WebGL › the notice does not push Filters, PLAY or Languages off the screen 
+  14) [chromium] › tests/e2e/importer.spec.js:8:1 › Anki export and an AI reply both end up as cards you can use 
+  15) [chromium] › tests/e2e/interruptions.spec.js:33:3 › Interruptions › sending the app to the background pauses the run, and nothing moves while it is away 
+  16) [chromium] › tests/e2e/interruptions.spec.js:66:3 › Interruptions › locking and unlocking the screen ten times in a row leaves the run intact 
+  17) [chromium] › tests/e2e/interruptions.spec.js:140:3 › Interruptions › the app being killed in the middle of a run (a reload) comes back to Home with the save intact 
+  18) [chromium] › tests/e2e/lanelock.spec.js:12:3 › Lane switching at the last moment › the scored gate is always the lane last asked for 
+  19) [chromium] › tests/e2e/personalization.spec.js:8:3 › Personalization › turning off a power-up marks runs as custom (not ranked) 
+  2) [chromium] › tests/e2e/autopilot.spec.js:14:1 › Auto-Pilot waits in hand, cannot be picked up twice, and answers the question when tapped 
+  20) [chromium] › tests/e2e/premium.spec.js:25:3 › premium Locker items › with a ready backend: a price, a confirming tap, then the payment page 
+  21) [chromium] › tests/e2e/premium.spec.js:45:3 › premium Locker items › a guest is asked to create an account, not left wondering 
+  22) [chromium] › tests/e2e/premium.spec.js:54:3 › premium Locker items › if the payment function turns out to be old, the failure is explained and the button goes back to Soon 
+  23) [chromium] › tests/e2e/pro.spec.js:14:3 › Language Dash Pro › with nothing to buy (no payment link) nothing is limited and nothing is shown 
+  24) [chromium] › tests/e2e/pro.spec.js:25:3 › Language Dash Pro › once something can be bought: 300 free cards, the unlock strip, the Pro row and the paywall 
+  25) [chromium] › tests/e2e/smoke.spec.js:25:3 › Smoke tests › settings are grouped into sections, each explained 
+  26) [chromium] › tests/e2e/tutorial.spec.js:68:3 › Interactive tutorial (on the real track) › asks for each move in turn and sends the obstacle or question only then 
+  27) [chromium] › tests/e2e/tutorial.spec.js:144:3 › Interactive tutorial (on the real track) › swipes on the track work 
+  3) [chromium] › tests/e2e/csp.spec.js:10:1 › the page has a policy, and the game runs under it without violations 
+  4) [chromium] › tests/e2e/deadcontrols.spec.js:48:5 › no dead controls › Stats: every control does something 
+  5) [chromium] › tests/e2e/fit.spec.js:114:3 › the question, answers and explanation stay above the player at 320x568 
+  6) [chromium] › tests/e2e/fit.spec.js:189:1 › opening a Locker tab does not change the size of the page 
+  7) [chromium] › tests/e2e/fit.spec.js:225:1 › a premium item's price is shown in the plain reading font, not the pixel one 
+  8) [chromium] › tests/e2e/fit.spec.js:283:1 › pinned badges on the profile always show their names 
+  9) [chromium] › tests/e2e/gameplay.spec.js:38:3 › Gameplay › pause shows the pause screen and Resume takes it away 

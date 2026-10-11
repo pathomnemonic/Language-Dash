@@ -7,7 +7,7 @@ import { enabledProviders, providerLabel, onlyAvailable } from './authproviders.
 import { track } from './analytics/index.js';
 import { createElement } from './dom.js';
 
-var INPUT_STYLE = 'width:100%;padding:9px 11px;border-radius:10px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3);margin-bottom:8px;font-size:14px';
+var INPUT_STYLE = 'width:100%;padding:9px 11px;border-radius:10px;background:var(--field);color:var(--ink);border:2px solid var(--line);margin-bottom:8px;font-size:14px';
 
 var _mode = 'signup'; // signup | signin | reset
 var _recovery = false;
@@ -343,9 +343,9 @@ function renderSignedIn(body, deps, status) {
 export function askWhichSave(localSummary, cloudSummary) {
   return new Promise(function (resolve) {
     var overlay = createElement('div', { attributes: { role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Choose which progress to keep' } });
-    overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(5,8,25,.85);display:flex;align-items:center;justify-content:center;padding:16px';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:16px';
     var card = createElement('div');
-    card.style.cssText = 'max-width:380px;width:100%;background:rgba(20,14,50,.98);border:2px solid var(--accent-cyan);border-radius:16px;padding:18px';
+    card.style.cssText = 'max-width:380px;width:100%;background:var(--card);color:var(--ink);border:2.5px solid var(--line);border-radius:10px;box-shadow:6px 6px 0 var(--line);padding:18px';
     card.appendChild(createElement('h3', { text: 'Which progress do you want?' }));
     var intro = createElement('p', { text: 'This device and your account both have progress. Pick one to keep. The other will be replaced.' });
     intro.style.cssText = 'font-size:12px;color:var(--text-secondary);margin:6px 0 12px';

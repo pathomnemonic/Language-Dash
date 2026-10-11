@@ -97,7 +97,7 @@ export function buildFeedbackForm(o) {
   area.className = 'feedback-text';
   area.setAttribute('aria-label', 'Your feedback');
   area.placeholder = 'What went wrong, or what would make it better?';
-  area.style.cssText = 'width:100%;box-sizing:border-box;padding:8px;border-radius:8px;background:rgba(20,10,50,.6);color:#fff;border:1px solid rgba(187,102,255,.25);font:inherit;font-size:13px;margin:6px 0';
+  area.style.cssText = 'width:100%;box-sizing:border-box;padding:8px;border-radius:8px;background:var(--field);color:var(--ink);border:2px solid var(--line);font:inherit;font-size:13px;margin:6px 0';
   box.appendChild(area);
   var contact = document.createElement('input');
   contact.type = 'text';
@@ -105,7 +105,7 @@ export function buildFeedbackForm(o) {
   contact.maxLength = 120;
   contact.setAttribute('aria-label', 'Your email, if you would like a reply (optional)');
   contact.placeholder = 'Your email, if you want a reply (optional)';
-  contact.style.cssText = 'width:100%;box-sizing:border-box;padding:8px;border-radius:8px;background:rgba(20,10,50,.6);color:#fff;border:1px solid rgba(187,102,255,.25);font:inherit;font-size:13px;margin-bottom:6px';
+  contact.style.cssText = 'width:100%;box-sizing:border-box;padding:8px;border-radius:8px;background:var(--field);color:var(--ink);border:2px solid var(--line);font:inherit;font-size:13px;margin-bottom:6px';
   box.appendChild(contact);
   var row = document.createElement('div');
   row.className = 'prompt-row';

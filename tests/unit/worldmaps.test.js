@@ -98,7 +98,7 @@ describe('the bright maps', () => {
 
       it('builds fixtures, a ground and a whole track within the draw-call and triangle budget', () => {
         expect(buildWorldArch(skin, -44).children.length).toBeGreaterThan(3);
-        expect(buildWorldGround(skin).children.length).toBeGreaterThan(1);
+        expect(buildWorldGround(skin).children.length).toBeGreaterThanOrEqual(1); // (the lane paint is the platform markings in track.js now)
         const root = new THREE.Scene();
         const refs = buildTrack(root, skin, { quality: 'medium' });
         const { calls, tris } = countCalls(root);

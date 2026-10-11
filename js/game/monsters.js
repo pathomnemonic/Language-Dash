@@ -15,6 +15,12 @@ import { buildExamMonster, getMonsterParts } from './exammonster.js';
 import { getMonsterModel, modelUrl } from './modelcatalog.js';
 import { useCharacterModels } from './quality.js';
 import { buildModelMonster, loadCharacterModel } from './charactermodel.js';
+import { paperizeMaterials } from './paper.js';
+
+function printed(group) {
+  paperizeMaterials(group, { keepBasic: false });
+  return group;
+}
 
 var STYLES = {
   monster_classic: { name: 'The Hush', builder: 'classic' },
@@ -308,10 +314,11 @@ export function buildMonster(id) {
       console.warn('[Monsters] Could not load monster model:', e && e.message);
     });
   }
+  // The other Hush relatives are moved onto the paper palette (no glow, no violet); the classic Hush is drawn that way already
   switch (id) {
-    case 'monster_wraith': return buildWraith();
-    case 'monster_golem': return buildGolem();
-    case 'monster_kraken': return buildKraken();
+    case 'monster_wraith': return printed(buildWraith());
+    case 'monster_golem': return printed(buildGolem());
+    case 'monster_kraken': return printed(buildKraken());
     default: {
       var classic = buildExamMonster();
       classic.userData.monsterParts = getMonsterParts(classic);

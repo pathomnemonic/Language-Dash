@@ -8,30 +8,77 @@
 import * as THREE from 'three';
 import { storage } from '../storage.js';
 import { buildTrack, updateRunningLights, updateAtmosphericParticles, updateScrollLines, updateScrollers, updateWallScrollPanels, updateWallMarkers, updateSkyboxElements } from './track.js';
-import { softDotTexture } from './materials.js';
+import { PALETTE, paperize } from './paper.js';
 import { getQuality, isLowQuality, useSceneryModels, DENSITY_LEVELS } from './quality.js';
 import { buildSideScenery, animateSideScenery } from './scenery.js';
 import { updateAnimators, setSceneryDensity } from './mapfx.js';
 import { trackGlow } from './combo.js';
 import { secretFor, buildSecret, planSecretTime, isTapOnSecret, secretReward } from './secrets.js';
 
+// ===== PAPER PIECES =====
+// Confetti chips, stamp dots and airmail envelopes share geometry and materials, so a burst costs nothing to build.
+
+var _paperKit = null;
+
+function envelopeTexture() {
+  if (typeof document === 'undefined') return null;
+  var canvas = document.createElement('canvas');
+  canvas.width = 64; canvas.height = 44;
+  var ctx = canvas.getContext && canvas.getContext('2d');
+  if (!ctx) return null;
+  ctx.fillStyle = '#fffbf2'; ctx.fillRect(0, 0, 64, 44);
+  // airmail border: red and blue dashes
+  for (var x = 0; x < 64; x += 8) { ctx.fillStyle = (x / 8) % 2 ? '#5da9d6' : '#d9432c'; ctx.fillRect(x, 0, 6, 5); ctx.fillRect(x, 39, 6, 5); }
+  ctx.strokeStyle = '#1b2a41'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(4, 8); ctx.lineTo(32, 26); ctx.lineTo(60, 8); ctx.stroke();
+  ctx.strokeRect(1, 1, 62, 42);
+  var tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function paperKit() {
+  if (_paperKit) return _paperKit;
+  var mats = {};
+  var tex = envelopeTexture();
+  _paperKit = {
+    colors: [PALETTE.red, PALETTE.marigold, PALETTE.teal, PALETTE.sky, PALETTE.card, PALETTE.leaf],
+    chip: new THREE.PlaneGeometry(0.2, 0.12),
+    dot: new THREE.CircleGeometry(0.07, 10),
+    env: new THREE.PlaneGeometry(0.3, 0.2),
+    envMat: new THREE.MeshBasicMaterial({ map: tex, color: tex ? 0xffffff : PALETTE.card, side: THREE.DoubleSide }),
+    matFor: function (hex) { return mats[hex] || (mats[hex] = new THREE.MeshBasicMaterial({ color: hex, side: THREE.DoubleSide })); }
+  };
+  return _paperKit;
+}
+
 export var visualMethods = {
 
-  /** A short burst of glowing sparks at a pickup. */
+  /** A short pop of paper confetti, round stamp dots and tiny airmail envelopes at a pickup (no glow). */
   _spawnSparks(position, color) {
     if (isLowQuality() || storage.get('reducedMotion')) return;
-    var tex = softDotTexture();
     if (!this._sparks) this._sparks = [];
-    for (var i = 0; i < 10; i++) {
-      var mat = new THREE.SpriteMaterial({ map: tex, color: color, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending });
-      var sprite = new THREE.Sprite(mat);
-      sprite.scale.setScalar(0.28);
-      sprite.position.copy(position);
+    this._popPaper(position, color, 10, 1);
+  },
+
+  /** `count` paper pieces flying out of `position`; `color` tints some of them, the rest are stamp colours. */
+  _popPaper(position, color, count, power) {
+    if (!this._sparks) this._sparks = [];
+    var kit = paperKit();
+    var tint = color === undefined ? null : paperize(color);
+    for (var i = 0; i < count; i++) {
+      var roll = Math.random();
+      var kind = roll < 0.18 ? 'env' : roll < 0.4 ? 'dot' : 'chip';
+      var colorHex = tint !== null && Math.random() < 0.45 ? tint : kit.colors[Math.floor(Math.random() * kit.colors.length)];
+      var mesh = new THREE.Mesh(kind === 'dot' ? kit.dot : kind === 'env' ? kit.env : kit.chip, kind === 'env' ? kit.envMat : kit.matFor(colorHex));
+      mesh.position.copy(position);
       var a = Math.random() * Math.PI * 2;
-      var sp = 1.6 + Math.random() * 1.8;
-      sprite.userData = { vx: Math.cos(a) * sp, vy: 1 + Math.random() * 2, vz: Math.sin(a) * sp * 0.5, life: 0.55 };
-      this.scene.add(sprite);
-      this._sparks.push(sprite);
+      var sp = (1.6 + Math.random() * 1.8) * (power || 1);
+      mesh.rotation.set(Math.random() * 3, Math.random() * 3, Math.random() * 3);
+      mesh.scale.setScalar(kind === 'env' ? 1.15 : 0.8 + Math.random() * 0.6);
+      mesh.userData = { vx: Math.cos(a) * sp, vy: 1 + Math.random() * 2.2, vz: Math.sin(a) * sp * 0.5, life: 0.75, life0: 0.75, sx: (Math.random() - 0.5) * 12, sy: (Math.random() - 0.5) * 12, base: mesh.scale.x };
+      this.scene.add(mesh);
+      this._sparks.push(mesh);
     }
   },
 
@@ -42,8 +89,7 @@ export var visualMethods = {
       var u = s.userData;
       u.life -= dt;
       if (u.life <= 0) {
-        this.scene.remove(s);
-        s.material.dispose();
+        this.scene.remove(s); // (geometry and materials are shared by every piece)
         this._sparks.splice(i, 1);
         continue;
       }
@@ -51,7 +97,9 @@ export var visualMethods = {
       s.position.x += u.vx * dt;
       s.position.y += u.vy * dt;
       s.position.z += u.vz * dt + move;
-      s.material.opacity = Math.max(0, u.life / 0.55);
+      s.rotation.x += u.sx * dt;
+      s.rotation.y += u.sy * dt;
+      s.scale.setScalar(u.base * Math.min(1, u.life / 0.25)); // paper does not fade: it shrinks away at the end
     }
   },
 
@@ -194,8 +242,8 @@ export var visualMethods = {
         var lineLen = 2 + Math.random() * 4;
         var lineOpacity = 0.15 + (speedRatio - 1) * 0.1;
         if (this.rushing) lineOpacity = 0.3 + this.rushStacks * 0.1;
-        var lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: Math.min(lineOpacity, 0.6) });
-        var speedLine = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, lineLen), lineMat);
+        var lineMat = new THREE.MeshBasicMaterial({ color: PALETTE.ink, transparent: true, opacity: Math.min(lineOpacity * 1.3, 0.55), fog: false }); // ink speed lines, not neon
+        var speedLine = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.035, lineLen), lineMat);
         speedLine.position.set((Math.random() - 0.5) * 12, Math.random() * 6, -30 - Math.random() * 20);
         this.scene.add(speedLine);
         this.speedLines.push(speedLine);
@@ -216,42 +264,8 @@ export var visualMethods = {
   },
 
   _spawnGateParticles(position, color, count) {
-    var scene = this.scene;
-    for (var i = 0; i < count; i++) {
-      var particle = new THREE.Mesh(
-        new THREE.SphereGeometry(0.06, 4, 4),
-        new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.8 })
-      );
-      particle.position.set(position.x, position.y, position.z);
-      var pAngle = (i / count) * Math.PI * 2;
-      var pSpeed = 2 + Math.random() * 2;
-      var vx = Math.cos(pAngle) * pSpeed;
-      var vy = 1 + Math.random() * 2;
-      var vz = Math.sin(pAngle) * pSpeed;
-      scene.add(particle);
-
-      (function (p, velX, velY, velZ, sc) {
-        var startTime = Date.now();
-        function animateParticle() {
-          var elapsed = (Date.now() - startTime) / 1000;
-          if (elapsed > 0.4) {
-            sc.remove(p);
-            p.geometry.dispose();
-            p.material.dispose();
-            return;
-          }
-          p.position.x += velX * 0.016;
-          p.position.y += velY * 0.016;
-          p.position.z += velZ * 0.016;
-          velY -= 6 * 0.016;
-          p.material.opacity = (1 - elapsed / 0.4) * 0.8;
-          var s = (1 - elapsed / 0.4) * 0.8 + 0.2;
-          p.scale.set(s, s, s);
-          requestAnimationFrame(animateParticle);
-        }
-        animateParticle();
-      })(particle, vx, vy, vz, scene);
-    }
+    if (storage.get('reducedMotion')) return;
+    this._popPaper(position, color, Math.max(count, 14), 1.25);
   },
 
   _updateMapTransition(dt) {
@@ -271,8 +285,6 @@ export var visualMethods = {
     if (gateway) {
       gateway.position.z = -80 + this.transitionProgress * 86;
       gateway.rotation.z = Math.sin(this.transitionTimer * 1.5) * 0.02;
-      var glow = 0.8 + 0.2 * Math.sin(this.transitionTimer * 6);
-      gateway.userData.mats.forEach(function (m) { m.opacity = glow; });
     }
     var flash = typeof document !== 'undefined' ? document.getElementById('mapFlash') : null;
     if (flash) {
@@ -302,26 +314,31 @@ export var visualMethods = {
     }
   },
 
-  /** A glowing doorway in the next map's colours, built ahead of the runner. */
+  /** A station arch to the next map: cream pillars with an ink outline, and a pale wash of the next map's colour in the doorway. */
   _buildMapGateway(skin) {
     this._removeMapGateway();
-    var hex = skin.colors.archGlow || skin.colors.wallGlow || 0xffffff;
+    var hex = paperize(skin.colors.archGlow || skin.colors.wallGlow || 0xffffff);
     var group = new THREE.Group();
     var mats = [];
-    function mat() {
-      var m = new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: 0.8, fog: false });
+    function mat(color, o) {
+      var m = new THREE.MeshBasicMaterial(Object.assign({ color: color, transparent: true, opacity: 1, fog: false }, o || {}));
       mats.push(m);
       return m;
     }
-    var ring = new THREE.Mesh(new THREE.TorusGeometry(5.2, 0.8, 10, 40, Math.PI), mat());
-    ring.position.set(0, 0, 0);
+    var inkRing = new THREE.Mesh(new THREE.TorusGeometry(5.2, 1.0, 10, 40, Math.PI), mat(PALETTE.ink));
+    inkRing.position.set(0, 0, -0.2);
+    group.add(inkRing);
+    var ring = new THREE.Mesh(new THREE.TorusGeometry(5.2, 0.8, 10, 40, Math.PI), mat(PALETTE.card));
     group.add(ring);
     [-5.2, 5.2].forEach(function (x) {
-      var pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 5.2, 10), mat());
+      var outline = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 5.2, 10), mat(PALETTE.ink));
+      outline.position.set(x, -2.6, -0.2);
+      group.add(outline);
+      var pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 5.2, 10), mat(PALETTE.card));
       pillar.position.set(x, -2.6, 0);
       group.add(pillar);
     });
-    var veil = new THREE.Mesh(new THREE.PlaneGeometry(10.4, 5.2), new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: 0.3, side: THREE.DoubleSide, fog: false, depthWrite: false }));
+    var veil = new THREE.Mesh(new THREE.PlaneGeometry(10.4, 5.2), mat(hex, { opacity: 0.28, side: THREE.DoubleSide, depthWrite: false }));
     veil.position.set(0, -0.0, 0);
     group.add(veil);
     group.position.set(0, 2.6, -80);

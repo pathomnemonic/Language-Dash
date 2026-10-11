@@ -1,0 +1,214 @@
+/* ==================================================================
+   extras.css  -  scripts that are tall, wide or right-to-left; the dyslexia font;
+   short screens (every tab page fits without scrolling on a small phone);
+   big screens; comfortable tap targets.
+   ================================================================== */
+
+/* ---------- other scripts: the hint (#buzzText) and the gate words (#ansText0-2) carry lang= and dir= (see ui.js) ----------
+   Tall scripts get more line height so stacked marks are not clipped, capitals are off where they do not exist, long words wrap
+   instead of overflowing their gate, and each script has a system font stack to fall back on (no web fonts needed). */
+:root {
+  --font-ja: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", system-ui, sans-serif;
+  --font-zh: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", "Source Han Sans SC", system-ui, sans-serif;
+  --font-ko: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+  --font-hi: "Noto Sans Devanagari", "Kohinoor Devanagari", "Mangal", "Nirmala UI", system-ui, sans-serif;
+  --font-ar: "Noto Naskh Arabic", "Noto Sans Arabic", "Geeza Pro", "Segoe UI", "Tahoma", system-ui, sans-serif;
+  --font-ru: "DM Sans", system-ui, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+}
+[lang="ja"] { font-family: var(--font-ja); }
+[lang="zh"] { font-family: var(--font-zh); }
+[lang="ko"] { font-family: var(--font-ko); }
+[lang="hi"] { font-family: var(--font-hi); }
+[lang="ar"] { font-family: var(--font-ar); }
+[lang="ru"] { font-family: var(--font-ru); }
+#buzzText[lang], #answerRow [lang] { overflow-wrap: anywhere; min-width: 0; }
+#buzzText[lang="ja"], #buzzText[lang="zh"], #buzzText[lang="ko"], #buzzText[lang="ar"], #buzzText[lang="hi"], #buzzText[lang="ru"] { text-transform: none; line-height: 1.5; letter-spacing: 0; }
+#answerRow [lang="ja"], #answerRow [lang="zh"], #answerRow [lang="ko"], #answerRow [lang="ar"], #answerRow [lang="hi"], #answerRow [lang="ru"] { display: block; line-height: 1.45; letter-spacing: 0; padding-block: 1px; }
+#buzzText[lang="ja"], #buzzText[lang="zh"], #buzzText[lang="ko"], #buzzText[lang="ar"], #buzzText[lang="hi"],
+#answerRow [lang="ja"], #answerRow [lang="zh"], #answerRow [lang="ko"], #answerRow [lang="ar"], #answerRow [lang="hi"] { font-weight: 800; }
+#buzzText[lang="ar"], #answerRow [lang="ar"] { font-weight: 700; }
+.answer-choice { overflow: hidden; min-width: 0; }
+#buzzText[dir="rtl"], #answerRow [dir="rtl"] { direction: rtl; unicode-bidi: isolate; text-align: center; }
+.ans-roman { direction: ltr; unicode-bidi: isolate; text-transform: none; line-height: 1.25; font-family: var(--font-ui); font-style: italic; }
+.answer-choice .lane-label { direction: ltr; unicode-bidi: isolate; }
+#feedbackEl .fb-roman, .fb-roman { direction: ltr; unicode-bidi: isolate; text-transform: none; }
+
+/* ---------- dyslexia-friendly font, left-handed layout (also in run.css) ---------- */
+body.dyslexia, body.dyslexia :where(button, input, select, textarea) {
+  --font-display: "OpenDyslexic", "Comic Sans MS", sans-serif;
+  --font-ui: "OpenDyslexic", "Comic Sans MS", sans-serif;
+  --font-read: "OpenDyslexic", "Comic Sans MS", sans-serif;
+  font-family: "OpenDyslexic", "Comic Sans MS", sans-serif;
+  letter-spacing: 0.03em;
+  word-spacing: 0.08em;
+}
+body.dyslexia { line-height: 1.55; }
+body.dyslexia h1, body.dyslexia h2, body.dyslexia h3, body.dyslexia h4 { font-family: "OpenDyslexic", "Comic Sans MS", sans-serif; }
+/* the font is wide: the tight HUD and buttons get a touch smaller so nothing overflows */
+body.dyslexia #hud .hud-pill { font-size: 12px; }
+body.dyslexia .btn { letter-spacing: 0.01em; }
+body.dyslexia .home-header h1 { font-family: "OpenDyslexic", "Comic Sans MS", sans-serif; letter-spacing: -0.04em; }
+body.dyslexia #buzzText, body.dyslexia #teachEl, body.dyslexia #cbResults, body.dyslexia #flashcardContent, body.dyslexia #examContent, body.dyslexia #reviewOverlay,
+body.dyslexia #reviewFullList, body.dyslexia #quickReviewOverlay, body.dyslexia .report-card, body.dyslexia .story-long { font-family: "OpenDyslexic", "Comic Sans MS", sans-serif; }
+
+/* ---------- comfortable tap targets (about 44px, what the store guidelines ask for) ---------- */
+.btn, .btn-sm, .top-btn, .collapsible-toggle, .perf-summary, .profile-fold-sum, .home-profile-btn, .back-btn, .sheet-entry { min-height: 44px; }
+.btn, .btn-sm, .top-btn, .collapsible-toggle { min-width: 44px; }
+.btn-sm { min-height: 40px; }
+#howToPlayBtn.link-btn { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+#cbSubjectFilter, #cbStatusFilter, #cbSearch { min-height: 44px; }
+.shop-item .btn, .shop-item .btn-sm { min-height: 40px; min-width: 40px; }
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea { font-size: 16px !important; }
+}
+@media (pointer: coarse), (max-width: 600px) {
+  .setting-row select { min-height: 44px; font-size: 15px; }
+  input[type="range"] { min-height: 32px; touch-action: pan-y; }
+  .setting-row a, .legal-links a { display: inline-block; padding: 12px 6px; }
+  #screenShop .btn-sm { min-width: 44px; min-height: 44px; }
+}
+.quest-item .btn, .quest-item .btn-sm { min-height: 32px; }
+.review-flag { overflow: visible; }
+.quest-swap { min-width: 30px; }
+
+/* ---------- short phones: the one-page screens tighten up so they fit without scrolling ---------- */
+@media (max-height: 800px) {
+  #screenStats .perf-hero { padding: 8px 10px 9px; margin-bottom: 8px; }
+  #screenStats .perf-goal-line { margin: 4px 0 3px; font-size: 12px; }
+  #screenStats .perf-bar-big { height: 11px; }
+  #screenStats .perf-next-label { margin-top: 5px; font-size: 9px; }
+  #screenStats .perf-next-title { font-size: 16px; margin: 0 0 5px; }
+  #screenStats .perf-step-buttons .btn { padding-top: 6px; padding-bottom: 6px; min-height: 40px; }
+  #screenStats .perf-more { margin-top: 2px; }
+  #screenStats .perf-more > summary { padding: 2px 0; }
+  #screenStats .perf-tiles { gap: 6px; margin-bottom: 8px; }
+  #screenStats .perf-tile { padding: 3px 4px 4px; }
+  #screenStats .perf-tile-icon { font-size: 12px; }
+  #screenStats .perf-tile-value { font-size: 17px; }
+  #screenStats .perf-section { margin-bottom: 6px; }
+  #screenStats .perf-summary { padding: 3px 12px; min-height: 40px; }
+}
+@media (max-height: 700px) {
+  #screenShop .screen-scroll > .muted { margin: 2px 0; font-size: 11px; }
+  .hero-card { margin: 6px 0 2px; padding: 7px 10px; }
+  #characterPreviewContainer { height: 170px; }
+  #questList .quest-item { padding: 4px 10px; margin: 3px 0; }
+  #questList .quest-title { font-size: 11px; line-height: 1.2; }
+  #questList .quest-bar { height: 8px; margin: 2px 0 1px; }
+  #questList .quest-reward { font-size: 10px; }
+  #screenQuests h2 { font-size: 22px; margin-bottom: 8px; padding-bottom: 6px; }
+  #screenQuests .quest-intro { margin: 2px 0 4px; font-size: 11px; }
+  #screenProfile .screen-scroll { padding-top: 8px; }
+  #screenProfile h2 { font-size: 22px; margin-bottom: 6px; padding-bottom: 6px; }
+  .profile-top .profile-avatar { width: 52px; height: 52px; font-size: 24px; }
+  .profile-stats-grid { margin: 6px 0; }
+  .profile-stat { padding: 3px 2px; }
+  .profile-actions { margin: 4px 0 8px; }
+  .profile-fold-sum { min-height: 44px; padding-top: 3px; padding-bottom: 3px; }
+  .profile-fold { margin-bottom: 6px; }
+  .mp-panel { padding: 12px; margin: 4px 0; }
+  .rk-card { padding: 8px; margin-bottom: 6px; }
+  .rk-badge { width: 48px; height: 48px; font-size: 26px; }
+  .rk-rules-next { display: none; }
+  .continue-box, .quick-review-card { padding: 12px; }
+  .dr-card, .rk-result-card { padding: 12px 10px; }
+  .dr-title { font-size: 26px; }
+  .bonus-detail { font-size: 10.5px; }
+  .quest-intro { margin: 2px 0 4px; }
+  .perf-summary { padding: 4px 12px; }
+}
+@media (max-height: 660px) {
+  #characterPreviewContainer { height: 150px; }
+  .profile-fold-sum { min-height: 44px; }
+}
+@media (max-height: 640px) {
+  #screenStats .screen-scroll { padding-top: 6px; }
+  #screenStats .perf-hero { padding: 6px 10px 7px; margin-bottom: 6px; }
+  #screenStats .perf-hero-label, #screenStats .perf-next-label { display: none; }
+  #screenStats .perf-next-title { font-size: 15px; margin: 4px 0 5px; }
+  #screenStats .perf-step-buttons .btn { min-height: 36px; padding-top: 4px; padding-bottom: 4px; font-size: 12px; }
+  #screenStats .perf-tile-icon { display: none; }
+  #screenStats .perf-tiles { margin-bottom: 6px; }
+  #screenStats .perf-section { margin-bottom: 4px; }
+  #screenStats .perf-summary { min-height: 44px; padding-top: 2px; padding-bottom: 2px; }
+  .quest-intro { display: none; }
+  #screenQuests h2 { font-size: 18px; margin: 0 0 6px; }
+  #questList .quest-item { padding: 2px 8px; margin: 2px 0; }
+  .quest-title { font-size: 11px; line-height: 1.15; }
+  .quest-reward { font-size: 10.5px; }
+  .bonus-detail { font-size: 10px; line-height: 1.2; }
+  .showcase-badge { min-height: 30px; padding: 2px 8px 2px 5px; font-size: 10px; gap: 4px; }
+  .showcase-icon { font-size: 15px; }
+  .profile-fold { margin-bottom: 5px; }
+  .profile-stat { padding: 3px 2px; }
+  .profile-stats-grid { gap: 4px; margin: 5px 0; }
+  .profile-top .profile-name-input { min-height: 40px; font-size: 16px; }
+  .profile-top .profile-avatar { width: 48px; height: 48px; font-size: 22px; }
+  #screenProfile h2 { font-size: 20px; }
+  .post-review-open { min-height: 78px; }
+  .post-review-open .post-review-count { font-size: 30px !important; }
+  .tutorial-coach.docked .tut-text { display: none; }
+}
+@media (max-height: 600px) {
+  #screenProfile h2 { margin: 0 0 4px; padding-bottom: 4px; font-size: 18px; }
+  .profile-fold { margin-bottom: 4px; }
+  .profile-stats-grid { margin: 3px 0; }
+  #characterPreviewContainer { height: 136px; }
+  #screenShop h2 { font-size: 22px; }
+  #screenProfile .screen-scroll { padding-top: 4px; }
+  .profile-header { padding: 2px 0; }
+  .profile-pic-box > summary { min-height: 40px; }
+  .profile-actions { margin: 2px 0 6px; }
+  #screenQuests h2 { font-size: 16px; margin: 0 0 4px; }
+  #questList .quest-bar { height: 6px; margin: 1px 0; }
+  .quest-item .btn, .quest-item .btn-sm { min-height: 28px; }
+  #questList .quest-item .quest-swap { width: 28px; height: 28px; }
+}
+@media (max-height: 760px) {
+  .sheet-card { padding: 10px 10px 8px; }
+  .sheet-card::before { margin: -10px -10px 8px; }
+  .sheet-card h2 { font-size: 20px; margin-bottom: 2px; }
+  .sheet-intro { display: none; }
+  .sheet-list { gap: 6px; margin-bottom: 6px; }
+  .se-icon { font-size: 20px; width: 44px; }
+  .se-body { gap: 1px; padding: 6px 10px; }
+  .se-body strong { font-size: 14px; }
+  .se-body span { font-size: 11px; line-height: 1.25; }
+  .se-body em { font-size: 9px; }
+}
+@media (max-height: 860px) {
+  .se-body em { display: none; }
+  .se-body span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+}
+@media (max-height: 580px) {
+  .se-body span { -webkit-line-clamp: 1; }
+  .sheet-list { gap: 4px; }
+  .sheet-card h2 { font-size: 17px; }
+}
+@media (max-height: 460px) {
+  .dr-card { max-height: 100%; overflow-y: auto; }
+}
+@media (max-height: 640px) {
+  .sheet-card .perf-note { display: none; }
+}
+@media (max-width: 400px) {
+  .locker-tabs .locker-tab { font-size: 10px; }
+}
+@media (max-width: 260px) {
+  .locker-tabs { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- big screens: wider menus ---------- */
+@media (min-width: 768px) {
+  .screen-scroll { max-width: 640px; }
+  #characterPreviewContainer { height: 260px; }
+  .profile-stats-grid { grid-template-columns: repeat(4, 1fr); }
+  .card-browser-item { padding: 14px; }
+  .mp-mode-grid { flex-direction: row; }
+  .mp-mode-card { flex: 1; }
+  .fc-answer { font-size: 26px; }
+}
+@media (min-width: 1000px) and (min-height: 600px) {
+  .screen-scroll { max-width: 840px; }
+  #screenHome .screen-scroll { max-width: 700px; }
+}

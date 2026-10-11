@@ -117,8 +117,8 @@ export function initNative(handlers) {
       if (launch && launch.url) handlers.onDeepLink(launch.url);
     }).catch(function () {});
 
-    StatusBar.setStyle({ style: Style.Dark }).catch(function () {});
-    StatusBar.setBackgroundColor({ color: '#0b1020' }).catch(function () {});
+    StatusBar.setStyle({ style: Style.Light }).catch(function () {}); // dark icons on the paper-colored bar
+    StatusBar.setBackgroundColor({ color: '#F6EEDC' }).catch(function () {});
     return SplashScreen.hide().catch(function () {});
   }).then(function () { return true; }).catch(function () { return false; });
 }

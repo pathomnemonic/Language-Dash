@@ -1,18 +1,19 @@
 /**
- * postfx.js — optional bloom post-processing for the runner scene.
+ * postfx.js — the printed-page finish for the runner scene (high graphics tier).
  *
- * Makes neon gates, coins and power-ups glow. It is skipped entirely when the
- * player turns "Glow effects" off, and it switches itself off for the session
- * if the frame rate drops (dynamic quality) so weaker devices keep playing
- * smoothly.
+ * One cheap full-screen pass does everything: it draws a thin navy ink line wherever the scene's depth jumps (the
+ * silhouettes of the runner, gates, obstacles and scenery), warms the colours a touch toward paper, and lays a very
+ * faint paper grain over it. There is no bloom and no vignette. It is skipped entirely when the player turns
+ * "Glow effects" off, and it switches itself off for the session if the frame rate drops (dynamic quality) so weaker
+ * devices keep playing smoothly. The medium and low tiers never use it: gates, coins and the runner carry their own
+ * ink outlines (paper.js).
  */
 
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { Pass, FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass.js';
 
 var SLOW_FRAME_MS = 30;     // average frame time considered "too slow"
 var SAMPLE_FRAMES = 120;    // frames averaged before deciding
@@ -27,6 +28,86 @@ function isIntegratedGpu(renderer) {
   } catch (e) { return false; }
 }
 
+var INK_VERTEX = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }';
+
+// Edge test on disparity (1 / view depth): flat ground and walls are linear in disparity across the screen, so only real
+// depth jumps (silhouettes) have a large second difference. No lines are drawn where nothing has been drawn (the sky).
+var INK_FRAGMENT = [
+  'uniform sampler2D tDiffuse; uniform sampler2D tDepth; uniform vec2 texel; uniform float near; uniform float far;',
+  'uniform vec3 inkColor; uniform float inkAlpha; uniform float edgeWidth; uniform float grain; uniform float warm;',
+  'varying vec2 vUv;',
+  'float disp(vec2 uv){',
+  '  float z = texture2D(tDepth, uv).x;',
+  '  float viewZ = (near * far) / ((far - near) * z - far);', // negative view-space z
+  '  return z >= 0.9999 ? 0.0 : -1.0 / viewZ;',
+  '}',
+  'float hash(vec2 p){ p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }',
+  'void main(){',
+  '  vec4 c = texture2D(tDiffuse, vUv);',
+  '  vec2 o = texel * edgeWidth;',
+  '  float d0 = disp(vUv);',
+  '  float dl = disp(vUv - vec2(o.x, 0.0)); float dr = disp(vUv + vec2(o.x, 0.0));',
+  '  float du = disp(vUv + vec2(0.0, o.y)); float dd = disp(vUv - vec2(0.0, o.y));',
+  '  float lap = abs(dl + dr - 2.0 * d0) + abs(du + dd - 2.0 * d0);',
+  '  float nearest = max(max(d0, dl), max(max(dr, du), dd));',
+  '  float edge = smoothstep(0.05, 0.12, lap / max(nearest, 0.02)) * step(0.0005, nearest);',
+  // far scenery gets a fainter line so it does not turn to mud, and the horizon gets none
+  '  float fade = clamp((170.0 - 1.0 / max(nearest, 0.0001)) / 110.0, 0.0, 1.0);',
+  '  c.rgb = mix(c.rgb, inkColor, edge * inkAlpha * fade);',
+  '  c.rgb = mix(c.rgb, c.rgb * vec3(1.03, 1.0, 0.94), warm);',
+  '  c.rgb *= 1.0 - grain * (hash(gl_FragCoord.xy) - 0.5);',
+  '  gl_FragColor = c;',
+  '}'
+].join('\n');
+
+class InkPass extends Pass {
+  constructor(camera, size) {
+    super();
+    this.camera = camera;
+    this.material = new THREE.ShaderMaterial({
+      uniforms: {
+        tDiffuse: { value: null },
+        tDepth: { value: null },
+        texel: { value: new THREE.Vector2(1 / size.x, 1 / size.y) },
+        near: { value: camera.near },
+        far: { value: camera.far },
+        inkColor: { value: new THREE.Color(0x1b2a41) },
+        inkAlpha: { value: 0.92 },
+        edgeWidth: { value: 1.0 },
+        grain: { value: 0.035 },
+        warm: { value: 0.5 }
+      },
+      vertexShader: INK_VERTEX,
+      fragmentShader: INK_FRAGMENT,
+      depthTest: false,
+      depthWrite: false
+    });
+    this.quad = new FullScreenQuad(this.material);
+  }
+
+  setSize(width, height) {
+    this.material.uniforms.texel.value.set(1 / width, 1 / height);
+    // keep the line about one CSS pixel wide on dense screens, and not hair-thin at low resolution
+    this.material.uniforms.edgeWidth.value = Math.max(1, Math.min(2, height / 700));
+  }
+
+  render(renderer, writeBuffer, readBuffer) {
+    var u = this.material.uniforms;
+    u.tDiffuse.value = readBuffer.texture;
+    u.tDepth.value = readBuffer.depthTexture;
+    u.near.value = this.camera.near;
+    u.far.value = this.camera.far;
+    renderer.setRenderTarget(this.renderToScreen ? null : writeBuffer);
+    if (this.clear) renderer.clear();
+    this.quad.render(renderer);
+  }
+
+  dispose() {
+    this.material.dispose();
+    this.quad.dispose();
+  }
+}
+
 /**
  * @param {THREE.WebGLRenderer} renderer
  * @param {THREE.Scene} scene
@@ -38,36 +119,20 @@ export function createPostFX(renderer, scene, camera, targetMs) {
   var size = renderer.getSize(new THREE.Vector2());
   var pixelRatio = renderer.getPixelRatio();
 
-  // Multisampled target keeps edges smooth (the composer bypasses canvas MSAA).
+  // Multisampled target keeps edges smooth (the composer bypasses canvas MSAA); the depth texture feeds the ink pass.
   var coarse = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
   var target = new THREE.WebGLRenderTarget(size.x * pixelRatio, size.y * pixelRatio, {
     type: THREE.HalfFloatType,
     samples: (coarse || isIntegratedGpu(renderer)) ? 2 : 4 // phones, tablets and integrated GPUs: half the multisampling cost
   });
+  target.depthTexture = new THREE.DepthTexture(size.x * pixelRatio, size.y * pixelRatio);
 
   var composer = new EffectComposer(renderer, target);
   composer.setPixelRatio(pixelRatio);
   composer.addPass(new RenderPass(scene, camera));
-  // Bloom is a soft blur: computing it at half resolution looks the same and costs far less
-  var bloom = new UnrealBloomPass(new THREE.Vector2(size.x / 2, size.y / 2), 0.5, 0.55, 0.82);
-  composer.addPass(bloom);
-
-  // Color grade: richer saturation and a soft vignette that frames the action
-  composer.addPass(new ShaderPass({
-    uniforms: { tDiffuse: { value: null }, saturation: { value: 1.28 }, vignette: { value: 0.3 } },
-    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-    fragmentShader: [
-      'uniform sampler2D tDiffuse; uniform float saturation; uniform float vignette; varying vec2 vUv;',
-      'void main(){',
-      '  vec4 c = texture2D(tDiffuse, vUv);',
-      '  float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));',
-      '  c.rgb = mix(vec3(l), c.rgb, saturation);',
-      '  vec2 d = vUv - 0.5;',
-      '  c.rgb *= 1.0 - vignette * smoothstep(0.35, 0.85, length(d) * 1.25);',
-      '  gl_FragColor = c;',
-      '}'
-    ].join('\n')
-  }));
+  var ink = new InkPass(camera, new THREE.Vector2(size.x * pixelRatio, size.y * pixelRatio));
+  ink.setSize(size.x * pixelRatio, size.y * pixelRatio);
+  composer.addPass(ink);
   composer.addPass(new OutputPass());
 
   var frames = 0;
@@ -103,14 +168,17 @@ export function createPostFX(renderer, scene, camera, targetMs) {
     },
 
     setSize: function (width, height, ratio) {
-      composer.setPixelRatio(ratio || renderer.getPixelRatio());
+      var r = ratio || renderer.getPixelRatio();
+      composer.setPixelRatio(r);
       composer.setSize(width, height);
-      bloom.setSize(width / 2, height / 2);
+      ink.setSize(width * r, height * r);
     },
 
     dispose: function () {
       composer.dispose();
       target.dispose();
+      if (target.depthTexture) target.depthTexture.dispose();
+      ink.dispose();
     }
   };
 

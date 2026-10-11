@@ -137,8 +137,8 @@ var DEFAULTS = {
     handedness: 'right',    // accessibility: which side the Dash / Auto-Pilot buttons sit on ('right' | 'left')
     relaxedPace: false,     // accessibility: slower track, no speed-up (single-player runs only; unranked)
     quality: 'auto',
-    uiTheme: 'surprise',
-    themeSurpriseSeen: false,
+    uiTheme: 'auto',
+    themePaperSeen: false,
     reviewTipSeen: false,   // the first results screen after the tutorial points out the review section
     lockerSeen: [],
     fps30Seen: false,
@@ -892,10 +892,13 @@ class Storage {
       if (d.settings.cardFreshnessWeight === 5) d.settings.cardFreshnessWeight = 8;
     }
 
-    // The colors now change by themselves now and then ("Surprise me"); players left on the old Auto move over once
-    if (!d.settings.themeSurpriseSeen) {
-      d.settings.themeSurpriseSeen = true;
-      if (d.settings.uiTheme === 'auto') d.settings.uiTheme = 'surprise';
+    // The menus are printed paper now (Paper by day, Night Train after dark on Automatic). Players still on a look from the
+    // earlier purple arcade skin (Classic, the seasons, the bold worlds, or the old Surprise me default) move to Automatic once.
+    if (!d.settings.themePaperSeen) {
+      d.settings.themePaperSeen = true;
+      delete d.settings.themeSurpriseSeen;
+      var paperLooks = ['auto', 'paper', 'night', 'sunset', 'harbour', 'matcha', 'postcard'];
+      if (paperLooks.indexOf(d.settings.uiTheme) === -1) d.settings.uiTheme = 'auto';
     }
 
     // The dash used to default to the double tap; players who never chose move to Automatic (a button on phones)

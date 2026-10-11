@@ -150,15 +150,15 @@ export function installGlobalErrorHandlers(win) {
 export function showUserError(message, options = {}) {
   var durationMs = options.durationMs != null ? options.durationMs : 5000;
 
-  var accent = options.info ? 'var(--accent, #00e5ff)' : 'var(--accent-red, #ff3355)';
+  var accent = options.info ? 'var(--teal-deep, #087270)' : 'var(--red-deep, #B5341F)';
   var overlay = document.createElement('div');
   overlay.style.cssText =
     'position:fixed;top:12%;left:50%;transform:translateX(-50%);' +
     'z-index:50;max-width:340px;width:90%;padding:18px 22px;' +
-    'background:rgba(10,5,30,0.95);border:2px solid ' + accent + ';' +
-    'border-radius:16px;color:#fff;font-size:13px;font-weight:700;' +
-    'text-align:center;pointer-events:auto;backdrop-filter:blur(8px);' +
-    'box-shadow:0 4px 24px rgba(255,51,85,0.25);transition:opacity 0.4s ease;';
+    'background:var(--card,#FFFBF2);border:2.5px solid var(--line,#1B2A41);border-left:9px solid ' + accent + ';' +
+    'border-radius:8px;color:var(--ink,#1B2A41);font-size:13px;font-weight:700;' +
+    'text-align:center;pointer-events:auto;' +
+    'box-shadow:4px 4px 0 var(--line,#1B2A41);transition:opacity 0.4s ease;';
 
   var html = '';
   if (options.title) {
@@ -173,9 +173,9 @@ export function showUserError(message, options = {}) {
     var btn = document.createElement('button');
     btn.textContent = options.actionLabel;
     btn.style.cssText =
-      'margin-top:10px;padding:8px 16px;border:none;border-radius:10px;' +
-      'background:' + accent + ';color:#fff;font-size:12px;' +
-      'font-weight:800;cursor:pointer;';
+      'margin-top:10px;padding:8px 16px;border:2px solid var(--line,#1B2A41);border-radius:6px;' +
+      'background:' + accent + ';color:var(--card,#FFFBF2);font-size:12px;' +
+      'font-weight:700;cursor:pointer;box-shadow:2px 2px 0 var(--line,#1B2A41);';
     btn.addEventListener('click', function () {
       options.onAction();
       dismiss();

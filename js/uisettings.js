@@ -179,8 +179,8 @@ export var settingsMethods = {
         { key: 'characterVoices', label: '💬 Character voices', desc: 'Your runner cheers when you score and groans when you miss, each with a voice of their own.', type: 'toggle' }
       ] : []),
       look: [
-        { key: 'uiTheme', label: '🎨 Colors', desc: 'Surprise me changes the whole color of the menus after every run: purple, ocean blue, forest green, ember red and more. Seasonal follows the date. Or pick a season by hand, or Classic for the original colors.', type: 'select', options: THEME_CHOICES },
-        { key: 'nightMode', label: '🌙 Night Shift', desc: 'Darker, softer colors for late-night practice.', type: 'toggle' },
+        { key: 'uiTheme', label: '🎨 Colors', desc: 'Automatic is Paper by day and Night Train after dark. Or pick Paper, Night Train, Sunset Bazaar, Harbour Blue, Matcha or Postcard Pink by hand, or let Surprise me change the look after every run.', type: 'select', options: THEME_CHOICES },
+        { key: 'nightMode', label: '🌙 Night Shift', desc: 'Night Train colors for late-night practice, whatever the Colors setting says.', type: 'toggle' },
         { key: 'colorblindMode', label: '👁 Colorblind-safe colors', desc: 'Swaps red and green cues for colors that are easier to tell apart.', type: 'toggle' },
         { key: 'dyslexiaFont', label: '🔤 Dyslexia-friendly font', desc: 'Switches every word in the game to OpenDyslexic, a typeface with weighted bottoms that keep letters from flipping, with a little more room between letters and lines.', type: 'toggle' },
         { key: 'handedness', label: '🖐 Button side', desc: 'Moves the Dash and Auto-Pilot buttons to the side your thumb rests on. Swiping to change lane works anywhere on the screen either way.', type: 'select', options: [['right', 'Right hand (buttons on the right)'], ['left', 'Left hand (buttons on the left)']] },
@@ -257,14 +257,14 @@ export var settingsMethods = {
         row.appendChild(toggle);
       } else if (s.type === 'select') {
         var select = createElement('select', { attributes: { 'aria-label': s.label } });
-        select.style.cssText = 'padding:6px 8px;border-radius:8px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3)';
+        select.style.cssText = 'padding:6px 8px;border-radius:8px;background:var(--field);color:var(--ink);border:2px solid var(--line)';
         s.options.forEach(function (opt) {
           var o = createElement('option', { text: opt[1], attributes: { value: opt[0] } });
           if ((storage.get(s.key) || 'auto') === opt[0]) o.selected = true;
           select.appendChild(o);
         });
         if (s.key === 'uiTheme') {
-          label.appendChild(createElement('span', { className: 'setting-sublabel', text: 'Right now: ' + (document.documentElement.getAttribute('data-theme-name') || 'Classic') }));
+          label.appendChild(createElement('span', { className: 'setting-sublabel', text: 'Right now: ' + (document.documentElement.getAttribute('data-theme-name') || 'Paper') }));
         }
         if (s.key === 'quality') {
           label.appendChild(createElement('span', { className: 'setting-sublabel', text: 'Now using: ' + getQuality().charAt(0).toUpperCase() + getQuality().slice(1) }));
@@ -531,7 +531,7 @@ export var settingsMethods = {
         'More set pieces, from Poly Pizza (CC BY 3.0): Wheelchair and Ambulance by Poly by Google; IV stand by Daisuke Takeoka; Doctor and Ambulance by jeremy; Wet Floor Sign by J-Toastie; Microscope and Lab Desk by Colonel Cthulu; Science Tubes by Ryan Donaldson; Fire Extinguisher by Jarlan Perez.',
         'Hero characters: Quaternius (CC0).',
         'Scout: KayKit Adventurers Rogue by Kay Lousberg (CC0), www.kaylousberg.com.',
-        'Interface font: Fredoka (SIL Open Font License 1.1); big titles: Jersey 10 and Press Start 2P (SIL Open Font License 1.1).',
+        'Fonts: Fraunces and DM Sans (SIL Open Font License 1.1).',
         'Dyslexia-friendly font: OpenDyslexic by Abbie Gonzalez (SIL Open Font License 1.1).'
       ].forEach(function (t) { creditsBody.appendChild(createElement('div', { className: 'howto-item', text: t })); });
       credits.appendChild(creditsBody);
@@ -638,7 +638,7 @@ export var settingsMethods = {
     mapLabel.appendChild(createElement('span', { className: 'setting-sublabel', text: 'Run on one map instead of rotating (cosmetic, still ranked)' }));
     mapRow.appendChild(mapLabel);
     var mapSelect = createElement('select', { attributes: { 'aria-label': 'Favorite map' } });
-    mapSelect.style.cssText = 'padding:6px 8px;border-radius:8px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3);max-width:160px';
+    mapSelect.style.cssText = 'padding:6px 8px;border-radius:8px;background:var(--field);color:var(--ink);border:2px solid var(--line);max-width:160px';
     mapSelect.appendChild(createElement('option', { text: 'Rotate maps', attributes: { value: '' } }));
     SKINS.filter(function (sk) { return isMapUnlocked(sk, function (id) { return storage.ownsItem(id); }); }).forEach(function (sk) {
       var o = createElement('option', { text: skinTitle(sk), attributes: { value: sk.name } });

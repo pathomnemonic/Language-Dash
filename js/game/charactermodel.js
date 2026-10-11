@@ -14,6 +14,7 @@ import * as THREE from 'three';
 import { createGLTFLoader } from './gltfloader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { markShared } from './materials.js';
+import { toonRamp, inkMaterial } from './paper.js';
 
 var TARGET_HEIGHT = 2.05; // matches the procedural humanoids
 var FADE = 0.2;
@@ -28,7 +29,38 @@ export function isModelReady(url) {
   return !!_cache[url];
 }
 
+/**
+ * Print the model: its lit PBR materials become cel-shaded ones (flat colour bands, same colours and textures).
+ * Done once on the cached original; every clone shares the result.
+ */
+function toonify(root) {
+  var cache = {};
+  root.traverse(function (o) {
+    if (!o.isMesh || !o.material) return;
+    var list = Array.isArray(o.material) ? o.material : [o.material];
+    var out = list.map(function (m) {
+      if (!m || m.isMeshToonMaterial || !(m.isMeshStandardMaterial || m.isMeshPhongMaterial || m.isMeshLambertMaterial)) return m;
+      if (cache[m.uuid]) return cache[m.uuid];
+      var t = new THREE.MeshToonMaterial({
+        color: m.color ? m.color.clone() : new THREE.Color(0xffffff),
+        map: m.map || null,
+        gradientMap: toonRamp(),
+        side: m.side,
+        transparent: m.transparent,
+        opacity: m.opacity,
+        alphaTest: m.alphaTest || 0,
+        vertexColors: !!m.vertexColors
+      });
+      t.name = m.name;
+      cache[m.uuid] = t;
+      return t;
+    });
+    o.material = Array.isArray(o.material) ? out : out[0];
+  });
+}
+
 function store(url, gltf) {
+  toonify(gltf.scene);
   // Skinned meshes measure wrongly until their bones' world matrices are
   // current, so update first and use the precise (posed-vertex) bounds.
   gltf.scene.updateMatrixWorld(true);
@@ -139,6 +171,33 @@ function applyTint(root, tints) {
   });
 }
 
+var OUTLINE_WORLD = 0.016; // outline thickness in world units (about 1% of the runner's height)
+
+/**
+ * A thin navy ink outline: a copy of each skinned mesh, inflated along its normals and drawn back-faces only.
+ * It shares the geometry and the skeleton, so it animates for free.
+ */
+function addInkOutline(root) {
+  var skinned = [];
+  root.updateMatrixWorld(true);
+  root.traverse(function (o) { if (o.isSkinnedMesh && o.geometry && !o.userData.inkHull) skinned.push(o); });
+  skinned.forEach(function (o) {
+    // thickness in this mesh's own units: the world width, undone by the mesh's total world scale (model scale and node scales)
+    var e = o.matrixWorld.elements;
+    var local = OUTLINE_WORLD / Math.max(1e-6, Math.hypot(e[0], e[1], e[2]));
+    var hull = new THREE.SkinnedMesh(o.geometry, inkMaterial(local, undefined, true));
+    hull.bind(o.skeleton, o.bindMatrix);
+    hull.frustumCulled = false;
+    hull.userData.inkHull = true;
+    hull.name = (o.name || 'mesh') + '_ink';
+    hull.matrixAutoUpdate = o.matrixAutoUpdate;
+    hull.position.copy(o.position);
+    hull.quaternion.copy(o.quaternion);
+    hull.scale.copy(o.scale);
+    if (o.parent) o.parent.add(hull);
+  });
+}
+
 /**
  * Build a character from a loaded model.
  * @param {string} url
@@ -159,6 +218,8 @@ export function buildModelCharacter(url, scale, height, tint) {
   root.position.y = -entry.minY * k;
   root.rotation.y = Math.PI; // the model faces +Z; gameplay faces -Z
 
+  addInkOutline(root);
+
   var pg = new THREE.Group();
   pg.add(root);
   pg.userData.isModel = true;
@@ -178,6 +239,10 @@ export function buildModelMonster(url, height) {
   var pg = buildModelCharacter(url, 1, height || 5.5);
   if (!pg) return null;
   var root = pg.children[0];
+  // (a monster fades as a whole and keeps its own look: no shared outline hulls)
+  var hulls = [];
+  root.traverse(function (o) { if (o.userData && o.userData.inkHull) hulls.push(o); });
+  hulls.forEach(function (h) { if (h.parent) h.parent.remove(h); });
   // Like the runner, monsters face -Z: they chase, so they look at the runner (their back is to the camera)
   root.traverse(function (o) {
     if (!o.isMesh || !o.material) return;

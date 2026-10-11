@@ -31,6 +31,7 @@ import {
 } from './skinbuilders.js';
 import { PROP_BUILDERS, getSpecialtyProps } from './props.js';
 import { upgradeMaterials, mergeStatic, softDotTexture, softenTranslucentScenery } from './materials.js';
+import { paperizeMaterials, PALETTE } from './paper.js';
 import { isLowQuality } from './quality.js';
 import { HALL_PERIOD, isHospitalHall } from './hospitalhall.js';
 import { worldOf, buildDaySky } from './worlds.js';
@@ -222,12 +223,15 @@ function buildTrackParts(trackRoot, skin, options, trackRefs, qc, world, reduced
 
   // Sky and distance haze: depth instead of a black void
   if (!isLowQuality() && !(world && world.indoor)) trackRoot.add(world ? buildDaySky(skin) : buildSkyDome(skin));
-  if (trackRoot.isScene) trackRoot.fog = new THREE.Fog(skin.colors.bg, skin.fog ? skin.fog.near : 70, skin.fog ? skin.fog.far : 240);
+  if (trackRoot.isScene) trackRoot.fog = new THREE.Fog(skin.colors.bg, skin.fog ? skin.fog.near : 70, skin.fog ? skin.fog.far : 240); // soft paper haze
 
   // Ground
   var groundGroup = buildGround(skin);
   mergeStatic(groundGroup);
   trackRoot.add(groundGroup);
+
+  // Station-platform floor markings: dashed lane dividers, safety strips at the edges, tile joints
+  buildPlatformMarkings(trackRoot, skin, qc, trackRefs);
 
   // Walls
   buildWalls(trackRoot, skin, qc, trackRefs);
@@ -276,6 +280,8 @@ function buildTrackParts(trackRoot, skin, options, trackRefs, qc, world, reduced
   else if (!world) addSideMotion(skin);
   if (trackRefs.atmosphere && ATMOSPHERES[trackRefs.atmosphere] && ATMOSPHERES[trackRefs.atmosphere].precipitation) addPrecipitation(trackRefs.atmosphere);
 
+  // Print the whole map in paper colours and cel-shaded bands (see paper.js)
+  paperizeMaterials(trackRoot);
   softenTranslucentScenery(trackRoot);
 }
 
@@ -286,29 +292,26 @@ function buildTrackParts(trackRoot, skin, options, trackRefs, qc, world, reduced
 
 function buildSkyDome(skin) {
   var c = skin.colors;
+  // a banded paper sky: three or four flat steps from warm paper at the horizon up to the map's own sky colour
   var mat = new THREE.ShaderMaterial({
     side: THREE.BackSide,
     depthWrite: false,
     fog: false,
     uniforms: {
       top: { value: new THREE.Color(c.sky || c.bg) },
-      horizon: { value: new THREE.Color(c.wallGlow || c.lane || 0x18ffff) },
+      horizon: { value: new THREE.Color(PALETTE.paper).lerp(new THREE.Color(c.bg), 0.45) },
       base: { value: new THREE.Color(c.bg) }
     },
     vertexShader: 'varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
     fragmentShader: [
       'varying vec3 vDir; uniform vec3 top; uniform vec3 horizon; uniform vec3 base;',
-      'float hash(vec3 p){ p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }',
       'void main(){',
       '  float h = vDir.y;',
-      '  vec3 col = mix(base, top, smoothstep(-0.05, 0.75, h));',
-      '  float glow = exp(-abs(h) * 7.0);',
-      '  col += horizon * glow * 0.32;',
-      '  vec3 cell = floor(vDir * 170.0);',
-      '  float s = hash(cell);',
-      '  float star = step(0.9965, s) * smoothstep(0.02, 0.35, h);',
-      '  col += vec3(star) * (0.5 + 0.5 * hash(cell + 7.0));',
+      '  float t = floor(smoothstep(-0.05, 0.8, h) * 4.0) / 4.0;', // hard print bands
+      '  vec3 col = mix(horizon, top, t);',
+      '  col = mix(base, col, step(-0.02, h));',
       '  gl_FragColor = vec4(col, 1.0);',
+      '  #include <colorspace_fragment>',
       '}'
     ].join('\n')
   });
@@ -317,6 +320,44 @@ function buildSkyDome(skin) {
   dome.frustumCulled = false;
   dome.userData.isSkyDome = true;
   return dome;
+}
+
+// ===== PLATFORM MARKINGS =====
+// Railway-station floor paint instead of glowing lane lines: dashed cream dividers between the lanes, a marigold
+// safety strip along each edge of the platform, and faint tile joints across it. They scroll with the walls.
+
+var _markGeo = null;
+
+function buildPlatformMarkings(trackRoot, skin, qc, trackRefs) {
+  var spacing = 8;
+  var group = new THREE.Group();
+  trackRoot.add(group);
+  trackRefs.scrollers.push({ group: group, spacing: spacing });
+  var cream = new THREE.MeshBasicMaterial({ color: PALETTE.card, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2, fog: true });
+  var inkLine = new THREE.MeshBasicMaterial({ color: PALETTE.ink, transparent: true, opacity: 0.35, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1, depthWrite: false });
+  var yellow = new THREE.MeshBasicMaterial({ color: PALETTE.marigold, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  cream.userData.paper = yellow.userData.paper = inkLine.userData.paper = true; // (already the paper colours)
+  var far = skin.fog ? skin.fog.far : 160;
+  var reach = Math.min(160, far + 10);
+  function strip(w, d, mat, x, z, y) {
+    var m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), mat);
+    m.rotation.x = -Math.PI / 2;
+    m.position.set(x, y, z);
+    group.add(m);
+  }
+  for (var z = -reach - spacing; z < 14; z += spacing) {
+    for (var lx = -1; lx <= 1; lx += 2) {
+      strip(0.16, 3.1, inkLine, lx * 1.5, z, 0.026);
+      strip(0.09, 2.9, cream, lx * 1.5, z, 0.03);
+      // a marigold safety strip with a dark edge, broken into long dashes like tactile paving
+      strip(0.34, 3.6, inkLine, lx * 4.25, z - 2, 0.026);
+      strip(0.24, 3.4, yellow, lx * 4.25, z - 2, 0.03);
+      strip(0.34, 3.6, inkLine, lx * 4.25, z + 2, 0.026);
+      strip(0.24, 3.4, yellow, lx * 4.25, z + 2, 0.03);
+    }
+    strip(8.4, 0.05, inkLine, 0, z + 4, 0.025);
+  }
+  mergeStatic(group);
 }
 
 // ===== LIGHTING UNDER TRACKROOT =====

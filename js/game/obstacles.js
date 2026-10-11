@@ -24,10 +24,11 @@
 
 import * as THREE from 'three';
 import { roundedBox, upgradeMaterials, markShared, mergeStatic, softenTranslucentScenery } from './materials.js';
+import { PALETTE, toonMaterial, paperizeMaterials, outlineGroup } from './paper.js';
 import { buildScenery, buildHanging } from './scenery.js';
 import { buildModelCharacter, loadCharacterModel, isModelReady } from './charactermodel.js';
 import { modelUrl } from './modelcatalog.js';
-import { useCharacterModels } from './quality.js';
+import { useCharacterModels, isLowQuality } from './quality.js';
 import { VISUAL_SPEED } from './enginedefs.js';
 import { COIN_GAP, coinsForObstacle, jumpArc, jumpArcLength, arcCoinCount } from './coinfx.js';
 
@@ -409,71 +410,34 @@ function buildBaggageScanner() {
 
 // ===== INDICATOR BUILDERS =====
 
-function addJumpIndicator(group) {
+// A flat paper arrow with an ink outline on a painted floor strip: marigold-orange up = jump, sky blue down = slide.
+function addIndicator(group, hex, y, down) {
   var arrowGroup = new THREE.Group();
-  var arrow = new THREE.Mesh(
-    new THREE.ConeGeometry(0.25, 0.5, 6),
-    new THREE.MeshBasicMaterial({ color: 0xff8800 })
-  );
-  arrow.position.set(0, 0, 0);
-  arrowGroup.add(arrow);
-  var glowRing = new THREE.Mesh(
-    new THREE.TorusGeometry(0.3, 0.04, 6, 12),
-    new THREE.MeshBasicMaterial({ color: 0xff8800, transparent: true, opacity: 0.5 })
-  );
-  glowRing.position.set(0, -0.1, 0);
-  glowRing.rotation.x = Math.PI / 2;
-  arrowGroup.add(glowRing);
-  var arrow2 = new THREE.Mesh(
-    new THREE.ConeGeometry(0.15, 0.3, 6),
-    new THREE.MeshBasicMaterial({ color: 0xffaa33, transparent: true, opacity: 0.7 })
-  );
-  arrow2.position.set(0, 0.5, 0);
-  arrowGroup.add(arrow2);
-  arrowGroup.position.set(0, 1.8, 0);
+  arrowGroup.userData.noOutline = true;
+  var fill = toonMaterial(hex);
+  var inkM = new THREE.MeshBasicMaterial({ color: PALETTE.ink, side: THREE.BackSide });
+  [[0.25, 0.5, 0], [0.15, 0.3, down ? -0.5 : 0.5]].forEach(function (c) {
+    var arrow = new THREE.Mesh(new THREE.ConeGeometry(c[0], c[1], 6), fill);
+    arrow.position.set(0, c[2], 0);
+    if (down) arrow.rotation.z = Math.PI;
+    var hull = new THREE.Mesh(new THREE.ConeGeometry(c[0] + 0.05, c[1] + 0.07, 6), inkM);
+    arrow.add(hull);
+    arrowGroup.add(arrow);
+  });
+  arrowGroup.position.set(0, y, 0);
   group.add(arrowGroup);
   var tintPlane = new THREE.Mesh(
     new THREE.PlaneGeometry(2.5, 0.1),
-    new THREE.MeshBasicMaterial({ color: 0xff6600, transparent: true, opacity: 0.4, side: THREE.DoubleSide })
+    new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: 0.75, side: THREE.DoubleSide })
   );
   tintPlane.rotation.x = -Math.PI / 2;
   tintPlane.position.set(0, 0.01, 0);
   group.add(tintPlane);
 }
 
-function addSlideIndicator(group) {
-  var arrowGroup = new THREE.Group();
-  var arrow = new THREE.Mesh(
-    new THREE.ConeGeometry(0.25, 0.5, 6),
-    new THREE.MeshBasicMaterial({ color: 0x4488ff })
-  );
-  arrow.rotation.z = Math.PI;
-  arrow.position.set(0, 0, 0);
-  arrowGroup.add(arrow);
-  var glowRing = new THREE.Mesh(
-    new THREE.TorusGeometry(0.3, 0.04, 6, 12),
-    new THREE.MeshBasicMaterial({ color: 0x4488ff, transparent: true, opacity: 0.5 })
-  );
-  glowRing.position.set(0, 0.1, 0);
-  glowRing.rotation.x = Math.PI / 2;
-  arrowGroup.add(glowRing);
-  var arrow2 = new THREE.Mesh(
-    new THREE.ConeGeometry(0.15, 0.3, 6),
-    new THREE.MeshBasicMaterial({ color: 0x66aaff, transparent: true, opacity: 0.7 })
-  );
-  arrow2.rotation.z = Math.PI;
-  arrow2.position.set(0, -0.5, 0);
-  arrowGroup.add(arrow2);
-  arrowGroup.position.set(0, 1.5, 0);
-  group.add(arrowGroup);
-  var tintPlane = new THREE.Mesh(
-    new THREE.PlaneGeometry(2.5, 0.1),
-    new THREE.MeshBasicMaterial({ color: 0x2266ff, transparent: true, opacity: 0.3, side: THREE.DoubleSide })
-  );
-  tintPlane.rotation.x = -Math.PI / 2;
-  tintPlane.position.set(0, 0.01, 0);
-  group.add(tintPlane);
-}
+function addJumpIndicator(group) { addIndicator(group, 0xe8812a, 1.8, false); }
+
+function addSlideIndicator(group) { addIndicator(group, PALETTE.sky, 1.5, true); }
 
 // ===== OBSTACLE SPAWNING =====
 
@@ -560,6 +524,9 @@ export function spawnObstacle(scene, obstacleMeshes, planEntry, options) {
     upgradeMaterials(obs, { glowAbove: 0.92 });
   }
   var staff = variant.staff ? buildStaffMember(variant.staff) : null;
+  // Printed look: paper colours and flat shading, and an ink outline so the obstacle reads at a glance
+  paperizeMaterials(obs);
+  if (!isLowQuality()) outlineGroup(obs, 0.03);
   if (staff) obs.add(staff);
   obs.position.set(LANE_X[lane], 0, spawnZ);
   obs.userData = {
@@ -602,7 +569,7 @@ export function isImpossibleLayout(entry1, entry2) {
   return false;
 }
 
-// ===== COINS WITH GLOW =====
+// ===== COINS: BRASS TRAVEL TOKENS =====
 
 var _coinTemplate = null;
 
@@ -610,46 +577,54 @@ var _coinTemplate = null;
 /** A coin is drawn this much bigger than its first model, so it reads from a distance. */
 var COIN_SCALE = 1.3;
 
+/** An 8-point compass star (long N/E/S/W points, short diagonals), flat. */
+function compassStarShape(R, r, d) {
+  var sh = new THREE.Shape();
+  var pts = 8;
+  for (var i = 0; i < pts * 2; i++) {
+    var rad = i % 2 === 0 ? (i % 4 === 0 ? R : d) : r;
+    var a = Math.PI / 2 + (i * Math.PI) / pts;
+    if (i === 0) sh.moveTo(Math.cos(a) * rad, Math.sin(a) * rad); else sh.lineTo(Math.cos(a) * rad, Math.sin(a) * rad);
+  }
+  sh.closePath();
+  return sh;
+}
+
 function getCoinTemplate() {
   if (_coinTemplate) return _coinTemplate;
   var group = new THREE.Group();
-  var gold = new THREE.MeshStandardMaterial({
-    color: 0xffc83a, metalness: 0.95, roughness: 0.22,
-    emissive: 0x663300, emissiveIntensity: 0.4, envMapIntensity: 1.5
-  });
-  var shine = new THREE.MeshStandardMaterial({
-    color: 0xffe58a, metalness: 0.9, roughness: 0.18,
-    emissive: 0x996600, emissiveIntensity: 0.5, envMapIntensity: 1.6
-  });
+  // A brass travel token: flat-shaded brass, a lighter raised rim, an engraved (darker) compass star, and a thin ink edge
+  var brass = toonMaterial(PALETTE.brass);
+  var rimBrass = toonMaterial(0xf0c75e);
+  var engraved = toonMaterial(PALETTE.brassDark);
+  var inkEdge = new THREE.MeshBasicMaterial({ color: PALETTE.ink });
 
   // Minted disc: face turned toward +Z so it spins like a real coin
-  var coin = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.07, 20), gold);
+  var coin = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.07, 22), brass);
   coin.rotation.x = Math.PI / 2;
   group.add(coin);
-  var rim = new THREE.Mesh(new THREE.TorusGeometry(0.29, 0.032, 10, 32), shine);
+  var edge = new THREE.Mesh(new THREE.CylinderGeometry(0.335, 0.335, 0.05, 22), inkEdge); // the ink outline, as a slightly wider thin disc
+  edge.rotation.x = Math.PI / 2;
+  group.add(edge);
+  var rim = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.03, 8, 28), rimBrass);
   group.add(rim);
 
-  // Embossed compass-rose star on both faces
+  // Engraved compass star on both faces
+  var starGeo = new THREE.ExtrudeGeometry(compassStarShape(0.22, 0.05, 0.11), { depth: 0.012, bevelEnabled: false });
+  var dot = new THREE.CylinderGeometry(0.045, 0.045, 0.02, 12);
   [1, -1].forEach(function (side) {
-    var v = new THREE.Mesh(roundedBox(0.08, 0.36, 0.03, 2), shine);
-    var h = new THREE.Mesh(roundedBox(0.36, 0.08, 0.03, 2), shine);
-    var d1 = new THREE.Mesh(roundedBox(0.06, 0.24, 0.03, 2), shine);
-    var d2 = new THREE.Mesh(roundedBox(0.24, 0.06, 0.03, 2), shine);
-    d1.rotation.z = d2.rotation.z = Math.PI / 4;
-    v.position.z = h.position.z = d1.position.z = d2.position.z = side * 0.045;
-    group.add(v);
-    group.add(h);
-    group.add(d1);
-    group.add(d2);
+    var star = new THREE.Mesh(starGeo, engraved);
+    star.position.z = side > 0 ? 0.036 : -0.036;
+    if (side < 0) star.rotation.y = Math.PI;
+    group.add(star);
+    var hub = new THREE.Mesh(dot, rimBrass);
+    hub.rotation.x = Math.PI / 2;
+    hub.position.z = side * 0.05;
+    group.add(hub);
   });
 
-  var halo = new THREE.Mesh(
-    new THREE.TorusGeometry(0.37, 0.035, 8, 24),
-    new THREE.MeshBasicMaterial({ color: 0xffee88, transparent: true, opacity: 0.3 })
-  );
-  group.add(halo);
-  // The disc, rim and cross pieces never move relative to each other: merge them by material so a
-  // coin costs 3 draw calls instead of 7 (a dozen coins on screen used to cost over 300).
+  // The disc, rim and star pieces never move relative to each other: merge them by material so a
+  // coin costs a handful of draw calls (a dozen coins on screen used to cost over 300).
   mergeStatic(group);
   markShared(group);
   group.children.forEach(function (ch) { ch.position.multiplyScalar(COIN_SCALE); ch.scale.multiplyScalar(COIN_SCALE); });
@@ -884,11 +859,11 @@ export function spawnCoinsFromPlan(scene, coinMeshes, coinPlan) {
 // ===== POWER-UPS =====
 
 var PU_TYPES = [
-  { type: 'shield', color: 0x4488ff, iconGeo: 'shield', label: 'SHIELD' },
-  { type: 'magnet', color: 0xffaa00, iconGeo: 'horseshoe', label: 'MAGNET' },
-  { type: 'double', color: 0xaa44ff, iconGeo: 'two-times', label: '2× SCORE' },
-  { type: 'autoPilot', color: 0x00ee66, iconGeo: 'steering-wheel', label: 'AUTO' },
-  { type: 'scoreFrenzy', color: 0xff4488, iconGeo: 'gem', label: 'FRENZY' }
+  { type: 'shield', color: PALETTE.sky, iconGeo: 'shield', label: 'SHIELD' },
+  { type: 'magnet', color: PALETTE.marigold, iconGeo: 'horseshoe', label: 'MAGNET' },
+  { type: 'double', color: PALETTE.teal, iconGeo: 'two-times', label: '2× SCORE' },
+  { type: 'autoPilot', color: PALETTE.leaf, iconGeo: 'steering-wheel', label: 'AUTO' },
+  { type: 'scoreFrenzy', color: PALETTE.red, iconGeo: 'gem', label: 'FRENZY' }
 ];
 
 // ===== POWER-UP ICONS =====
@@ -896,8 +871,9 @@ var PU_TYPES = [
 //   shield -> a shield, magnet -> a horseshoe magnet, double -> "2×", auto-pilot -> a steering wheel,
 //   score frenzy -> a gem (coins and points rain in).
 
-function iconMaterial(color, glow) {
-  return new THREE.MeshStandardMaterial({ color: color, emissive: glow === undefined ? color : glow, emissiveIntensity: 0.5, roughness: 0.25, metalness: 0.3, envMapIntensity: 1.4 });
+// Each icon is flat-shaded enamel (the second argument used to be a glow colour; nothing glows now)
+function iconMaterial(color) {
+  return toonMaterial(color);
 }
 
 var _twoTimesTexture = null;
@@ -912,9 +888,9 @@ function twoTimesTexture() {
     ctx.textBaseline = 'middle';
     ctx.lineJoin = 'round';
     ctx.lineWidth = 14;
-    ctx.strokeStyle = '#3b1670';
+    ctx.strokeStyle = '#1b2a41';
     ctx.strokeText('2\u00d7', 64, 68);
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = '#fffbf2';
     ctx.fillText('2\u00d7', 64, 68);
   }
   _twoTimesTexture = new THREE.CanvasTexture(canvas);
@@ -927,7 +903,7 @@ function twoTimesTexture() {
  */
 export function buildPowerupIcon(type) {
   var g = new THREE.Group();
-  var white = 0xffffff;
+  var white = PALETTE.card;
   switch (type) {
     case 'shield': {
       // a heater shield with a blue field in the middle
@@ -940,7 +916,7 @@ export function buildPowerupIcon(type) {
       inset.quadraticCurveTo(0.2, -0.17, 0, -0.32);
       inset.quadraticCurveTo(-0.2, -0.17, -0.2, 0.04); inset.lineTo(-0.2, 0.23); inset.closePath();
       var body = new THREE.Mesh(new THREE.ExtrudeGeometry(outline, { depth: 0.08, bevelEnabled: true, bevelThickness: 0.025, bevelSize: 0.025, bevelSegments: 2 }), iconMaterial(white));
-      var field = new THREE.Mesh(new THREE.ExtrudeGeometry(inset, { depth: 0.04, bevelEnabled: false }), iconMaterial(0x2f6fe0));
+      var field = new THREE.Mesh(new THREE.ExtrudeGeometry(inset, { depth: 0.04, bevelEnabled: false }), iconMaterial(PALETTE.sky));
       body.position.z = -0.04;
       field.position.z = 0.06;
       g.add(body); g.add(field);
@@ -948,13 +924,13 @@ export function buildPowerupIcon(type) {
     }
     case 'magnet': {
       // a red horseshoe with silver tips, open end down
-      var arc = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.075, 10, 24, Math.PI), iconMaterial(0xe53935));
+      var arc = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.075, 10, 24, Math.PI), iconMaterial(PALETTE.red));
       g.add(arc);
       [-0.2, 0.2].forEach(function (x) {
-        var leg = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.22, 12), iconMaterial(0xe53935));
+        var leg = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.22, 12), iconMaterial(PALETTE.red));
         leg.position.set(x, -0.11, 0);
         g.add(leg);
-        var tip = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.1, 12), iconMaterial(0xe8edf2));
+        var tip = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.1, 12), iconMaterial(PALETTE.card));
         tip.position.set(x, -0.27, 0);
         g.add(tip);
       });
@@ -981,14 +957,14 @@ export function buildPowerupIcon(type) {
         spoke.rotation.z = a - Math.PI / 2;
         g.add(spoke);
       });
-      var hub = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.08, 16), iconMaterial(0x14b85a));
+      var hub = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.08, 16), iconMaterial(PALETTE.leaf));
       hub.rotation.x = Math.PI / 2;
       g.add(hub);
       return { icon: g, flat: true };
     }
     case 'scoreFrenzy': {
       // a cut gem: points and coins pour in
-      var gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.3, 0), iconMaterial(0xffd1e6, 0xff4488));
+      var gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.3, 0), iconMaterial(0xf08a78));
       gem.scale.set(1, 1.4, 1);
       g.add(gem);
       return { icon: g, flat: false };
@@ -1037,58 +1013,36 @@ export function spawnPowerup(scene, coinMeshes, planEntry, disabledTypes) {
   var color = puDef.color;
   var group = new THREE.Group();
 
-  // Outer glow
-  var outer = new THREE.Mesh(
-    new THREE.SphereGeometry(0.98, 16, 16),
-    new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.15 })
-  );
-  group.add(outer);
-
-  // Mid glow
-  var mid = new THREE.Mesh(
-    new THREE.SphereGeometry(0.68, 14, 14),
-    new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.30 })
-  );
-  group.add(mid);
-
-  // Inner core
-  var inner = new THREE.Mesh(
-    new THREE.SphereGeometry(0.42, 24, 24),
-    new THREE.MeshStandardMaterial({ color: color, emissive: color, emissiveIntensity: 0.85, roughness: 0.12, metalness: 0.35, envMapIntensity: 1.6 })
-  );
-  group.add(inner);
+  // An enamel pin badge: ink rim, brass bezel, a coloured enamel field and the icon on top. Pins face the runner.
+  var face = new THREE.Group();
+  function disc(r, d, mat, z) {
+    var m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, d, 28), mat);
+    m.rotation.x = Math.PI / 2;
+    m.position.z = z;
+    face.add(m);
+    return m;
+  }
+  disc(0.8, 0.12, new THREE.MeshBasicMaterial({ color: PALETTE.ink }), -0.01); // the ink outline
+  disc(0.73, 0.16, toonMaterial(PALETTE.brass), 0);
+  disc(0.63, 0.18, toonMaterial(color), 0.01);                                  // the enamel field
+  var inner = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.018, 6, 36), toonMaterial(PALETTE.card));
+  inner.position.z = 0.1;
+  face.add(inner);
+  // the pin's little "post" and clutch show when the badge turns
+  var post = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.3, 8), toonMaterial(PALETTE.brassDark));
+  post.rotation.x = Math.PI / 2;
+  post.position.z = -0.2;
+  face.add(post);
 
   // Type-specific icon: a shape that says what the power-up does (see buildPowerupIcon)
   var made = buildPowerupIcon(puDef.type);
   var icon = made.icon;
   if (icon) {
-    icon.scale.setScalar(1.4); // big enough to read from far down the track
-    icon.position.set(0, 1.1, 0);
-    group.add(icon);
+    icon.scale.setScalar(0.95);
+    icon.position.set(0, 0, 0.12);
+    face.add(icon);
   }
-
-  // Spinning rings
-  var ring = new THREE.Mesh(
-    new THREE.TorusGeometry(0.75, 0.05, 8, 24),
-    new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.5 })
-  );
-  ring.rotation.x = Math.PI / 2;
-  group.add(ring);
-
-  var ring2 = new THREE.Mesh(
-    new THREE.TorusGeometry(0.72, 0.04, 8, 24),
-    new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.35 })
-  );
-  ring2.rotation.y = Math.PI / 2;
-  group.add(ring2);
-
-  var ring3 = new THREE.Mesh(
-    new THREE.TorusGeometry(0.78, 0.03, 8, 24),
-    new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.25 })
-  );
-  ring3.rotation.x = Math.PI / 4;
-  ring3.rotation.z = Math.PI / 4;
-  group.add(ring3);
+  group.add(face);
 
   group.position.set(LANE_X[lane], 1.5, spawnZ);
   group.userData = {
@@ -1096,9 +1050,9 @@ export function spawnPowerup(scene, coinMeshes, planEntry, disabledTypes) {
     collected: false,
     type: 'powerup',
     powerupType: puDef.type,
-    // flat icons (shield, magnet, 2x, wheel) are turned back toward the camera as the orb spins, so they always read
-    icon: icon,
-    flatIcon: made.flat
+    // the badge is turned back toward the camera as the orb spins, so it always reads (the engine does this for 'flat' icons)
+    icon: face,
+    flatIcon: true
   };
 
   softenTranslucentScenery(group);

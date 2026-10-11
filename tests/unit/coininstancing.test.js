@@ -22,10 +22,10 @@ describe('coins drawn in bulk', () => {
     const drawn = syncCoinInstances(coins);
     expect(drawn).toBe(coins.filter((c) => c.userData.type === 'coin').length);
     const instanced = scene.children.filter((c) => c.isInstancedMesh);
-    expect(instanced.length).toBe(3);               // disc, rim and crosses, glow
+    expect(instanced.length).toBe(4);               // brass disc, ink edge, rim and hubs, engraved star
     instanced.forEach((m) => expect(m.count).toBe(drawn));
     // far fewer drawn objects than one mesh per coin part
-    expect(scene.children.filter((c) => c.isMesh).length).toBe(3);
+    expect(scene.children.filter((c) => c.isMesh).length).toBe(4);
   });
 
   it('puts each instance where its coin is, and follows it when it moves or spins', () => {
@@ -65,7 +65,7 @@ describe('coins drawn in bulk', () => {
     const coins = [];
     spawnCoinBatch(scene, coins, -30);
     const coin = coins.find((c) => c.userData.type === 'coin');
-    expect(coin.children.length).toBe(3); // disc, rim and crosses, glow
+    expect(coin.children.length).toBe(4); // brass disc, ink edge, rim and hubs, engraved star
   });
 });
 
@@ -103,11 +103,11 @@ describe('coins stay drawn when the scene is swept', () => {
     disableCoinInstancing();
     enableCoinInstancing(scene);
     const meshes = coinInstanceMeshes();
-    expect(meshes.length).toBe(3);
+    expect(meshes.length).toBe(4);
     meshes.forEach((m) => scene.remove(m));          // what a map change used to do to them
     expect(scene.children.filter((c) => c.isInstancedMesh).length).toBe(0);
-    expect(reattachCoinInstances(scene)).toBe(3);
-    expect(scene.children.filter((c) => c.isInstancedMesh).length).toBe(3);
+    expect(reattachCoinInstances(scene)).toBe(4);
+    expect(scene.children.filter((c) => c.isInstancedMesh).length).toBe(4);
     expect(reattachCoinInstances(scene)).toBe(0);    // nothing to fix the second time
     disableCoinInstancing();
   });

@@ -90,7 +90,7 @@ export var postRunMethods = {
     // Golden Quill notice
     if (game.wrong === 0 && game.correct >= 20 && storage.hasAchievement('ach_golden_doctor')) {
       var goldenNotice = createElement('div');
-      goldenNotice.style.cssText = 'text-align:center;padding:12px;margin:10px 0;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,170,0,0.1));border:2px solid var(--accent-gold);border-radius:12px';
+      goldenNotice.style.cssText = 'text-align:center;padding:12px;margin:10px 0;background:var(--paper-deep);border:2px dashed var(--line);border-radius:8px';
       goldenNotice.appendChild(createElement('div', { text: '🏆' }));
       goldenNotice.firstChild.style.fontSize = '24px';
       var goldenText = createElement('div', { text: 'Golden Quill Unlocked!' });

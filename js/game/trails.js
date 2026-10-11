@@ -21,6 +21,7 @@
 import * as THREE from 'three';
 import { storage } from '../storage.js';
 import { getTrailGeometry } from './trailshapes.js';
+import { PALETTE, paperizeColor } from './paper.js';
 
 // ===== QUALITY PRESETS =====
 var QUALITY_PRESETS = {
@@ -85,7 +86,7 @@ var TRAIL_CONFIGS = {
 /** The trail settings (exported so tests can check every trail draws what its description says). */
 export var TRAIL_SETTINGS = TRAIL_CONFIGS;
 
-var CONFETTI_COLORS = [0xff4466, 0xffd23f, 0x3ddc84, 0x4aa8ff, 0xc77dff];
+var CONFETTI_COLORS = [PALETTE.red, PALETTE.marigold, PALETTE.leaf, PALETTE.sky, PALETTE.teal];
 
 // ===== SHARED GEOMETRY (created once, reused by all particles) =====
 var _sharedSphereGeo = null;
@@ -324,7 +325,7 @@ export class TrailSystem {
     p.mesh.geometry = getTrailGeometry(config.shape);
     p.mesh.rotation.set(0, 0, 0);
     p.spin = 0;
-    p.mesh.material.blending = config.glow ? THREE.AdditiveBlending : THREE.NormalBlending;
+    p.mesh.material.blending = THREE.NormalBlending; // printed ink, never additive glow (config.glow only marks which trails used to flare)
 
     // Color
     var t = Math.random();
@@ -342,7 +343,7 @@ export class TrailSystem {
     } else {
       c1.lerp(c2, t);
     }
-    p.mesh.material.color.copy(c1);
+    p.mesh.material.color.copy(paperizeColor(c1));
     p.mesh.material.opacity = config.see ? 0.55 : 0.95;
     p.opacityScale = config.see ? 0.55 / 0.95 : 1;
 

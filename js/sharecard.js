@@ -6,7 +6,7 @@
  * downloads it.
  */
 
-import { getSubjectStyle, getSubjectCssColor } from './game/subjectstyle.js';
+import { getSubjectStyle } from './game/subjectstyle.js';
 import { saveFile } from './platform.js';
 
 var W = 1080;
@@ -67,94 +67,140 @@ export function renderShareCard(data) {
   var ctx = canvas.getContext('2d');
   if (!ctx) return Promise.reject(new Error('Canvas unavailable'));
 
-  var bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, '#1b0a45');
-  bg.addColorStop(0.55, '#3a0f7a');
-  bg.addColorStop(1, '#0a3a6b');
-  ctx.fillStyle = bg;
+  // Paper Passport: warm paper, navy ink, stamp red and teal, hard offset shadows (docs/DESIGN.md)
+  var PAPER = '#F6EEDC', CARD = '#FFFBF2', INK = '#1B2A41', SOFT = '#4B5870', RED = '#C73B25', REDDEEP = '#B5341F', TEAL = '#0A7A78', GOLD = '#F2B134';
+  var SERIF = '"Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif';
+  var SANS = '"DM Sans", "Segoe UI", system-ui, sans-serif';
+  ctx.fillStyle = PAPER;
   ctx.fillRect(0, 0, W, H);
 
-  // Soft glow blobs
-  [[220, 260, '#ff3399'], [880, 1050, '#18ffff'], [860, 200, '#9d4dff']].forEach(function (b) {
-    var g = ctx.createRadialGradient(b[0], b[1], 0, b[0], b[1], 380);
-    g.addColorStop(0, b[2] + '55');
-    g.addColorStop(1, b[2] + '00');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-  });
+  // faint dotted route across the paper
+  ctx.strokeStyle = 'rgba(27,42,65,0.22)';
+  ctx.lineWidth = 6;
+  ctx.setLineDash([2, 18]);
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(60, 1200);
+  ctx.quadraticCurveTo(300, 760, 560, 940);
+  ctx.quadraticCurveTo(820, 1120, 1020, 700);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // a card with a hard shadow and an ink outline
+  function ticket(x, y, w, h, fill, r) {
+    ctx.fillStyle = INK;
+    roundRect(ctx, x + 10, y + 10, w, h, r);
+    ctx.fill();
+    ctx.fillStyle = fill;
+    roundRect(ctx, x, y, w, h, r);
+    ctx.fill();
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+  }
+
+  // header band
+  ctx.fillStyle = TEAL;
+  ctx.fillRect(0, 0, W, 34);
+  ctx.fillStyle = INK;
+  ctx.fillRect(0, 34, W, 6);
 
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#ffffff';
-  ctx.font = '900 84px "Arial Black", Impact, sans-serif';
-  ctx.fillText('LANGUAGE DASH', W / 2, 150);
-  ctx.font = '600 34px "Segoe UI", sans-serif';
-  ctx.fillStyle = '#b9a8ff';
-  ctx.fillText('Run the lexicon.', W / 2, 205);
+  ctx.fillStyle = REDDEEP;
+  ctx.font = '900 92px ' + SERIF;
+  ctx.fillText('Language Dash', W / 2, 160);
+  ctx.strokeStyle = RED;
+  ctx.lineWidth = 6;
+  ctx.beginPath(); ctx.moveTo(W / 2 - 200, 192); ctx.lineTo(W / 2 + 200, 192); ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(W / 2 - 200, 204); ctx.lineTo(W / 2 + 200, 204); ctx.stroke();
+  ctx.font = 'italic 500 34px ' + SANS;
+  ctx.fillStyle = SOFT;
+  ctx.fillText('Run the lexicon.', W / 2, 258);
 
   // Player + mode
-  ctx.fillStyle = '#ffffff';
-  ctx.font = '700 46px "Segoe UI", sans-serif';
-  ctx.fillText((data.name || 'A new Wordrunner').slice(0, 24), W / 2, 330);
-  ctx.fillStyle = '#18ffff';
-  ctx.font = '600 32px "Segoe UI", sans-serif';
-  ctx.fillText(data.modeLabel + (data.trackName ? '  ·  ' + data.trackName : ''), W / 2, 380);
+  ctx.fillStyle = INK;
+  ctx.font = '900 54px ' + SERIF;
+  ctx.fillText((data.name || 'A new Wordrunner').slice(0, 24), W / 2, 350);
+  ctx.fillStyle = TEAL;
+  ctx.font = '700 32px ' + SANS;
+  ctx.fillText((data.modeLabel + (data.trackName ? '  ·  ' + data.trackName : '')).toUpperCase(), W / 2, 402);
 
-  // Big score
-  ctx.fillStyle = '#ffd700';
-  ctx.font = '900 210px "Arial Black", Impact, sans-serif';
-  ctx.fillText(Number(data.score || 0).toLocaleString(), W / 2, 620);
-  ctx.fillStyle = '#ffffff';
-  ctx.font = '600 38px "Segoe UI", sans-serif';
-  ctx.fillText('POINTS', W / 2, 675);
+  // Big score: a stamp
+  ctx.save();
+  ctx.translate(W / 2, 560);
+  ctx.rotate(-0.045);
+  var scoreText = Number(data.score || 0).toLocaleString();
+  ctx.font = '900 190px ' + SERIF;
+  var sw = Math.min(ctx.measureText(scoreText).width + 110, W - 160);
+  ctx.strokeStyle = RED;
+  ctx.lineWidth = 9;
+  roundRect(ctx, -sw / 2, -140, sw, 230, 18);
+  ctx.stroke();
+  ctx.lineWidth = 3;
+  roundRect(ctx, -sw / 2 + 18, -122, sw - 36, 194, 12);
+  ctx.stroke();
+  ctx.fillStyle = REDDEEP;
+  ctx.fillText(scoreText, 0, 42, sw - 60);
+  ctx.restore();
+  ctx.fillStyle = INK;
+  ctx.font = '700 36px ' + SANS;
+  ctx.fillText('POINTS', W / 2, 715);
 
-  // Stat pills
+  // Stat stubs
   var total = (data.correct || 0) + (data.wrong || 0);
   var accuracy = total > 0 ? Math.round((data.correct || 0) / total * 100) : 0;
   var stats = [
-    [accuracy + '%', 'Accuracy'],
-    [String(data.bestStreak || 0), 'Best streak'],
-    [String(data.correct || 0), 'Correct']
+    [accuracy + '%', 'Accuracy', GOLD],
+    [String(data.bestStreak || 0), 'Best streak', '#5DA9D6'],
+    [String(data.correct || 0), 'Correct', CARD]
   ];
   stats.forEach(function (s, i) {
-    var x = 90 + i * 300;
-    ctx.fillStyle = 'rgba(255,255,255,0.10)';
-    roundRect(ctx, x, 750, 270, 190, 28);
+    var x = 70 + i * 316;
+    ticket(x, 770, 270, 200, CARD, 16);
+    ctx.fillStyle = s[2];
+    roundRect(ctx, x + 3, 773, 264, 14, 6);
     ctx.fill();
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '900 76px "Arial Black", Impact, sans-serif';
-    ctx.fillText(s[0], x + 135, 852);
-    ctx.fillStyle = '#b9a8ff';
-    ctx.font = '600 30px "Segoe UI", sans-serif';
-    ctx.fillText(s[1], x + 135, 905);
+    ctx.fillStyle = INK;
+    ctx.font = '900 84px ' + SERIF;
+    ctx.fillText(s[0], x + 135, 884);
+    ctx.setLineDash([10, 8]);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = INK;
+    ctx.beginPath(); ctx.moveTo(x + 18, 910); ctx.lineTo(x + 252, 910); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = SOFT;
+    ctx.font = '700 28px ' + SANS;
+    ctx.fillText(s[1].toUpperCase(), x + 135, 950);
   });
 
   // Top topics
   var subjects = data.subjects || [];
   if (subjects.length) {
-    ctx.fillStyle = '#b9a8ff';
-    ctx.font = '600 32px "Segoe UI", sans-serif';
-    ctx.fillText('MOST PLAYED', W / 2, 1035);
+    ctx.fillStyle = SOFT;
+    ctx.font = '700 28px ' + SANS;
+    ctx.fillText('MOST PLAYED', W / 2, 1042);
     var slot = W / subjects.length;
     subjects.forEach(function (s, i) {
       var cx = slot * i + slot / 2;
-      ctx.font = '84px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
-      ctx.fillStyle = '#ffffff';
+      ctx.font = '76px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
+      ctx.fillStyle = INK;
       ctx.fillText(getSubjectStyle(s.subject).icon, cx, 1130);
-      ctx.font = '600 28px "Segoe UI", sans-serif';
-      ctx.fillStyle = getSubjectCssColor(s.subject);
-      ctx.fillText(s.subject.length > 18 ? s.subject.slice(0, 17) + '…' : s.subject, cx, 1180);
+      ctx.font = '700 28px ' + SANS;
+      ctx.fillStyle = INK;
+      ctx.fillText(s.subject.length > 18 ? s.subject.slice(0, 17) + '…' : s.subject, cx, 1182);
     });
   }
 
   var line = shareFooterLine(data);
   if (line) {
-    ctx.fillStyle = '#ffd700';
-    ctx.font = '700 34px "Segoe UI", sans-serif';
+    ctx.fillStyle = REDDEEP;
+    ctx.font = '700 34px ' + SANS;
     ctx.fillText(line, W / 2, 1245);
   }
-  ctx.fillStyle = 'rgba(255,255,255,0.6)';
-  ctx.font = '600 30px "Segoe UI", sans-serif';
-  ctx.fillText('Can you beat it?', W / 2, 1300);
+  ctx.fillStyle = INK;
+  ctx.font = '900 40px ' + SERIF;
+  ctx.fillText('Can you beat it?', W / 2, 1302);
 
   return new Promise(function (resolve, reject) {
     canvas.toBlob(function (blob) {

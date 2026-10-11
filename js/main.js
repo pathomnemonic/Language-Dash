@@ -311,7 +311,7 @@ function configureMultiplayer(client, content) {
       if (client.isHost) {
         var select = document.createElement('select');
         select.setAttribute('aria-label', 'Match mode');
-        select.style.cssText = 'width:100%;padding:10px;border-radius:12px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3);margin:8px 0';
+        select.style.cssText = 'width:100%;padding:10px;border-radius:12px;background:var(--field);color:var(--ink);border:2px solid var(--line);margin:8px 0';
         mod.MP_MODES.forEach(function (m) {
           var opt = document.createElement('option');
           opt.value = m.id;
@@ -587,7 +587,7 @@ function showChallengeBanner(challenge) {
   var banner = document.createElement('div');
   banner.setAttribute('role', 'dialog');
   banner.setAttribute('aria-label', 'Challenge received');
-  banner.style.cssText = 'position:fixed;top:12%;left:50%;transform:translateX(-50%);z-index:60;width:90%;max-width:340px;padding:16px;border-radius:16px;background:rgba(10,5,30,0.97);border:2px solid var(--accent-gold);color:#fff;text-align:center';
+  banner.style.cssText = 'position:fixed;top:12%;left:50%;transform:translateX(-50%);z-index:60;width:90%;max-width:340px;padding:16px;border-radius:10px;background:var(--card);border:2.5px solid var(--line);border-top:9px solid var(--gold);box-shadow:6px 6px 0 var(--line);color:var(--ink);text-align:center';
   var title = document.createElement('div');
   title.style.cssText = 'font-size:16px;font-weight:800;margin-bottom:6px';
   title.textContent = (challenge.from || 'A friend') + ' challenges you!';
@@ -704,7 +704,7 @@ function attachTipPrompt() {
   trackEvent('tip_prompt', Object.assign({ step: 'shown' }, tipFacts));
 
   var box = document.createElement('div');
-  box.style.cssText = 'margin:14px 0;padding:12px;border-radius:12px;border:1px solid rgba(255,215,0,0.4);text-align:center;background:rgba(255,215,0,0.06)';
+  box.style.cssText = 'margin:14px 0;padding:12px;border-radius:8px;border:2px dashed var(--line);text-align:center;background:var(--paper-deep)';
   var text = document.createElement('div');
   text.style.cssText = 'font-size:12px;color:var(--text-secondary);margin-bottom:8px';
   text.textContent = 'Enjoying Language Dash? It is free and always will be. If it is helping your words stick, a small tip helps keep it going.';
@@ -1194,7 +1194,7 @@ function hideBootSplash() {
 
 var flyersOn = null;
 
-/** The word-themed odds and ends flying out of the middle of the home backdrop (off for reduced motion). */
+/** The postage stamps and airmail drifting behind Home (still, not moving, for reduced motion). */
 function refreshFlyers() {
   var layer = document.getElementById('bgFlyers');
   if (!layer) return;
@@ -1204,21 +1204,21 @@ function refreshFlyers() {
   mountFlyers(layer, { reducedMotion: reduced });
 }
 
-/** Apply the current color theme (a whole palette tinted by the season and time of day). */
+/** Apply the current color theme (a Paper Passport palette: Paper by day and Night Train after dark on Automatic). */
 var themeRoll = { world: null, runs: 0, at: Date.now() };
 function refreshTheme() {
   if (!themeRoll.world) themeRoll.world = rollWorld(null);
-  var theme = pickTheme(new Date(), storage.get('uiTheme') || 'surprise', themeRoll.world);
+  var theme = pickTheme(new Date(), storage.get('uiTheme') || 'auto', themeRoll.world);
   applyTheme(document.documentElement, theme);
   var meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', theme.vars['--bg-fallback'] || '#0b1020');
+  if (meta) meta.setAttribute('content', theme.vars['--bg-fallback'] || '#F6EEDC');
   document.documentElement.setAttribute('data-theme-name', theme.name);
   refreshFlyers();
 }
 
 /** Surprise me: after every run (or after a while) the look changes to a different season, quietly: no popup or toast. */
 function maybeRerollTheme() {
-  if ((storage.get('uiTheme') || 'surprise') !== 'surprise') return;
+  if ((storage.get('uiTheme') || 'auto') !== 'surprise') return;
   if (!rerollDue(themeRoll.runs, themeRoll.at, Date.now())) return;
   themeRoll.world = rollWorld(themeRoll.world);
   themeRoll.runs = 0;
@@ -1861,7 +1861,7 @@ function init() {
           '<div style="text-align:center;margin:8px 0;color:var(--text-muted)">— or play a friend —</div>' : '') +
         '<button class="btn btn-green btn-block" id="mpHostBtn">\uD83C\uDFAE Host Game</button>' +
         '<div style="text-align:center;margin:8px 0;color:var(--text-muted)">\u2014 or \u2014</div>' +
-        '<input type="text" id="mpJoinCode" maxlength="5" placeholder="ROOM CODE" aria-label="Room code" style="width:100%;padding:10px;border-radius:12px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3);font-size:18px;text-align:center;letter-spacing:4px;margin-bottom:8px;text-transform:uppercase">' +
+        '<input type="text" id="mpJoinCode" maxlength="5" placeholder="ROOM CODE" aria-label="Room code" style="width:100%;padding:10px;border-radius:12px;background:var(--field);color:var(--ink);border:2px solid var(--line);font-size:18px;text-align:center;letter-spacing:4px;margin-bottom:8px;text-transform:uppercase">' +
         '<button class="btn btn-primary btn-block" id="mpJoinBtn">Join Game</button>';
 
       var module;

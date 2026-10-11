@@ -228,17 +228,24 @@ describe('retired duplicate characters', () => {
   });
 });
 
-describe('the Surprise me colors', () => {
-  it('moves players left on the old Auto over once, and respects a later choice of Seasonal', async () => {
+describe('the Paper Passport colors', () => {
+  it('moves players left on a look from the earlier purple skin over to Automatic once, and respects a later choice', async () => {
     localStorage.clear();
     const { storage } = await import('../../js/storage.js');
     storage.load();
-    storage.data.settings.uiTheme = 'auto';
-    storage.data.settings.themeSurpriseSeen = false;
+    expect(storage.get('uiTheme')).toBe('auto');   // new players start on Automatic: Paper by day, Night Train after dark
+    ['surprise', 'classic', 'winter', 'ocean', 'auto'].forEach((old) => {
+      storage.data.settings.uiTheme = old;
+      storage.data.settings.themePaperSeen = false;
+      storage._ensureInvariants();
+      expect(storage.get('uiTheme')).toBe('auto');
+    });
+    storage.data.settings.uiTheme = 'matcha';        // a new look kept
+    storage.data.settings.themePaperSeen = false;
+    storage._ensureInvariants();
+    expect(storage.get('uiTheme')).toBe('matcha');
+    storage.data.settings.uiTheme = 'surprise';      // chosen on purpose afterwards
     storage._ensureInvariants();
     expect(storage.get('uiTheme')).toBe('surprise');
-    storage.data.settings.uiTheme = 'auto';   // chosen on purpose afterwards
-    storage._ensureInvariants();
-    expect(storage.get('uiTheme')).toBe('auto');
   });
 });

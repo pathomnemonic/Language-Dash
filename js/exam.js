@@ -386,7 +386,7 @@ function renderResults(st, result, durationSec) {
     row.appendChild(createElement('div', { text: getSubjectStyle(subj).icon + ' ' + subj + ' — ' + s.ok + '/' + s.n + ' (' + pct + '%)' }));
     row.lastChild.style.fontSize = '12px';
     var bar = createElement('div', { attributes: { role: 'img', 'aria-label': subj + ' ' + pct + ' percent' } });
-    bar.style.cssText = 'height:8px;border-radius:4px;background:rgba(255,255,255,0.12);overflow:hidden;margin-top:2px';
+    bar.style.cssText = 'height:10px;border-radius:5px;border:2px solid var(--line);background:var(--card);overflow:hidden;margin-top:2px';
     var fill = createElement('div');
     fill.style.cssText = 'height:100%;width:' + pct + '%;background:' + getSubjectCssColor(subj);
     bar.appendChild(fill);

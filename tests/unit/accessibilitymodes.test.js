@@ -33,7 +33,7 @@ describe('relaxed pace', () => {
 });
 
 describe('dyslexia font and button side', () => {
-  const css = readFileSync('css/arcade.css', 'utf8');
+  const css = ['tokens', 'base', 'home', 'run', 'screens', 'extras'].map((f) => readFileSync('css/' + f + '.css', 'utf8')).join('\n');
 
   it('ships the font files with their license', () => {
     ['opendyslexic-latin-400-normal.woff2', 'opendyslexic-latin-700-normal.woff2', 'OpenDyslexic-LICENSE.txt'].forEach((f) => {

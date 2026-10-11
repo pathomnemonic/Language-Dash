@@ -12,7 +12,7 @@ describe('Library Hall map (skin key: Hospital Hallway)', () => {
     expect(isHospitalHall(hall)).toBe(true);
     expect(buildWallSegment(hall, -1, -40, 3.5).children.length).toBeGreaterThan(8);
     expect(buildArch(hall, -44).children.length).toBeGreaterThan(3);
-    expect(buildGround(hall).children.length).toBeGreaterThan(2);
+    expect(buildGround(hall).children.length).toBeGreaterThanOrEqual(2);
   });
 
   it('repeats every four bays so the corridor scrolls without a pop', () => {
@@ -57,7 +57,7 @@ describe('the other walled-in maps', () => {
       expect(isHospitalHall(skin)).toBe(true);
       for (let k = 0; k < 4; k++) expect(buildWallSegment(skin, 1, -k * 4, 3.5).children.length).toBeGreaterThan(6);
       expect(buildArch(skin, -44).children.length).toBeGreaterThan(2);
-      expect(buildGround(skin).children.length).toBeGreaterThan(2);
+      expect(buildGround(skin).children.length).toBeGreaterThanOrEqual(2);
     });
   });
 });

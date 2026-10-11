@@ -17,6 +17,7 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeom
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { isLowQuality } from './quality.js';
+import { paperize, toonRamp } from './paper.js';
 
 var _envCache = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
 
@@ -28,8 +29,9 @@ var _envCache = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
  * @param {THREE.Scene} scene
  */
 export function setupEnvironment(renderer, scene) {
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.25;
+  // A printed look: true colours, no filmic contrast curve (ACES crushed the paper tones and tinted them)
+  renderer.toneMapping = THREE.NoToneMapping;
+  renderer.toneMappingExposure = 1;
   var tex = _envCache && _envCache.get(renderer);
   if (!tex) {
     var pmrem = new THREE.PMREMGenerator(renderer);
@@ -170,7 +172,7 @@ export function upgradeMaterials(root, opts) {
     var type = o.geometry && o.geometry.type;
 
     if (m.isMeshStandardMaterial) {
-      m.envMapIntensity = envIntensity;
+      m.envMapIntensity = Math.min(envIntensity, 0.35);
       return;
     }
     if (!m.isMeshBasicMaterial || m.transparent || m.opacity < 1 || m.wireframe) return;
@@ -181,14 +183,9 @@ export function upgradeMaterials(root, opts) {
 
     var lit = cache[m.uuid];
     if (!lit) {
-      // Grey-blue mid tones read as metal (frames, legs, rails); the rest is painted or plastic.
-      var metal = hsl.s < 0.25 && hsl.l > 0.25 && hsl.l < 0.75;
-      lit = new THREE.MeshStandardMaterial({
-        color: m.color.clone(),
-        roughness: metal ? 0.35 : 0.55,
-        metalness: metal ? 0.7 : 0.1,
-        envMapIntensity: envIntensity
-      });
+      // Cel-shaded: flat colour bands (see paper.js), no glossy reflections
+      lit = new THREE.MeshToonMaterial({ color: paperize(m.color.getHex()), gradientMap: toonRamp(), fog: m.fog !== false });
+      lit.userData.paper = true;
       cache[m.uuid] = lit;
     }
     o.material = lit;

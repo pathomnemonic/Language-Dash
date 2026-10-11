@@ -17,6 +17,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { buildScenery } from './scenery.js';
+import { paperizeCanvas } from './paper.js';
 
 /** One repeat of the scenery along the track: four bays of WORLD_BAY units. */
 export var WORLD_BAY = 4;
@@ -263,6 +264,7 @@ export function canvasTex(name, w, h, draw, o) {
       var ctx = canvas.getContext && canvas.getContext('2d');
       if (ctx) {
         draw(ctx, w, h);
+        paperizeCanvas(ctx, w, h); // every painted texture is moved onto the paper palette (no violet, calmer saturation)
         t = new THREE.CanvasTexture(canvas);
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
         t.anisotropy = (o && o.aniso) || 4;

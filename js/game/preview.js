@@ -122,14 +122,14 @@ export class CharacterPreview {
         if (!this.container) return;
 
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x0a0e27);
+        this.scene.background = new THREE.Color(0xf1e6cb); // warm paper
 
         this.camera = new THREE.PerspectiveCamera(40, 1, 0.1, 50);
         this.camera.position.set(0, 1.2, 4);
         this.camera.lookAt(0, 0.9, 0);
 
         this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        this.renderer.setClearColor(0x0a0e27, 1);
+        this.renderer.setClearColor(0xf1e6cb, 1);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         setupEnvironment(this.renderer, this.scene);
         this.container.appendChild(this.renderer.domElement);
@@ -137,25 +137,25 @@ export class CharacterPreview {
         this.resize();
 
         // Lighting
-        var keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
+        var keyLight = new THREE.DirectionalLight(0xfff0d8, 1.8);
         keyLight.position.set(3, 4, 5);
         this.scene.add(keyLight);
 
-        var fillLight = new THREE.DirectionalLight(0x9999ff, 0.9);
+        var fillLight = new THREE.DirectionalLight(0xffe4cc, 0.5);
         fillLight.position.set(-3, 2, 4);
         this.scene.add(fillLight);
 
-        var rimLight = new THREE.DirectionalLight(0x4488ff, 0.3);
+        var rimLight = new THREE.DirectionalLight(0xffffff, 0.2);
         rimLight.position.set(0, 3, -3);
         this.scene.add(rimLight);
 
-        var ambient = new THREE.AmbientLight(0x8888aa, 1.3);
+        var ambient = new THREE.AmbientLight(0xfff1dc, 1.5);
         this.scene.add(ambient);
 
         // Ground disc
         var groundDisc = new THREE.Mesh(
             new THREE.CircleGeometry(1.2, 24),
-            new THREE.MeshBasicMaterial({ color: 0x111428, transparent: true, opacity: 0.6 })
+            new THREE.MeshBasicMaterial({ color: 0x1b2a41, transparent: true, opacity: 0.18 })
         );
         groundDisc.rotation.x = -Math.PI / 2;
         groundDisc.position.y = -0.2;
@@ -163,7 +163,7 @@ export class CharacterPreview {
 
         var groundRing = new THREE.Mesh(
             new THREE.RingGeometry(1.15, 1.25, 32),
-            new THREE.MeshBasicMaterial({ color: 0x18ffff, transparent: true, opacity: 0.15 })
+            new THREE.MeshBasicMaterial({ color: 0xd9432c, transparent: true, opacity: 0.5 })
         );
         groundRing.rotation.x = -Math.PI / 2;
         groundRing.position.y = -0.19;
@@ -457,9 +457,9 @@ export class CharacterPreview {
         this.mapGroup = null;
         if (this.previewMapId) {
             this.previewMapId = null;
-            this.scene.background = new THREE.Color(0x0a0e27);
+            this.scene.background = new THREE.Color(0xf1e6cb);
             this.scene.fog = null;
-            if (this.renderer) this.renderer.setClearColor(0x0a0e27, 1);
+            if (this.renderer) this.renderer.setClearColor(0xf1e6cb, 1);
         }
     }
 
