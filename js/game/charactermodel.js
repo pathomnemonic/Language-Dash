@@ -22,7 +22,7 @@ var FADE = 0.2;
 var _cache = {};    // url -> { scene, clips, height, minY }
 var _loading = {};  // url -> Promise
 
-import { STATE_CLIPS, baseClipName, findClipName, resolveClipName, heroKeyFor } from './clipnames.js';
+import { STATE_CLIPS, HERO_RUN_SCALE, baseClipName, findClipName, resolveClipName, heroKeyFor } from './clipnames.js';
 export { baseClipName, findClipName, resolveClipName };
 
 export function isModelReady(url) {
@@ -135,7 +135,7 @@ class ModelAnimator {
     next.reset();
     next.setLoop(def.loop ? THREE.LoopRepeat : THREE.LoopOnce, Infinity);
     next.clampWhenFinished = !!def.clamp;
-    next.timeScale = def.scale || 1;
+    next.timeScale = (def.scale || 1) * (resolved.state === 'run' && state === 'run' ? (HERO_RUN_SCALE[this.heroKey] || 1) : 1);
     next.enabled = true;
     next.fadeIn(FADE).play();
     if (prev && prev !== next) prev.fadeOut(FADE);
@@ -181,6 +181,20 @@ function addInkOutline(root) {
   var skinned = [];
   root.updateMatrixWorld(true);
   root.traverse(function (o) { if (o.isSkinnedMesh && o.geometry && !o.userData.inkHull) skinned.push(o); });
+  var rigid = [];
+  root.traverse(function (o) { if (o.isMesh && !o.isSkinnedMesh && o.geometry && !o.userData.inkHull && o.geometry.attributes.normal) rigid.push(o); });
+  rigid.forEach(function (o) {
+    // models animated by node transforms (the blocky people) have no skeleton: a sibling hull rides the same parent
+    var e = o.matrixWorld.elements;
+    var local = OUTLINE_WORLD / Math.max(1e-6, Math.hypot(e[0], e[1], e[2]));
+    var hull = new THREE.Mesh(o.geometry, inkMaterial(local, undefined, false));
+    hull.userData.inkHull = true;
+    hull.name = (o.name || 'mesh') + '_ink';
+    hull.position.copy(o.position);
+    hull.quaternion.copy(o.quaternion);
+    hull.scale.copy(o.scale);
+    if (o.parent) o.parent.add(hull);
+  });
   skinned.forEach(function (o) {
     // thickness in this mesh's own units: the world width, undone by the mesh's total world scale (model scale and node scales)
     var e = o.matrixWorld.elements;
