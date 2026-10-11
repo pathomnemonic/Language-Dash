@@ -602,3 +602,60 @@
   .pal-emoji { animation: none !important; }
   .pal-bubble { transition: none; }
 }
+
+/* ==================================================================
+   A calmer Home. Fewer boxes, one accent: the red PLAY ticket. Everything else is quiet paper and ink.
+   - red "new" dots stay on the tab bar only (they were on every button)
+   - the route and word filters share one slim pass; today and the streak are plain lines, not more boxes
+   - the three other ways to play are plain paper stubs (no colored fills), shorter, with more air around them
+   ================================================================== */
+#screenHome .nav-dot { display: none !important; }
+.home-layout { gap: clamp(10px, 2vh, 22px); padding-left: calc(var(--safe-left) + 20px); padding-right: calc(var(--safe-right) + 20px); }
+
+/* the stamp: a little smaller so it breathes */
+.home-header h1 { --stamp: min(100cqh, 100cqw, 140px); }
+.home-header { opacity: 0.96; }
+
+/* the pass: a single card, no teal strip, a soft shadow */
+.pass { box-shadow: var(--hard-sm); border-radius: var(--radius-md); }
+.pass::before { display: none; }
+.pass-main { flex-direction: column; align-items: stretch; gap: 6px; padding: 12px 12px 6px; }
+#langBtn { flex: none; width: 100%; min-height: 54px; align-items: center; text-align: center; }
+#langBtn .side-label { display: none; }
+#langBtn .filters-summary { font-size: 28px; text-align: center; width: 100%; }
+#filtersBtn { flex: none; flex-direction: row; align-items: baseline; justify-content: center; gap: 6px; min-height: 32px; padding: 0 4px 2px; }
+#filtersBtn .side-label { font-size: 10px; letter-spacing: 0.14em; }
+#filtersBtn .filters-summary { font-size: 12px; font-weight: 700; display: block; -webkit-line-clamp: unset; white-space: nowrap; max-width: 60%; text-decoration: underline; text-decoration-color: var(--ink-faint); text-underline-offset: 3px; }
+
+/* today and the streak: plain lines on the tear-off, no inner boxes */
+.home-progress { gap: 12px; padding: 12px 14px 11px; align-items: center; background: transparent; }
+.home-progress::before, .home-progress::after { top: -13px; background: var(--paper); }
+.streak-chip, .study-goal { background: transparent; border: 0; box-shadow: none; }
+.streak-chip { min-width: 44px; min-height: 40px; flex-direction: row; gap: 4px; padding: 0; }
+.streak-chip.lit { background: transparent; color: var(--ink); }
+.streak-chip:active, .study-goal:active { transform: none; }
+.study-goal { padding: 0; min-height: 40px; }
+.study-goal.goal-done { background: transparent; color: var(--ink); }
+.study-goal-bar { height: 9px; }
+
+/* PLAY: the one loud thing */
+.btn-play { height: clamp(66px, 11vh, 92px); }
+
+/* the other modes: quiet stubs */
+.mode-row { gap: 12px; }
+.mode-btn { height: clamp(56px, 9vh, 72px); box-shadow: var(--hard-sm); }
+.mode-row .mode-btn:nth-child(n) .mode-btn-icon { background: transparent; color: var(--ink); }
+.mode-btn-icon { font-size: 20px; }
+.mode-btn-label { border-top: var(--bw) dashed var(--line-soft, var(--line)); font-size: 10.5px; padding: 3px 2px 4px; }
+.mode-btn::before, .mode-btn::after { display: none; }
+
+/* a rare bit of motion only: fewer drifting objects behind the menus */
+#bgFlyers { opacity: 0.35; }
+.play-sub { min-height: 36px; }
+/* the route sits straight on the pass (no box inside a box) */
+#langBtn { background: transparent; border: 0; box-shadow: none; border-radius: 0; padding: 4px 0; min-height: 48px; }
+#langBtn::before { display: none; }
+#langBtn:active { transform: none; }
+#langBtn .filters-summary { letter-spacing: 0.12em; }
+/* tab-bar dots: smaller */
+.nav-item .nav-dot { transform: scale(0.8); }
