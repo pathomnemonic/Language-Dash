@@ -33,17 +33,18 @@ describe('service worker caches', () => {
     await sw.request('https://x.test/portraits/hero-face.webp');
     await sw.request('https://x.test/', 'navigate');
     expect([...sw.stores['language-dash-assets'].keys()]).toEqual(['https://x.test/assets/cards-renal-Bnz5F6Lk.js']);
-    expect([...sw.stores['dx-dash-b1'].keys()].sort()).toEqual(['https://x.test/', 'https://x.test/portraits/hero-face.webp']);
+    expect([...sw.stores['language-dash-b1'].keys()].sort()).toEqual(['https://x.test/', 'https://x.test/portraits/hero-face.webp']);
   });
 
-  it('on activation drops old build caches but keeps the asset cache', async () => {
+  it('on activation drops its own old build caches but keeps the asset cache and other games\' caches', async () => {
     const sw = load();
-    sw.stores['dx-dash-old'] = new Map([['a', 1]]);
+    sw.stores['language-dash-old'] = new Map([['a', 1]]);
+    sw.stores['dx-dash-b9'] = new Map([['theirs', 1]]);
     sw.stores['language-dash-assets'] = new Map([['https://x.test/assets/a-12345678.js', 1]]);
     let waited;
     sw.listeners.activate({ waitUntil: (p) => { waited = p; } });
     await waited;
-    expect(Object.keys(sw.stores).sort()).toEqual(['language-dash-assets']);
+    expect(Object.keys(sw.stores).sort()).toEqual(['dx-dash-b9', 'language-dash-assets']);
     expect(sw.stores['language-dash-assets'].size).toBe(1);
   });
 

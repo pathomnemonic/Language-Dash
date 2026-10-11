@@ -640,14 +640,7 @@ class Storage {
     this._protectNewer = false;
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw && STORAGE_KEY !== LEGACY_KEY) {
-        // First time on this site's own key: bring the earlier shared save across (copied, never moved)
-        var legacy = localStorage.getItem(LEGACY_KEY);
-        if (legacy && hasProgress(legacy)) {
-          localStorage.setItem(STORAGE_KEY, legacy);
-          raw = legacy;
-        }
-      }
+      // (Language Dash never adopts a save it did not write: no 'earlier shared save' is copied in from another key)
       if (raw) {
         var parsed = JSON.parse(raw);
 

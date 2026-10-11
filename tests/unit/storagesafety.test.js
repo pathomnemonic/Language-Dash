@@ -88,7 +88,7 @@ describe('storage keys and newer saves', () => {
   it('files each site under its own path so another copy of the game on the same host cannot touch it', async () => {
     const { storageKeyFor } = await import('../../js/storage.js');
     expect(storageKeyFor('/')).toBe('langdash_save_v1');
-    expect(storageKeyFor('/Language-Dash/')).toBe('langdash_save_v1@language-dash-v2');
+    expect(storageKeyFor('/Language-Dash/')).toBe('langdash_save_v1@Language-Dash');
     expect(storageKeyFor('/language-dash/')).not.toBe(storageKeyFor('/Language-Dash/'));
   });
 

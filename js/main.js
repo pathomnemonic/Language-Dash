@@ -1413,7 +1413,14 @@ function init() {
   // The how-to-play is played on the real track; the practice-track tutorial is the fallback where the runner cannot start
   ui.startRealTutorial = function (opts) {
     if (!webglOk || game.running || game.paused) return false;
-    // (the card list can still be loading on the very first launch: the two ids are only looked up when a question is sent)
+    // The words load in the background after the first paint. On a first visit over a real connection the practice run
+    // would start before there are any words, so wait for them (the player sees the welcome page meanwhile).
+    if (!areCardsReady()) {
+      loadCards().then(function () { ui.startRealTutorial(opts); }).catch(function () {
+        ui._showToast('Could not load the words. Check your connection and try again.');
+      });
+      return true;
+    }
     var ids = TUTORIAL_CARD_IDS.slice();
     if (CARDS.length > 0) {
       var known = {};

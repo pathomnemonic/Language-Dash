@@ -27,7 +27,7 @@ describe('links sent to friends', () => {
 
   it('a challenge link built from it opens the website, not localhost', () => {
     const url = buildChallengeUrl(publicUrl({ protocol: 'https:', hostname: 'localhost', origin: 'https://localhost', pathname: '/' }, ''), { seed: 5, n: 15, from: 'Ada', score: 100, hash: 'a' });
-    expect(url).toMatch(/^https:\/\/pathomnemonic\.github\.io\/language-dash-v2\/#c=/);
+    expect(url).toMatch(/^https:\/\/pathomnemonic\.github\.io\/Language-Dash\/#c=/);
     expect(url).not.toContain('localhost');
   });
 });

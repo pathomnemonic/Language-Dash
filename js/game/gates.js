@@ -21,7 +21,7 @@
  */
 
 import * as THREE from 'three';
-import { CARDS, SUBJECTS } from '../cardhub.js';
+import { CARDS, SUBJECTS, EXAM_FILTERS } from '../cardhub.js';
 import { storage } from '../storage.js';
 import { customCards } from '../customcards.js';
 import { getSubjectStyle } from './subjectstyle.js';
@@ -103,6 +103,17 @@ export function getCardPool(options) {
   var filters = options.filters || {};
   var mode = options.mode || 'endless';
   var includeCustomCards = options.includeCustomCards !== false;
+
+  // Saved choices that are not topics or levels of this game (left over from an older save, an import or another app
+  // that shared the browser) cannot match any word. They are dropped rather than emptying the pool, so a run never
+  // ends before the first word because of a stale filter.
+  if (subjects && subjects.length) subjects = subjects.filter(function (t) { return SUBJECTS.indexOf(t) >= 0; });
+  if (filters.exams && filters.exams.length) {
+    var knownLevels = filters.exams.filter(function (l) { return EXAM_FILTERS.indexOf(l) >= 0; });
+    filters = Object.assign({}, filters, { exams: knownLevels });
+  }
+  // (question type, source, year and high-yield filters do not exist in this game: nothing to match on)
+  filters = Object.assign({}, filters, { questionTypes: [], sources: [], years: [], highYieldOnly: false });
 
   // If subjects array is empty or not provided, use ALL canonical subjects
   if (!subjects || subjects.length === 0) {
