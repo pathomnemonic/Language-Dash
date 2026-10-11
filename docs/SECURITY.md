@@ -24,7 +24,7 @@ Why: Supabase gives every new function and table to the signed-in and signed-out
 - Webhook events to send to `stripe-webhook`: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `invoice.paid`, `charge.refunded`, `charge.dispute.created`, `charge.dispute.updated`, `charge.dispute.closed`.
 - Use a **restricted API key** for `STRIPE_SECRET_KEY` (write: Checkout Sessions, Billing Portal, Refunds; read: Subscriptions, Charges, Invoices, Payment Intents, Prices) rather than the full secret key.
 - Keep Radar on. Offer cards (and wallets built on cards); bank debits finish days later, and a purchase that finishes later is still delivered, but cards are simpler for players.
-- If a payment ever shows in Stripe but not in the app: the app asks Stripe directly (every ten minutes while a purchase is pending, otherwise twice a day), and **Settings → Dx Dash Pro → Check again** does it at once.
+- If a payment ever shows in Stripe but not in the app: the app asks Stripe directly (every ten minutes while a purchase is pending, otherwise twice a day), and **Settings → Language Dash Pro → Check again** does it at once.
 
 ## 4. What the code guarantees (and the tests that prove it)
 

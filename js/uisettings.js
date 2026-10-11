@@ -18,7 +18,7 @@ import { audio } from './audio.js';
 import { LOCKER_ITEMS, DELISTED_ITEMS, ARCHIVE_CLASSIC, AVATARS } from './game/shopdata.js';
 import { getTipUrl, openTipPage } from './tips.js';
 import { POWERUP_OPTIONS, describeRules, getRunRules } from './rules.js';
-import { SKINS, isMapUnlocked, isIndoorSkin } from './game/skins.js';
+import { SKINS, skinTitle, isMapUnlocked, isIndoorSkin } from './game/skins.js';
 import { levelFromXp } from './progress.js';
 import { mapUnlockLevel, UNLOCK_EVERY } from './game/mapunlocks.js';
 import { getPal, palLine } from './companions.js';
@@ -29,7 +29,7 @@ import { canRemind, requestReminderPermission } from './reminders.js';
 import { isNative } from './native.js';
 import { canDownloadPack, downloadPack, packStatus, formatBytes } from './offlinepack.js';
 import { loadCards } from './cardhub.js';
-import { renderLanguageSheet, pairLabel } from './langui.js';
+import { renderLanguageSheet } from './langui.js';
 import { buildStudyReport, reportToText, reportToCsv } from './studyreport.js';
 import { copyText, saveFile } from './platform.js';
 import { canRate, rateTheApp, openStorePage } from './review.js';
@@ -641,7 +641,7 @@ export var settingsMethods = {
     mapSelect.style.cssText = 'padding:6px 8px;border-radius:8px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3);max-width:160px';
     mapSelect.appendChild(createElement('option', { text: 'Rotate maps', attributes: { value: '' } }));
     SKINS.filter(function (sk) { return isMapUnlocked(sk, function (id) { return storage.ownsItem(id); }); }).forEach(function (sk) {
-      var o = createElement('option', { text: sk.name, attributes: { value: sk.name } });
+      var o = createElement('option', { text: skinTitle(sk), attributes: { value: sk.name } });
       if (storage.get('preferredMap') === sk.name) o.selected = true;
       mapSelect.appendChild(o);
     });

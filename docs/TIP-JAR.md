@@ -8,9 +8,9 @@ The code: `js/tipjar.js` (store logic), `js/tipui.js` (the sheet), `js/tips.js` 
 
 | id | Suggested price | Label in the app |
 |---|---|---|
-| `dxdash_tip_small` | 1.99 | Small coffee |
-| `dxdash_tip_medium` | 4.99 | Coffee and a pastry |
-| `dxdash_tip_large` | 9.99 | A whole lunch |
+| `languagedash_tip_small` | 1.99 | Small coffee |
+| `languagedash_tip_medium` | 4.99 | Coffee and a pastry |
+| `languagedash_tip_large` | 9.99 | A whole lunch |
 
 Prices shown in the app are read from the store, in the player's own currency. Change prices in the store consoles; no app update is needed. To change labels or add amounts, edit `TIP_PRODUCTS` in `js/tipjar.js`.
 

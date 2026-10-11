@@ -1,4 +1,4 @@
-// tools/brand.mjs — the Dx Dash mark, drawn as shapes (no fonts needed) in a 512 box.
+// tools/brand.mjs — the Language Dash mark, drawn as shapes (no fonts needed) in a 512 box.
 export const BG = '#0b1020';
 export const CYAN = '#22d3ee';
 export const WHITE = '#e8f7ff';

@@ -13,7 +13,7 @@
 /* global window, document, localStorage, Storage */
 const URL = process.env.URL || 'http://localhost:4173';
 const CHROME = process.env.CHROME_PATH || '/opt/pw-browsers/chromium';
-const NOISE = /WebSocket|peerjs|GPU stall|swiftshader|WebGL: INVALID|GroupMarkerNotSet|Failed to load resource|net::ERR|\[vite\]|status of (404|401|403|400)|KHR_parallel|offline|Dx Dash|auto-fix/i;
+const NOISE = /WebSocket|peerjs|GPU stall|swiftshader|WebGL: INVALID|GroupMarkerNotSet|Failed to load resource|net::ERR|\[vite\]|status of (404|401|403|400)|KHR_parallel|offline|Language Dash|auto-fix/i;
 const pw = await import('@playwright/test');
 const browser = await pw.chromium.launch({ executablePath: CHROME, args: ['--use-gl=swiftshader', '--ignore-gpu-blocklist', '--no-sandbox'] });
 const results = [];

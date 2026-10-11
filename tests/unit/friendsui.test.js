@@ -71,7 +71,7 @@ describe('Friends screen', () => {
     await flush();
     const t = text();
     expect(t).toContain('Alice set a new best score: 1,200');
-    expect(t).toContain('You hit a 12-answer streak');
+    expect(t).toContain('You hit a 12-word streak');
     expect(t).toContain('just now');
     expect(t).toContain('3h ago');
     expect(t).toContain('2d ago');
@@ -104,7 +104,7 @@ describe('Friends screen', () => {
     expect(t).toContain('Code ABC123 · 1 member');
     expect(t).toContain('200 / 500'); // the group's cards add up across members (120 + 80)
     expect(t).toContain('Alice');
-    expect(document.querySelector('[aria-label="Weekly goal in cards"]')).not.toBeNull(); // the owner can set it
+    expect(document.querySelector('[aria-label="Weekly goal in words"]')).not.toBeNull(); // the owner can set it
     expect(svc.postActivity).toHaveBeenCalledWith('group_join', { name: 'Me' }); // friends see it in their feed
   });
 
@@ -124,7 +124,7 @@ describe('Friends screen', () => {
     await flush(); await flush(); await flush();
     expect(toasts).toContain('Joined Study Crew!');
     expect(text()).toContain('Code GOOD · 4 members');
-    expect(document.querySelector('[aria-label="Weekly goal in cards"]')).toBeNull();
+    expect(document.querySelector('[aria-label="Weekly goal in words"]')).toBeNull();
     window.confirm = () => true;
     [...document.querySelectorAll('#root button')].find((b) => b.textContent === 'Leave').click();
     await flush(); await flush(); await flush();

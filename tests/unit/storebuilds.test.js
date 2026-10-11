@@ -52,7 +52,7 @@ describe('both store builds', () => {
     expect(manifest).toMatch(/android\.hardware\.screen\.portrait"\s+android:required="false"/);
     expect(manifest).toMatch(/android:resizeableActivity="true"/);
     expect(manifest).not.toMatch(/android:screenOrientation="portrait"/);
-    const main = readFileSync('android/app/src/main/java/com/pathomnemonic/dxdash/MainActivity.java', 'utf8');
+    const main = readFileSync('android/app/src/main/java/com/pathomnemonic/languagedash/MainActivity.java', 'utf8');
     expect(main).toMatch(/smallestScreenWidthDp < 600/);
   });
 });

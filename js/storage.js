@@ -23,6 +23,7 @@
 import { isPremiumItem, PREMIUM_ITEMS } from '../supabase/functions/_shared/premium.js';
 import { FEATURES } from './features.js';
 import { mapUnlockLevel, legacyMapUnlockLevel } from './game/mapunlocks.js';
+import { getSkinByName } from './game/skins.js';
 import { levelFromXp } from './progress.js';
 import { repairData, sanitizeCollections } from './sanity.js';
 import { advanceStudyStreak, liveStudyStreak, deriveStreakFromCounts, daysBetween } from './studystreak.js';
@@ -572,13 +573,13 @@ function cleanRunSummary(s) {
   return out;
 }
 
-/** Which badge a subject's mastery earns. */
+/** Which badge a topic's mastery earns (the 15 topics of js/lang/topics.js, in order; ids are the old MASTER_* ones). */
 var SUBJECT_MASTERY_KEYS = {
-  'Neurology': 'MASTER_NEURO', 'Cardiology': 'MASTER_CARDIO', 'Nephrology': 'MASTER_NEPHRO',
-  'Psychiatry': 'MASTER_PSYCH', 'Gastroenterology': 'MASTER_GI', 'Pulmonology': 'MASTER_PULM',
-  'Infectious Disease': 'MASTER_ID', 'Endocrinology': 'MASTER_ENDO', 'Hematology/Oncology': 'MASTER_HEME',
-  'Rheumatology': 'MASTER_RHEUM', 'Obstetrics/Gynecology': 'MASTER_OBGYN', 'Pediatrics': 'MASTER_PEDS',
-  'Surgery': 'MASTER_SURG', 'Emergency Medicine': 'MASTER_EM', 'Multisystem / Mixed': 'MASTER_MULTI'
+  'Basics': 'MASTER_NEURO', 'People & Family': 'MASTER_CARDIO', 'Body & Health': 'MASTER_NEPHRO',
+  'Food & Drink': 'MASTER_PSYCH', 'Home & Things': 'MASTER_GI', 'Nature & Animals': 'MASTER_PULM',
+  'Travel & Places': 'MASTER_ID', 'Time & Numbers': 'MASTER_ENDO', 'Colors & Describing': 'MASTER_HEME',
+  'Actions': 'MASTER_RHEUM', 'Feelings & Thinking': 'MASTER_OBGYN', 'Talking': 'MASTER_PEDS',
+  'Work & School': 'MASTER_SURG', 'Shopping & Money': 'MASTER_EM', 'Small Words': 'MASTER_MULTI'
 };
 
 // ===== QUEST EVENT MAPPING =====
@@ -958,7 +959,8 @@ class Storage {
     // Maps went into the Locker: someone who had already chosen one as their favorite keeps it
     var fav = d.settings.preferredMap;
     if (fav) {
-      var favItem = LOCKER_ITEMS.filter(function (i) { return i.type === 'map' && i.name === fav; })[0];
+      var favSkin = getSkinByName(fav); // (accepts the old skin name or the new title)
+      var favItem = favSkin && (favSkin.name === fav || favSkin.title === fav) ? LOCKER_ITEMS.filter(function (i) { return i.type === 'map' && i.skinId === favSkin.id; })[0] : null;
       if (favItem && d.progression.ownedItems.indexOf(favItem.id) < 0) d.progression.ownedItems.push(favItem.id);
     }
 

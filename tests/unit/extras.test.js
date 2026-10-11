@@ -159,7 +159,7 @@ describe('leaderboard screen: feed and group goals', () => {
     [...root.querySelectorAll('[role=tab]')].find((b) => /Feed/.test(b.textContent)).click();
     await tick();
     expect(root.querySelector('img')).toBeNull();
-    expect(root.textContent).toContain('22-answer streak');
+    expect(root.textContent).toContain('22-word streak');
     const challengeButtons = [...root.querySelectorAll('button')].filter((b) => /Challenge/.test(b.textContent));
     expect(challengeButtons).toHaveLength(1); // not offered for your own events
     challengeButtons[0].click();

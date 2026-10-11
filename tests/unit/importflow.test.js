@@ -11,40 +11,46 @@ describe('Anki "Notes in Plain Text" export', () => {
   it('drops the metadata columns and HTML, keeps front and back, splits clozes', () => {
     const r = ankiImport.parseDelimitedText(sample);
     const fronts = r.cards.map((c) => c.front);
-    expect(fronts[0]).toBe('Fever, new murmur, Janeway lesions, Osler nodes / in an IV drug user');
-    expect(r.cards[0].back).toBe('Infective endocarditis / S. aureus is the most common cause');
-    expect(r.cards[1].back).toBe('N-acetylcysteine (replenishes glutathione)');
+    expect(fronts[0]).toBe('dog / (an animal)');
+    expect(r.cards[0].back).toBe('perro / el perro corre');
+    expect(r.cards[1].back).toBe('comer (verb)');
     // the cloze note became two cards
-    expect(r.cards.filter((c) => /diabetes/.test(c.front)).length).toBe(2);
+    expect(r.cards.filter((c) => /dog|bread/.test(c.front) && /\[/.test(c.front)).length).toBe(2);
     // nothing carries the GUID, note type, deck or tags
-    r.cards.forEach((c) => expect(c.front + c.back).not.toMatch(/gT3k|Basic|Cloze|Step 1::|endocarditis cardio/));
-    // the quoted field with a comma and the image-only card
-    expect(r.cards.find((c) => /facial droop/.test(c.front)).back).toMatch(/^Contralateral upper motor neuron/);
+    r.cards.forEach((c) => expect(c.front + c.back).not.toMatch(/gT3k|Basic|Cloze|Spanish::|food verbs/));
+    // the quoted field with a comma
+    expect(r.cards.find((c) => /hello, hi/.test(c.front)).back).toMatch(/^hola/);
     // the picture-only note is skipped, with a reason, rather than imported as "[image]"
     expect(r.cards.some((c) => /Image occlusion/.test(c.front))).toBe(false);
     expect(r.warnings.join(' ')).toMatch(/picture/);
   });
   it('skips a Front,Back header row and says when a row is half empty', () => {
-    const r = ankiImport.parseDelimitedText('Front,Back\nQ1,A1\nQ2,\n');
-    expect(r.cards).toEqual([{ front: 'Q1', back: 'A1' }]);
+    const r = ankiImport.parseDelimitedText('Front,Back\ndog,perro\ncat,\n');
+    expect(r.cards).toEqual([{ front: 'dog', back: 'perro' }]);
     expect(r.warnings.join(' ')).toMatch(/one side is empty|only a picture/);
   });
   it('reads the example shown in the app', () => {
-    expect(ankiImport.parseDelimitedText(FORMAT_EXAMPLE).cards.length).toBe(2);
+    expect(ankiImport.parseDelimitedText(FORMAT_EXAMPLE).cards.length).toBe(3);
   });
   it('reads semicolon exports', () => {
-    const r = ankiImport.parseDelimitedText('#separator:semicolon\nQ one;A one\nQ two;A two\n');
+    const r = ankiImport.parseDelimitedText('#separator:semicolon\ndog;perro\ncat;gato\n');
     expect(r.cards.length).toBe(2);
   });
 });
 
 describe('the AI prompt', () => {
+  it('names the language pair, and asks for word pairs, not clinical cards', () => {
+    const p = buildAiPrompt({ known: 'en', target: 'ja' });
+    expect(p).toMatch(/I speak English and I am learning Japanese/);
+    expect(p).toMatch(/word pairs/);
+    expect(p).not.toMatch(/medical|USMLE|diagnos/i);
+  });
   it('names every real subject and the exact field names the importer reads', () => {
     const p = buildAiPrompt();
     SUBJECTS.forEach((s) => expect(p).toContain('"' + s + '"'));
     ['"subj"', '"bw"', '"ans"', '"d"', '"tp"', '"ww"'].forEach((f) => expect(p).toContain(f));
-    expect(p).toMatch(/exactly 2 wrong answers/);
-    expect(p.endsWith('My cards:')).toBe(true);
+    expect(p).toMatch(/exactly 2 wrong gate words/);
+    expect(p.endsWith('My word pairs:')).toBe(true);
   });
   it('its own example card passes the real validator', () => {
     const p = buildAiPrompt();
@@ -62,10 +68,11 @@ describe('what an AI chat actually sends back', () => {
     expect(r.error).toBeNull();
     expect(r.cards.length).toBe(5);          // the N/A + duplicate-answer card is dropped
     expect(r.skipped).toBe(1);
-    expect(r.cards[4].subj).toBe('Multisystem / Mixed'); // "Hematology" is not canonical
-    expect(r.cards[4].ans).toBe('Heparin-induced thrombocytopenia');
+    expect(r.cards[4].subj).toBe('Basics'); // "Greetings" is not one of the 15 topics
+    expect(r.cards[4].bw).toEqual(['hello']);
+    expect(r.cards[4].ans).toBe('hola');
   });
-  it('imports into My Cards as playable (not flashcard-only) cards', async () => {
+  it('imports into My words as playable (not flashcard-only) cards', async () => {
     const { customCards } = await import('../../js/customcards.js');
     const { storage } = await import('../../js/storage.js');
     storage.load();
@@ -84,10 +91,10 @@ describe('what an AI chat actually sends back', () => {
   it('explains an unusable reply instead of failing silently', () => {
     expect(parseAiReply('').error).toMatch(/Paste/);
     expect(parseAiReply('I am sorry, I cannot help').error).toMatch(/JSON/);
-    expect(parseAiReply('[{"bw":["x"],"ans":"y","d":["z"]}]').error).toMatch(/No usable cards/);
+    expect(parseAiReply('[{"bw":["x"],"ans":"y","d":["z"]}]').error).toMatch(/No usable words/);
   });
   it('accepts {"cards": [...]} and a bare array', () => {
-    const one = { subj: 'Cardiology', bw: ['a'], ans: 'b', d: ['c', 'd'], tp: 't' };
+    const one = { subj: 'Basics', bw: ['a'], ans: 'b', d: ['c', 'd'], tp: 't' };
     expect(parseAiReply(JSON.stringify({ cards: [one] })).cards.length).toBe(1);
     expect(parseAiReply(JSON.stringify([one])).cards.length).toBe(1);
   });
@@ -100,7 +107,7 @@ describe('the importer screen', () => {
     const text = box.textContent;
     expect(text).toMatch(/Notes in Plain Text/);
     expect(text).toMatch(/Copy AI prompt/);
-    expect(text).toMatch(/Import quiz cards/);
+    expect(text).toMatch(/Import as runner words/);
     expect(text).not.toMatch(/Backend URL/i);
     expect(box.querySelectorAll('details').length).toBe(2);
     ankiImport.unmount();
@@ -108,7 +115,7 @@ describe('the importer screen', () => {
 });
 
 describe('using the importer screen like a person', () => {
-  it('paste cards -> preview -> import as flashcards; paste AI reply -> import quiz cards', async () => {
+  it('paste word pairs -> preview -> import as flashcards; paste AI reply -> import runner words', async () => {
     localStorage.clear();
     const { customCards } = await import('../../js/customcards.js');
     const { storage } = await import('../../js/storage.js');
@@ -124,18 +131,18 @@ describe('using the importer screen like a person', () => {
 
     byText('Fill in an example').click();
     await new Promise((r) => setTimeout(r, 400));
-    expect(box.querySelector('.anki-import-preview').textContent).toMatch(/Found 2 cards/);
+    expect(box.querySelector('.anki-import-preview').textContent).toMatch(/Found 3 cards/);
 
     const before = customCards.getAll().length;
     byText('Import as flashcards').click();
     await new Promise((r) => setTimeout(r, 50));
-    expect(customCards.getAll().length).toBe(before + 2);
-    expect(status.textContent).toMatch(/Imported 2 flashcards/);
+    expect(customCards.getAll().length).toBe(before + 3);
+    expect(status.textContent).toMatch(/Imported 3 flashcards/);
 
-    byText('Import quiz cards').click();
+    byText('Import as runner words').click();
     expect(status.textContent).toMatch(/Paste the AI/);   // empty box explains itself
     ai.value = aiReply;
-    byText('Import quiz cards').click();
+    byText('Import as runner words').click();
     expect(status.textContent).toMatch(/Imported 5 quiz cards/);
     expect(customCards.getAll().length).toBe(before + 7);
     expect(paste).toBeTruthy();
@@ -162,7 +169,7 @@ describe('big decks', () => {
     const r2 = ankiImport.importRaw(Array.from({ length: 2000 }, (_, i) => ({ front: 'More ' + i, back: 'Ans ' + i })));
     expect(r2.imported).toBe(1000);
     expect(r2.rejected).toBe(1000);
-    expect(r2.warnings.join(' ')).toMatch(/5000 custom cards/);
+    expect(r2.warnings.join(' ')).toMatch(/5000 words/);
     ankiImport.unmount();
   });
 });

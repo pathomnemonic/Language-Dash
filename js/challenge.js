@@ -101,7 +101,7 @@ function parsePair(text) {
 /** The language pair the card ids of a challenge belong to (ids look like "en-es-007"), or null. */
 function pairOfIds(ids) {
   if (!ids || !ids.length) return null;
-  var m = /^([a-z]{2})-([a-z]{2})-\d{3}$/.exec(ids[0]);
+  var m = /^([a-z]{2})-([a-z]{2})-\d{3,4}$/.exec(ids[0]);
   return m ? parsePair(m[1] + '>' + m[2]) : null;
 }
 

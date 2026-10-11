@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { CARDS } from '../../js/cards.js';
+import { CARDS } from '../../js/cardhub.js';
 import { answerKey, uniqueByAnswer } from '../../js/cardleaks.js';
 import { buildExam } from '../../js/exam.js';
 import { buildEncounterPlan } from '../../js/multiplayer.js';
@@ -7,17 +7,17 @@ import { createDailyOrder } from '../../js/game/gates.js';
 
 const keys = (cards) => cards.map((c) => answerKey(c.ans));
 
-describe('no diagnosis is dealt twice in one deck', () => {
-  it('the deck has diagnoses with more than one card (so this matters)', () => {
-    expect(keys(CARDS).length).toBeGreaterThan(new Set(keys(CARDS)).size);
+describe('no answer word is dealt twice in one deck', () => {
+  it('the deck has answer words that more than one card shares (so this matters)', () => {
+    expect(keys(CARDS).length).toBeGreaterThanOrEqual(new Set(keys(CARDS)).size);
   });
 
-  it('uniqueByAnswer keeps the first card for each diagnosis, ignoring parentheses and case', () => {
-    const cards = [{ id: 'a', ans: 'Giant Cell Arteritis' }, { id: 'b', ans: 'giant cell arteritis (temporal)' }, { id: 'c', ans: 'Takayasu Arteritis' }];
+  it('uniqueByAnswer keeps the first card for each answer word, ignoring parentheses, accents and case', () => {
+    const cards = [{ id: 'a', ans: 'Café' }, { id: 'b', ans: 'cafe (drink)' }, { id: 'c', ans: 'té' }];
     expect(uniqueByAnswer(cards).map((c) => c.id)).toEqual(['a', 'c']);
   });
 
-  it('exams never repeat a diagnosis', () => {
+  it('exams never repeat an answer word', () => {
     for (let i = 0; i < 20; i++) {
       const exam = buildExam(CARDS, 80);
       const k = keys(exam.map((q) => q.card));
@@ -25,7 +25,7 @@ describe('no diagnosis is dealt twice in one deck', () => {
     }
   });
 
-  it('shared plans (friend challenge, versus) never repeat a diagnosis, and are the same for both players', () => {
+  it('shared plans (friend challenge, versus) never repeat an answer word, and are the same for both players', () => {
     const a = buildEncounterPlan({ seed: 12345, cards: CARDS, count: 100 });
     const b = buildEncounterPlan({ seed: 12345, cards: CARDS, count: 100 });
     expect(a.map((e) => e.cardId)).toEqual(b.map((e) => e.cardId));

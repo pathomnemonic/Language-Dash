@@ -16,7 +16,7 @@ Four PASS lines means the webhook refuses unsigned, wrongly signed and old reque
 Use Stripe test cards (any future date, any CVC): `4242 4242 4242 4242` succeeds, `4000 0000 0000 0341` fails on the second charge, `4000 0000 0000 0259` creates a chargeback.
 
 In the website (signed in with an email account, not a guest):
-1. Buy a **monthly** plan. Pro should switch on within seconds. Settings → Dx Dash Pro → Manage opens Stripe's page.
+1. Buy a **monthly** plan. Pro should switch on within seconds. Settings → Language Dash Pro → Manage opens Stripe's page.
 2. Cancel it there. The app should say it ends on the date, and Pro should stay until then.
 3. Buy a **Locker item** (💎 button, tap twice). It should appear in the Locker. Buy the same item again from a second tab: the second payment should be refunded by itself and the item should still be yours.
 4. In the Stripe Dashboard refund the item payment. Within a few minutes (the app checks twice, so open the app twice) the item should disappear from the Locker.

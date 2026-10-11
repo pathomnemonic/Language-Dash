@@ -57,7 +57,7 @@ describe('Pro screens once switched on', () => {
   it('someone without an account is asked to create one, and sees no plans to buy', async () => {
     setProUiDeps({ lb: { isAuthenticated: () => true, isGuest: () => true } });
     const iap = createIap({ platform: 'android', loadPlugin: () => Promise.resolve(fakePlugin()) });
-    iap.add(['dxdash_pro_yearly'].map((id) => ({ id, kind: 'subscription' })));
+    iap.add(['languagedash_pro_yearly'].map((id) => ({ id, kind: 'subscription' })));
     setIapForTest(iap);
     const o = openPaywall({ trigger: 'home_button', pricing: true });
     await tick();
@@ -183,7 +183,7 @@ describe('Pro screens once switched on', () => {
 
   it('the paywall shows the benefits, the store prices and a way out', async () => {
     const iap = createIap({ platform: 'android', loadPlugin: () => Promise.resolve(fakePlugin()) });
-    iap.add(['dxdash_pro_yearly', 'dxdash_pro_monthly', 'dxdash_pro_pass3m'].map((id) => ({ id, kind: 'subscription' })));
+    iap.add(['languagedash_pro_yearly', 'languagedash_pro_monthly', 'languagedash_pro_pass3m'].map((id) => ({ id, kind: 'subscription' })));
     setIapForTest(iap);
     const o = openPaywall({ trigger: 'settings', pricing: true });
     expect(o).toBeTruthy();
@@ -201,7 +201,7 @@ describe('Pro screens once switched on', () => {
   it('someone on the free trial still sees the plans, with how long the trial has left', async () => {
     localStorage.setItem('dx_pro', JSON.stringify({ active: true, source: 'server', plan: 'trial', trial: true, until: Date.now() + 3 * 86400000, provenAt: Date.now() }));
     const iap = createIap({ platform: 'android', loadPlugin: () => Promise.resolve(fakePlugin()) });
-    iap.add(['dxdash_pro_yearly', 'dxdash_pro_monthly'].map((id) => ({ id, kind: 'subscription' })));
+    iap.add(['languagedash_pro_yearly', 'languagedash_pro_monthly'].map((id) => ({ id, kind: 'subscription' })));
     setIapForTest(iap);
     const first = openPaywall({ trigger: 'home_button' });
     expect(first.textContent).toMatch(/free trial is on: 3 days left/);
@@ -221,7 +221,7 @@ describe('Pro screens once switched on', () => {
 
   it('a gate being hit opens the paywall for that feature', async () => {
     const iap = createIap({ platform: 'android', loadPlugin: () => Promise.resolve(fakePlugin()) });
-    iap.add([{ id: 'dxdash_pro_yearly', kind: 'subscription' }]);
+    iap.add([{ id: 'languagedash_pro_yearly', kind: 'subscription' }]);
     setIapForTest(iap);
     installProUi({});
     document.dispatchEvent(new CustomEvent('dx:pro-gate', { detail: { feature: 'offline_pack', trigger: 'offline_pack' } }));
@@ -230,7 +230,7 @@ describe('Pro screens once switched on', () => {
 
   it('buying a plan from the paywall turns Pro on and says so', async () => {
     const iap = createIap({ platform: 'android', loadPlugin: () => Promise.resolve(fakePlugin()) });
-    iap.add([{ id: 'dxdash_pro_monthly', kind: 'subscription' }]);
+    iap.add([{ id: 'languagedash_pro_monthly', kind: 'subscription' }]);
     setIapForTest(iap);
     const o = openPaywall({ trigger: 'settings', pricing: true });
     await tick();
@@ -241,7 +241,7 @@ describe('Pro screens once switched on', () => {
 
   it('with Pro, the paywall becomes a thank-you with a way to manage it, and Settings shows Active', async () => {
     const iap = createIap({ platform: 'android', loadPlugin: () => Promise.resolve(fakePlugin()) });
-    iap.add([{ id: 'dxdash_pro_monthly', kind: 'subscription' }]);
+    iap.add([{ id: 'languagedash_pro_monthly', kind: 'subscription' }]);
     setIapForTest(iap);
     localStorage.setItem('dx_pro_debug', '1');
     const o = openPaywall({ trigger: 'settings' });

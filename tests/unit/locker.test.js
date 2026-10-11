@@ -174,9 +174,9 @@ describe('Locker tabs', () => {
     ui.renderShop();
     clickTab('Trails');
     expect(headings().join('|')).toContain('Trails');
-    expect(headings().join('|')).not.toContain('Exam Monsters');
+    expect(headings().join('|')).not.toContain('The Hush and Co.');
     clickTab('Monsters');
-    expect(headings().join('|')).toContain('Exam Monsters');
+    expect(headings().join('|')).toContain('The Hush and Co.');
     expect(headings().join('|')).not.toContain('Trails');
   });
 

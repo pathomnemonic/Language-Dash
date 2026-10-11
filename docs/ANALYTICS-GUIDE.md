@@ -1,6 +1,6 @@
 # Analytics guide
 
-Dx Dash has its own first-party analytics. No third-party SDK, no ad networks: events go from the app to this project's own Supabase database, and you read them with ready-made SQL views. This guide covers setting it up, reading it, and extending it.
+Language Dash has its own first-party analytics. No third-party SDK, no ad networks: events go from the app to this project's own Supabase database, and you read them with ready-made SQL views. This guide covers setting it up, reading it, and extending it.
 
 - The list of every event and property: [ANALYTICS.md](ANALYTICS.md) (generated; `npm run analytics:docs`).
 - What players are told: `public/privacy.html` and the consent card (`js/analyticsui.js`).
@@ -47,7 +47,7 @@ Dx Dash has its own first-party analytics. No third-party SDK, no ad networks: e
 - **Retention percentages count only installs old enough** for that day to have happened ("mature" installs).
 - **Rates are corrected for sampling.** Events the remote config samples (for example `obstacle_outcome` at 20%) carry their rate, and the views scale counts back up.
 - **Android store installs** show up as source `store` unless the link had campaign tags: the Play install referrer is not read (it would need a native plugin). Use tagged links (`?utm_source=…&utm_medium=…&utm_campaign=…`) for web campaigns, and a landing page with tags for store campaigns. iOS gives no campaign data to the app.
-- **Share links** carry `utm_source=dxdash_share`, `utm_medium=<what was shared>` and `r=<short code>`; `virality` and `top_referrers` use them. The code is a one-way hash of the sharer's install id.
+- **Share links** carry `utm_source=languagedash_share`, `utm_medium=<what was shared>` and `r=<short code>`; `virality` and `top_referrers` use them. The code is a one-way hash of the sharer's install id.
 
 ## 3. Remote switches and experiments (no store release)
 

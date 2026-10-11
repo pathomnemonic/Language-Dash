@@ -38,7 +38,7 @@ function stampServiceWorker() {
   };
 }
 
-// Lists every file the game needs offline (code, card chunks, 3D models, portraits) so Settings can download them once.
+// Lists every file the game needs offline (code, word chunks, 3D models, portraits) so Settings can download them once.
 function offlineManifest() {
   let outDir = 'dist';
   let base = '/';
@@ -68,7 +68,7 @@ function offlineManifest() {
 
 export default defineConfig(({ mode }) => {
   // Support GitHub Pages subpath deployment via env var or default to '/'
-  // Set VITE_BASE_PATH=/buzzword-dash/ for project-site deploys
+  // Set VITE_BASE_PATH=/Language-Dash/ for project-site deploys
   const base = process.env.VITE_BASE_PATH || '/';
 
   return {
@@ -76,7 +76,7 @@ export default defineConfig(({ mode }) => {
     plugins: [stampServiceWorker(), offlineManifest(), injectCsp(process.env.VITE_SUPABASE_URL || loadEnv(mode, process.cwd(), 'VITE_').VITE_SUPABASE_URL || '')],
     define: { __APP_VERSION__: JSON.stringify(BUILD_ID), __APP_SEMVER__: JSON.stringify(JSON.parse(readFileSync('package.json', 'utf8')).version) },
     build: {
-      chunkSizeWarningLimit: 3000, // card data chunk is intentionally large
+      chunkSizeWarningLimit: 3000, // the 3D engine chunk is intentionally large
       outDir: 'dist',
       sourcemap: mode !== 'production',
       rollupOptions: {
@@ -87,11 +87,10 @@ export default defineConfig(({ mode }) => {
           assetFileNames: 'assets/[name]-[hash][extname]',
           manualChunks(id) {
             if (id.includes('node_modules/three')) return 'three';
-            // One chunk per subject (about 175 KB each) instead of one 2.6 MB file: the browser fetches them in
-            // parallel, and after an update only the subjects that changed are downloaded again.
-            var subject = /\/js\/cards\/([a-z]+)\.js$/.exec(id);
-            if (subject) return 'cards-' + subject[1];
-            if (id.includes('cardsarchive')) return 'cards-archive';
+            // One small chunk per language (js/lang/data/xx.js): a player only downloads the two languages in their
+            // pair, and after an update only the languages that changed are fetched again.
+            var words = /\/js\/lang\/data\/([a-z]+)\.js$/.exec(id);
+            if (words) return 'words-' + words[1];
           }
         }
       }
@@ -109,8 +108,7 @@ export default defineConfig(({ mode }) => {
         reportsDirectory: 'coverage',
         include: ['js/**/*.js'],
         exclude: [
-          'js/cards/**',
-          'js/cardsarchive.js'
+          'js/lang/data/**'
         ],
         // A floor just under today's numbers (43 / 69 / 39 / 43). It stops coverage sliding back;
         // raise it as tests are added.

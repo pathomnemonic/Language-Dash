@@ -22,7 +22,7 @@
  * studyBuddies: the Home-screen pet (js/companions.js, js/palui.js) and its Pals tab in the Locker. It is shelved for now: the
  * code, the buddy items and the saved choice are all kept, so it comes back untouched. Build with VITE_FEATURE_STUDY_BUDDIES=1.
  *
- * pro: Dx Dash Pro, the subscription (js/pro.js, docs/PRO.md). Built and tested but dormant: nothing is visible and no feature
+ * pro: Language Dash Pro, the subscription (js/pro.js, docs/PRO.md). Built and tested but dormant: nothing is visible and no feature
  * is limited. Turn it on in the build with VITE_FEATURE_PRO=1, or without a release with "pro": {"enabled": true} in
  * public/remote-config.json (which also says what is gated).
  *
@@ -30,11 +30,11 @@
  * players to find a match quickly. Versus works with a room code only for now. Build with VITE_FEATURE_RANKED_MATCHES=1 to release it.
  *
  * lockerItems: buying the real-money Locker items (heroes, maps, trails, a monster). Built and tested, but their buttons read "Soon" and nothing
- * can be bought until this is on, so the first release sells only Dx Dash Pro. Build with VITE_FEATURE_LOCKER_ITEMS=1 to sell them (docs/PRO.md
+ * can be bought until this is on, so the first release sells only Language Dash Pro. Build with VITE_FEATURE_LOCKER_ITEMS=1 to sell them (docs/PRO.md
  * has the store products and the backend steps). Tests build with it on.
  *
  * backend: false in a build made with VITE_NO_BACKEND=1 (the standalone copy of the game that has no Supabase or Stripe behind it).
- * That build has no Dx Dash Pro, no real-money items (those become ordinary coin items again, with their old level
+ * That build has no Language Dash Pro, no real-money items (those become ordinary coin items again, with their old level
  * unlocks), and no accounts, friends or leaderboards (no Supabase address is given, so they are not reachable).
  */
 

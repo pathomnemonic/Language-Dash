@@ -15,7 +15,7 @@ const dot = (page, selector) => page.locator(selector + ' > .nav-dot, ' + select
 test.describe('Red dots and lessons', () => {
   test('every menu and tab has a red dot once the how-to-play is over', async ({ page }) => {
     await openWithLessons(page);
-    for (const sel of ['#filtersBtn', '#speedBtn', '#homeFlashcardsBtn', '#homeChallengeBtn', '#settingsBtn',
+    for (const sel of ['#filtersBtn', '#langBtn', '#homeFlashcardsBtn', '#homeChallengeBtn', '#settingsBtn',
       '.nav-item[data-screen="screenStats"]', '.nav-item[data-screen="screenShop"]', '.nav-item[data-screen="screenQuests"]', '.nav-item[data-screen="screenProfile"]']) {
       await expect(dot(page, sel), sel).toBeVisible();
     }
@@ -102,7 +102,7 @@ test.describe('Red dots and lessons', () => {
   test('the Filters lesson walks through the sections and closes the pop-up', async ({ page }) => {
     await openWithLessons(page);
     await page.locator('#filtersBtn').click();
-    await expect(page.locator('.tour-card h2')).toHaveText('Subjects', { timeout: 5000 });
+    await expect(page.locator('.tour-card h2')).toHaveText('Topics', { timeout: 5000 });
     for (let i = 0; i < 12; i++) {
       if (!(await page.locator('#tourOverlay').count())) break;
       const next = page.locator('#tourNextBtn');

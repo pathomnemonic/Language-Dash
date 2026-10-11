@@ -8,7 +8,7 @@
  *
  * (A restricted Stripe key with read access to Checkout Sessions, Payment Intents, Charges and Subscriptions is enough.)
  * Prints one line per mismatch and exits with 1 if there are any. To fix a "paid, not delivered" line, ask that member to
- * open Settings → Dx Dash Pro → Check again, or run the same check for them from the SQL editor (pro_grant_item /
+ * open Settings → Language Dash Pro → Check again, or run the same check for them from the SQL editor (pro_grant_item /
  * pro_grant_until). To fix "given back, still held": SELECT pro_revoke_item('<user>', '<item>') or pro_revoke_plan(...).
  */
 import { reconcile } from './reconcile-lib.mjs';

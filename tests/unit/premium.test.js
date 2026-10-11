@@ -23,7 +23,7 @@ describe('the store product list in docs/PRO.md', () => {
     const { readFileSync } = await import('node:fs');
     const doc = readFileSync('docs/PRO.md', 'utf8');
     Object.keys(PREMIUM_ITEMS).forEach((id) => {
-      expect(doc, id).toContain('`dxdash_item_' + id + '`');
+      expect(doc, id).toContain('`languagedash_item_' + id + '`');
       expect(doc, id).toContain((PREMIUM_ITEMS[id] / 100).toFixed(2));
     });
   });
@@ -45,7 +45,7 @@ describe('the premium catalog', () => {
     expect(isPremiumItem('constructor')).toBe(false);
     expect(premiumCents('trail_fire')).toBe(99);
     expect(formatUsd(299)).toBe('$2.99');
-    expect(itemProductId('trail_neural')).toBe('dxdash_item_trail_neural');
+    expect(itemProductId('trail_neural')).toBe('languagedash_item_trail_neural');
   });
 
   it('cannot be bought with coins or taken as the Pro gift', () => {
@@ -91,7 +91,7 @@ describe('what a member has paid for is theirs, and nothing takes it away', () =
   });
 
   it('a purchase through the store (phone app) is picked up too', async () => {
-    const iap = { start: async () => true, owned: (id) => id === 'dxdash_item_trail_blood', product: () => null, add() {}, price: () => null };
+    const iap = { start: async () => true, owned: (id) => id === 'languagedash_item_trail_blood', product: () => null, add() {}, price: () => null };
     await refreshPro({ iap });
     expect(storage.ownsItem('trail_blood')).toBe(true);
   });

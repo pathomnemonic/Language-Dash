@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.pathomnemonic.dxdash"
+    namespace = "com.pathomnemonic.languagedash"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.pathomnemonic.dxdash"
+        applicationId "com.pathomnemonic.languagedash"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 5

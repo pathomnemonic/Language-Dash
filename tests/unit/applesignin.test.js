@@ -5,7 +5,7 @@ import { appleConfigured, appleClientSecret, appleRevokeForm, revokeSucceeded, h
 
 const { privateKey, publicKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' });
 const PEM = privateKey.export({ type: 'pkcs8', format: 'pem' });
-const ENV = { APPLE_TEAM_ID: 'TEAM123456', APPLE_KEY_ID: 'KEY1234567', APPLE_PRIVATE_KEY: PEM, APPLE_CLIENT_ID: 'com.example.dxdash.web' };
+const ENV = { APPLE_TEAM_ID: 'TEAM123456', APPLE_KEY_ID: 'KEY1234567', APPLE_PRIVATE_KEY: PEM, APPLE_CLIENT_ID: 'com.example.languagedash.web' };
 const b64 = (s) => Buffer.from(s.replace(/-/g, '+').replace(/_/g, '/'), 'base64');
 
 describe('revoking a Sign in with Apple login', () => {
@@ -19,7 +19,7 @@ describe('revoking a Sign in with Apple login', () => {
     const jwt = await appleClientSecret(ENV, 1_800_000_000);
     const [h, c, sig] = jwt.split('.');
     expect(JSON.parse(b64(h).toString())).toEqual({ alg: 'ES256', kid: 'KEY1234567', typ: 'JWT' });
-    expect(JSON.parse(b64(c).toString())).toEqual({ iss: 'TEAM123456', iat: 1_800_000_000, exp: 1_800_000_300, aud: 'https://appleid.apple.com', sub: 'com.example.dxdash.web' });
+    expect(JSON.parse(b64(c).toString())).toEqual({ iss: 'TEAM123456', iat: 1_800_000_000, exp: 1_800_000_300, aud: 'https://appleid.apple.com', sub: 'com.example.languagedash.web' });
     const ok = createVerify('SHA256').update(h + '.' + c).verify({ key: publicKey, dsaEncoding: 'ieee-p1363' }, b64(sig));
     expect(ok).toBe(true);
   });
@@ -36,7 +36,7 @@ describe('revoking a Sign in with Apple login', () => {
 
   it('makes the revoke request form', async () => {
     const f = await appleRevokeForm(ENV, 'r_token_123', 5);
-    expect(f).toMatchObject({ client_id: 'com.example.dxdash.web', token: 'r_token_123', token_type_hint: 'refresh_token' });
+    expect(f).toMatchObject({ client_id: 'com.example.languagedash.web', token: 'r_token_123', token_type_hint: 'refresh_token' });
     expect(f.client_secret.split('.')).toHaveLength(3);
   });
 

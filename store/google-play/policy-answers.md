@@ -3,7 +3,7 @@
 Play Console → **Policy and programs → App content**. Answer each item as below. They match `public/privacy.html`.
 
 ## Privacy policy
-`https://pathomnemonic.github.io/buzzword-dash-v2/privacy.html`
+`https://pathomnemonic.github.io/Language-Dash/privacy.html`
 
 ## Ads
 **No, my app does not contain ads.**
@@ -16,7 +16,7 @@ Play Console → **Policy and programs → App content**. Answer each item as be
 Does your app collect or share any of the required user data types? **Yes** (only if the player uses the optional online features).
 
 Is all of the user data collected by your app encrypted in transit? **Yes**.
-Do you provide a way for users to request that their data be deleted? **Yes.** In-app: Friends → Account → Delete my account. Web link to paste: `https://pathomnemonic.github.io/buzzword-dash-v2/delete-account.html`
+Do you provide a way for users to request that their data be deleted? **Yes.** In-app: Friends → Account → Delete my account. Web link to paste: `https://pathomnemonic.github.io/Language-Dash/delete-account.html`
 
 | Data type | Collected | Shared | Optional | Why | 
 |---|---|---|---|---|
@@ -64,6 +64,6 @@ Provide: in-app path (Friends → Account → Delete my account) and the web lin
 
 ## Subscriptions and in-app products (Play Console > Monetize)
 Create these in Play Console with exactly these product IDs, then activate them:
-- Subscription `dxdash_pro_yearly` (base plan yearly, no store trial offer: the free trial is given to every account by our own server), `dxdash_pro_monthly` (monthly), `dxdash_pro_pass3m` (auto-renewing 3-month base plan).
-- One-time products `dxdash_pro_lifetime` and the tip consumables `dxdash_tip_small`, `dxdash_tip_medium`, `dxdash_tip_large`.
+- Subscription `languagedash_pro_yearly` (base plan yearly, no store trial offer: the free trial is given to every account by our own server), `languagedash_pro_monthly` (monthly), `languagedash_pro_pass3m` (auto-renewing 3-month base plan).
+- One-time products `languagedash_pro_lifetime` and the tip consumables `languagedash_tip_small`, `languagedash_tip_medium`, `languagedash_tip_large`.
 Subscription disclosure requirements: the paywall shows price, billing period, trial length and "cancel anytime in Google Play". Link the Privacy Policy and Terms. The in-app list of what free vs Pro includes is in docs/PRO.md.

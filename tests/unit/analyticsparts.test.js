@@ -101,7 +101,7 @@ describe('attribution', function () {
     expect(parseTouch('', 'https://blog.example.org/post', {}).channel).toBe('referral');
     expect(parseTouch('?utm_medium=cpc', '', {}).channel).toBe('paid');
     expect(parseTouch('?utm_medium=email', '', {}).channel).toBe('email');
-    expect(parseTouch('?utm_source=dxdash_share&r=abc', '', {}).channel).toBe('share');
+    expect(parseTouch('?utm_source=languagedash_share&r=abc', '', {}).channel).toBe('share');
     expect(channelOf({ has_click_id: true })).toBe('paid');
   });
 
@@ -130,7 +130,7 @@ describe('attribution', function () {
     expect(code).toBe(refCodeFor(id));
     expect(id.replace(/-/g, '')).not.toContain(code);
     var url = decorateShareUrl('https://x.io/app/#c=1', { kind: 'results', refCode: code });
-    expect(url).toBe('https://x.io/app/?utm_source=dxdash_share&utm_medium=results&utm_campaign=viral&r=' + code + '#c=1');
+    expect(url).toBe('https://x.io/app/?utm_source=languagedash_share&utm_medium=results&utm_campaign=viral&r=' + code + '#c=1');
     expect(decorateShareUrl('https://x.io/?a=1', { kind: 'app' })).toContain('?a=1&utm_source');
     // a link coming back through parseTouch is recognised as a share
     expect(parseTouch(url.slice(url.indexOf('?'), url.indexOf('#')), '', {}).share_ref).toBe(code);

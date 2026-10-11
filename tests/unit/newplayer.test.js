@@ -61,25 +61,27 @@ describe('a new player starts with every question on', () => {
     ui.renderAdvancedFilters();
     ui._renderFiltersSummary();
     const chips = [...document.querySelectorAll('.subject-chip')];
-    expect(chips.length).toBeGreaterThan(20);
+    expect(chips.length).toBeGreaterThan(15); // 15 topics and the word levels
     expect(chips.every((c) => c.classList.contains('selected'))).toBe(true);
-    expect(document.getElementById('filtersSummary').textContent).toBe('All subjects');
-    expect(document.getElementById('activeFilterCount').textContent).toBe('');
+    expect(document.getElementById('filtersSummary').textContent).toBe('All topics');
+    // the advanced filters (question type, year, high-yield) are gone for good
+    expect(document.getElementById('advancedFilterContainer').children.length).toBe(0);
+    expect(document.getElementById('activeFilterCount')).toBeNull();
   });
 
-  it('tapping a chip narrows to it, tapping another adds it, and turning the last off returns to everything', () => {
-    ui.renderAdvancedFilters();
-    const chip = (id) => document.querySelector(`[data-qtype="${id}"]`);
-    chip('lab_dx').click();
-    expect(storage.get('selectedQuestionTypes')).toEqual(['lab_dx']);
-    expect(chip('lab_dx').classList.contains('selected')).toBe(true);
-    expect(chip('pharm').classList.contains('selected')).toBe(false);
-    chip('pharm').click();
-    expect(storage.get('selectedQuestionTypes')).toEqual(['lab_dx', 'pharm']);
-    chip('lab_dx').click();
-    chip('pharm').click();
-    expect(storage.get('selectedQuestionTypes')).toEqual([]);
-    expect([...document.querySelectorAll('[data-qtype]')].every((c) => c.classList.contains('selected'))).toBe(true);
+  it('tapping a word level narrows to it, tapping another adds it, and turning the last off returns to everything', () => {
+    ui.renderExamFilter();
+    const chip = (id) => document.querySelector(`[data-level="${id}"]`);
+    chip('top100').click();
+    expect(storage.get('selectedExams')).toEqual(['top100']);
+    expect(chip('top100').classList.contains('selected')).toBe(true);
+    expect(chip('top600').classList.contains('selected')).toBe(false);
+    chip('top600').click();
+    expect(storage.get('selectedExams')).toEqual(['top100', 'top600']);
+    chip('top100').click();
+    chip('top600').click();
+    expect(storage.get('selectedExams')).toEqual([]);
+    expect([...document.querySelectorAll('[data-level]')].every((c) => c.classList.contains('selected'))).toBe(true);
   });
 });
 

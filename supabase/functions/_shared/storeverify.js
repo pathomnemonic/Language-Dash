@@ -43,8 +43,8 @@ async function signJwt(header, claims, pem, algo) {
 export function describeStoreProduct(productId) {
   var id = String(productId || '');
   if (PRODUCTS[id]) return PRODUCTS[id].kind === 'subscription' ? { kind: 'subscription', plan: PRODUCTS[id].plan } : { kind: 'lifetime', plan: 'lifetime' };
-  if (id === 'dxdash_library') return { kind: 'library', plan: 'library' };
-  var m = /^dxdash_item_([a-z0-9_]{3,64})$/.exec(id);
+  if (id === 'languagedash_library') return { kind: 'library', plan: 'library' };
+  var m = /^languagedash_item_([a-z0-9_]{3,64})$/.exec(id);
   if (m && isPremiumItem(m[1])) return { kind: 'item', item: m[1] };
   return null;
 }

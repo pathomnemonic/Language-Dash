@@ -277,7 +277,7 @@ export function hashCardPool(cards) {
 
 /** The pair a card id belongs to: "en-es-007" is { known: 'en', target: 'es' }. Null for ids of any other shape (My words). */
 export function pairOfCardId(id) {
-  var m = /^([a-z]{2})-([a-z]{2})-\d{3}$/.exec(String(id || ''));
+  var m = /^([a-z]{2})-([a-z]{2})-\d{3,4}$/.exec(String(id || ''));
   return m && getLanguage(m[1]) && getLanguage(m[2]) ? { known: m[1], target: m[2] } : null;
 }
 

@@ -1,50 +1,36 @@
 import { describe, it, expect } from 'vitest';
-import { readdirSync } from 'node:fs';
-import { deckGenericWords, strictLeakReport, strictClueLeak } from '../../js/cardleaks.js';
+import { loadDeck } from '../../js/cards.js';
+import { wordKey } from '../../js/lang/deck.js';
+import { answerKey } from '../../js/cardleaks.js';
+import { validateCard } from '../../js/cardschema.js';
+import { getLanguage } from '../../js/lang/languages.js';
 
-async function rawCards() {
-  const files = readdirSync('js/cards').filter((f) => f.endsWith('.js'));
-  const out = [];
-  for (const f of files) {
-    const mod = await import('../../js/cards/' + f);
-    Object.values(mod).forEach((v) => { if (Array.isArray(v)) out.push(...v); });
-  }
-  return out;
-}
+const PAIRS = [['en', 'es'], ['es', 'fr'], ['en', 'ja'], ['ru', 'en'], ['zh', 'en'], ['en', 'ko'], ['en', 'ar'], ['en', 'hi']];
 
-describe('strict clue-leak detector', () => {
-  const generic = new Set();
-  it('catches the CLL Rai staging card that slipped through before', () => {
-    const card = { ans: 'CLL Rai Staging', d: ['Ann Arbor Staging', 'TNM Staging'] };
-    expect(strictClueLeak('CLL staging', card, generic)).toMatch(/cll/);
-    expect(strictClueLeak('Rai staging system', card, generic)).toMatch(/rai/);
-    expect(strictClueLeak('Lymphocytosis alone = stage 0', card, generic)).toBe('');
-  });
-  it('catches two-letter acronyms spelled out (MG, UC) without chance hits', () => {
-    const mg = { ans: 'Ice Pack Test for MG', d: ['Edrophonium Test'] };
-    expect(strictClueLeak('Myasthenia gravis', mg, generic)).toMatch(/spells out/);
-    const av = { ans: 'Complete AV Canal Defect', d: ['Secundum ASD'] };
-    expect(strictClueLeak('One large valve between atria and ventricles', av, generic)).toBe('');
-  });
-  it('catches acronyms spelled out and answer initials', () => {
-    const card = { ans: 'SBP Prophylaxis', d: ['Empiric Antibiotics'] };
-    expect(strictClueLeak('Spontaneous bacterial peritonitis prevention', card, generic)).toMatch(/spells out/);
-    expect(strictClueLeak('Norfloxacin', card, generic)).toBe('');
-  });
-});
-
-describe('built-in cards never hand the player the answer', () => {
-  it('no clue contains a distinctive word, the initials, the spelled-out acronym or the whole answer', async () => {
-    const cards = await rawCards();
-    expect(cards.length).toBeGreaterThan(2500);
-    const generic = deckGenericWords(cards.map((c) => c.ans));
+describe.each(PAIRS)('quality of the %s → %s deck', (known, target) => {
+  it('every card passes the card schema (one hint, one answer, two distinct wrong gates)', async () => {
+    const { CARDS } = await loadDeck({ known, target });
     const bad = [];
-    cards.forEach((c) => strictLeakReport(c, generic).leaking.forEach((l) => bad.push(c.id + ' [' + c.ans + '] "' + l.clue + '" ' + l.why)));
+    CARDS.forEach((c) => { const r = validateCard(c, { strict: false }); if (!r.success) bad.push(c.id + ' ' + r.errors.map((e) => e.code).join(',')); });
     expect(bad).toEqual([]);
   });
-  it('every built-in card keeps at least three clues', async () => {
-    const cards = await rawCards();
-    const thin = cards.filter((c) => (c.bw || []).length < 3).map((c) => c.id);
-    expect(thin).toEqual([]);
+
+  it('the answer differs from the hint, and wrong gates differ from the answer and the hint', async () => {
+    const { CARDS } = await loadDeck({ known, target });
+    const bad = CARDS.filter((c) => wordKey(c.ans) === wordKey(c.bw[0]) || c.d.some((w) => wordKey(w) === wordKey(c.ans) || wordKey(w) === wordKey(c.bw[0]))).map((c) => c.id);
+    expect(bad).toEqual([]);
+  });
+
+  it('non-Latin targets always come with a pronunciation line', async () => {
+    const { CARDS } = await loadDeck({ known, target });
+    if (!getLanguage(target).roman) return;
+    const missing = CARDS.filter((c) => !c.ansRoman || c.dRoman.some((r) => !r)).map((c) => c.id);
+    expect(missing).toEqual([]);
+  });
+
+  it('most answers are unique (a repeated answer word is rare and is handled when dealing)', async () => {
+    const { CARDS } = await loadDeck({ known, target });
+    const keys = new Set(CARDS.map((c) => answerKey(c.ans)));
+    expect(keys.size).toBeGreaterThan(CARDS.length * 0.9);
   });
 });

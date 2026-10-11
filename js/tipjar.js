@@ -15,9 +15,9 @@ import { createIap, getIap } from './iap.js';
 import { track } from './analytics/index.js';
 
 export var TIP_PRODUCTS = [
-  { id: 'dxdash_tip_small', label: '☕ Small coffee', fallback: '' },
-  { id: 'dxdash_tip_medium', label: '🥐 Coffee and a pastry', fallback: '' },
-  { id: 'dxdash_tip_large', label: '🍕 A whole lunch', fallback: '' }
+  { id: 'languagedash_tip_small', label: '☕ Small coffee', fallback: '' },
+  { id: 'languagedash_tip_medium', label: '🥐 Coffee and a pastry', fallback: '' },
+  { id: 'languagedash_tip_large', label: '🍕 A whole lunch', fallback: '' }
 ];
 
 /**

@@ -1,12 +1,11 @@
 {
-  "name": "buzzword-dash",
+  "name": "language-dash",
   "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "A 3D endless-runner game for USMLE & COMLEX board prep",
+  "description": "Language Dash: a 3D endless-runner for learning the 1,000 most common words of 15 languages",
   "scripts": {
     "soak": "node tools/soak.mjs",
-    "audit:cards": "node tools/audit-cards.mjs",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
@@ -15,7 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "validate:cards": "node tools/validate-cards.mjs",
+    "validate:deck": "node tools/validate-deck.mjs",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",

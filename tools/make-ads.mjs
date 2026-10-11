@@ -22,7 +22,7 @@ var FONTS = 'file://' + path.join(ROOT, 'css/fonts');
 var SCREEN = function (n) { return 'file://' + path.join(ASSETS, 'screens', n + '.png'); };
 var CHROME = process.env.CHROMIUM_PATH || (existsSync('/opt/pw-browsers/chromium-1194/chrome-linux/chrome') ? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' : undefined);
 
-var DISCLAIMER = 'Dx Dash is a study aid, not affiliated with or endorsed by NBME, FSMB or NBOME.';
+var DISCLAIMER = 'Language Dash is a study aid, not affiliated with or endorsed by NBME, FSMB or NBOME.';
 
 /** id, headline (use [[word]] to highlight in gold), sub line, screen, accent, small print */
 export var CONCEPTS = [
@@ -111,7 +111,7 @@ export var VIDEOS = [
       [1.4, 3.6, '<div class="big" style="top:1000px">also me:</div><div class="emoji" style="top:1180px">🧠🍟📱</div>'],
       [3.4, 6.2, '<div class="phoneBig"><img src="' + SCREEN('run-b') + '"></div><div class="stamp" style="top:260px">BRAIN ROT FRIENDLY</div>'],
       [5.4, 8.6, '<div class="phoneBig" style="top:560px"><img src="' + SCREEN('run-a') + '"></div><div class="stamp" style="top:220px;background:#7fe6ff">CORRECT 💥 +COINS</div><div class="small" style="top:350px">(it still teaches real vignettes)</div>'],
-      [8.6, 12, '<div class="big" style="top:520px">Rot your brain <b>productively.</b></div><div class="pill2" style="top:1120px">FREE TO START</div><div class="logo2" style="top:1330px">DX DASH</div><div class="fine2">Dx Dash is a study aid, not affiliated with NBME, FSMB or NBOME.</div>']
+      [8.6, 12, '<div class="big" style="top:520px">Rot your brain <b>productively.</b></div><div class="pill2" style="top:1120px">FREE TO START</div><div class="logo2" style="top:1330px">DX DASH</div><div class="fine2">Language Dash is a study aid, not affiliated with NBME, FSMB or NBOME.</div>']
     ]
   },
   {
@@ -120,7 +120,7 @@ export var VIDEOS = [
       [0, 3, '<div class="big" style="top:300px">It\'s 11:40pm.</div><div class="big" style="top:520px">You meant to do <b>one block.</b></div><div class="feed"><i></i><i></i><i></i><i></i></div>'],
       [3, 5.2, '<div class="big" style="top:420px">Same thumb.</div><div class="timer">0:45:12</div>'],
       [5, 9, '<div class="phoneBig" style="top:520px"><img src="' + SCREEN('run-b') + '"></div><div class="stamp" style="top:240px">DIFFERENT 5 MINUTES</div>'],
-      [9, 12, '<div class="big" style="top:560px">Make the scroll <b>count.</b></div><div class="pill2" style="top:1120px">FREE TO START</div><div class="logo2" style="top:1330px">DX DASH</div><div class="fine2">Dx Dash is a study aid, not affiliated with NBME, FSMB or NBOME.</div>']
+      [9, 12, '<div class="big" style="top:560px">Make the scroll <b>count.</b></div><div class="pill2" style="top:1120px">FREE TO START</div><div class="logo2" style="top:1330px">DX DASH</div><div class="fine2">Language Dash is a study aid, not affiliated with NBME, FSMB or NBOME.</div>']
     ]
   },
   {

@@ -9,8 +9,8 @@ describe('a backup carries the player\'s own cards too', () => {
   it('restoring on a fresh device brings back progress AND imported cards', () => {
     storage.set('coins', 4321);
     customCards.importJSON(JSON.stringify([
-      { subj: 'Cardiology', bw: ['Fever', 'New murmur'], ans: 'Endocarditis', d: ['Rheumatic fever', 'Myxoma'], tp: 'IE', ww: {} },
-      { subj: 'Neurology', bw: ['Facial droop sparing forehead'], ans: 'UMN lesion', d: ['Bell palsy', 'LMN lesion'], tp: 'Forehead is bilateral', ww: {} }
+      { subj: 'Basics', bw: ['dog'], ans: 'perro', d: ['casa', 'mesa'], tp: 'IE', ww: {} },
+      { subj: 'Actions', bw: ['cat'], ans: 'gato', d: ['libro', 'agua'], tp: 'Forehead is bilateral', ww: {} }
     ]));
     const text = buildBackup(storage, customCards);
 
@@ -20,11 +20,11 @@ describe('a backup carries the player\'s own cards too', () => {
     const res = restoreBackup(text, storage, customCards);
     expect(res).toEqual({ ok: true, cards: 2 });
     expect(storage.get('coins')).toBe(4321);
-    expect(customCards.getAll().map((c) => c.ans).sort()).toEqual(['Endocarditis', 'UMN lesion']);
+    expect(customCards.getAll().map((c) => c.ans).sort()).toEqual(['gato', 'perro']);
   });
 
   it('an older backup without cards leaves the cards that are already there', () => {
-    customCards.importJSON(JSON.stringify([{ subj: 'Cardiology', bw: ['x'], ans: 'y', d: ['a', 'b'], tp: 't', ww: {} }]));
+    customCards.importJSON(JSON.stringify([{ subj: 'Basics', bw: ['x'], ans: 'y', d: ['a', 'b'], tp: 't', ww: {} }]));
     const old = storage.exportBackup(); // the old format
     const res = restoreBackup(old, storage, customCards);
     expect(res.ok).toBe(true);
@@ -39,7 +39,7 @@ describe('a backup carries the player\'s own cards too', () => {
   });
 
   it('a file that is not a backup is refused and touches nothing', () => {
-    customCards.importJSON(JSON.stringify([{ subj: 'Cardiology', bw: ['x'], ans: 'y', d: ['a', 'b'], tp: 't', ww: {} }]));
+    customCards.importJSON(JSON.stringify([{ subj: 'Basics', bw: ['x'], ans: 'y', d: ['a', 'b'], tp: 't', ww: {} }]));
     const res = restoreBackup('{"hello":1}', storage, customCards);
     expect(res.ok).toBe(false);
     expect(customCards.getAll().length).toBe(1);

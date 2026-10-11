@@ -40,7 +40,7 @@ describe('marketing ads', () => {
     expect(html).toMatch(/location\.search/);
     expect(html).not.toMatch(/<script[^>]+src=/i);
     expect(html).not.toMatch(/https?:\/\/(?!claude)[^"' )]+\.(js|css|woff2?)/i);
-    expect(html).toMatch(/not affiliated with or endorsed by NBME, FSMB or NBOME/);
+    expect(html).toMatch(/not a language course and not a test of fluency/);
     ['run.png', 'home.png', 'locker.png', 'stats.png', 'jersey-10-latin-400-normal.woff2', 'press-start-2p-latin-400-normal.woff2'].forEach(function (f) { expect(existsSync('public/landing/' + f)).toBe(true); });
   });
 });

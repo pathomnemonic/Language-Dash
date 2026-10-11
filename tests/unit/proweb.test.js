@@ -5,8 +5,8 @@ import { setIapForTest, createIap } from '../../js/iap.js';
 import { openPaywall, setProUiDeps } from '../../js/proui.js';
 
 const PRICES = [
-  { id: 'dxdash_pro_monthly', price: '$3.49', micros: 3490000, currency: 'USD', period: 'P1M', trialDays: 0 },
-  { id: 'dxdash_pro_yearly', price: '$19.99', micros: 19990000, currency: 'USD', period: 'P1Y', trialDays: 0 }
+  { id: 'languagedash_pro_monthly', price: '$3.49', micros: 3490000, currency: 'USD', period: 'P1M', trialDays: 0 },
+  { id: 'languagedash_pro_yearly', price: '$19.99', micros: 19990000, currency: 'USD', period: 'P1Y', trialDays: 0 }
 ];
 const tick = () => new Promise((r) => setTimeout(r, 10));
 
@@ -63,8 +63,8 @@ describe('Pro on the website', () => {
   });
 
   it('lists the plans best value first, and offers no Full Library', async () => {
-    const r = await webPlans(fakeLb({ proFunction: async () => ({ plans: [...PRICES, { id: 'dxdash_library', price: '$7.49', micros: 7490000, currency: 'USD', period: '', trialDays: 0 }] }) }));
-    expect(r.plans.map((p) => p.id)).toEqual(['dxdash_pro_yearly', 'dxdash_pro_monthly']);
+    const r = await webPlans(fakeLb({ proFunction: async () => ({ plans: [...PRICES, { id: 'languagedash_library', price: '$7.49', micros: 7490000, currency: 'USD', period: '', trialDays: 0 }] }) }));
+    expect(r.plans.map((p) => p.id)).toEqual(['languagedash_pro_yearly', 'languagedash_pro_monthly']);
     expect(r.plans[0]).toMatchObject({ label: 'Yearly', blurb: 'BEST VALUE', price: '$19.99' });
     expect(r.library).toBeNull();
     expect((await webPlans(null)).plans).toEqual([]);
@@ -73,9 +73,9 @@ describe('Pro on the website', () => {
   it('sends a signed-in player to Stripe, and says why when it cannot', async () => {
     const lb = fakeLb();
     const go = vi.fn();
-    expect(await webBuy('dxdash_pro_yearly', lb, go)).toEqual({ ok: true, redirected: true });
+    expect(await webBuy('languagedash_pro_yearly', lb, go)).toEqual({ ok: true, redirected: true });
     expect(go).toHaveBeenCalledWith('https://checkout.stripe.com/c/pay_1');
-    expect(lb.calls.pop()).toEqual(['checkout', { plan: 'dxdash_pro_yearly' }]);
+    expect(lb.calls.pop()).toEqual(['checkout', { plan: 'languagedash_pro_yearly' }]);
     expect((await webBuy('x', fakeLb({ isAuthenticated: () => false }), go)).error).toMatch(/Signing in/);
     expect(await webBuy('x', fakeLb({ isGuest: () => true }), go)).toMatchObject({ ok: false, needsAccount: true }); // a guest cannot buy
     expect((await webBuy('x', fakeLb({ proFunction: async () => ({ error: 'Nope' }) }), go))).toEqual({ ok: false, error: 'Nope' });
@@ -291,15 +291,15 @@ describe('the website paywall', () => {
     openPaywall({ trigger: 'test', pricing: true });
     await tick(); await tick();
     const plans = [...document.querySelectorAll('#proPaywall .pro-plan')].map((b) => b.getAttribute('data-plan'));
-    expect(plans).toEqual(['dxdash_pro_yearly', 'dxdash_pro_monthly']);
+    expect(plans).toEqual(['languagedash_pro_yearly', 'languagedash_pro_monthly']);
     const text = document.getElementById('proPaywall').textContent;
     expect(text).toMatch(/\$19\.99 \/ year/);
     expect(text).toMatch(/Stripe/);
     expect(text).toMatch(/Cancel any time/i);
     expect(text).not.toMatch(/Just the cards/);
-    document.querySelector('#proPaywall [data-plan="dxdash_pro_yearly"]').click();
+    document.querySelector('#proPaywall [data-plan="languagedash_pro_yearly"]').click();
     await tick();
-    expect(lb.calls.pop()).toEqual(['checkout', { plan: 'dxdash_pro_yearly' }]);
+    expect(lb.calls.pop()).toEqual(['checkout', { plan: 'languagedash_pro_yearly' }]);
   });
 
   it('does not push the trial on someone who has an account', async () => {
@@ -328,7 +328,7 @@ describe('a payment on its way is never left locked, and Pro never follows the w
     const { markPaymentPending, paymentPending } = await import('../../js/pro.js');
     let synced = 0;
     const lb = fakeLb({ proFunction: async (a) => { if (a === 'checkout') return { url: 'https://checkout.stripe.com/c/x' }; if (a === 'sync') { synced++; return { ok: true, granted: [] }; } return { error: 'no' }; } });
-    await webBuy('dxdash_pro_yearly', lb, () => {});
+    await webBuy('languagedash_pro_yearly', lb, () => {});
     expect(paymentPending()).toBe(true);
     const t0 = Date.now();
     await refreshPro({ lb, now: t0 });

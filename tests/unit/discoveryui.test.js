@@ -11,10 +11,10 @@ function service(over) {
     getBuddyListing: vi.fn(async () => null),
     setBuddyListing: vi.fn(async () => ({ success: true })),
     removeBuddyListing: vi.fn(async () => ({ success: true })),
-    findBuddies: vi.fn(async () => ({ success: true, data: [{ user_id: 'u2', player_name: 'Bo', avatar: 'icon:🦊', exam: 'USMLE Step 1', exam_date: '2027-03-01', subjects: ['Cardiology'], pace: 'steady', utc_offset: -5, score: 8 }] })),
+    findBuddies: vi.fn(async () => ({ success: true, data: [{ user_id: 'u2', player_name: 'Bo', avatar: 'icon:🦊', exam: 'Learning French', exam_date: '2027-03-01', subjects: ['Cardiology'], pace: 'steady', utc_offset: -5, score: 8 }] })),
     sendFriendRequest: vi.fn(async () => ({ success: true })),
     discoverGroups: vi.fn(async () => [
-      { id: 'g1', name: 'Step 1 Crew', exam: 'USMLE Step 1', join_mode: 'open', member_count: '4', owner_name: 'Ada', requested: false },
+      { id: 'g1', name: 'Step 1 Crew', exam: 'Learning French', join_mode: 'open', member_count: '4', owner_name: 'Ada', requested: false },
       { id: 'g2', name: 'Quiet Study', exam: null, join_mode: 'request', member_count: '2', owner_name: 'Cy', requested: false }
     ]),
     joinPublicGroup: vi.fn(async (id) => ({ success: true, data: id === 'g1' ? 'joined' : 'requested' })),
@@ -69,24 +69,24 @@ describe('discovery screens', () => {
     const lb = service();
     const { root } = mount(lb);
     await flush();
-    root.querySelector('#buddyExam').value = 'COMLEX Level 1';
+    root.querySelector('#buddyExam').value = 'Learning Spanish';
     root.querySelector('#buddyPace').value = 'intense';
-    buttons(root, /^Cardiology$/)[0].click();
+    buttons(root, /^Food & Drink$/)[0].click();
     root.querySelector('#buddyOn').checked = true;
     buttons(root, /^Save$/)[0].click();
     await flush();
     const arg = lb.setBuddyListing.mock.calls[0][0];
-    expect(arg).toMatchObject({ exam: 'COMLEX Level 1', pace: 'intense', discoverable: true, examDate: '2027-03-01' });
-    expect(arg.subjects).toContain('Cardiology');
+    expect(arg).toMatchObject({ exam: 'Learning Spanish', pace: 'intense', discoverable: true, examDate: '2027-03-01' });
+    expect(arg.subjects).toContain('Food & Drink');
     expect(typeof arg.utcOffset).toBe('number');
   });
 
   it('shows matches once discoverable, with add and report', async () => {
-    const lb = service({ getBuddyListing: vi.fn(async () => ({ user_id: 'me', exam: 'USMLE Step 1', exam_date: null, subjects: [], pace: 'steady', discoverable: true })) });
+    const lb = service({ getBuddyListing: vi.fn(async () => ({ user_id: 'me', exam: 'Learning French', exam_date: null, subjects: [], pace: 'steady', discoverable: true })) });
     const { root, toasts } = mount(lb);
     await flush();
     expect(root.textContent).toContain('Bo');
-    expect(root.textContent).toContain('USMLE Step 1');
+    expect(root.textContent).toContain('Learning French');
     buttons(root, /Add/)[0].click();
     await flush();
     expect(lb.sendFriendRequest).toHaveBeenCalledWith('u2');
@@ -122,11 +122,11 @@ describe('discovery screens', () => {
     renderGroupDiscoverySettings(box, { id: 'g1', is_owner: true, visibility: 'private', exam: null, join_mode: 'open', pending_requests: 1 }, { lb, toast() {}, rerender });
     await flush();
     box.querySelector('#groupPublic').checked = true;
-    box.querySelector('#groupExam').value = 'USMLE Step 1';
+    box.querySelector('#groupExam').value = 'Learning French';
     box.querySelector('#groupJoin').value = 'request';
     buttons(box, /^Save$/)[0].click();
     await flush();
-    expect(lb.setGroupDiscovery).toHaveBeenCalledWith('g1', true, 'USMLE Step 1', 'request');
+    expect(lb.setGroupDiscovery).toHaveBeenCalledWith('g1', true, 'Learning French', 'request');
     expect(box.textContent).toContain('Di');
     buttons(box, /Accept/)[0].click();
     await flush();

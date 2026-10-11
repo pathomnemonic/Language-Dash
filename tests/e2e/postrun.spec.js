@@ -1,5 +1,5 @@
 // tests/e2e/postrun.spec.js
-// The results ("Case Review") page is laid out symmetrically at every phone size: nothing hangs off one side,
+// The results ("Run Report") page is laid out symmetrically at every phone size: nothing hangs off one side,
 // rows of tiles and buttons fill the width evenly, and the page never scrolls sideways.
 
 import { test, expect } from '@playwright/test';

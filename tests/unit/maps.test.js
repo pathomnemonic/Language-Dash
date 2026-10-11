@@ -103,8 +103,8 @@ describe('buying and choosing maps', () => {
     ui._settingsSection = 'rules';
     ui.renderSettings();
     const opts = [...document.querySelectorAll('select[aria-label="Favorite map"] option')].map((o) => o.textContent);
-    expect(opts).not.toContain('Cardiac Pulse');
-    expect(opts).toContain('Hospital Hallway');
+    expect(opts).not.toContain('Verona Balcony Carnival');
+    expect(opts).toContain('Library Hall');
   });
 
   it('someone who already had an outdoor map as their favorite keeps it', () => {

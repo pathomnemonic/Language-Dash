@@ -1,5 +1,5 @@
 -- ================================================================
--- Dx Dash — Row Level Security Policies
+-- Language Dash — Row Level Security Policies
 -- Version: 2.0.0
 --
 -- All tables use RLS. Writes require authentication via auth.uid().

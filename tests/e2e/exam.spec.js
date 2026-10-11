@@ -1,5 +1,5 @@
 // tests/e2e/exam.spec.js
-// The Exam Sim from setup to results: answer every question, flag one, finish, read the report and study the misses.
+// The Word Quiz from setup to results: answer every question, flag one, finish, read the report and study the misses.
 
 import { test, expect } from '@playwright/test';
 import { openApp } from './helpers.js';
@@ -12,10 +12,10 @@ test('an untimed 10-question exam can be taken, finished and reviewed', async ({
   await openApp(page, '/?debug=1');
   await page.waitForFunction(() => window.__ui);
   await page.evaluate(() => window.__ui.show('screenExam'));
-  await expect(page.getByText('Start exam')).toBeVisible({ timeout: 15000 });
+  await expect(page.getByText('Start quiz')).toBeVisible({ timeout: 15000 });
   await page.getByRole('radio', { name: '10', exact: true }).click();
   await page.getByRole('radio', { name: /Untimed/ }).click();
-  await page.getByRole('button', { name: /Start exam/ }).click();
+  await page.getByRole('button', { name: /Start quiz/ }).click();
   await expect(page.locator('#examClock')).toHaveText(/Untimed/);
 
   for (let i = 0; i < 10; i++) {
@@ -26,7 +26,7 @@ test('an untimed 10-question exam can be taken, finished and reviewed', async ({
     await page.getByRole('button', { name: i === 9 ? /Finish/ : /Next/ }).click();
   }
   // "Finish" asks when something is unanswered; everything was answered, so the report shows
-  await expect(page.locator('#examContent').getByText(/readiness|Accuracy|correct/i).first()).toBeVisible({ timeout: 15000 });
+  await expect(page.locator('#examContent').getByText(/fluency|Accuracy|correct/i).first()).toBeVisible({ timeout: 15000 });
   await expect(page.locator('#examContent')).toContainText(/\d+\s*\/\s*10|\d+%/);
   const study = page.getByRole('button', { name: /Study missed/ });
   if (await study.count()) {

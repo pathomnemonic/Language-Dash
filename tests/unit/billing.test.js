@@ -22,21 +22,21 @@ function fake(over) {
 
 describe('products and prices', () => {
   it('sells four products, found by id or plan name, and shows the ones with a price set', () => {
-    expect(Object.keys(PRODUCTS)).toEqual(['dxdash_pro_yearly', 'dxdash_pro_pass3m', 'dxdash_pro_monthly', 'dxdash_pro_lifetime']);
-    expect(productFor('yearly').id).toBe('dxdash_pro_yearly');
+    expect(Object.keys(PRODUCTS)).toEqual(['languagedash_pro_yearly', 'languagedash_pro_pass3m', 'languagedash_pro_monthly', 'languagedash_pro_lifetime']);
+    expect(productFor('yearly').id).toBe('languagedash_pro_yearly');
     expect(productFor('nope')).toBeNull();
-    expect(productFor('dxdash_library')).toBeNull();                      // the Full Library is not sold any more...
-    expect(anyProductFor('dxdash_library').def.plan).toBe('library');     // ...but an old purchase or refund is still understood
-    expect(configuredProducts(ENV)).toEqual(['dxdash_pro_yearly', 'dxdash_pro_lifetime']);
+    expect(productFor('languagedash_library')).toBeNull();                      // the Full Library is not sold any more...
+    expect(anyProductFor('languagedash_library').def.plan).toBe('library');     // ...but an old purchase or refund is still understood
+    expect(configuredProducts(ENV)).toEqual(['languagedash_pro_yearly', 'languagedash_pro_lifetime']);
   });
 
   it('turns a Stripe price into what the paywall shows (same shape as the stores)', () => {
     expect(periodOf({ recurring: { interval: 'year', interval_count: 1 } })).toBe('P1Y');
     expect(periodOf({ recurring: { interval: 'month', interval_count: 3 } })).toBe('P3M');
     expect(periodOf({})).toBe('');
-    const y = describePrice('dxdash_pro_yearly', { unit_amount: 3999, currency: 'usd', recurring: { interval: 'year', interval_count: 1 } }, ENV);
-    expect(y).toMatchObject({ id: 'dxdash_pro_yearly', price: '$39.99', micros: 39990000, currency: 'USD', period: 'P1Y', trialDays: 0 });
-    expect(describePrice('dxdash_pro_lifetime', { unit_amount: 7999, currency: 'usd' })).toMatchObject({ period: '', trialDays: 0 });
+    const y = describePrice('languagedash_pro_yearly', { unit_amount: 3999, currency: 'usd', recurring: { interval: 'year', interval_count: 1 } }, ENV);
+    expect(y).toMatchObject({ id: 'languagedash_pro_yearly', price: '$39.99', micros: 39990000, currency: 'USD', period: 'P1Y', trialDays: 0 });
+    expect(describePrice('languagedash_pro_lifetime', { unit_amount: 7999, currency: 'usd' })).toMatchObject({ period: '', trialDays: 0 });
   });
 });
 
@@ -49,9 +49,9 @@ describe('checkout', () => {
   });
 
   it('builds a one-time session whose charge can be traced for a refund, and refuses bad requests', () => {
-    const f = checkoutParams('dxdash_pro_lifetime', 'u1', ENV, {});
+    const f = checkoutParams('languagedash_pro_lifetime', 'u1', ENV, {});
     expect(f).toMatchObject({ mode: 'payment', 'payment_intent_data[metadata][plan]': 'lifetime', 'payment_intent_data[metadata][user_id]': 'u1' });
-    expect(() => checkoutParams('dxdash_library', 'u1', ENV)).toThrow(/Unknown/);
+    expect(() => checkoutParams('languagedash_library', 'u1', ENV)).toThrow(/Unknown/);
     expect(() => checkoutParams('monthly', 'u1', ENV)).toThrow(/not for sale/);
     expect(() => checkoutParams('wat', 'u1', ENV)).toThrow(/Unknown/);
     expect(() => checkoutParams('yearly', '', ENV)).toThrow(/Sign in/);

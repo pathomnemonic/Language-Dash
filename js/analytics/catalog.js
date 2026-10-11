@@ -169,9 +169,9 @@ export var EVENTS = {
   referral_landed: ['growth', 'This install came from someone else\'s share link.', { share_ref: 's16!', kind: 's24' }],
 
   // ───────────────────────── feedback, ratings, money ─────────────────────────
-  rating_prompt: ['growth', 'The "enjoying Dx Dash?" prompt and where it led.', { step: 'e:shown|enjoying_yes|enjoying_no|store_opened|feedback_opened|dismissed|later!', trigger: 's30', runs_total: 'i', days_since_install: 'i' }],
+  rating_prompt: ['growth', 'The "enjoying Language Dash?" prompt and where it led.', { step: 'e:shown|enjoying_yes|enjoying_no|store_opened|feedback_opened|dismissed|later!', trigger: 's30', runs_total: 'i', days_since_install: 'i' }],
   feedback_sent: ['growth', 'Feedback was sent (never the text).', { mood: 'e:unhappy|idea|bug', length: 'i', has_contact: 'b', ok: 'b' }],
-  paywall_viewed: ['monetization', 'The Dx Dash Pro screen was opened (only once Pro is launched).', { trigger: 's30', feature: 's24', plans: 'sa', variant: 's20', pro: 'b' }],
+  paywall_viewed: ['monetization', 'The Language Dash Pro screen was opened (only once Pro is launched).', { trigger: 's30', feature: 's24', plans: 'sa', variant: 's20', pro: 'b' }],
   paywall_action: ['monetization', 'What the player did on the Pro screen, with the plan and the store price.', {
     action: 'e:plan_selected|purchase_started|purchased|cancelled|failed|restore_started|restore_ok|restore_none|code_ok|code_failed|web_opened|manage_opened|closed!',
     plan: 's24', trigger: 's30', price: 's16', micros: 'i', currency: 's3', trial_days: 'i'

@@ -17,8 +17,8 @@ export function openTipJar(toast) {
   var opener = document.activeElement;
   var overlay = createElement('div', { className: 'report-overlay', attributes: { id: 'tipJar', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Support the developer' } });
   var box = createElement('div', { className: 'report-box' });
-  box.appendChild(createElement('h2', { text: '☕ Support Dx Dash' }));
-  box.appendChild(createElement('p', { text: 'Dx Dash is free and always will be. A tip helps keep it going. It is only a thank-you: it unlocks nothing and gives no coins.' }));
+  box.appendChild(createElement('h2', { text: '☕ Support Language Dash' }));
+  box.appendChild(createElement('p', { text: 'Language Dash is free and always will be. A tip helps keep it going. It is only a thank-you: it unlocks nothing and gives no coins.' }));
   var list = createElement('div', { className: 'tip-options' });
   list.style.cssText = 'display:grid;gap:8px;margin:10px 0';
   var status = createElement('div', { className: 'setting-sublabel', attributes: { role: 'status' }, text: 'Loading prices…' });

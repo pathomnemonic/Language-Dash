@@ -23,7 +23,7 @@ describe('the Today popup on Home', () => {
     const ui = makeUi();
     const el = document.getElementById('t');
     ui._renderToday(el);
-    expect(el.textContent).toContain('30 cards due for review');
+    expect(el.textContent).toContain('30 words due for review');
     expect(el.textContent).not.toContain('Flashcards → Review due cards'); // no more "go somewhere else" instructions
     expect(el.querySelector('.today-next-title').textContent).toBe('Next up: Review 20 due');
     [...el.querySelectorAll('.today-next button')].find((b) => /Run it/.test(b.textContent)).click();

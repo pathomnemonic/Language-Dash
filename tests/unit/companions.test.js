@@ -58,7 +58,7 @@ describe('the reminder in the buddy\'s voice', () => {
     await syncNativeReminder({ enabled: true, hour: 19, goalMetToday: false, now, body: 'Triage: cards. You. Go.' }); // same again: nothing new to schedule
     await syncNativeReminder({ enabled: true, hour: 19, goalMetToday: false, now, body: 'Stetho: Hi! Five minutes?' }); // a different buddy: rescheduled
     await syncNativeReminder({ enabled: true, hour: 19, goalMetToday: false, now, body: '   ' });
-    expect(calls).toEqual(['Triage: cards. You. Go.', 'Stetho: Hi! Five minutes?', 'Time to study. Keep your streak going! 🔥']);
+    expect(calls).toEqual(['Triage: cards. You. Go.', 'Stetho: Hi! Five minutes?', 'Time for a few words. Keep the hearth lit! 🔥']);
     setReminderPluginForTest(null);
   });
 });

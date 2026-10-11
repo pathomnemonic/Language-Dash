@@ -1,6 +1,6 @@
 {
-  "appId": "com.pathomnemonic.dxdash",
-  "appName": "Dx Dash",
+  "appId": "com.pathomnemonic.languagedash",
+  "appName": "Language Dash",
   "webDir": "dist",
   "backgroundColor": "#0b1020",
   "server": {

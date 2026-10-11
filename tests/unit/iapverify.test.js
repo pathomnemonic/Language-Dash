@@ -36,10 +36,10 @@ describe('having the server check phone-store purchases', () => {
   it('sends each owned product with its proof, once, and again only after twelve hours', async () => {
     const pro = await load();
     const calls = [];
-    const iap = fakeIap(['dxdash_pro_monthly', 'dxdash_item_trail_fire'], { dxdash_pro_monthly: 'token-aaaaaa', dxdash_item_trail_fire: 'token-bbbbbb' });
+    const iap = fakeIap(['languagedash_pro_monthly', 'languagedash_item_trail_fire'], { languagedash_pro_monthly: 'token-aaaaaa', languagedash_item_trail_fire: 'token-bbbbbb' });
     const t0 = Date.now();
     expect(await pro.verifyStorePurchases(fakeLb(calls), iap, { now: t0 })).toBe(2);
-    expect(calls).toEqual([['android', 'dxdash_pro_monthly', 'token-aaaaaa'], ['android', 'dxdash_item_trail_fire', 'token-bbbbbb']]);
+    expect(calls).toEqual([['android', 'languagedash_pro_monthly', 'token-aaaaaa'], ['android', 'languagedash_item_trail_fire', 'token-bbbbbb']]);
     expect(await pro.verifyStorePurchases(fakeLb(calls), iap, { now: t0 + 60000 })).toBe(0);
     expect(await pro.verifyStorePurchases(fakeLb(calls), iap, { now: t0 + 13 * 3600000 })).toBe(2);
   });
@@ -47,17 +47,17 @@ describe('having the server check phone-store purchases', () => {
   it('skips what is not owned or has no proof, and does nothing for a guest', async () => {
     const pro = await load();
     const calls = [];
-    expect(await pro.verifyStorePurchases(fakeLb(calls), fakeIap(['dxdash_pro_monthly'], {}))).toBe(0);
-    expect(await pro.verifyStorePurchases(fakeLb(calls), fakeIap([], { dxdash_pro_monthly: 'token-aaaaaa' }))).toBe(0);
+    expect(await pro.verifyStorePurchases(fakeLb(calls), fakeIap(['languagedash_pro_monthly'], {}))).toBe(0);
+    expect(await pro.verifyStorePurchases(fakeLb(calls), fakeIap([], { languagedash_pro_monthly: 'token-aaaaaa' }))).toBe(0);
     const guest = { ...fakeLb(calls), isGuest: () => true };
-    expect(await pro.verifyStorePurchases(guest, fakeIap(['dxdash_pro_monthly'], { dxdash_pro_monthly: 'token-aaaaaa' }))).toBe(0);
+    expect(await pro.verifyStorePurchases(guest, fakeIap(['languagedash_pro_monthly'], { languagedash_pro_monthly: 'token-aaaaaa' }))).toBe(0);
     expect(calls).toEqual([]);
   });
 
   it('an error from the server is tried again next time, and never throws', async () => {
     const pro = await load();
     const calls = [];
-    const iap = fakeIap(['dxdash_pro_monthly'], { dxdash_pro_monthly: 'token-aaaaaa' });
+    const iap = fakeIap(['languagedash_pro_monthly'], { languagedash_pro_monthly: 'token-aaaaaa' });
     const bad = fakeLb(calls, () => ({ error: 'down' }));
     await pro.verifyStorePurchases(bad, iap, { now: 1000 });
     await pro.verifyStorePurchases(fakeLb(calls), iap, { now: 2000 });

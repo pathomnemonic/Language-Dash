@@ -8,7 +8,7 @@ The Account panel (Friends → Account, and the profile button on Home) offers *
 
 ## Switch it on (once, in each provider and in Supabase)
 
-1. **Supabase → Authentication → URL Configuration → Redirect URLs**: add your site (`https://<you>.github.io/buzzword-dash-v2/`) and the app link `com.pathomnemonic.dxdash://auth`.
+1. **Supabase → Authentication → URL Configuration → Redirect URLs**: add your site (`https://<you>.github.io/Language-Dash/`) and the app link `com.pathomnemonic.languagedash://auth`.
 2. **Supabase → Authentication → Sign In / Providers → "Allow manual linking": ON.** Without it, "I am new" cannot upgrade a guest and says so.
 3. **Google**: Google Cloud Console → APIs & Services → Credentials → OAuth client ID (Web application). Authorized redirect URI: `https://<your-project>.supabase.co/auth/v1/callback`. Paste the client ID and secret into Supabase → Providers → Google, and turn it on. (Configure the consent screen with your app name, logo and privacy-policy link.)
 4. **Apple**: Apple Developer → Identifiers → Services ID with "Sign in with Apple", return URL `https://<your-project>.supabase.co/auth/v1/callback`, plus a key. Paste the Services ID and the generated client secret into Supabase → Providers → Apple. (Apple's client secret expires every 6 months; Supabase's Apple page explains how to regenerate it. Put a reminder in your calendar.)

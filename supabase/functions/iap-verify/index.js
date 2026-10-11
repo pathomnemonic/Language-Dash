@@ -7,9 +7,9 @@
 //
 // Deploy:  supabase functions deploy iap-verify
 // Secrets (set the ones for the stores you sell in):
-//   Google Play:  GOOGLE_PLAY_PACKAGE (com.pathomnemonic.dxdash), GOOGLE_SA_EMAIL, GOOGLE_SA_PRIVATE_KEY
+//   Google Play:  GOOGLE_PLAY_PACKAGE (com.pathomnemonic.languagedash), GOOGLE_SA_EMAIL, GOOGLE_SA_PRIVATE_KEY
 //                 (a service account added in Play Console → Users and permissions with "View financial data" and "Manage orders")
-//   App Store:    APPLE_BUNDLE_ID (com.pathomnemonic.dxdash), APPLE_IAP_ISSUER_ID, APPLE_IAP_KEY_ID, APPLE_IAP_PRIVATE_KEY
+//   App Store:    APPLE_BUNDLE_ID (com.pathomnemonic.languagedash), APPLE_IAP_ISSUER_ID, APPLE_IAP_KEY_ID, APPLE_IAP_PRIVATE_KEY
 //                 (an In-App Purchase key from App Store Connect → Users and Access → Integrations → In-App Purchase)
 // The app only calls this when built with VITE_IAP_VERIFY=1.
 

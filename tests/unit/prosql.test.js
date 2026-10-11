@@ -1,6 +1,6 @@
 // @vitest-environment node
 //
-// Dx Dash Pro backend: entitlements and codes. The app can only ask and redeem; it cannot grant itself anything.
+// Language Dash Pro backend: entitlements and codes. The app can only ask and redeem; it cannot grant itself anything.
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import { PGlite } from '@electric-sql/pglite';
@@ -30,7 +30,7 @@ beforeAll(async () => {
   for (let i = 0; i < 2; i++) await db.exec(readFileSync('database/pro.sql', 'utf8')); // safe to run twice
 }, 60000);
 
-describe('Dx Dash Pro backend', () => {
+describe('Language Dash Pro backend', () => {
   it('says "no" to someone with nothing, and to someone not signed in', async () => {
     expect((await one(A, 'SELECT get_my_pro() AS r')).r.active).toBe(false);
     expect((await one(null, 'SELECT get_my_pro() AS r')).r.active).toBe(false);

@@ -296,7 +296,7 @@ describe('iap-verify: phone-store purchases', () => {
 
   it('needs a real account, and a purchase it understands', async () => {
     const h = await boot('../../supabase/functions/iap-verify/index.js');
-    const ok = { platform: 'android', product_id: 'dxdash_pro_monthly', token: 'purchase-token-123' };
+    const ok = { platform: 'android', product_id: 'languagedash_pro_monthly', token: 'purchase-token-123' };
     expect((await call(h, ok)).status).toBe(401);
     expect((await call(h, ok, 'guest')).status).toBe(403);
     expect((await call(h, { ...ok, product_id: 'free_pro' }, 'good')).status).toBe(400);
@@ -308,15 +308,15 @@ describe('iap-verify: phone-store purchases', () => {
   it('Google Play: a live subscription is attached to the account and runs to its end plus the grace', async () => {
     const h = await boot('../../supabase/functions/iap-verify/index.js');
     const end = NOWS() + 20 * 86400;
-    storeReply = { status: 200, body: { subscriptionState: 'SUBSCRIPTION_STATE_ACTIVE', lineItems: [{ productId: 'dxdash_pro_monthly', expiryTime: new Date(end * 1000).toISOString() }] } };
-    const r = await call(h, { platform: 'android', product_id: 'dxdash_pro_monthly', token: 'purchase-token-123' }, 'good');
+    storeReply = { status: 200, body: { subscriptionState: 'SUBSCRIPTION_STATE_ACTIVE', lineItems: [{ productId: 'languagedash_pro_monthly', expiryTime: new Date(end * 1000).toISOString() }] } };
+    const r = await call(h, { platform: 'android', product_id: 'languagedash_pro_monthly', token: 'purchase-token-123' }, 'good');
     expect(r.status).toBe(200);
     expect(r.body).toMatchObject({ ok: true, valid: true, granted: true });
     const asked = stripeCalls.find((c) => c.path.startsWith('STORE '));
     expect(asked.path).toContain('/applications/com.example.app/purchases/subscriptionsv2/tokens/purchase-token-123');
     expect(asked.auth).toBe('Bearer goog_access');
     const claim = db.find((c) => c[0] === 'pro_store_claim')[1];
-    expect(claim).toMatchObject({ p_platform: 'android', p_user: 'u1', p_product: 'dxdash_pro_monthly', p_revoked: false });
+    expect(claim).toMatchObject({ p_platform: 'android', p_user: 'u1', p_product: 'languagedash_pro_monthly', p_revoked: false });
     expect(claim.p_key).toMatch(/^[0-9a-f]{64}$/);                     // (a hash, never the token)
     const grant = db.find((c) => c[0] === 'pro_grant_until')[1];
     expect(grant).toMatchObject({ p_user: 'u1', p_plan: 'monthly', p_source: 'store' });
@@ -326,20 +326,20 @@ describe('iap-verify: phone-store purchases', () => {
   it('Google Play: a refunded item is taken back, an unknown purchase gives nothing', async () => {
     const h = await boot('../../supabase/functions/iap-verify/index.js');
     storeReply = { status: 200, body: { purchaseState: 1 } };
-    const r = await call(h, { platform: 'android', product_id: 'dxdash_item_trail_fire', token: 'purchase-token-456' }, 'good');
+    const r = await call(h, { platform: 'android', product_id: 'languagedash_item_trail_fire', token: 'purchase-token-456' }, 'good');
     expect(r.body).toMatchObject({ ok: true, valid: false, revoked: true, granted: false });
     expect(db.find((c) => c[0] === 'pro_revoke_item')[1]).toMatchObject({ p_user: 'u1', p_item: 'trail_fire' });
     db.length = 0;
     storeReply = { status: 404, body: {} };
-    const unknown = await call(h, { platform: 'android', product_id: 'dxdash_item_trail_fire', token: 'purchase-token-789' }, 'good');
+    const unknown = await call(h, { platform: 'android', product_id: 'languagedash_item_trail_fire', token: 'purchase-token-789' }, 'good');
     expect(unknown.body).toMatchObject({ ok: true, valid: false, granted: false });
     expect(db.some((c) => c[0].startsWith('pro_grant') || c[0] === 'pro_store_claim')).toBe(false);
   });
 
   it('App Store: a valid transaction is attached; the sandbox is tried when production does not know it', async () => {
     const h = await boot('../../supabase/functions/iap-verify/index.js');
-    storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.example.app', productId: 'dxdash_pro_lifetime', type: 'Non-Consumable', originalTransactionId: '555' }) }, sandboxOnly: true };
-    const r = await call(h, { platform: 'ios', product_id: 'dxdash_pro_lifetime', token: '2000000123456' }, 'good');
+    storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.example.app', productId: 'languagedash_pro_lifetime', type: 'Non-Consumable', originalTransactionId: '555' }) }, sandboxOnly: true };
+    const r = await call(h, { platform: 'ios', product_id: 'languagedash_pro_lifetime', token: '2000000123456' }, 'good');
     expect(r.body).toMatchObject({ ok: true, valid: true, granted: true });
     const urls = stripeCalls.filter((c) => c.path.startsWith('STORE ')).map((c) => c.path);
     expect(urls[0]).toContain('api.storekit.itunes.apple.com');
@@ -350,14 +350,14 @@ describe('iap-verify: phone-store purchases', () => {
 
   it('refuses a transaction for another app or another product, and one that another account already holds', async () => {
     const h = await boot('../../supabase/functions/iap-verify/index.js');
-    storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.someone.else', productId: 'dxdash_pro_lifetime', type: 'Non-Consumable', originalTransactionId: '1' }) } };
-    expect((await call(h, { platform: 'ios', product_id: 'dxdash_pro_lifetime', token: '2000000123456' }, 'good')).body).toMatchObject({ ok: true, valid: false, granted: false });
-    storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.example.app', productId: 'dxdash_item_trail_fire', type: 'Non-Consumable', originalTransactionId: '2' }) } };
-    expect((await call(h, { platform: 'ios', product_id: 'dxdash_pro_lifetime', token: '2000000123456' }, 'good')).status).toBe(400);
-    storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.example.app', productId: 'dxdash_pro_lifetime', type: 'Non-Consumable', originalTransactionId: '3' }) } };
+    storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.someone.else', productId: 'languagedash_pro_lifetime', type: 'Non-Consumable', originalTransactionId: '1' }) } };
+    expect((await call(h, { platform: 'ios', product_id: 'languagedash_pro_lifetime', token: '2000000123456' }, 'good')).body).toMatchObject({ ok: true, valid: false, granted: false });
+    storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.example.app', productId: 'languagedash_item_trail_fire', type: 'Non-Consumable', originalTransactionId: '2' }) } };
+    expect((await call(h, { platform: 'ios', product_id: 'languagedash_pro_lifetime', token: '2000000123456' }, 'good')).status).toBe(400);
+    storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.example.app', productId: 'languagedash_pro_lifetime', type: 'Non-Consumable', originalTransactionId: '3' }) } };
     claimResult = 'other_account';
     db.length = 0;
-    const r = await call(h, { platform: 'ios', product_id: 'dxdash_pro_lifetime', token: '2000000123456' }, 'good');
+    const r = await call(h, { platform: 'ios', product_id: 'languagedash_pro_lifetime', token: '2000000123456' }, 'good');
     expect(r.status).toBe(409);
     expect(db.some((c) => c[0].startsWith('pro_grant'))).toBe(false);
   });
@@ -365,7 +365,7 @@ describe('iap-verify: phone-store purchases', () => {
   it('a store that cannot be reached takes nothing away and says to try again', async () => {
     const h = await boot('../../supabase/functions/iap-verify/index.js');
     storeReply = { status: 500, body: {} };
-    const r = await call(h, { platform: 'android', product_id: 'dxdash_pro_monthly', token: 'purchase-token-123' }, 'good');
+    const r = await call(h, { platform: 'android', product_id: 'languagedash_pro_monthly', token: 'purchase-token-123' }, 'good');
     expect(r.status).toBe(502);
     expect(db.some((c) => c[0].startsWith('pro_revoke') || c[0].startsWith('pro_grant'))).toBe(false);
   });

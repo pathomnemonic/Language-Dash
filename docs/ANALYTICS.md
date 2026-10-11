@@ -976,7 +976,7 @@ This install came from someone else's share link.
 
 ### `rating_prompt`
 
-The "enjoying Dx Dash?" prompt and where it led.
+The "enjoying Language Dash?" prompt and where it led.
 
 | Property | Type |
 |---|---|
@@ -1000,7 +1000,7 @@ Feedback was sent (never the text).
 
 ### `paywall_viewed`
 
-The Dx Dash Pro screen was opened (only once Pro is launched).
+The Language Dash Pro screen was opened (only once Pro is launched).
 
 | Property | Type |
 |---|---|

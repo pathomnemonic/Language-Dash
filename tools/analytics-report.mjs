@@ -69,7 +69,7 @@ async function main() {
   var limit = Number(arg('limit', 30)) || 30;
   var picked = views.filter(function (v) { return v.section > 0 && (!only || v.name === only) && (!section || v.section === section); });
   if (only) picked = views.filter(function (v) { return v.name === only; });
-  console.log('# Dx Dash analytics report\n\n_' + new Date().toISOString() + '_\n');
+  console.log('# Language Dash analytics report\n\n_' + new Date().toISOString() + '_\n');
   var lastSection = -1;
   for (var i = 0; i < picked.length; i++) {
     var v = picked[i];

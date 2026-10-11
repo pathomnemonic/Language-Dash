@@ -1,5 +1,5 @@
 /**
- * proconfig.js — what Dx Dash Pro is and what it limits, with the remote config file (public/remote-config.json) able
+ * proconfig.js — what Language Dash Pro is and what it limits, with the remote config file (public/remote-config.json) able
  * to change any of it without a release.
  *
  * Pro ships ON. Free players get a taste of everything: 300 hand-spread cards (20 in each subject), the game, the
@@ -10,16 +10,16 @@
  * custom_cards the limit is how many cards in total; for anki_import how many cards in one import). The file can change
  * them, add launchAt + grandfather to keep a feature free for people who installed earlier, or switch Pro off:
  *
- *   { "pro": { "enabled": true, "plans": ["dxdash_pro_yearly", "dxdash_pro_monthly", "dxdash_pro_pass3m", "dxdash_pro_lifetime"],
- *              "library": "dxdash_library",
+ *   { "pro": { "enabled": true, "plans": ["languagedash_pro_yearly", "languagedash_pro_monthly", "languagedash_pro_pass3m", "languagedash_pro_lifetime"],
+ *              "library": "languagedash_library",
  *              "gates": { "card_library": "locked", "custom_cards": { "limit": 25, "per": "total" }, "anki_import": "locked" },
  *              "launchAt": 0, "grandfather": [] } }
  */
 
 export var GATE_FEATURES = ['card_library', 'analytics_detail', 'custom_cards', 'anki_import', 'offline_pack', 'explanations', 'exam_sim', 'missed_cards', 'browse_cards', 'my_cards', 'mode_study', 'mode_weakness', 'mp_suddendeath', 'mp_race'];
-export var DEFAULT_PLANS = ['dxdash_pro_yearly', 'dxdash_pro_monthly', 'dxdash_pro_pass3m', 'dxdash_pro_lifetime'];
+export var DEFAULT_PLANS = ['languagedash_pro_yearly', 'languagedash_pro_monthly', 'languagedash_pro_pass3m', 'languagedash_pro_lifetime'];
 /** The one-time purchase that unlocks only the full card library (not the study tools). */
-export var DEFAULT_LIBRARY_PRODUCT = 'dxdash_library';
+export var DEFAULT_LIBRARY_PRODUCT = 'languagedash_library';
 /** What free players get by default; the remote file can loosen or tighten each. */
 export var DEFAULT_GATES = {
   card_library: 'locked',

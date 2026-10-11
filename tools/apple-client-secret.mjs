@@ -5,7 +5,7 @@
  * Apple does not give you a ready-made secret: you sign one yourself from the key file (.p8) you download in the Apple
  * developer account, and it stops working after at most six months (180 days). Run this again before it expires.
  *
- *   node tools/apple-client-secret.mjs --team ABCDE12345 --key-id K1234567 --services-id com.pathomnemonic.dxdash.web --p8 ~/Downloads/AuthKey_K1234567.p8
+ *   node tools/apple-client-secret.mjs --team ABCDE12345 --key-id K1234567 --services-id com.pathomnemonic.languagedash.web --p8 ~/Downloads/AuthKey_K1234567.p8
  *
  * It prints the secret (one long line of three parts joined by dots) and the date it stops working. Paste the line into
  * Supabase → Authentication → Sign In / Providers → Apple → "Secret Key (for OAuth)". The .p8 file never leaves your

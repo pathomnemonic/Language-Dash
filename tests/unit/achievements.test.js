@@ -53,11 +53,11 @@ describe('badges are actually awarded by real play', () => {
   });
   it('80% over 50 answers in a subject earns that subject badge and the mastery-count badge', async () => {
     const storage = await fresh();
-    storage.data.cards.subjectStats.Neurology = { correct: 45, wrong: 10 };
+    storage.data.cards.subjectStats.Basics = { correct: 45, wrong: 10 };
     const got = storage.checkAchievements(null);
     expect(got).toContain(ACHIEVEMENT_IDS.MASTER_NEURO);
     expect(got).toContain(ACHIEVEMENT_IDS.MASTER_1_SUBJECT);
-    storage.data.cards.subjectStats.Cardiology = { correct: 30, wrong: 30 };
+    storage.data.cards.subjectStats['People & Family'] = { correct: 30, wrong: 30 };
     expect(storage.checkAchievements(null)).not.toContain(ACHIEVEMENT_IDS.MASTER_CARDIO);
   });
   it('play time and studied-card badges use the real ids', async () => {

@@ -8,7 +8,7 @@ Everything the code can do is done and tested. This page is the click-by-click l
 - **Never paste a secret into chat, a GitHub issue or a file in the repo.** Secrets are: Stripe secret keys (`sk_…`, `rk_…`, `whsec_…`), Supabase `service_role` key, the Apple `.p8` file, the Android keystore and its passwords, Google client secrets. Paste them only into the box the instructions name. The anon key and `VITE_` variables are public and are fine.
 - **Keep a private note** (a password manager is ideal) with: the Supabase project reference, each provider's client ID, where each key file is saved, and the date each expires.
 - **Test mode first.** Stripe, Apple and Google all have a way to practise without real money. Practise first, then switch to live.
-- **Words used here.** *Supabase* is the online database and sign-in service behind the game. *Edge Function* is a small server program stored in Supabase. *Secret* is a private setting for a server program. *Variable* is a public build setting in GitHub. *The site* is the web version at `https://pathomnemonic.github.io/buzzword-dash-v2/`.
+- **Words used here.** *Supabase* is the online database and sign-in service behind the game. *Edge Function* is a small server program stored in Supabase. *Secret* is a private setting for a server program. *Variable* is a public build setting in GitHub. *The site* is the web version at `https://pathomnemonic.github.io/Language-Dash/`.
 
 **Where things stand (9 Oct 2026)**
 
@@ -25,7 +25,7 @@ Everything the code can do is done and tested. This page is the click-by-click l
 You ran `schema.sql`, `policies.sql`, `cohorts.sql`, `discovery.sql`, `pro.sql`, `analytics.sql`, `analytics_views.sql`, `lockdown.sql`, then `audit.sql` (no rows). **Repeat this whenever I tell you a `database/` file changed:**
 1. Supabase dashboard (supabase.com/dashboard) → click your project.
 2. Left sidebar → **SQL Editor** → **New query**.
-3. Open the file from the repo on GitHub (github.com/pathomnemonic/buzzword-dash-v2 → `database` folder → file → **Raw** → select all → copy). Paste into the editor → **Run**. Run only the files I name, in the order above. Always finish with `lockdown.sql` and then `audit.sql`.
+3. Open the file from the repo on GitHub (github.com/pathomnemonic/Language-Dash → `database` folder → file → **Raw** → select all → copy). Paste into the editor → **Run**. Run only the files I name, in the order above. Always finish with `lockdown.sql` and then `audit.sql`.
 4. `audit.sql` must say "Success. No rows returned". Any rows: copy them to me.
 
 ### 1.2 Supabase sign-in settings
@@ -34,12 +34,12 @@ Supabase dashboard → your project → left sidebar → **Authentication**.
    - Click **Email** → make sure it is **Enabled** → turn **Confirm email** ON → **Save**.
    - On the same page (or in *Authentication → Sign In / Providers → User Signups*): turn ON **Allow new users to sign up**, **Allow anonymous sign-ins** and **Allow manual linking**. Save each.
 2. **URL Configuration**:
-   - **Site URL**: `https://pathomnemonic.github.io/buzzword-dash-v2/`
-   - **Redirect URLs** → **Add URL**, one at a time: `https://pathomnemonic.github.io/buzzword-dash-v2/` and `com.pathomnemonic.dxdash://auth`. Nothing else (no `localhost`, no wildcards) once you are live.
+   - **Site URL**: `https://pathomnemonic.github.io/Language-Dash/`
+   - **Redirect URLs** → **Add URL**, one at a time: `https://pathomnemonic.github.io/Language-Dash/` and `com.pathomnemonic.languagedash://auth`. Nothing else (no `localhost`, no wildcards) once you are live.
    - Save.
 3. **Email sending (SMTP).** Supabase's built-in sender allows only a few emails an hour, so sign-up and sign-in-link emails will fail once people arrive.
    - Make a free account at an email provider such as Resend (resend.com) or Postmark, verify your sending domain or address (they give you step-by-step DNS records; if you have no domain, use the provider's own test address while testing, and a real address before launch), and create an **SMTP** user.
-   - Supabase → **Authentication → Emails → SMTP Settings** (older dashboards: *Project Settings → Authentication → SMTP*) → turn on **Enable custom SMTP** → fill sender email, sender name ("Dx Dash"), host, port, username, password → **Save**.
+   - Supabase → **Authentication → Emails → SMTP Settings** (older dashboards: *Project Settings → Authentication → SMTP*) → turn on **Enable custom SMTP** → fill sender email, sender name ("Language Dash"), host, port, username, password → **Save**.
    - Test: sign up on the site with a real address and check the email arrives (and is not in spam).
 4. **Email templates** (Authentication → Emails → Templates): open *Confirm signup* and *Magic Link*. Change nothing unless you want your own wording; keep the `{{ .ConfirmationURL }}` link in each.
 5. **Backups**: Supabase dashboard → **Database → Backups**. If it says daily backups need a paid plan, go to your organization (top-left name) → **Billing** → change the project to the **Pro** plan ($25/month). Everything players earned and bought is in this database. After upgrading, return to **Database → Backups** and confirm daily backups show.
@@ -50,7 +50,7 @@ Supabase dashboard → your project → left sidebar → **Authentication**.
 
 ### 1.3 Support email and public name
 The stores, the privacy policy and the terms need a real contact.
-1. Create an address players can write to, e.g. `support@yourdomain` or a dedicated Gmail like `dxdash.support@gmail.com`.
+1. Create an address players can write to, e.g. `support@yourdomain` or a dedicated Gmail like `languagedash.support@gmail.com`.
 2. Decide the name shown as the publisher/seller (your name or your business name).
 3. **Done:** the support address is `patho.mnemonic1@gmail.com` and it is now in `public/privacy.html`, `public/terms.html`, `public/delete-account.html` and the store text. It is shown publicly, and a free Gmail address is fine to start; switch to an address on your own domain later if you buy one. Remember to set the GitHub variable `VITE_SUPPORT_EMAIL` to it (2.1) so the in-app feedback form uses it too.
 
@@ -59,14 +59,14 @@ The stores, the privacy policy and the terms need a real contact.
 2. **Do not** run `npm install -g supabase`: Supabase does not support that. Use one of:
    - Any computer: no install, just put `npx supabase@latest` where the guide says `supabase`.
    - Mac: `brew install supabase/tap/supabase`. Windows: install Scoop, then `scoop bucket add supabase https://github.com/supabase/scoop-bucket.git` and `scoop install supabase`.
-3. In a terminal, in the folder where you cloned `buzzword-dash-v2`: `npx supabase@latest login` (a browser tab opens; approve), then `npx supabase@latest link --project-ref <your Reference ID>` (it asks for the database password you chose when you created the project; reset it under *Project Settings → Database* if you lost it).
+3. In a terminal, in the folder where you cloned `Language-Dash`: `npx supabase@latest login` (a browser tab opens; approve), then `npx supabase@latest link --project-ref <your Reference ID>` (it asks for the database password you chose when you created the project; reset it under *Project Settings → Database* if you lost it).
 
 ---
 
 ## Part 2: GitHub settings and the live site (about 20 minutes)
 
 ### 2.1 Build variables
-GitHub → `pathomnemonic/buzzword-dash-v2` → **Settings** → **Secrets and variables** → **Actions** → tab **Variables** → **New repository variable**. Add each (name exactly, then value):
+GitHub → `pathomnemonic/Language-Dash` → **Settings** → **Secrets and variables** → **Actions** → tab **Variables** → **New repository variable**. Add each (name exactly, then value):
 
 | Name | Value |
 | --- | --- |
@@ -94,14 +94,14 @@ GitHub → **Actions** tab → left list **Deploy to GitHub Pages** → **Run wo
 Allow time for Apple: it needs the paid Apple account (6.2). Do Google first.
 
 ### 3.1 Google
-1. Go to console.cloud.google.com, sign in, click the project picker (top bar) → **New project** → name it "Dx Dash" → **Create** → make sure it is selected.
+1. Go to console.cloud.google.com, sign in, click the project picker (top bar) → **New project** → name it "Language Dash" → **Create** → make sure it is selected.
 2. Left menu (☰) → **APIs & Services** → **OAuth consent screen** (new layout: **Google Auth Platform**). Click **Get started** / **Configure consent screen**.
-   - App name: `Dx Dash`. User support email: your support email. Audience/User type: **External**. Developer contact: your email. Agree → **Create**.
-   - **Branding**: add the app logo (`assets/store/play-icon-512.png` works), **Application home page** = the site, **Privacy policy link** = `https://pathomnemonic.github.io/buzzword-dash-v2/privacy.html`, **Terms** = `.../terms.html`, **Authorized domains**: just `pathomnemonic.github.io` (the one Google accepts; you cannot add `supabase.co` because you do not own it, and you do not need to: the Supabase address goes in the OAuth client's redirect URI in step 3, which is checked separately).
+   - App name: `Language Dash`. User support email: your support email. Audience/User type: **External**. Developer contact: your email. Agree → **Create**.
+   - **Branding**: add the app logo (`assets/store/play-icon-512.png` works), **Application home page** = the site, **Privacy policy link** = `https://pathomnemonic.github.io/Language-Dash/privacy.html`, **Terms** = `.../terms.html`, **Authorized domains**: just `pathomnemonic.github.io` (the one Google accepts; you cannot add `supabase.co` because you do not own it, and you do not need to: the Supabase address goes in the OAuth client's redirect URI in step 3, which is checked separately).
    - **Data access / Scopes**: add only `.../auth/userinfo.email`, `.../auth/userinfo.profile` and `openid`. These need no extra Google review.
    - **Audience**: click **Publish app** / **Make external → In production** and confirm. (While it says "Testing", only listed test users can sign in.)
 3. Left menu → **Clients** (older: **Credentials → + Create credentials → OAuth client ID**) → **Create client**:
-   - Application type: **Web application**. Name: "Dx Dash web".
+   - Application type: **Web application**. Name: "Language Dash web".
    - **Authorized redirect URIs** → **Add URI**: `https://<your Reference ID>.supabase.co/auth/v1/callback`
    - **Create**. A box shows the **Client ID** and **Client secret**. Copy both (the secret can be shown again under the client's page).
 4. Supabase → **Authentication → Sign In / Providers → Google** → turn ON → paste the Client ID and Client secret → **Save**.
@@ -110,20 +110,20 @@ Allow time for Apple: it needs the paid Apple account (6.2). Do Google first.
 
 ### 3.2 Apple (needs the Apple Developer account from 6.2)
 1. developer.apple.com/account → **Certificates, Identifiers & Profiles** → **Identifiers**.
-2. **App ID** (for the iPhone app): click **+** → **App IDs** → **App** → Continue. Description "Dx Dash", Bundle ID **Explicit** `com.pathomnemonic.dxdash`. Under **Capabilities** tick **Sign in with Apple**. Continue → **Register**. (If it already exists from 6.2, open it, tick the capability and **Save**.)
-3. **Services ID** (for the website): click **+** → **Services IDs** → Continue. Description "Dx Dash web", Identifier `com.pathomnemonic.dxdash.web` → Continue → **Register**. Click it in the list → tick **Sign in with Apple** → **Configure**:
-   - Primary App ID: Dx Dash (the one from step 2).
+2. **App ID** (for the iPhone app): click **+** → **App IDs** → **App** → Continue. Description "Language Dash", Bundle ID **Explicit** `com.pathomnemonic.languagedash`. Under **Capabilities** tick **Sign in with Apple**. Continue → **Register**. (If it already exists from 6.2, open it, tick the capability and **Save**.)
+3. **Services ID** (for the website): click **+** → **Services IDs** → Continue. Description "Language Dash web", Identifier `com.pathomnemonic.languagedash.web` → Continue → **Register**. Click it in the list → tick **Sign in with Apple** → **Configure**:
+   - Primary App ID: Language Dash (the one from step 2).
    - **Domains and Subdomains**: `<your Reference ID>.supabase.co` (no https).
    - **Return URLs**: `https://<your Reference ID>.supabase.co/auth/v1/callback`
    - **Next → Done → Continue → Save.**
-4. **Key**: left menu **Keys** → **+**. Name "Dx Dash sign in". Tick **Sign in with Apple** → **Configure** → pick the Primary App ID → Save → Continue → **Register**. **Download** the `.p8` file now (Apple lets you download it **once**). Note the **Key ID** shown (10 characters). Keep the file somewhere private and back it up.
+4. **Key**: left menu **Keys** → **+**. Name "Language Dash sign in". Tick **Sign in with Apple** → **Configure** → pick the Primary App ID → Save → Continue → **Register**. **Download** the `.p8` file now (Apple lets you download it **once**). Note the **Key ID** shown (10 characters). Keep the file somewhere private and back it up.
 5. Find your **Team ID**: developer.apple.com/account → **Membership details** → Team ID (10 characters).
 6. Make the secret Supabase needs. In a terminal in the repo folder:
    ```
-   node tools/apple-client-secret.mjs --team <Team ID> --key-id <Key ID> --services-id com.pathomnemonic.dxdash.web --p8 <path to the .p8 file>
+   node tools/apple-client-secret.mjs --team <Team ID> --key-id <Key ID> --services-id com.pathomnemonic.languagedash.web --p8 <path to the .p8 file>
    ```
    It prints one long line (the secret) and the date it expires (about 6 months away). Copy the line.
-7. Supabase → **Authentication → Sign In / Providers → Apple** → turn ON → **Client IDs** = `com.pathomnemonic.dxdash.web` (add `com.pathomnemonic.dxdash` after a comma too: that is the iPhone app) → **Secret Key** = the long line → **Save**.
+7. Supabase → **Authentication → Sign In / Providers → Apple** → turn ON → **Client IDs** = `com.pathomnemonic.languagedash.web` (add `com.pathomnemonic.languagedash` after a comma too: that is the iPhone app) → **Secret Key** = the long line → **Save**.
 8. **Put a reminder in your calendar for 5 months from today: run step 6 again and paste the new secret in step 7.** When it expires, Apple sign-in silently stops working.
 9. Deleting accounts cleanly (Apple rule) needs four more secrets later, in 4.2.
 
@@ -131,7 +131,7 @@ Allow time for Apple: it needs the paid Apple account (6.2). Do Google first.
 
 ### 3.3 Microsoft (optional; the button stays hidden until you finish this)
 1. portal.azure.com (sign in with any Microsoft account) → search **Microsoft Entra ID** → **App registrations** → **+ New registration**.
-   - Name: Dx Dash. **Supported account types**: *Accounts in any organizational directory and personal Microsoft accounts*.
+   - Name: Language Dash. **Supported account types**: *Accounts in any organizational directory and personal Microsoft accounts*.
    - **Redirect URI**: platform **Web**, value `https://<your Reference ID>.supabase.co/auth/v1/callback` → **Register**.
 2. On the app's **Overview** page copy **Application (client) ID**.
 3. **Certificates & secrets** → **New client secret** → description, 24 months → **Add** → copy the **Value** immediately (not the "Secret ID"). Put an expiry reminder in your calendar.
@@ -152,10 +152,10 @@ You need the support email (1.3) and Part 1 and 2 done. Stay in Stripe's **Test 
 
    | Product name | Price | Billing |
    | --- | --- | --- |
-   | Dx Dash Pro – Yearly | $19.99 | Recurring, every **year** |
-   | Dx Dash Pro – 3 months | $7.49 | Recurring, every **3 months** (choose *Custom* interval) |
-   | Dx Dash Pro – Monthly | $3.49 | Recurring, every **month** |
-   | Dx Dash Pro – Lifetime | $39.99 | **One time** |
+   | Language Dash Pro – Yearly | $19.99 | Recurring, every **year** |
+   | Language Dash Pro – 3 months | $7.49 | Recurring, every **3 months** (choose *Custom* interval) |
+   | Language Dash Pro – Monthly | $3.49 | Recurring, every **month** |
+   | Language Dash Pro – Lifetime | $39.99 | **One time** |
 
    (These are the suggested prices from `docs/PRO.md`; change them if you decide differently, and tell me so the app text matches.)
 3. Open each product → under **Pricing**, click the price row (or its ⋯ menu) → **Copy price ID** (starts `price_…`). Paste the four ids into your private note labelled yearly / 3-month / monthly / lifetime.
@@ -166,7 +166,7 @@ Supabase → **Edge Functions** (left sidebar) → **Secrets** tab (or run `npx 
 
 | Secret name | Value |
 | --- | --- |
-| `SITE_URL` | `https://pathomnemonic.github.io/buzzword-dash-v2` (no slash at the end) |
+| `SITE_URL` | `https://pathomnemonic.github.io/Language-Dash` (no slash at the end) |
 | `STRIPE_PRICE_YEARLY` | the yearly price id |
 | `STRIPE_PRICE_PASS3M` | the 3-month price id |
 | `STRIPE_PRICE_MONTHLY` | the monthly price id |
@@ -175,10 +175,10 @@ Supabase → **Edge Functions** (left sidebar) → **Secrets** tab (or run `npx 
 | `STRIPE_WEBHOOK_SECRET` | from 4.5 |
 
 (Supabase already provides `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to functions; you do not add them.)
-For Apple account deletion (iPhone rule), also add: `APPLE_TEAM_ID` (Team ID), `APPLE_KEY_ID` (Key ID), `APPLE_PRIVATE_KEY` (open the `.p8` in a text editor, copy **all** of it including the BEGIN and END lines), `APPLE_CLIENT_ID` (`com.pathomnemonic.dxdash.web`).
+For Apple account deletion (iPhone rule), also add: `APPLE_TEAM_ID` (Team ID), `APPLE_KEY_ID` (Key ID), `APPLE_PRIVATE_KEY` (open the `.p8` in a text editor, copy **all** of it including the BEGIN and END lines), `APPLE_CLIENT_ID` (`com.pathomnemonic.languagedash.web`).
 
 ### 4.3 The restricted Stripe key
-Stripe → **Developers → API keys** → **+ Create restricted key**. Name "Dx Dash functions". Set permissions:
+Stripe → **Developers → API keys** → **+ Create restricted key**. Name "Language Dash functions". Set permissions:
 - **Write**: Checkout Sessions, Customer portal (Billing portal), Refunds, Subscriptions.
 - **Read**: Charges, Invoices, PaymentIntents, Prices, Customers.
 - Everything else: **None**.
@@ -205,8 +205,8 @@ GitHub → **Settings → Secrets and variables → Actions → Variables** → 
 ### 4.7 Test mode walk-through (do all of this before real money)
 Follow `docs/PAYMENT-CHECKS.md`. In short:
 1. **Webhook wiring** (no payment): in a terminal, `WEBHOOK_URL=https://<ref>.supabase.co/functions/v1/stripe-webhook STRIPE_WEBHOOK_SECRET=whsec_… node tools/smoke-webhook.mjs` → four PASS lines. (On Windows PowerShell, set the two variables first with `$env:NAME="value"`.)
-2. **A real test purchase**: on the site, signed in with an email account (not a guest), tap a locked Pro section → choose monthly → pay with card `4242 4242 4242 4242`, any future date, any CVC, any postcode. You return to the game with "Welcome to Dx Dash Pro!".
-3. **Manage / cancel**: Settings → Dx Dash Pro → Manage → cancel. Pro stays until the period ends.
+2. **A real test purchase**: on the site, signed in with an email account (not a guest), tap a locked Pro section → choose monthly → pay with card `4242 4242 4242 4242`, any future date, any CVC, any postcode. You return to the game with "Welcome to Language Dash Pro!".
+3. **Manage / cancel**: Settings → Language Dash Pro → Manage → cancel. Pro stays until the period ends.
 4. **A Locker item** (💎 button, tap twice): it appears. Buy the same one again from a second tab: the second payment is refunded automatically.
 5. **Refund** the item in Stripe (**Payments** → the payment → **Refund**). Open the app twice over a few minutes: the item disappears.
 6. **Lifetime then refund**: Pro ends. **Chargeback card** `4000 0000 0000 0259`: item removed; mark the dispute won (Stripe test mode lets you) and it returns.
@@ -242,28 +242,28 @@ Tell me which step fails and what the screen says.
 Use `docs/RELEASE_GUIDE.md` Part 1 for the full list; the click paths are:
 1. **Signing key.** On a computer with Java (Android Studio includes it), in a terminal:
    ```
-   keytool -genkey -v -keystore release.keystore -alias dxdash -keyalg RSA -keysize 2048 -validity 10000
+   keytool -genkey -v -keystore release.keystore -alias languagedash -keyalg RSA -keysize 2048 -validity 10000
    base64 -w0 release.keystore > release.keystore.b64      (Mac: base64 -i release.keystore -o release.keystore.b64)
    ```
    Back up `release.keystore` and its two passwords somewhere safe (losing them means you cannot update the app).
-2. GitHub → repo → **Settings → Secrets and variables → Actions → Secrets** → **New repository secret**: `ANDROID_KEYSTORE_BASE64` (the contents of `release.keystore.b64`), `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` (`dxdash`), `ANDROID_KEY_PASSWORD`.
+2. GitHub → repo → **Settings → Secrets and variables → Actions → Secrets** → **New repository secret**: `ANDROID_KEYSTORE_BASE64` (the contents of `release.keystore.b64`), `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` (`languagedash`), `ANDROID_KEY_PASSWORD`.
 3. **Actions** tab → **Android app** → **Run workflow** → `main`. When done, open the run → **Artifacts** → download the release bundle `app-release.aab` (and the debug APK to try on your own phone first: allow "install unknown apps", open the file).
-4. Play Console → **Create app**: name `Dx Dash: Board Exam Runner`, English, **App**, **Free**, accept declarations.
+4. Play Console → **Create app**: name `Language Dash: Board Exam Runner`, English, **App**, **Free**, accept declarations.
 5. **Store listing**: Grow → **Store presence → Main store listing**: paste text from `store/google-play/listing.md`; upload `assets/store/play-icon-512.png`, `assets/store/feature-graphic.png`, the phone screenshots in `assets/store/screenshots/`, and the tablet screenshots (the **7-inch tablet** and **10-inch tablet** boxes) from `assets/store/play-tablet-7/` and `assets/store/play-tablet-10/`. Chromebook screenshots can reuse the 10-inch set.
-6. **App content** (Policy and programs → App content): answer every item using `store/google-play/policy-answers.md`: privacy policy URL `https://pathomnemonic.github.io/buzzword-dash-v2/privacy.html`; ads: **No ads**; app access: no login needed; **Data safety** (answers in that file, including email address for sign-in and purchase history); **Account deletion** URL `.../delete-account.html`; content rating questionnaire; target audience **18+ / not for children**; health apps declaration: it is a study game, not a medical device.
-7. **Products** (after step 8's first upload; Play only lets you create them once a bundle exists). Monetize with Play → **Products → Subscriptions** → **Create subscription**, three times. Each one: **Product ID** exactly `dxdash_pro_yearly`, `dxdash_pro_pass3m`, `dxdash_pro_monthly` (the app looks products up by these ids); name "Dx Dash Pro"; **one base plan** each, auto-renewing, billing period 1 year, 3 months and 1 month; prices per `docs/PRO.md`; **no free trial or introductory offer**. Then **Products → In-app products** → **Create product** for `dxdash_pro_lifetime` and (optionally) the three `dxdash_tip_*` tips, exact ids and prices as in `docs/PRO.md`. **Skip the 11 `dxdash_item_*` Locker items for the first release:** their buttons show "Soon" until you build with `VITE_FEATURE_LOCKER_ITEMS=1`. After the first internal-test install, confirm the paywall shows the real store prices; if a plan shows no price, the product id or its activation is wrong: tell me which. (`docs/PRO.md` describes this as one subscription with three base plans; three separate subscriptions is what matches the ids the app asks for.)
+6. **App content** (Policy and programs → App content): answer every item using `store/google-play/policy-answers.md`: privacy policy URL `https://pathomnemonic.github.io/Language-Dash/privacy.html`; ads: **No ads**; app access: no login needed; **Data safety** (answers in that file, including email address for sign-in and purchase history); **Account deletion** URL `.../delete-account.html`; content rating questionnaire; target audience **18+ / not for children**; health apps declaration: it is a study game, not a medical device.
+7. **Products** (after step 8's first upload; Play only lets you create them once a bundle exists). Monetize with Play → **Products → Subscriptions** → **Create subscription**, three times. Each one: **Product ID** exactly `languagedash_pro_yearly`, `languagedash_pro_pass3m`, `languagedash_pro_monthly` (the app looks products up by these ids); name "Language Dash Pro"; **one base plan** each, auto-renewing, billing period 1 year, 3 months and 1 month; prices per `docs/PRO.md`; **no free trial or introductory offer**. Then **Products → In-app products** → **Create product** for `languagedash_pro_lifetime` and (optionally) the three `languagedash_tip_*` tips, exact ids and prices as in `docs/PRO.md`. **Skip the 11 `languagedash_item_*` Locker items for the first release:** their buttons show "Soon" until you build with `VITE_FEATURE_LOCKER_ITEMS=1`. After the first internal-test install, confirm the paywall shows the real store prices; if a plan shows no price, the product id or its activation is wrong: tell me which. (`docs/PRO.md` describes this as one subscription with three base plans; three separate subscriptions is what matches the ids the app asks for.)
 8. **Testing → Closed testing** → **Create track / Create release** → upload `app-release.aab` → release notes → **Next → Save** → **Testers** tab: create an email list or Google Group with your 12+ testers → copy the **opt-in link** and send it to them. Ask each to open it, **Become a tester**, and install. They must stay opted in 14 days.
 9. Under **Setup → License testing** add your own Google account so test purchases are free and quick to cancel.
 10. After the 14 days: **Production → Create new release → promote from closed testing → submit**. Review takes a few days.
 
 ### 6.2 iPhone
 Use `docs/RELEASE_GUIDE.md` Part 2 for the full list; the click paths are:
-1. App Store Connect → **Apps → +** → **New App**: iOS, name `Dx Dash: Board Exam Runner`, English, bundle ID `com.pathomnemonic.dxdash` (register it first in developer.apple.com → Identifiers if it is not listed; see 3.2 step 2), SKU `dxdash`.
+1. App Store Connect → **Apps → +** → **New App**: iOS, name `Language Dash: Board Exam Runner`, English, bundle ID `com.pathomnemonic.languagedash` (register it first in developer.apple.com → Identifiers if it is not listed; see 3.2 step 2), SKU `languagedash`.
 2. **API key for the build robot:** App Store Connect → **Users and Access → Integrations → App Store Connect API → Team Keys → +** → access **App Manager** → **Generate** → **Download** the `.p8` (once). Copy the **Issuer ID** and **Key ID**.
-3. codemagic.io → sign in with GitHub → **Add application** → pick `buzzword-dash-v2` → it finds `codemagic.yaml`. **Teams → Integrations → App Store Connect** → add the key from step 2, naming the integration exactly `Dx Dash App Store Connect`.
+3. codemagic.io → sign in with GitHub → **Add application** → pick `Language-Dash` → it finds `codemagic.yaml`. **Teams → Integrations → App Store Connect** → add the key from step 2, naming the integration exactly `Language Dash App Store Connect`.
 4. Codemagic → the app → **Environment variables**: add `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (mark secure), `VITE_SUPPORT_EMAIL`, and later `VITE_APPSTORE_ID` (the app's numeric Apple ID from App Store Connect → App Information).
 5. **Start new build → ios-release.** This file has never run: if a step fails, copy the red log lines to me; the fix is usually one line.
-6. App Store Connect → the app → **Monetization → In-App Purchases / Subscriptions**: create a **subscription group** "Dx Dash Pro" with the three subscriptions (`dxdash_pro_yearly`, `dxdash_pro_pass3m`, `dxdash_pro_monthly`, no introductory offer), a **non-consumable** `dxdash_pro_lifetime`, **consumables** for the three `dxdash_tip_*`, and **non-consumables** for the 11 `dxdash_item_*` ids. Each needs a display name, description, price and a review screenshot (use the paywall or Locker screenshot).
+6. App Store Connect → the app → **Monetization → In-App Purchases / Subscriptions**: create a **subscription group** "Language Dash Pro" with the three subscriptions (`languagedash_pro_yearly`, `languagedash_pro_pass3m`, `languagedash_pro_monthly`, no introductory offer), a **non-consumable** `languagedash_pro_lifetime`, **consumables** for the three `languagedash_tip_*`, and **non-consumables** for the 11 `languagedash_item_*` ids. Each needs a display name, description, price and a review screenshot (use the paywall or Locker screenshot).
 7. **Version page** (Distribution → iOS App → the version): paste text from `store/app-store/listing.md`; upload screenshots from `assets/store/appstore/` (6.9") and `appstore-6.5/`, and for iPad `assets/store/ipad-13/` (13" iPad; the 12.9" slot takes `ipad-12.9/`); fill **App Privacy** and **Age Rating** from the same file; paste the **reviewer notes**; set **Sign-in information**: not required.
 8. When the Codemagic build appears under **TestFlight** (10–30 minutes after upload), open the version page → **Build → +** → pick it. Install it on your own iPhone from the **TestFlight** app and run the tests in 6.4.
 9. **Add for Review → Submit.** Review takes 1–3 days.
@@ -277,7 +277,7 @@ Run `docs/DEVICE-TESTING.md` on at least one Android phone and one iPhone, writi
 2. Sign in with each provider, once as a guest ("I am new") and once as a returning player. You must come back to the app signed in, with the same coins.
 3. iPhone: Sign in with Apple, then **Delete my account**. Within a minute the app must vanish from iPhone **Settings → [your name] → Sign-In & Security → Sign in with Apple**.
 4. Buy a subscription and an item with a test account; restore after reinstalling; refund in the store console and open the app twice.
-5. Clear the app's storage and relaunch: it offers "Restore your progress?". iPhone: Settings → Dx Dash → remove website data, or offload and reinstall.
+5. Clear the app's storage and relaunch: it offers "Restore your progress?". iPhone: Settings → Language Dash → remove website data, or offload and reinstall.
 6. Airplane mode during a purchase and during sign-in: nothing charged twice.
 Send me anything odd.
 
@@ -295,7 +295,7 @@ Send me anything odd.
 - [ ] **Hidden features** (global leaderboard, ranked matches, cohorts, discovery): built but hidden; revisit when you have players (`js/features.js`).
 - [ ] **Pro limits.** `public/remote-config.json` has Pro on and the free tier at 300 cards; re-read the gates against the prices you chose.
 - [ ] **Analytics.** Decide whether you will look at the owner views (`docs/ANALYTICS-GUIDE.md`) and who does.
-- [ ] **Name and trademarks.** Check "Dx Dash" is free in both stores. The app and ads carry the disclaimer about NBME, FSMB and NBOME.
+- [ ] **Name and trademarks.** Check "Language Dash" is free in both stores. The app and ads carry the disclaimer about NBME, FSMB and NBOME.
 - [ ] **What's new text and launch plan** (`docs/marketing/`): the images were regenerated from the current app; the wording needs your voice.
 - [ ] **Calendar reminders:** Apple sign-in secret (every 6 months, 3.2), Microsoft client secret (3.3), Apple Developer renewal (yearly).
 
@@ -306,7 +306,7 @@ Send me anything odd.
 - Server-side checking of phone-store purchases is off until you do 6.3.
 
 ## Part 9: iOS things I could not test (watch for these in 6.4)
-- Sign in with Apple/Google/Microsoft opens an in-app Safari sheet and returns through the `com.pathomnemonic.dxdash://auth` link. iOS may ask "Open in Dx Dash?" once. If that is clumsy, the fix is Universal Links.
+- Sign in with Apple/Google/Microsoft opens an in-app Safari sheet and returns through the `com.pathomnemonic.languagedash://auth` link. iOS may ask "Open in Language Dash?" once. If that is clumsy, the fix is Universal Links.
 - iPhone web views can lose stored data under storage pressure. The app keeps a second copy of the save in a file and offers it back; check by removing the app's website data and relaunching.
 - Keyboard, safe areas (notch, home bar) and 3D performance on an older iPhone.
 

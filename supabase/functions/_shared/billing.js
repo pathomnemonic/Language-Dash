@@ -13,12 +13,12 @@
 import { premiumCents } from './premium.js';
 
 export var PRODUCTS = {
-  dxdash_pro_yearly: { plan: 'yearly', kind: 'subscription', env: 'STRIPE_PRICE_YEARLY' },
-  dxdash_pro_pass3m: { plan: 'pass3m', kind: 'subscription', env: 'STRIPE_PRICE_PASS3M' },
-  dxdash_pro_monthly: { plan: 'monthly', kind: 'subscription', env: 'STRIPE_PRICE_MONTHLY' },
-  dxdash_pro_lifetime: { plan: 'lifetime', kind: 'payment', env: 'STRIPE_PRICE_LIFETIME' }
+  languagedash_pro_yearly: { plan: 'yearly', kind: 'subscription', env: 'STRIPE_PRICE_YEARLY' },
+  languagedash_pro_pass3m: { plan: 'pass3m', kind: 'subscription', env: 'STRIPE_PRICE_PASS3M' },
+  languagedash_pro_monthly: { plan: 'monthly', kind: 'subscription', env: 'STRIPE_PRICE_MONTHLY' },
+  languagedash_pro_lifetime: { plan: 'lifetime', kind: 'payment', env: 'STRIPE_PRICE_LIFETIME' }
 };
-var LEGACY = { dxdash_library: { plan: 'library', kind: 'payment', env: 'STRIPE_PRICE_LIBRARY' } };
+var LEGACY = { languagedash_library: { plan: 'library', kind: 'payment', env: 'STRIPE_PRICE_LIBRARY' } };
 
 /** A subscription stays on this long past its paid period, so a late renewal does not lock anyone out for a day. */
 export var GRACE_SECONDS = 2 * 24 * 60 * 60;
@@ -31,7 +31,7 @@ export function configuredProducts(env) {
   return Object.keys(PRODUCTS).filter(function (id) { return !!(env && env[PRODUCTS[id].env]); });
 }
 
-/** Find the product for a plan name or id ('yearly' or 'dxdash_pro_yearly'). */
+/** Find the product for a plan name or id ('yearly' or 'languagedash_pro_yearly'). */
 export function productFor(planOrId) {
   var key = String(planOrId || '');
   if (PRODUCTS[key]) return { id: key, def: PRODUCTS[key] };
@@ -44,7 +44,7 @@ export function anyProductFor(planOrId) {
   var p = productFor(planOrId);
   if (p) return p;
   var key = String(planOrId || '');
-  return key === 'library' || key === 'dxdash_library' ? { id: 'dxdash_library', def: LEGACY.dxdash_library } : null;
+  return key === 'library' || key === 'languagedash_library' ? { id: 'languagedash_library', def: LEGACY.languagedash_library } : null;
 }
 
 /**
@@ -192,7 +192,7 @@ export function itemCheckoutParams(itemId, userId, env, opts) {
   f['client_reference_id'] = userId;
   f['line_items[0][price_data][currency]'] = 'usd';
   f['line_items[0][price_data][unit_amount]'] = String(cents);
-  f['line_items[0][price_data][product_data][name]'] = String((opts && opts.name) || itemId).slice(0, 80) + ' (Dx Dash Locker item)';
+  f['line_items[0][price_data][product_data][name]'] = String((opts && opts.name) || itemId).slice(0, 80) + ' (Language Dash Locker item)';
   f['line_items[0][quantity]'] = '1';
   f['success_url'] = site + '/?pro=success&item=' + encodeURIComponent(itemId);
   f['cancel_url'] = site + '/?pro=cancelled';
@@ -211,7 +211,7 @@ export function itemCheckoutParams(itemId, userId, env, opts) {
 export function portalConfig(env) {
   var site = String((env && env.SITE_URL) || '').replace(/\/+$/, '');
   var f = {
-    'business_profile[headline]': 'Manage your Dx Dash Pro subscription',
+    'business_profile[headline]': 'Manage your Language Dash Pro subscription',
     'features[subscription_cancel][enabled]': 'true',
     'features[subscription_cancel][mode]': 'at_period_end',
     'features[payment_method_update][enabled]': 'true',

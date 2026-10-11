@@ -357,19 +357,19 @@ describe('the views', () => {
   });
 });
 
-describe('Dx Dash Pro and tip views', () => {
+describe('Language Dash Pro and tip views', () => {
   it('turn paywall, purchase, gate and status events into funnels and revenue', async () => {
     const P = uuid(900);
     const S = uuid(901);
     const t = Date.now();
     const events = [
       ['paywall_viewed', { trigger: 'gate_offline_pack', variant: 'a' }],
-      ['paywall_action', { action: 'plan_selected', plan: 'dxdash_pro_yearly', trigger: 'gate_offline_pack' }],
-      ['paywall_action', { action: 'purchase_started', plan: 'dxdash_pro_yearly', trigger: 'gate_offline_pack' }],
-      ['paywall_action', { action: 'purchased', plan: 'dxdash_pro_yearly', trigger: 'gate_offline_pack', micros: 29990000, currency: 'USD', price: '$29.99' }],
+      ['paywall_action', { action: 'plan_selected', plan: 'languagedash_pro_yearly', trigger: 'gate_offline_pack' }],
+      ['paywall_action', { action: 'purchase_started', plan: 'languagedash_pro_yearly', trigger: 'gate_offline_pack' }],
+      ['paywall_action', { action: 'purchased', plan: 'languagedash_pro_yearly', trigger: 'gate_offline_pack', micros: 29990000, currency: 'USD', price: '$29.99' }],
       ['pro_gate_hit', { feature: 'offline_pack', mode: 'locked', used: 0, limit: 0 }],
       ['pro_status', { active: true, source: 'store', plan: 'yearly', trial: false }],
-      ['tip_purchase', { outcome: 'completed', product: 'dxdash_tip_small', micros: 1990000, currency: 'USD' }]
+      ['tip_purchase', { outcome: 'completed', product: 'languagedash_tip_small', micros: 1990000, currency: 'USD' }]
     ].map(([n, p], i) => ({ id: uuid(902, i), n, t, q: i, s: S, p }));
     const res = await send({ sent_at: t, install: { id: P, platform: 'android', version: '2.0.0', consent_v: 1 }, sessions: { [S]: { started: t, ctx: { platform: 'android' } } }, events });
     expect(res.accepted).toBe(7);
@@ -377,7 +377,7 @@ describe('Dx Dash Pro and tip views', () => {
     expect(funnel).toMatchObject({ variant: 'a' });
     expect(Number(funnel.bought)).toBe(1);
     expect(Number(funnel.viewers)).toBe(1);
-    const rev = (await q("SELECT * FROM analytics_v_pro_revenue WHERE plan = 'dxdash_pro_yearly'"))[0];
+    const rev = (await q("SELECT * FROM analytics_v_pro_revenue WHERE plan = 'languagedash_pro_yearly'"))[0];
     expect(Number(rev.gross)).toBeCloseTo(29.99, 2);
     expect((await q('SELECT * FROM analytics_v_pro_gates'))[0]).toMatchObject({ feature: 'offline_pack', mode: 'locked' });
     expect((await q('SELECT * FROM analytics_v_pro_users WHERE active'))[0]).toMatchObject({ source: 'store', plan: 'yearly' });

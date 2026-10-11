@@ -1,5 +1,5 @@
 -- ================================================================
--- Dx Dash — first-party analytics (tables, ingest, privacy functions)
+-- Language Dash — first-party analytics (tables, ingest, privacy functions)
 --
 -- Run after schema.sql and policies.sql. Safe to run twice.
 -- The views for reading the data are in analytics_views.sql.

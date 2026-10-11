@@ -83,6 +83,7 @@ import { readNativeBackup, scheduleNativeBackup, flushNativeBackup, clearNativeB
 import { analytics } from './analytics/index.js';
 import { installAnalytics, reportRunEnd, reportFrame, instrumentLeaderboard } from './analytics/instrument.js';
 import { track as trackEvent } from './analytics/index.js';
+import { skinTitle } from './game/skins.js';
 import { pairVoices } from './tts.js';
 import { setReadLangs } from './readaloud.js';
 
@@ -810,7 +811,7 @@ function attachShareImage() {
     wrong: game.wrong,
     bestStreak: game.bestStreak,
     modeLabel: MODE_LABELS[game.mode] || 'Runner',
-    trackName: game.currentSkin ? game.currentSkin.name : '',
+    trackName: game.currentSkin ? skinTitle(game.currentSkin) : '',
     streakDays: storage.getStreakStatus().streak,
     cardsMet: Number(storage.get('totalCardsStudied')) || 0,
     runCards: game.runCards ? game.runCards.slice() : []

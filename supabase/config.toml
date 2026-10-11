@@ -1,5 +1,5 @@
 # Only used by `supabase functions deploy`. The functions are plain JavaScript, so name the entrypoints.
-project_id = "buzzword-dash"
+project_id = "language-dash"
 
 [functions.pro-checkout]
 entrypoint = "./functions/pro-checkout/index.js"

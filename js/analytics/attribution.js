@@ -30,7 +30,7 @@ export function hostOf(url) {
 
 /** How the visit is grouped for marketing reports. */
 export function channelOf(t) {
-  if (t.share_ref || t.utm_source === 'dxdash_share') return 'share';
+  if (t.share_ref || t.utm_source === 'languagedash_share') return 'share';
   if (t.utm_medium && PAID_MEDIUM.test(t.utm_medium)) return 'paid';
   if (t.has_click_id) return 'paid';
   if (t.utm_medium === 'email' || t.utm_medium === 'newsletter' || t.utm_source === 'email') return 'email';
@@ -133,7 +133,7 @@ export function decorateShareUrl(url, o) {
   var hashAt = base.indexOf('#');
   var hash = hashAt >= 0 ? base.slice(hashAt) : '';
   if (hashAt >= 0) base = base.slice(0, hashAt);
-  var params = ['utm_source=dxdash_share', 'utm_medium=' + encodeURIComponent(String(o.kind || 'share').replace(/[^a-z0-9_]/gi, '')), 'utm_campaign=viral'];
+  var params = ['utm_source=languagedash_share', 'utm_medium=' + encodeURIComponent(String(o.kind || 'share').replace(/[^a-z0-9_]/gi, '')), 'utm_campaign=viral'];
   if (o.refCode) params.push('r=' + encodeURIComponent(o.refCode));
   var joiner = base.indexOf('?') >= 0 ? (/[?&]$/.test(base) ? '' : '&') : '?';
   return base + joiner + params.join('&') + hash;

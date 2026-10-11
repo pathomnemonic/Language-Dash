@@ -1,5 +1,5 @@
 -- ================================================================
--- Dx Dash — Cohorts and cohort wars (NOT RELEASED YET)
+-- Language Dash — Cohorts and cohort wars (NOT RELEASED YET)
 --
 -- Cohorts are teams of up to 50 players (a class, a study group, a whole
 -- school year) that climb a weekly "war" ladder together. Schools are a tag on

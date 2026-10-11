@@ -12,13 +12,13 @@ const NOW = 1_800_000_000;
 
 describe('understanding the product ids the app sells', () => {
   it('knows plans, the lifetime purchase, premium items and the old library, and nothing else', () => {
-    expect(describeStoreProduct('dxdash_pro_monthly')).toEqual({ kind: 'subscription', plan: 'monthly' });
-    expect(describeStoreProduct('dxdash_pro_yearly')).toEqual({ kind: 'subscription', plan: 'yearly' });
-    expect(describeStoreProduct('dxdash_pro_lifetime')).toEqual({ kind: 'lifetime', plan: 'lifetime' });
-    expect(describeStoreProduct('dxdash_library')).toEqual({ kind: 'library', plan: 'library' });
-    expect(describeStoreProduct('dxdash_item_trail_fire')).toEqual({ kind: 'item', item: 'trail_fire' });
-    expect(describeStoreProduct('dxdash_item_avatar_intern')).toBeNull();   // (not a premium item)
-    expect(describeStoreProduct('dxdash_item_../../etc')).toBeNull();
+    expect(describeStoreProduct('languagedash_pro_monthly')).toEqual({ kind: 'subscription', plan: 'monthly' });
+    expect(describeStoreProduct('languagedash_pro_yearly')).toEqual({ kind: 'subscription', plan: 'yearly' });
+    expect(describeStoreProduct('languagedash_pro_lifetime')).toEqual({ kind: 'lifetime', plan: 'lifetime' });
+    expect(describeStoreProduct('languagedash_library')).toEqual({ kind: 'library', plan: 'library' });
+    expect(describeStoreProduct('languagedash_item_trail_fire')).toEqual({ kind: 'item', item: 'trail_fire' });
+    expect(describeStoreProduct('languagedash_item_avatar_intern')).toBeNull();   // (not a premium item)
+    expect(describeStoreProduct('languagedash_item_../../etc')).toBeNull();
     expect(describeStoreProduct('free_pro_for_all')).toBeNull();
     expect(describeStoreProduct('')).toBeNull();
   });
@@ -50,8 +50,8 @@ describe('Google Play', () => {
   });
 
   it('asks about a subscription and a one-time product in the right places, with the token escaped', () => {
-    expect(googleUrl('subscription', 'com.x', 'dxdash_pro_monthly', 'tok/en')).toBe('https://androidpublisher.googleapis.com/androidpublisher/v3/applications/com.x/purchases/subscriptionsv2/tokens/tok%2Fen');
-    expect(googleUrl('product', 'com.x', 'dxdash_item_trail_fire', 'tok')).toBe('https://androidpublisher.googleapis.com/androidpublisher/v3/applications/com.x/purchases/products/dxdash_item_trail_fire/tokens/tok');
+    expect(googleUrl('subscription', 'com.x', 'languagedash_pro_monthly', 'tok/en')).toBe('https://androidpublisher.googleapis.com/androidpublisher/v3/applications/com.x/purchases/subscriptionsv2/tokens/tok%2Fen');
+    expect(googleUrl('product', 'com.x', 'languagedash_item_trail_fire', 'tok')).toBe('https://androidpublisher.googleapis.com/androidpublisher/v3/applications/com.x/purchases/products/languagedash_item_trail_fire/tokens/tok');
   });
 
   it('reads a subscription: active, in grace and cancelled-but-paid count; expired, on hold and pending do not', () => {
@@ -104,13 +104,13 @@ describe('the App Store', () => {
   });
 
   it('a live subscription is valid until it ends; a refunded one is revoked; the wrong app is refused', () => {
-    const sub = { bundleId: 'com.x', productId: 'dxdash_pro_monthly', type: 'Auto-Renewable Subscription', expiresDate: (NOW + 86400) * 1000, originalTransactionId: '777' };
-    expect(parseAppleTransaction(sub, 'com.x', NOW)).toMatchObject({ valid: true, expiresAt: NOW + 86400, key: '777', productId: 'dxdash_pro_monthly' });
+    const sub = { bundleId: 'com.x', productId: 'languagedash_pro_monthly', type: 'Auto-Renewable Subscription', expiresDate: (NOW + 86400) * 1000, originalTransactionId: '777' };
+    expect(parseAppleTransaction(sub, 'com.x', NOW)).toMatchObject({ valid: true, expiresAt: NOW + 86400, key: '777', productId: 'languagedash_pro_monthly' });
     expect(parseAppleTransaction({ ...sub, expiresDate: (NOW - 1) * 1000 }, 'com.x', NOW).valid).toBe(false);
     expect(parseAppleTransaction({ ...sub, revocationDate: (NOW - 5) * 1000 }, 'com.x', NOW)).toMatchObject({ valid: false, revoked: true });
     expect(parseAppleTransaction(sub, 'com.other', NOW)).toBeNull();
     expect(parseAppleTransaction(null, 'com.x', NOW)).toBeNull();
-    const item = { bundleId: 'com.x', productId: 'dxdash_item_trail_fire', type: 'Non-Consumable', originalTransactionId: '888' };
+    const item = { bundleId: 'com.x', productId: 'languagedash_item_trail_fire', type: 'Non-Consumable', originalTransactionId: '888' };
     expect(parseAppleTransaction(item, 'com.x', NOW)).toMatchObject({ valid: true, expiresAt: 0, key: '888' });
   });
 });

@@ -1,5 +1,5 @@
 /**
- * pro.js — Dx Dash Pro: who has it, what is limited without it, and how it is bought.
+ * pro.js — Language Dash Pro: who has it, what is limited without it, and how it is bought.
  *
  * Pro ships ON (see proconfig.js for what it limits and how the remote file changes that). Free players get 300
  * hand-spread cards plus the game; Pro (a subscription, or a one-time Lifetime purchase) unlocks the whole library and
@@ -44,10 +44,10 @@ var PENDING_KEY = 'dx_pro_pending';
 var PENDING_MS = 3 * 24 * 60 * 60 * 1000;
 
 export var PRO_PLAN_INFO = {
-  dxdash_pro_yearly: { label: 'Yearly', blurb: 'BEST VALUE', rank: 1 },
-  dxdash_pro_pass3m: { label: '3-Month Dedicated Pass', blurb: 'For your exam window', rank: 2 },
-  dxdash_pro_monthly: { label: 'Monthly', blurb: 'Cancel any time', rank: 3 },
-  dxdash_pro_lifetime: { label: 'Lifetime', blurb: 'Pay once, keep it', rank: 4 }
+  languagedash_pro_yearly: { label: 'Yearly', blurb: 'BEST VALUE', rank: 1 },
+  languagedash_pro_pass3m: { label: '3-Month Dedicated Pass', blurb: 'For your exam window', rank: 2 },
+  languagedash_pro_monthly: { label: 'Monthly', blurb: 'Cancel any time', rank: 3 },
+  languagedash_pro_lifetime: { label: 'Lifetime', blurb: 'Pay once, keep it', rank: 4 }
 };
 
 /** What Pro gives (shown on the paywall). Keep in step with the gates in proconfig.js. */
@@ -244,7 +244,7 @@ export function proStatus() {
   return { active: isPro(), source: c.source || '', plan: c.plan || '', trial: !!c.trial, until: c.until || 0, since: c.since || 0 };
 }
 
-function planName(productId) { return String(productId || '').replace(/^dxdash_pro_/, '') || 'pro'; }
+function planName(productId) { return String(productId || '').replace(/^languagedash_pro_/, '') || 'pro'; }
 
 /**
  * Ask the sources (the store, and the server when signed in) and save the answer.

@@ -9,7 +9,7 @@ test.describe('Gameplay', () => {
   // The runner is 3D. Only Chromium has a reliable software WebGL in headless CI.
   test.skip(({ browserName }) => browserName !== 'chromium', 'runner needs WebGL (verified in Chromium)');
 
-  test('starting a run shows clues and three answer lanes', async ({ page }) => {
+  test('starting a run shows a hint word and three word gates', async ({ page }) => {
     const errors = [];
     page.on('pageerror', (e) => errors.push(e.message));
 
@@ -97,33 +97,33 @@ test.describe('Settings and screens', () => {
     await page.locator('#flashcardBtn').click();
     await page.getByRole('button', { name: /Flip cards/ }).click();
     await expect(page.locator('#flashcardContent')).toContainText(/Card 1 of/);
-    await page.getByRole('button', { name: 'Show Answer' }).click();
+    await page.getByRole('button', { name: 'Show the word' }).click();
     await page.getByRole('button', { name: /Got it/ }).click();
     await expect(page.locator('#flashcardContent')).toContainText(/Card 2 of/);
   });
 
-  test('an exam simulation can be completed', async ({ page }) => {
+  test('a Word Quiz can be completed', async ({ page }) => {
     await openApp(page);
     await page.locator('#homeChallengeBtn').click();
     await page.locator('#examBtn').click();
     await page.getByRole('radio', { name: '10' }).click();
     await page.getByRole('radio', { name: 'Untimed' }).click();
-    await page.getByRole('button', { name: /Start exam/ }).click();
-    await expect(page.locator('#examContent')).toContainText(/Question 1 of 10/);
+    await page.getByRole('button', { name: /Start quiz/ }).click();
+    await expect(page.locator('#examContent')).toContainText(/Word 1 of 10/);
     page.once('dialog', (d) => d.accept());
-    await page.getByRole('button', { name: /End exam now/ }).click();
-    await expect(page.locator('#examContent')).toContainText(/Exam complete/);
+    await page.getByRole('button', { name: /End quiz now/ }).click();
+    await expect(page.locator('#examContent')).toContainText(/Quiz complete/);
   });
 });
 
 test.describe('Without WebGL', () => {
   // ?webgl=off simulates a browser that cannot create a WebGL context.
-  test('the notice does not push Filters, PLAY or Speed off the screen', async ({ page }) => {
+  test('the notice does not push Filters, PLAY or Languages off the screen', async ({ page }) => {
     for (const [w, h] of [[320, 568], [390, 780]]) {
       await page.setViewportSize({ width: w, height: h });
       await openApp(page, '/?webgl=off');
       await expect(page.locator('#webglNotice')).toBeVisible();
-      for (const sel of ['#filtersBtn', '.btn-play', '#speedBtn']) {
+      for (const sel of ['#filtersBtn', '.btn-play', '#langBtn']) {
         const b = await page.locator(sel).boundingBox();
         expect(b.x, sel + ' at ' + w).toBeGreaterThanOrEqual(0);
         expect(b.x + b.width, sel + ' at ' + w).toBeLessThanOrEqual(w);

@@ -51,7 +51,7 @@ for (const [name, w, h] of ALL) {
       await page.waitForTimeout(500);
       const gaps = await page.evaluate(() => {
         const nav = document.getElementById('bottomNav').getBoundingClientRect();
-        const sel = ['#filtersBtn', '.btn-play', '#speedBtn', '#homeFlashcardsBtn', '#homeChallengeBtn', '#multiplayerBtn', '#howToPlayBtn'];
+        const sel = ['#filtersBtn', '.btn-play', '#langBtn', '#homeFlashcardsBtn', '#homeChallengeBtn', '#multiplayerBtn', '#howToPlayBtn'];
         return { navInside: nav.left >= -1 && nav.right <= innerWidth + 1 && nav.bottom <= innerHeight + 1, gaps: sel.map((s) => { const e = document.querySelector(s); if (!e || !e.getClientRects().length) return [s, 99]; return [s, Math.round(nav.top - e.getBoundingClientRect().bottom)]; }) };
       });
       expect(gaps.navInside, 'the tab bar must be inside the window').toBe(true);

@@ -68,7 +68,7 @@ for (const [w, h] of PHONES) {
 
   test(`every Home pop-up fits the window at ${w}x${h}`, async ({ page }) => {
     await open(page, w, h);
-    for (const sheet of ['challengeSheet', 'flashcardsSheet', 'filtersSheet', 'speedSheet', 'todaySheet', 'streakSheet']) {
+    for (const sheet of ['challengeSheet', 'flashcardsSheet', 'filtersSheet', 'langSheet', 'todaySheet', 'streakSheet']) {
       await page.evaluate((id) => window.__ui.openSheet(id), sheet);
       await page.waitForTimeout(400);
       const r = await page.evaluate((id) => {

@@ -44,5 +44,5 @@ export function formatUsd(cents) {
 
 /** The store product id for an item (the phone apps sell each one as a one-time product). */
 export function itemProductId(id) {
-  return 'dxdash_item_' + String(id);
+  return 'languagedash_item_' + String(id);
 }

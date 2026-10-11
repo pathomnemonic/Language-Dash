@@ -38,7 +38,7 @@ test.describe('console stays clean', () => {
       const eye = page.locator('#shopItems [aria-label^="Preview"]').first();
       if (await eye.count()) { await eye.click(); await settle(900); }
     }
-    for (const sheet of ['filtersSheet', 'speedSheet', 'challengeSheet', 'flashcardsSheet', 'todaySheet']) {
+    for (const sheet of ['filtersSheet', 'langSheet', 'challengeSheet', 'flashcardsSheet', 'todaySheet']) {
       await ui((id) => window.__ui.openSheet(id), sheet);
       await settle(400);
       await page.keyboard.press('Escape');

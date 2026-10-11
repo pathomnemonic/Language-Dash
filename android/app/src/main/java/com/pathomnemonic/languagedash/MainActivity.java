@@ -1,4 +1,4 @@
-package com.pathomnemonic.dxdash;
+package com.pathomnemonic.languagedash;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;

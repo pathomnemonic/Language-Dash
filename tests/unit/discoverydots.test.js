@@ -19,7 +19,7 @@ describe('discovery dots', () => {
     const s = fakeStorage();
     let now = homeDotsNow(s).map((d) => d.id);
     expect(now.length).toBe(HOME_DISCOVERIES.length);
-    ['home:filters', 'home:speed', 'home:flashcards', 'home:challenge', 'home:settings', 'tab:stats', 'tab:locker', 'tab:quests', 'tab:profile'].forEach((id) => expect(now, id).toContain(id));
+    ['home:filters', 'home:languages', 'home:flashcards', 'home:challenge', 'home:settings', 'tab:stats', 'tab:locker', 'tab:quests', 'tab:profile'].forEach((id) => expect(now, id).toContain(id));
     expect(markExplored(s, 'home:flashcards')).toBe(true);
     expect(markExplored(s, 'home:flashcards')).toBe(false);
     now = homeDotsNow(s).map((d) => d.id);

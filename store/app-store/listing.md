@@ -4,7 +4,7 @@ App Store Connect → your app → **iOS App → (version) → App Information /
 
 ## Name (max 30)
 ```
-Dx Dash: Board Exam Runner
+Language Dash: Board Exam Runner
 ```
 ## Subtitle (max 30)
 ```
@@ -25,12 +25,12 @@ Use the same text as `store/google-play/listing.md` → Full description, but re
 
 ## What's new in this version
 ```
-First release of Dx Dash: run the list and learn the diagnosis.
+First release of Language Dash: run the list and learn the diagnosis.
 ```
 ## URLs
-- Support URL: `https://pathomnemonic.github.io/buzzword-dash-v2/` (contact email `patho.mnemonic1@gmail.com`)
-- Marketing URL: `https://pathomnemonic.github.io/buzzword-dash-v2/`
-- Privacy Policy URL: `https://pathomnemonic.github.io/buzzword-dash-v2/privacy.html`
+- Support URL: `https://pathomnemonic.github.io/Language-Dash/` (contact email `patho.mnemonic1@gmail.com`)
+- Marketing URL: `https://pathomnemonic.github.io/Language-Dash/`
+- Privacy Policy URL: `https://pathomnemonic.github.io/Language-Dash/privacy.html`
 
 ## Category
 Primary: **Education**. Secondary: **Games → Trivia** (or Medical; Education is the better fit).
@@ -70,13 +70,13 @@ Tracking: **No**. Third-party advertising: **No**.
 - Sign-in required: **No**. (Accounts are optional; reviewers can play without one. The app offers Sign in with Apple, Google and Microsoft; deleting an account revokes the Apple login.)
 - Notes for the reviewer:
 ```
-Dx Dash is a study game for US medical licensing exam prep (USMLE/COMLEX). No account is needed: tap PLAY on the Home screen. A short interactive tutorial runs the first time (the x in the corner closes it).
+Language Dash is a study game for US medical licensing exam prep (USMLE/COMLEX). No account is needed: tap PLAY on the Home screen. A short interactive tutorial runs the first time (the x in the corner closes it).
 In-app purchases (all optional; the app is fully playable free with 300 questions):
-- Auto-renewable subscription group "Dx Dash Pro": dxdash_pro_yearly, dxdash_pro_monthly, dxdash_pro_pass3m (auto-renewing, 3-month period). No store trial: every signed-in account gets a free 7-day Pro trial from our own server, with no payment details.
-- Non-consumable: dxdash_pro_lifetime (all Pro features).
-- Consumable tip jar (Settings > About & help > Leave a tip): dxdash_tip_small, dxdash_tip_medium, dxdash_tip_large. Tips unlock nothing.
-- Non-consumable cosmetic Locker items (hero, map, trail and monster skins; Locker tab, the 💎 buttons): dxdash_item_avatar_m_king, dxdash_item_avatar_m_alien, dxdash_item_avatar_m_robot, dxdash_item_avatar_m_wizard, dxdash_item_avatar_m_ninja, dxdash_item_monster_m_dragon, dxdash_item_map_aquarium_imaging_center, dxdash_item_map_dna_helix_tunnel, dxdash_item_trail_fire, dxdash_item_trail_neural, dxdash_item_trail_blood. They are cosmetic only.
-To see the paywall: Stats tab > tap any locked "Pro" section, or Settings > About & help > Dx Dash Pro > See Pro. "Restore purchases" is on the paywall and in that Settings row. Subscription terms, price and renewal are shown on the paywall, with links to the Privacy Policy and Terms.
+- Auto-renewable subscription group "Language Dash Pro": languagedash_pro_yearly, languagedash_pro_monthly, languagedash_pro_pass3m (auto-renewing, 3-month period). No store trial: every signed-in account gets a free 7-day Pro trial from our own server, with no payment details.
+- Non-consumable: languagedash_pro_lifetime (all Pro features).
+- Consumable tip jar (Settings > About & help > Leave a tip): languagedash_tip_small, languagedash_tip_medium, languagedash_tip_large. Tips unlock nothing.
+- Non-consumable cosmetic Locker items (hero, map, trail and monster skins; Locker tab, the 💎 buttons): languagedash_item_avatar_m_king, languagedash_item_avatar_m_alien, languagedash_item_avatar_m_robot, languagedash_item_avatar_m_wizard, languagedash_item_avatar_m_ninja, languagedash_item_monster_m_dragon, languagedash_item_map_aquarium_imaging_center, languagedash_item_map_dna_helix_tunnel, languagedash_item_trail_fire, languagedash_item_trail_neural, languagedash_item_trail_blood. They are cosmetic only.
+To see the paywall: Stats tab > tap any locked "Pro" section, or Settings > About & help > Language Dash Pro > See Pro. "Restore purchases" is on the paywall and in that Settings row. Subscription terms, price and renewal are shown on the paywall, with links to the Privacy Policy and Terms.
 Online features (Friends, feed, groups, Versus by room code) are optional and use an anonymous guest account created automatically, or an account made with Sign in with Apple, Google, Microsoft or email (Friends > Account). Account deletion: Friends > Account > Delete my account (it cancels any web subscription, revokes the Apple sign-in and removes the account).
 User safety: players can report and block other players (the flag and block icons next to a name in Friends). There is no chat and no free text between users. Reports are reviewed by the developer and abusive accounts are removed.
 The app is an educational aid and contains a medical-education disclaimer (Settings > About, and in the Terms). It does not provide medical advice.

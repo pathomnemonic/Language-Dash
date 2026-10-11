@@ -37,29 +37,29 @@ If your developer account is a **personal** one created after November 2023, Goo
 
 Do these now while testers run; none of them wait for the 14 days.
 
-1. **Store settings → Store listing contact details**: email `patho.mnemonic1@gmail.com`, website `https://pathomnemonic.github.io/buzzword-dash-v2/`.
+1. **Store settings → Store listing contact details**: email `patho.mnemonic1@gmail.com`, website `https://pathomnemonic.github.io/Language-Dash/`.
 2. **Grow users → Store presence → Main store listing**: paste the text from `store/google-play/listing.md`. Upload the icon `assets/store/play-icon-512.png`, feature graphic `assets/store/feature-graphic.png`, **phone screenshots** `assets/store/screenshots/` (all, in order), **7-inch tablet** screenshots `assets/store/play-tablet-7/` and **10-inch tablet** screenshots `assets/store/play-tablet-10/`. (A **Chromebook** box also exists: reuse the 10-inch set.) Save.
 3. **Policy and programs → App content**, answer every item with `store/google-play/policy-answers.md` open:
-   - Privacy policy: `https://pathomnemonic.github.io/buzzword-dash-v2/privacy.html`
+   - Privacy policy: `https://pathomnemonic.github.io/Language-Dash/privacy.html`
    - Ads: **No, my app does not contain ads**
    - App access: **All functionality is available without special access** (the app works without signing in)
    - **Data safety**: use the answers in `store/google-play/policy-answers.md`. Include email address (sign-in with Google, Apple, Microsoft or email), purchase history, and app activity if you keep analytics on. Say data is encrypted in transit and that users can request deletion.
-   - **Account deletion**: web link `https://pathomnemonic.github.io/buzzword-dash-v2/delete-account.html`, and say the app also has Delete my account in Settings
+   - **Account deletion**: web link `https://pathomnemonic.github.io/Language-Dash/delete-account.html`, and say the app also has Delete my account in Settings
    - Content rating: complete the questionnaire (no violence beyond cartoon, no user-generated content shared publicly beyond display names and scores; reporting and blocking exist)
    - Target audience: **18 and over** (not for children)
    - Health apps declaration: it is an exam study game, not a medical device and gives no medical advice
    - Government apps, financial features, news: **No**
 4. **Monetize with Play → Products** (only possible after the first bundle upload, which you have done):
-   - **Subscriptions**: create three, product ids exactly `dxdash_pro_yearly`, `dxdash_pro_pass3m`, `dxdash_pro_monthly`, each with one auto-renewing base plan (1 year, 3 months, 1 month), prices as in `docs/PRO.md`, **no free trial**. Activate each.
-   - **In-app products**: `dxdash_pro_lifetime` (and, optionally, the three tips `dxdash_tip_small`, `dxdash_tip_medium`, `dxdash_tip_large`), ids and prices from `docs/PRO.md`. Activate each.
-   - **The Locker items (`dxdash_item_*`) are not needed for this launch.** Their buttons show "Soon" and nothing can be bought, because the build leaves `VITE_FEATURE_LOCKER_ITEMS` off. When you want to sell them: create the 11 products (table in `docs/PRO.md`), finish the website backend steps, build with that variable set to `1`, and ship an update.
+   - **Subscriptions**: create three, product ids exactly `languagedash_pro_yearly`, `languagedash_pro_pass3m`, `languagedash_pro_monthly`, each with one auto-renewing base plan (1 year, 3 months, 1 month), prices as in `docs/PRO.md`, **no free trial**. Activate each.
+   - **In-app products**: `languagedash_pro_lifetime` (and, optionally, the three tips `languagedash_tip_small`, `languagedash_tip_medium`, `languagedash_tip_large`), ids and prices from `docs/PRO.md`. Activate each.
+   - **The Locker items (`languagedash_item_*`) are not needed for this launch.** Their buttons show "Soon" and nothing can be bought, because the build leaves `VITE_FEATURE_LOCKER_ITEMS` off. When you want to sell them: create the 11 products (table in `docs/PRO.md`), finish the website backend steps, build with that variable set to `1`, and ship an update.
    - You also need a **merchant account** (Payments profile): Play Console → **Setup → Payments profile**, add tax and bank details.
 5. **Setup → License testing**: add your testers' Gmail addresses (or a Google Group) so their test purchases are free and cancel quickly. Ask 2–3 testers to try a purchase and a restore.
 6. **App access, Government, Advertising ID**: declare the Advertising ID as **not used** (the app does not read it).
 
 ## 5. What to ask your testers to do (copy this into a message)
 
-> Thanks for testing Dx Dash! Please install it from this link [your opt-in link], keep it installed, and over the next two weeks please:
+> Thanks for testing Language Dash! Please install it from this link [your opt-in link], keep it installed, and over the next two weeks please:
 > 1. Play a few runs and answer some questions. Does anything feel broken or confusing?
 > 2. Try the Flashcards and the Stats tab.
 > 3. Make a free account (Friends → Account) with Google or email and check you stay signed in after closing and reopening the app.

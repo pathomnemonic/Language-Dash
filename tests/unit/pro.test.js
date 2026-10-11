@@ -60,16 +60,16 @@ describe('pro config (remote file)', () => {
     expect(d.enabled).toBe(true);
     expect(d.gates).toEqual(DEFAULT_GATES);
     expect(d.gates.card_library).toBe('locked');
-    expect(d.plans).toContain('dxdash_pro_lifetime');
-    expect(d.library).toBe('dxdash_library');
+    expect(d.plans).toContain('languagedash_pro_lifetime');
+    expect(d.library).toBe('languagedash_library');
   });
   it('survives any shape of file by keeping the defaults', () => {
     [null, undefined, 5, 'x', [], {}, { enabled: 'yes' }, { gates: 3 }].forEach((bad) => expect(sanitizeProConfig(bad)).toEqual(defaultProConfig()));
   });
   it('the file can switch Pro off, open a gate, change a limit and keep only valid ids', () => {
-    const c = sanitizeProConfig({ enabled: false, plans: ['dxdash_pro_yearly', 'BAD ID', 7], library: 'my_library', gates: { custom_cards: { limit: 50, per: 'total' }, offline_pack: 'open', explanations: { limit: 5, per: 'day' }, bogus: 'locked', exam_sim: { limit: -1 } }, launchAt: 1790000000000, grandfather: ['custom_cards', 'nope'] });
+    const c = sanitizeProConfig({ enabled: false, plans: ['languagedash_pro_yearly', 'BAD ID', 7], library: 'my_library', gates: { custom_cards: { limit: 50, per: 'total' }, offline_pack: 'open', explanations: { limit: 5, per: 'day' }, bogus: 'locked', exam_sim: { limit: -1 } }, launchAt: 1790000000000, grandfather: ['custom_cards', 'nope'] });
     expect(c.enabled).toBe(false);
-    expect(c.plans).toEqual(['dxdash_pro_yearly']);
+    expect(c.plans).toEqual(['languagedash_pro_yearly']);
     expect(c.library).toBe('my_library');
     expect(c.gates.custom_cards).toEqual({ limit: 50, per: 'total' });
     expect(c.gates.offline_pack).toBeUndefined();
@@ -109,7 +109,7 @@ describe('only limits things when there is a way to pay', () => {
   });
   it('does not ask the store while switched off', async () => {
     setProConfigForTest({ enabled: false });
-    const plugin = fakePlugin({ owned: ['dxdash_pro_yearly'] });
+    const plugin = fakePlugin({ owned: ['languagedash_pro_yearly'] });
     const st = await refreshPro({ iap: withPlans(iapFor(plugin)), now: NOW });
     expect(st.active).toBe(false);
     expect(plugin.registered.length).toBe(0);
@@ -131,7 +131,7 @@ describe('who has Pro', () => {
   });
   it('is on from the store (phone) once Pro is enabled, and is saved', async () => {
     setProConfigForTest({ enabled: true });
-    const iap = withPlans(iapFor(fakePlugin({ owned: ['dxdash_pro_monthly'] })));
+    const iap = withPlans(iapFor(fakePlugin({ owned: ['languagedash_pro_monthly'] })));
     const st = await refreshPro({ iap, now: NOW });
     expect(st).toMatchObject({ active: true, source: 'store', plan: 'monthly' });
     expect(isPro(NOW)).toBe(true);
@@ -170,7 +170,7 @@ describe('gates', () => {
     expect(checkGate('exam_sim', { now: NOW + 6 * DAY }).allowed).toBe(true); // next Monday
   });
   it('Pro lifts every gate', async () => {
-    const iap = withPlans(iapFor(fakePlugin({ owned: ['dxdash_pro_yearly'] })));
+    const iap = withPlans(iapFor(fakePlugin({ owned: ['languagedash_pro_yearly'] })));
     await refreshPro({ iap, now: Date.now() });
     GATE_FEATURES.forEach((f) => expect(checkGate(f, { used: 1e6 }).allowed).toBe(true));
   });
@@ -199,31 +199,31 @@ describe('buying', () => {
   it('lists the store plans best value first, with local prices and any free trial', async () => {
     const iap = withPlans(iapFor(fakePlugin({ trial: true })));
     const plans = await proPlans(iap);
-    expect(plans.map((p) => p.id)).toEqual(['dxdash_pro_yearly', 'dxdash_pro_pass3m', 'dxdash_pro_monthly', 'dxdash_pro_lifetime']);
+    expect(plans.map((p) => p.id)).toEqual(['languagedash_pro_yearly', 'languagedash_pro_pass3m', 'languagedash_pro_monthly', 'languagedash_pro_lifetime']);
     expect(plans[0]).toMatchObject({ currency: 'USD', trialDays: 7, period: 'P1Y' });
     expect(plans[1].trialDays).toBe(0);
   });
   it('leaves out plans the store does not have, and has none without the store', async () => {
-    const some = await proPlans(withPlans(iapFor(fakePlugin({ missing: ['dxdash_pro_monthly'] }))));
-    expect(some.map((p) => p.id)).not.toContain('dxdash_pro_monthly');
+    const some = await proPlans(withPlans(iapFor(fakePlugin({ missing: ['languagedash_pro_monthly'] }))));
+    expect(some.map((p) => p.id)).not.toContain('languagedash_pro_monthly');
     expect(await proPlans(withPlans(iapFor(null)))).toEqual([]);
   });
   it('a completed purchase turns Pro on', async () => {
     const iap = withPlans(iapFor(fakePlugin()));
     await iap.start();
-    const res = await buyPlan('dxdash_pro_monthly', { iap });
+    const res = await buyPlan('languagedash_pro_monthly', { iap });
     expect(res.ok).toBe(true);
     expect(isPro()).toBe(true);
   });
   it('a closed sheet or a store error does not', async () => {
     const cancel = withPlans(iapFor(fakePlugin({ orderError: { code: 6777006, message: 'x' } })));
-    expect(await buyPlan('dxdash_pro_monthly', { iap: cancel })).toMatchObject({ ok: false, cancelled: true });
+    expect(await buyPlan('languagedash_pro_monthly', { iap: cancel })).toMatchObject({ ok: false, cancelled: true });
     const fail = withPlans(iapFor(fakePlugin({ orderError: { code: 1, message: 'store down' } })));
-    expect((await buyPlan('dxdash_pro_monthly', { iap: fail })).ok).toBe(false);
+    expect((await buyPlan('languagedash_pro_monthly', { iap: fail })).ok).toBe(false);
     expect(isPro()).toBe(false);
   });
   it('restores an earlier purchase', async () => {
-    const plugin = fakePlugin({ owned: ['dxdash_pro_pass3m'] });
+    const plugin = fakePlugin({ owned: ['languagedash_pro_pass3m'] });
     const r = await restorePro({ iap: withPlans(iapFor(plugin)) });
     expect(plugin.restored).toBe(1);
     expect(r.active).toBe(true);
@@ -265,8 +265,8 @@ describe('store connection', () => {
 
 describe('analytics for Pro', () => {
   it('the paywall, action, gate and status events are in the catalog and clean', () => {
-    expect(cleanEvent('paywall_viewed', { trigger: 'gate_custom_cards', feature: 'custom_cards', plans: ['dxdash_pro_yearly'], variant: 'a', pro: false }).ok).toBe(true);
-    expect(cleanEvent('paywall_action', { action: 'purchased', plan: 'dxdash_pro_yearly', trigger: 'settings', price: '$29.99', micros: 29990000, currency: 'USD', trial_days: 7 }).props.micros).toBe(29990000);
+    expect(cleanEvent('paywall_viewed', { trigger: 'gate_custom_cards', feature: 'custom_cards', plans: ['languagedash_pro_yearly'], variant: 'a', pro: false }).ok).toBe(true);
+    expect(cleanEvent('paywall_action', { action: 'purchased', plan: 'languagedash_pro_yearly', trigger: 'settings', price: '$29.99', micros: 29990000, currency: 'USD', trial_days: 7 }).props.micros).toBe(29990000);
     expect(cleanEvent('paywall_action', { action: 'made_up' }).props.action).toBe('other');
     expect(cleanEvent('pro_gate_hit', { feature: 'offline_pack', mode: 'locked' }).ok).toBe(true);
     expect(cleanEvent('pro_status', { active: true, source: 'store' }).ok).toBe(true);
@@ -281,10 +281,10 @@ describe('the full library: lifetime, and the one-time cards unlock', () => {
     expect(libraryUnlocked()).toBe(false);
     const iap = withPlans(iapFor(fakePlugin()));
     registerProProducts(); // (registers on the app's own connection; not used here)
-    iap.add([{ id: 'dxdash_library', kind: 'nonconsumable' }]);
+    iap.add([{ id: 'languagedash_library', kind: 'nonconsumable' }]);
     await iap.start();
     const offer = await libraryOffer(iap);
-    expect(offer).toMatchObject({ id: 'dxdash_library', currency: 'USD' });
+    expect(offer).toMatchObject({ id: 'languagedash_library', currency: 'USD' });
     const res = await buyLibrary({ iap });
     expect(res.ok).toBe(true);
     expect(ownsLibrary()).toBe(true);
@@ -294,7 +294,7 @@ describe('the full library: lifetime, and the one-time cards unlock', () => {
     expect(checkGate('offline_pack').allowed).toBe(false);
   });
   it('Lifetime is Pro that does not run out', async () => {
-    const plugin = fakePlugin({ owned: ['dxdash_pro_lifetime'] });
+    const plugin = fakePlugin({ owned: ['languagedash_pro_lifetime'] });
     const iap = withPlans(iapFor(plugin));
     const st = await refreshPro({ iap, now: NOW });
     expect(st).toMatchObject({ active: true, plan: 'lifetime' });

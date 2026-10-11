@@ -27,15 +27,15 @@ Assets in `assets/store/`: `play-icon-512.png`, `feature-graphic.png` (1024x500)
 - [ ] 1. Create a Google Play Developer account: https://play.google.com/console/signup ($25, once). Verify your identity (can take a day or two).
 - [ ] 2. Create the upload key (run this on any computer with Java, e.g. Android Studio's terminal). Keep the file and the passwords safe: losing them is painful.
   ```bash
-  keytool -genkey -v -keystore release.keystore -alias dxdash -keyalg RSA -keysize 2048 -validity 10000
+  keytool -genkey -v -keystore release.keystore -alias languagedash -keyalg RSA -keysize 2048 -validity 10000
   base64 -w0 release.keystore > release.keystore.b64     # on a Mac: base64 -i release.keystore -o release.keystore.b64
   ```
-- [ ] 3. In GitHub: repo → Settings → Secrets and variables → Actions → **Secrets** → add `ANDROID_KEYSTORE_BASE64` (contents of `release.keystore.b64`), `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` (`dxdash`), `ANDROID_KEY_PASSWORD`.
+- [ ] 3. In GitHub: repo → Settings → Secrets and variables → Actions → **Secrets** → add `ANDROID_KEYSTORE_BASE64` (contents of `release.keystore.b64`), `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` (`languagedash`), `ANDROID_KEY_PASSWORD`.
 - [ ] 4. Same page → **Variables**: check `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set (they should be, from the website deploy).
 
 ### B. Switch on the online features (about 10 minutes)
 - [ ] 5. Supabase → SQL editor → paste and run `database/schema.sql`, then `database/policies.sql` (safe to run again; they add the new feed, kudos, moderation and reporting pieces). Leave `cohorts.sql` and `discovery.sql` for later: those features are hidden on purpose.
-- [ ] 6. Supabase → Authentication → URL Configuration → Redirect URLs → add `com.pathomnemonic.dxdash://auth` (keep your website URL there too). This makes confirmation and password-reset emails reopen the app.
+- [ ] 6. Supabase → Authentication → URL Configuration → Redirect URLs → add `com.pathomnemonic.languagedash://auth` (keep your website URL there too). This makes confirmation and password-reset emails reopen the app.
 - [ ] 7. Play one ranked or head-to-head match between two real devices or accounts. If you have not, delete the "Ranked matches and leagues" line from the store description (`store/google-play/listing.md` notes where).
 
 ### C. Build the app file (about 15 minutes, mostly waiting)
@@ -43,7 +43,7 @@ Assets in `assets/store/`: `play-icon-512.png`, `feature-graphic.png` (1024x500)
   - If you changed nothing since the last release, the first build is version code 1. For every later upload bump `versionCode` and `versionName` in `android/app/build.gradle`.
 
 ### D. Create the app in Play Console (about 60–90 minutes, all copy and paste)
-- [ ] 9. Play Console → **Create app**: name `Dx Dash: Board Exam Runner`, language English, **App** (not game), **Free**. Accept the declarations.
+- [ ] 9. Play Console → **Create app**: name `Language Dash: Board Exam Runner`, language English, **App** (not game), **Free**. Accept the declarations.
 - [ ] 10. **Store presence → Main store listing**: paste from `store/google-play/listing.md`; upload `play-icon-512.png`, `feature-graphic.png` and all files in `assets/store/screenshots/`.
 - [ ] 11. **Policy and programs → App content**: go through every item with `store/google-play/policy-answers.md` open (privacy policy, ads, app access, **Data safety**, **account deletion link**, content rating, target audience).
 - [ ] 12. **Testing → Closed testing** (or Internal testing first, to check it installs): create a release, upload `app-release.aab`, paste the release notes, add testers (a Google Group or email list). Send testers the opt-in link.
@@ -60,13 +60,13 @@ You do not need a Mac: `codemagic.yaml` builds and signs the app on Codemagic's 
 
 ### A. Accounts (about 30 minutes, plus Apple's approval, often 1–2 days)
 - [ ] 1. Enroll in the **Apple Developer Program**: https://developer.apple.com/programs/enroll/ ($99/year).
-- [ ] 2. App Store Connect → **My Apps → + → New App**: iOS, name `Dx Dash: Board Exam Runner`, primary language English, bundle ID `com.pathomnemonic.dxdash` (register it in Certificates, Identifiers & Profiles → Identifiers first if it is not in the list), SKU `dxdash`.
+- [ ] 2. App Store Connect → **My Apps → + → New App**: iOS, name `Language Dash: Board Exam Runner`, primary language English, bundle ID `com.pathomnemonic.languagedash` (register it in Certificates, Identifiers & Profiles → Identifiers first if it is not in the list), SKU `languagedash`.
 - [ ] 3. App Store Connect → **Users and Access → Integrations → App Store Connect API → Generate API key** (access: App Manager). Download the `.p8` file (you can download it only once), and note the Key ID and Issuer ID.
 
 ### B. Cloud build (about 20 minutes, mostly waiting)
 - [ ] 4. Sign up at https://codemagic.io with your GitHub account (free tier is enough) and add the repository. It finds `codemagic.yaml`.
-- [ ] 5. Codemagic → Teams → **Integrations → App Store Connect** → add the key from step 3; name the integration exactly `Dx Dash App Store Connect` (or change the name in `codemagic.yaml`).
-- [ ] 6. Codemagic → the app → Environment variables: add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (secure, same values as GitHub). Also add `VITE_SUPPORT_EMAIL` (your support address: the back-up for the in-app feedback form) and, once the app exists in App Store Connect, `VITE_APPSTORE_ID` (its numeric Apple ID, so "Rate Dx Dash" can open the App Store page).
+- [ ] 5. Codemagic → Teams → **Integrations → App Store Connect** → add the key from step 3; name the integration exactly `Language Dash App Store Connect` (or change the name in `codemagic.yaml`).
+- [ ] 6. Codemagic → the app → Environment variables: add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (secure, same values as GitHub). Also add `VITE_SUPPORT_EMAIL` (your support address: the back-up for the in-app feedback form) and, once the app exists in App Store Connect, `VITE_APPSTORE_ID` (its numeric Apple ID, so "Rate Language Dash" can open the App Store page).
 - [ ] 7. Start the **ios-release** workflow. It builds, signs (automatic) and uploads to TestFlight. This file has not been run before: if a step fails, the log says which; send me the error and the fix is usually one line.
 
 ### C. App Store Connect listing (about 60 minutes, copy and paste)

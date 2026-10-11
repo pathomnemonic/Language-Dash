@@ -46,7 +46,7 @@ test.describe('Accessible names', () => {
     await visit(page, 'Home', []);
     for (const [name, open, close] of [
       ['Filters', '#filtersBtn', '#filtersSheet .sheet-close'],
-      ['Speed', '#speedBtn', '#speedSheet .sheet-close'],
+      ['Languages', '#langBtn', '#langSheet .sheet-close'],
       ['Flashcards', '#homeFlashcardsBtn', '#flashcardsSheet .sheet-close'],
       ['Challenge', '#homeChallengeBtn', '#challengeSheet .sheet-close'],
       ['Today', '#studyGoal', '#todaySheet .sheet-close']

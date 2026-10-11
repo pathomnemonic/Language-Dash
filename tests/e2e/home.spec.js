@@ -23,7 +23,7 @@ test.describe('Home layout', () => {
       expect(overflow).toBeLessThanOrEqual(1);
       // every main control is on screen and clear of the tab bar
       const navTop = await page.locator('#bottomNav').evaluate((el) => el.getBoundingClientRect().top);
-      for (const sel of ['#settingsBtn', '#leaderboardBtn', '#profileCornerBtn', '.btn-play', '#filtersBtn', '#speedBtn', '#howToPlayBtn', '#multiplayerBtn', '#homeFlashcardsBtn', '#homeChallengeBtn']) {
+      for (const sel of ['#settingsBtn', '#leaderboardBtn', '#profileCornerBtn', '.btn-play', '#filtersBtn', '#langBtn', '#howToPlayBtn', '#multiplayerBtn', '#homeFlashcardsBtn', '#homeChallengeBtn']) {
         const box = await page.locator(sel).boundingBox();
         expect(box, sel).not.toBeNull();
         expect(box.y, sel).toBeGreaterThanOrEqual(0);
@@ -49,7 +49,7 @@ test.describe('Home layout', () => {
     await page.locator('#homeChallengeBtn').click();
     const sheet = page.locator('#challengeSheet');
     await expect(sheet).toBeVisible();
-    for (const name of ['Study', 'Weakness', 'Daily 15', 'Weekly Gauntlet', 'Friend challenge', 'Exam Sim']) {
+    for (const name of ['Study', 'Weakness', 'Daily 15', 'Weekly Gauntlet', 'Friend challenge', 'Word Quiz']) {
       await expect(sheet.getByText(name, { exact: true })).toBeVisible();
     }
     await page.keyboard.press('Escape');
@@ -62,18 +62,18 @@ test.describe('Home layout', () => {
     await expect(page.locator('#flashcardsSheet')).toBeVisible();
     await page.locator('#flashcardsSheet [data-source="fresh"]').click();
     await expect(page.locator('#screenFlashcard')).toBeVisible();
-    await expect(page.locator('.pick-source.on')).toContainText('New cards');
+    await expect(page.locator('.pick-source.on')).toContainText('New words');
   });
 
-  test('Filters, Speed and Today are popups; the card library lives in Flashcards; Quests is a tab', async ({ page }) => {
+  test('Filters, Languages and Today are popups; the card library lives in Flashcards; Quests is a tab', async ({ page }) => {
     await openApp(page);
     await page.locator('#filtersBtn').click();
     await expect(page.locator('#filtersSheet')).toBeVisible();
     await page.locator('#filtersSheet .sheet-close').click();
-    await page.locator('#speedBtn').click();
-    await expect(page.locator('#speedSheet')).toBeVisible();
-    await expect(page.locator('#speedDial')).toBeVisible();
-    await page.locator('#speedSheet .sheet-close').click();
+    await page.locator('#langBtn').click();
+    await expect(page.locator('#langSheet')).toBeVisible();
+    await expect(page.locator('#langSheetBody .lang-grid').first()).toBeVisible();
+    await page.locator('#langSheet .sheet-close').click();
     await page.locator('#studyGoal').click();
     await expect(page.locator('#todaySheet')).toBeVisible();
     await page.locator('#todaySheet .sheet-close').click();

@@ -23,7 +23,7 @@ beforeEach(async () => {
   getCardPool = gatesMod.getCardPool;
   createDailyOrder = gatesMod.createDailyOrder;
 
-  const cardsMod = await import('../../js/cards.js');
+  const cardsMod = await import('../../js/cardhub.js');
   CARDS = cardsMod.CARDS;
 });
 

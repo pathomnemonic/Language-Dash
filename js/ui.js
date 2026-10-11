@@ -48,7 +48,7 @@ import { missExplanation } from './explain.js';
 import { appPublicUrl } from './publicurl.js';
 import { shareText, copyText, saveFile } from './platform.js';
 import { buildBackup, restoreBackup } from './backup.js';
-import { speak, cancelSpeech, canSpeak, speakCard, pairVoices } from './tts.js';
+import { cancelSpeech, canSpeak, speakCard } from './tts.js';
 import { isGameTutorialOpen } from './tutorialrun.js';
 import { createColorWheel } from './colorwheel.js';
 import { audio } from './audio.js';
@@ -62,6 +62,7 @@ import { getDashControl } from './dashcontrol.js';
 import { getLanguage } from './lang/languages.js';
 import { getPairOrDefault, getShowRoman } from './lang/pair.js';
 import { streakCallout } from './flavor.js';
+import { skinTitle } from './game/skins.js';
 import { pairLabel } from './langui.js';
 import { dailyReward, loginStep } from './progress.js';
 import { newlyAffordable, markSeen } from './lockerdots.js';
@@ -1003,7 +1004,7 @@ class UI {
     setText(acc, done ? Math.round((game.correct / done) * 100) + '%' : '–');
     setText(document.getElementById('sideAns'), done);
     setText(document.getElementById('sideBest'), game.bestStreak || 0);
-    var map = game.currentSkin ? game.currentSkin.name : '';
+    var map = game.currentSkin ? skinTitle(game.currentSkin) : '';
     if (map !== this._sideMap) { this._sideMap = map; setText(document.getElementById('sideMap'), map ? '🗺️ ' + map : ''); }
     if (!this._sideKeysShown) this.renderSideKeys();
   }
@@ -2223,7 +2224,7 @@ class UI {
   shareScore(game) {
     var total = game.correct + game.wrong;
     var acc = total > 0 ? Math.round(game.correct / total * 100) : 0;
-    var skinName = game.currentSkin ? game.currentSkin.name : 'Unknown';
+    var skinName = game.currentSkin ? skinTitle(game.currentSkin) : 'Unknown';
     var text = '⚡ Language Dash ⚡\n🏆 Score: ' + game.score + '\n✅ Accuracy: ' + acc + '%\n🔥 Streak: ' + game.bestStreak + '\n🪙 Coins: ' + game.coins + '\n🗣 ' + pairFlags() + ' Words right: ' + game.correct + '\n🌍 Track: ' + skinName + '\n\nCan you beat my score? Run the lexicon at:\n' + shareLink(appPublicUrl(), 'results');
 
     var self = this;

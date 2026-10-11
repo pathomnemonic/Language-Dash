@@ -30,7 +30,7 @@ describe('Performance tab', () => {
     expect(c.querySelector('.perf-hero')).not.toBeNull();
     expect(c.querySelectorAll('.perf-tile')).toHaveLength(3);
     const sections = [...c.querySelectorAll('details.perf-section')];
-    expect(sections.map((s) => s.querySelector('.perf-title').textContent)).toEqual(['Reviews coming up', 'Subjects', 'Weakest concepts', 'Lifetime', 'Plan settings']);
+    expect(sections.map((s) => s.querySelector('.perf-title').textContent)).toEqual(['Reviews coming up', 'Topics', 'Trickiest words', 'Lifetime', 'Plan settings']);
     expect(sections.every((s) => !s.open)).toBe(true);
     // the page shows little text until something is opened
     expect(c.textContent.length).toBeLessThan(700);
@@ -59,7 +59,7 @@ describe('Performance tab', () => {
     const tiles = [...c.querySelectorAll('.perf-tile')].map((t) => t.getAttribute('aria-label'));
     expect(tiles[0]).toMatch(/^Due now: \d+$/);
     expect(tiles[1]).toBe('Accuracy: 70%');
-    expect(tiles[2]).toMatch(/^To exam: (39|40)d$/);
+    expect(tiles[2]).toMatch(/^To goal: (39|40)d$/);
     c.querySelectorAll('.perf-tile')[1].click();
     expect(c.querySelector('#perf-subjects').open).toBe(true);
     expect(c.querySelector('#perf-subjects').textContent).toMatch(/Solid|Learning|Mastered|New/);
@@ -136,7 +136,6 @@ describe('plan buttons and imported flashcards', () => {
     c.querySelector('#perf-subjects').open = true;
     c.querySelector('#perf-subjects').dispatchEvent(new Event('toggle'));
     expect(c.querySelector('#perf-subjects').textContent).not.toMatch(/100%/);
-    expect(c.querySelector('#perf-subjects').textContent).toMatch(/Answer 10 questions of a type/);
     expect(c.querySelector('#perf-subjects').textContent).toMatch(/accuracy after 10/);
   });
 });

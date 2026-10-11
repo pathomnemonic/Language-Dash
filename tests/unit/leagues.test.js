@@ -21,9 +21,9 @@ describe('leagues and divisions', () => {
     expect(divisionOf(200)).toBe(1);
     expect(divisionOf(299)).toBe(1);
     expect(divisionOf(300)).toBe(3); // a new league starts at its lowest division
-    expect(tierName(0)).toBe('Intern III');
-    expect(tierName(250)).toBe('Intern I');
-    expect(tierName(1250)).toBe('Attending III');
+    expect(tierName(0)).toBe('Tourist III');
+    expect(tierName(250)).toBe('Tourist I');
+    expect(tierName(1250)).toBe('Linguist III');
     expect(tierName(3600)).toBe('Legend III');
     expect(tierName(4500)).toBe('Legend I');
   });
@@ -39,18 +39,18 @@ describe('leagues and divisions', () => {
 
   it('reports progress to the next division, and the next league from division I', () => {
     expect(tierProgress(50)).toMatchObject({ needed: 50, fraction: 0.5 });
-    expect(tierProgress(50).next).toMatchObject({ name: 'Intern II', promotion: false });
-    expect(tierProgress(250).next).toMatchObject({ name: 'Resident III', promotion: true, min: 300 });
+    expect(tierProgress(50).next).toMatchObject({ name: 'Tourist II', promotion: false });
+    expect(tierProgress(250).next).toMatchObject({ name: 'Phrasebook Pal III', promotion: true, min: 300 });
     expect(tierProgress(99999).next).toBeNull();
   });
 });
 
 describe('the ladder gets harder', () => {
-  it('removes helpers one at a time, and they are all gone by the top of Fellow', () => {
+  it('removes helpers one at a time, and they are all gone by the top of Wordrunner', () => {
     const counts = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((s) => rulesForStep(s).disabledPowerups.length);
     expect(counts).toEqual([0, 1, 1, 2, 3, 3, 4, 4, 5, 5]);
     expect(rulesForStep(8).disabledPowerups).toHaveLength(5);
-    expect(tierName(stepStart(8))).toBe('Fellow I');
+    expect(tierName(stepStart(8))).toBe('Wordrunner I');
     for (let s = 1; s <= 20; s++) {
       const before = rulesForStep(s - 1).disabledPowerups;
       rulesForStep(s).disabledPowerups.length >= before.length || expect.fail('power-ups came back at step ' + s);
@@ -83,7 +83,7 @@ describe('the ladder gets harder', () => {
     const r = leagueRules(2800);
     expect(r.disabledPowerups).toHaveLength(5);
     expect(r.heartEvery).toBe(0);
-    expect(r.name).toBe('Dean III');
+    expect(r.name).toBe('Babel Master III');
     expect(describeLeagueRules(0)).toBe('All power-ups');
     expect(describeLeagueRules(250)).toBe('No Auto-pilot · track +3% faster');
     expect(describeLeagueRules(stepStart(6))).toBe('No Auto-pilot, Shield, Magnet, 2× Score · rarer hearts · track +9% faster');

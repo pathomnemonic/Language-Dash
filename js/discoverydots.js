@@ -15,7 +15,7 @@ import { FEATURES } from './features.js';
 export var HOME_DISCOVERIES = [
   { id: 'home:streak', selector: '#streakChip', label: 'Your hearth streak' },
   { id: 'home:today', selector: '#studyGoal', label: 'Today: your goal and reviews' },
-  { id: 'home:filters', selector: '#filtersBtn', label: 'Filters: choose your questions' },
+  { id: 'home:filters', selector: '#filtersBtn', label: 'Filters: choose your words' },
   { id: 'home:languages', selector: '#langBtn', label: 'Languages: change what you learn' },
   { id: 'home:flashcards', selector: '#homeFlashcardsBtn', label: 'Flashcards: try them' },
   { id: 'home:challenge', selector: '#homeChallengeBtn', label: 'Challenge modes: try one' },

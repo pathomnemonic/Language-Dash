@@ -1,78 +1,59 @@
 import { describe, it, expect } from 'vitest';
-import { clueLeaksAnswer, genericWords, words, stem } from '../../js/cardleaks.js';
-import { CARDS, getLoadReport } from '../../js/cards.js';
+import { clueLeaksAnswer, genericWords, words, stem, answerKey, uniqueByAnswer, strictClueLeak, strictLeakReport, deckGenericWords, strictTokens, initialsOf } from '../../js/cardleaks.js';
+import { loadDeck } from '../../js/cards.js';
 
-// A small deck in which "syndrome" and "acute" each name eight answers, so both are generic
-const generic = genericWords([
-  'Nephrotic Syndrome', 'Nephritic Syndrome', 'Cushing Syndrome', 'Carcinoid Syndrome', 'Horner Syndrome', 'Marfan Syndrome',
-  'Down Syndrome', 'Turner Syndrome',
-  'Acute Pancreatitis', 'Acute Cholecystitis', 'Acute Appendicitis', 'Acute Gastritis', 'Acute Bronchitis', 'Acute Otitis',
-  'Acute Sinusitis', 'Acute Hepatitis'
-]);
-
-describe('what counts as a leak', () => {
-  it('matches whole words, not pieces of words', () => {
-    // "dural" is inside "subdural", but a subdural clue does not give away "Post-Dural Puncture Headache"
-    expect(clueLeaksAnswer('Subdural fluid collection risk', 'Post-Dural Puncture Headache', ['Migraine', 'Tension Headache'], generic)).toBe(false);
-    expect(clueLeaksAnswer('Headache worse upright after dural puncture', 'Post-Dural Puncture Headache', ['Migraine', 'Cluster'], generic)).toBe(true);
+describe('single-word hints never leak, so the leak checks never drop a card', () => {
+  it('clueLeaksAnswer and strictClueLeak are no-ops', () => {
+    expect(clueLeaksAnswer('dog', 'perro', ['gato', 'casa'], new Set())).toBe(false);
+    expect(clueLeaksAnswer('hotel', 'hotel', [], new Set())).toBe(false);
+    expect(strictClueLeak('dog', { ans: 'dog', d: ['a', 'b'] }, new Set())).toBe('');
+    expect(strictLeakReport({ bw: ['dog'], ans: 'perro', d: ['x', 'y'] }, new Set())).toEqual({ leaking: [], remaining: 1 });
+    expect(genericWords(['a', 'b']).size).toBe(0);
+    expect(deckGenericWords(['a', 'b']).size).toBe(0);
+    expect(initialsOf('Disseminated Intravascular Coagulation')).toBe('');
   });
 
-  it('a clue that is the answer, or contains it, leaks (plurals and parentheticals do not hide it)', () => {
-    expect(clueLeaksAnswer('Horseshoe kidney', 'Horseshoe Kidney', ['A', 'B'], generic)).toBe(true);
-    expect(clueLeaksAnswer('Kaposi sarcoma lesions', 'Kaposi Sarcoma', ['Angiosarcoma', 'Lymphoma'], generic)).toBe(true);
-    expect(clueLeaksAnswer('Positive ice pack test', 'Ice Pack Test for MG', ['EMG', 'Tensilon'], generic)).toBe(true);
-    expect(clueLeaksAnswer('Cervical dystonia', 'Cervical Dystonia (Spasmodic Torticollis)', ['x', 'y'], new Set())).toBe(true);
-  });
-
-  it('a clue that only shares a common word with the answer is fine', () => {
-    expect(generic.has(stem('syndrome'))).toBe(true);
-    expect(clueLeaksAnswer('Syndrome of moon facies and striae', 'Cushing Syndrome', ['Addison Disease', 'Conn Syndrome'], generic)).toBe(false);
-    expect(clueLeaksAnswer('Acute abdominal pain radiating to back', 'Acute Pancreatitis', ['Cholecystitis', 'Perforated Ulcer'], generic)).toBe(false);
-  });
-
-  it('a word the distractors share is the category, not a giveaway', () => {
-    expect(clueLeaksAnswer('Fever and nuchal rigidity, meningitis suspected', 'Bacterial Meningitis', ['Viral Meningitis', 'Fungal Meningitis'], new Set())).toBe(false);
-    // but a word that is only in the answer still gives it away
-    expect(clueLeaksAnswer('Bacterial infection of the meninges', 'Bacterial Meningitis', ['Viral Meningitis', 'Fungal Meningitis'], new Set())).toBe(true);
-    expect(clueLeaksAnswer('Positive Kernig sign', 'Meningitis', ['Encephalitis', 'Brain Abscess'], new Set())).toBe(false);
-  });
-
-  it('short acronyms and joining words are ignored', () => {
-    expect(clueLeaksAnswer('Pain of the abdomen', 'Rash of the skin', [], new Set())).toBe(false);
-    expect(words('Anti-NMDA Receptor (anti-NMDAR) Encephalitis')).toEqual(['anti', 'nmda', 'receptor', 'encephalitis']);
-  });
-
-  it('learns the common words from the deck: a word in many answers is generic', () => {
-    expect(generic.has(stem('syndrome'))).toBe(true);
-    expect(generic.has(stem('pancreatitis'))).toBe(false);
+  it('the old helpers still work on any script', () => {
+    expect(words('Le chat (animal) noir')).toEqual(['chat', 'noir']);
+    expect(words('猫 と 犬')).toEqual([]);
+    expect(words('привет мир')).toEqual(['привет', 'мир']);
+    expect(strictTokens('a big dog')).toEqual(['big', 'dog']);
+    expect(stem('dogs')).toBe('dog');
   });
 });
 
-describe('the loaded deck', () => {
-  it('no loaded card keeps a clue that contains its whole answer, except flagged weak-clue cards', () => {
-    const weak = new Set(getLoadReport().weakClueIds);
-    const deckGeneric = genericWords(CARDS.map((x) => x.ans));
-    const bad = [];
-    for (const c of CARDS) {
-      if (weak.has(c.id)) continue;
-      for (const b of c.bw) if (clueLeaksAnswer(b, c.ans, c.d, deckGeneric)) bad.push(`${c.id}: ${b}`);
-    }
-    expect(bad).toEqual([]);
+describe('answerKey: answers are compared ignoring case, accents and punctuation', () => {
+  it('treats the same Latin word written differently as one answer', () => {
+    expect(answerKey('Café')).toBe(answerKey('cafe'));
+    expect(answerKey('CAFÉ!')).toBe(answerKey('café'));
+    expect(answerKey('Straße')).toBe(answerKey('STRASSE'.toLowerCase().replace('ss', 'ß')));
+    expect(answerKey('perro (animal)')).toBe(answerKey('Perro'));
   });
-
-  it('every card has two distinct distractors, none of them the answer, and at least two clues', () => {
-    const plain = (t) => t.toLowerCase().replace(/\s*\([^)]*\)/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
-    for (const c of CARDS) {
-      expect(c.bw.length, c.id).toBeGreaterThanOrEqual(2);
-      expect(c.d.length, c.id).toBe(2);
-      expect(plain(c.d[0]), c.id).not.toBe(plain(c.d[1]));
-      c.d.forEach((d) => expect(plain(d), c.id).not.toBe(plain(c.ans)));
-      expect(Object.keys(c.ww).sort(), c.id).toEqual([...c.d].sort());
-    }
+  it('keeps different words apart, in every script', () => {
+    expect(answerKey('perro')).not.toBe(answerKey('gato'));
+    expect(answerKey('犬')).not.toBe(answerKey('猫'));
+    expect(answerKey('कुत्ता')).not.toBe(answerKey('कुत्ती'));
+    expect(answerKey('كلب')).not.toBe(answerKey('قطة'));
+    expect(answerKey('собака')).toBe(answerKey('Собака'));
+    expect(answerKey('개')).toBe('개'.normalize('NFKD').toLowerCase());
   });
+  it('is never empty for a real word, and empty for nothing', () => {
+    ['犬', 'كلب', 'कुत्ता', 'собака', '개', 'perro'].forEach((w) => expect(answerKey(w).length).toBeGreaterThan(0));
+    expect(answerKey('')).toBe('');
+    expect(answerKey(null)).toBe('');
+  });
+});
 
-  it('cards that cannot keep two clean clues are tracked, and the list does not grow', () => {
-    const { weakClueIds } = getLoadReport();
-    expect(weakClueIds.length).toBeLessThanOrEqual(75);
+describe('uniqueByAnswer: the same answer word never appears twice in one deal', () => {
+  it('keeps the first of each answer', () => {
+    const cards = [{ id: 'a', ans: 'Café' }, { id: 'b', ans: 'cafe' }, { id: 'c', ans: 'té' }, { id: 'd', ans: 'CAFÉ' }];
+    expect(uniqueByAnswer(cards).map((c) => c.id)).toEqual(['a', 'c']);
+  });
+  it('a real deck has few repeated answers, and uniqueByAnswer removes every one', async () => {
+    const { CARDS } = await loadDeck({ known: 'en', target: 'es' });
+    const unique = uniqueByAnswer(CARDS);
+    expect(unique.length).toBeLessThanOrEqual(CARDS.length);
+    expect(unique.length).toBeGreaterThan(CARDS.length * 0.85);
+    expect(new Set(unique.map((c) => answerKey(c.ans))).size).toBe(unique.length);
   });
 });

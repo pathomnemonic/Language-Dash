@@ -1,4 +1,4 @@
-# Dx Dash
+# Language Dash
 
 **Run the list.**
 
@@ -6,7 +6,7 @@ An endless-runner game for USMLE & COMLEX board prep. Recognize medical buzzword
 
 ## Play Online
 
-Visit: `https://pathomnemonic.github.io/buzzword-dash-v2/`
+Visit: `https://pathomnemonic.github.io/Language-Dash/`
 
 ## How It Works
 
@@ -295,14 +295,14 @@ buzzword-dash/
 
 
 3. Go to **Settings → Pages → Source** and select the `main` branch
-4. Your game will be live at `https://pathomnemonic.github.io/buzzword-dash-v2/`
+4. Your game will be live at `https://pathomnemonic.github.io/Language-Dash/`
 
 ## Error reporting (Optional)
 
 Uncaught errors and unhandled promise rejections are logged to the console. To also collect them, set a build-time endpoint that accepts a JSON `POST`:
 
 ```
-VITE_ERROR_ENDPOINT=https://example.com/dxdash-errors
+VITE_ERROR_ENDPOINT=https://example.com/languagedash-errors
 ```
 
 (In GitHub, add it as a repository variable named `VITE_ERROR_ENDPOINT`.) With no URL set, nothing leaves the device. Separately, players can switch on **Settings → Data → Help fix problems** to send anonymous crash and slow-frame reports to the `client_diagnostics` table (`database/schema.sql`; nobody but you can read it in the Supabase table editor; no account id is stored). Each report holds only the error message, a trimmed stack, the area it came from and the build id, with no account, score or card data, and a page load sends at most 10 distinct reports.
@@ -315,7 +315,7 @@ The service worker's cache is named after the build (the commit in CI), so every
 
 ## Tips (Optional)
 
-Dx Dash is free. To let players leave a tip, create a page on Ko-fi, Buy Me a Coffee, GitHub Sponsors or a Stripe Payment Link, then set its URL at build time:
+Language Dash is free. To let players leave a tip, create a page on Ko-fi, Buy Me a Coffee, GitHub Sponsors or a Stripe Payment Link, then set its URL at build time:
 
 ```
 VITE_TIP_URL=https://ko-fi.com/yourname
@@ -350,7 +350,7 @@ Supabase setup for accounts:
 
 1. Re-run `database/schema.sql` and `database/policies.sql` (adds the `player_saves` table and save functions).
 2. **Authentication -> Providers -> Email**: enabled by default. Decide whether to require **Confirm email** (recommended).
-3. **Authentication -> URL Configuration**: set **Site URL** to your live game URL (for example `https://<user>.github.io/buzzword-dash-v2/`) and add it, plus `http://localhost:5173`, under **Redirect URLs**. Confirmation and reset links send players back here.
+3. **Authentication -> URL Configuration**: set **Site URL** to your live game URL (for example `https://<user>.github.io/Language-Dash/`) and add it, plus `http://localhost:5173`, under **Redirect URLs**. Confirmation and reset links send players back here.
 4. Supabase's built-in email sender is limited to a few messages per hour. For real use, add your own SMTP provider under **Authentication -> SMTP Settings** (Resend, Postmark, SendGrid, Brevo and similar all work).
 
 In the app: set a display name on the Leaderboard screen, then use **Find** or **＋ Add** to send friend requests, **Requests** to accept them, and **Invite** on a friend (after hosting a multiplayer room) to send a match invite.
@@ -441,7 +441,7 @@ Cards are automatically validated and cleaned at import time. Duplicate IDs, mis
 
 ## Rating and feedback
 
-After a good run, once the player has played a while, the results screen asks "Are you enjoying Dx Dash?". Yes leads to
+After a good run, once the player has played a while, the results screen asks "Are you enjoying Language Dash?". Yes leads to
 "Would you rate it?" and then the store's own rating box (Google Play's in-app review, or the iPhone's rating sheet),
 with the store page as a back-up (`market://` or `itms-apps://`, then the web page, then a copied link). "Not really"
 leads to a feedback form instead, never the store. Feedback goes to the `app_feedback` table (read it in
@@ -469,5 +469,5 @@ The soft glowing specks that float across the track are off by default (Settings
 First-party, anonymous, opt-in usage analytics (no third-party SDK). Events go to this project's Supabase database and are read with SQL views.
 See [docs/ANALYTICS-GUIDE.md](docs/ANALYTICS-GUIDE.md) (setup, what to look at, launch checklist) and [docs/ANALYTICS.md](docs/ANALYTICS.md) (every event, generated from the code).
 - Tip jar (in-app purchases for tips): [docs/TIP-JAR.md](docs/TIP-JAR.md)
-- Dx Dash Pro (subscription, Library and Lifetime; ships on, with 300 free cards): [docs/PRO.md](docs/PRO.md), pricing rationale in [docs/MONETIZATION-STRATEGY.md](docs/MONETIZATION-STRATEGY.md)
+- Language Dash Pro (subscription, Library and Lifetime; ships on, with 300 free cards): [docs/PRO.md](docs/PRO.md), pricing rationale in [docs/MONETIZATION-STRATEGY.md](docs/MONETIZATION-STRATEGY.md)
 - Marketing package (strategy, 24 ad scripts, copy, rendered ads and videos, production plan, channel playbooks, measurement, compliance): [docs/marketing/](docs/marketing/README.md)

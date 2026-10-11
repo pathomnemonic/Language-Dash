@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// The first release sells Dx Dash Pro only: the real-money Locker items stay "Soon" until VITE_FEATURE_LOCKER_ITEMS is on.
+// The first release sells Language Dash Pro only: the real-money Locker items stay "Soon" until VITE_FEATURE_LOCKER_ITEMS is on.
 describe('Locker items switched off (the default build)', () => {
   beforeEach(() => { vi.resetModules(); vi.stubEnv('VITE_FEATURE_LOCKER_ITEMS', ''); });
 

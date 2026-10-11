@@ -2,17 +2,17 @@ import { describe, it, expect } from 'vitest';
 import { rankForLevel, RANKS, bonusSubjectFor, bonusCoinsFor, BONUS_COINS_CAP, nextGoalLine, levelFromXp } from '../../js/progress.js';
 
 describe('ranks and prestige', () => {
-  it('climbs the medical ladder and then adds stars', () => {
-    expect(rankForLevel(1).title).toBe('Intern');
-    expect(rankForLevel(4).title).toBe('Intern');
-    expect(rankForLevel(5).title).toBe('Resident');
-    expect(rankForLevel(20).title).toBe('Attending');
-    expect(rankForLevel(49).title).toBe('Chief');
-    expect(rankForLevel(50)).toMatchObject({ title: 'Dean', stars: 1, label: 'Dean ★' });
+  it('climbs the Wordrunner ladder and then adds stars', () => {
+    expect(rankForLevel(1).title).toBe('Tourist');
+    expect(rankForLevel(4).title).toBe('Tourist');
+    expect(rankForLevel(5).title).toBe('Phrasebook Pal');
+    expect(rankForLevel(20).title).toBe('Linguist');
+    expect(rankForLevel(49).title).toBe('Polyglot');
+    expect(rankForLevel(50)).toMatchObject({ title: 'Babel Master', stars: 1, label: 'Babel Master ★' });
     expect(rankForLevel(74).stars).toBe(1);
-    expect(rankForLevel(75).label).toBe('Dean ★★');
-    expect(rankForLevel(0).title).toBe('Intern');
-    expect(rankForLevel(NaN).title).toBe('Intern');
+    expect(rankForLevel(75).label).toBe('Babel Master ★★');
+    expect(rankForLevel(0).title).toBe('Tourist');
+    expect(rankForLevel(NaN).title).toBe('Tourist');
     expect(RANKS.map((r) => r.level)).toEqual([...RANKS.map((r) => r.level)].sort((a, b) => a - b));
   });
 });
@@ -42,7 +42,7 @@ describe('the next small goal after a run', () => {
   const base = { score: 500, best: 520, xp: 0, coins: 100, dailyDone: 18, dailyGoal: 20, cheapestWanted: { name: 'EKG Line', price: 500 } };
   it('names the closest goal', () => {
     expect(nextGoalLine(base)).toMatch(/20 points from your best score|2 more cards/);
-    expect(nextGoalLine({ ...base, score: 100, best: 5000 })).toMatch(/2 more cards to reach today/);
+    expect(nextGoalLine({ ...base, score: 100, best: 5000 })).toMatch(/2 more words to reach today/);
   });
   it('talks about coins when that is closest', () => {
     const line = nextGoalLine({ ...base, score: 100, best: 5000, dailyDone: 0, xp: 0, coins: 480 });

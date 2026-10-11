@@ -59,7 +59,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: dx-dash-debug-apk
+          name: language-dash-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
 
       - name: Build signed release bundle
@@ -83,5 +83,5 @@ jobs:
         if: env.HAS_KEYSTORE == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: dx-dash-release-aab
+          name: language-dash-release-aab
           path: android/app/build/outputs/bundle/release/app-release.aab

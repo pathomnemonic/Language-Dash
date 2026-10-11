@@ -1,5 +1,5 @@
 /**
- * proui.js — the screens for Dx Dash Pro: the paywall, the "unlock all cards" banner and the Settings row. Nothing here
+ * proui.js — the screens for Language Dash Pro: the paywall, the "unlock all cards" banner and the Settings row. Nothing here
  * shows unless Pro is live (see pro.js proLive: switched on and something can actually be bought).
  */
 
@@ -69,9 +69,9 @@ export function openPaywall(o) {
   if (old) old.remove();
   var opener = document.activeElement;
   var trigger = o.trigger || 'settings';
-  var overlay = createElement('div', { className: 'report-overlay', attributes: { id: 'proPaywall', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Dx Dash Pro' } });
+  var overlay = createElement('div', { className: 'report-overlay', attributes: { id: 'proPaywall', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Language Dash Pro' } });
   var box = createElement('div', { className: 'report-box' });
-  box.appendChild(createElement('h2', { text: '⚡ Dx Dash Pro' }));
+  box.appendChild(createElement('h2', { text: '⚡ Language Dash Pro' }));
   var st0 = proStatus();
   // Someone on the free trial still needs a way to buy: they see the plans too, with their trial's end date
   var needsPlan = !isPro() || !!st0.trial;
@@ -85,7 +85,7 @@ export function openPaywall(o) {
     tl.style.fontWeight = '800';
     box.appendChild(tl);
   } else if (isPro()) {
-    box.appendChild(createElement('p', { text: 'You have Pro. Thank you for supporting Dx Dash! 💜' }));
+    box.appendChild(createElement('p', { text: 'You have Pro. Thank you for supporting Language Dash! 💜' }));
   } else if (pricing) {
     box.appendChild(createElement('p', { text: 'Choose your plan', className: 'pro-step-title' }));
   } else {
@@ -170,7 +170,7 @@ export function openPaywall(o) {
             act('purchase_started', d);
             buyPlan(p.id, { lb: _lb }).then(function (res) {
               [].forEach.call(list.children, function (x) { x.disabled = false; });
-              if (res.ok) { act('purchased', d); setText(status, 'Welcome to Pro! 🎉'); _toast('Welcome to Dx Dash Pro!'); setTimeout(cleanup, 1200); }
+              if (res.ok) { act('purchased', d); setText(status, 'Welcome to Pro! 🎉'); _toast('Welcome to Language Dash Pro!'); setTimeout(cleanup, 1200); }
               else if (res.cancelled) { act('cancelled', d); setText(status, ''); }
               else { act('failed', d); setText(status, 'That did not go through. You have not been charged.'); }
             });
@@ -186,7 +186,7 @@ export function openPaywall(o) {
         var plans = res.plans;
         track('paywall_viewed', { trigger: trigger, feature: o.feature || '', plans: plans.map(function (p) { return p.id; }), variant: variant('pro_paywall'), pro: false });
         if (!plans.length) { setText(status, res.error ? 'Pro is not available right now. ' + res.error : 'Pro is not available right now. Please try again later.'); return; }
-        var notes = ['Payment is handled by Stripe. Subscriptions renew automatically; cancel any time from Settings → Dx Dash Pro → Manage.'];
+        var notes = ['Payment is handled by Stripe. Subscriptions renew automatically; cancel any time from Settings → Language Dash Pro → Manage.'];
         if (plans.some(function (p) { return p.trialDays > 0; })) notes.unshift('Free trial applies to new subscribers.');
         if (guest) notes.push('Tip: create an account (Friends → Account) first, so Pro follows you to other devices.');
         setText(status, notes.join(' '));
@@ -223,7 +223,7 @@ export function openPaywall(o) {
         again.addEventListener('click', function () { refreshPro({ lb: _lb }).then(function (st) { setText(status, st.active ? 'Pro is on. Thank you! 💜' : 'Not showing yet. It can take a minute after paying.'); if (st.active) setTimeout(cleanup, 1000); }); });
         list.appendChild(again);
       } else {
-        setText(status, 'Pro is available in the Dx Dash app on Android and iPhone.');
+        setText(status, 'Pro is available in the Language Dash app on Android and iPhone.');
       }
     }
 
@@ -341,17 +341,17 @@ export function renderRedeemRow(container) {
 }
 
 /**
- * The "Dx Dash Pro" page in Settings, for everyone: what Pro gets you (with the free trial) for a free player, or the
+ * The "Language Dash Pro" page in Settings, for everyone: what Pro gets you (with the free trial) for a free player, or the
  * membership, the gift and billing for a member.
  */
 export function renderProTab(container) {
   if (!container) return;
-  if (!proLive()) { container.appendChild(createElement('p', { className: 'setting-sublabel', text: 'Dx Dash Pro is not available right now.' })); return; }
+  if (!proLive()) { container.appendChild(createElement('p', { className: 'setting-sublabel', text: 'Language Dash Pro is not available right now.' })); return; }
   var st = proStatus();
   var box = createElement('div', { className: 'pro-tab' });
   var counts = libraryCounts();
   if (st.active && !st.trial) {
-    box.appendChild(createElement('p', { className: 'pro-step-title', text: '⚡ You have Dx Dash Pro. Thank you! 💜' }));
+    box.appendChild(createElement('p', { className: 'pro-step-title', text: '⚡ You have Language Dash Pro. Thank you! 💜' }));
     var sub = createElement('p', { className: 'setting-sublabel pro-sub-line' });
     box.appendChild(sub);
     fillSubscriptionLine(sub);
@@ -382,13 +382,13 @@ export function renderProTab(container) {
   container.appendChild(box);
 }
 
-/** Settings → About & help: "Dx Dash Pro" with the status, only once Pro is switched on. */
+/** Settings → About & help: "Language Dash Pro" with the status, only once Pro is switched on. */
 export function renderProSettings(container) {
   if (!proLive() || !container) return;
   var row = createElement('div', { className: 'setting-row', attributes: { 'data-setting': 'pro' } });
   var label = createElement('div');
   label.style.flex = '1';
-  label.appendChild(createElement('div', { text: '⚡ Dx Dash Pro' }));
+  label.appendChild(createElement('div', { text: '⚡ Language Dash Pro' }));
   var st = proStatus();
   label.appendChild(createElement('span', { className: 'setting-sublabel', text: st.active ? 'Active' + (st.trial ? ' (trial)' : '') + '. Thank you!' : 'Unlimited custom cards, every explanation, full exam reports and more.' }));
   row.appendChild(label);
@@ -421,7 +421,7 @@ export function mountProButton() {
       var days = st.until ? Math.max(0, Math.ceil((st.until - Date.now()) / 86400000)) : 0;
       if (title) setText(title, 'TRIAL · ' + days + (days === 1 ? ' DAY' : ' DAYS') + ' LEFT');
       if (sub) setText(sub, 'Keep Pro');
-      btn.setAttribute('aria-label', 'Dx Dash Pro trial: keep Pro');
+      btn.setAttribute('aria-label', 'Language Dash Pro trial: keep Pro');
     } else {
       if (title) setText(title, 'GO PRO');
       if (sub) setText(sub, '10× more cards and every study tool');

@@ -172,14 +172,14 @@ describe('a purchase, start to finish, through the real database', () => {
   });
 
   it('a phone-store purchase belongs to one account: the first to present it keeps it', async () => {
-    const claim = (user) => rpc('pro_store_claim', { p_platform: 'android', p_key: 'abc123', p_user: user, p_product: 'dxdash_pro_monthly', p_expires: new Date(Date.now() + 86400000).toISOString(), p_revoked: false });
+    const claim = (user) => rpc('pro_store_claim', { p_platform: 'android', p_key: 'abc123', p_user: user, p_product: 'languagedash_pro_monthly', p_expires: new Date(Date.now() + 86400000).toISOString(), p_revoked: false });
     expect(await claim(U)).toBe('ok');
     expect(await claim(U)).toBe('ok');                    // (the same account again: fine, and refreshed)
     expect(await claim(V)).toBe('other_account');
     // the same key on the other platform is a different purchase
-    expect(await rpc('pro_store_claim', { p_platform: 'ios', p_key: 'abc123', p_user: V, p_product: 'dxdash_pro_monthly', p_expires: null, p_revoked: false })).toBe('ok');
+    expect(await rpc('pro_store_claim', { p_platform: 'ios', p_key: 'abc123', p_user: V, p_product: 'languagedash_pro_monthly', p_expires: null, p_revoked: false })).toBe('ok');
     // and a refund recorded for the owner stays recorded
-    await rpc('pro_store_claim', { p_platform: 'android', p_key: 'abc123', p_user: U, p_product: 'dxdash_pro_monthly', p_expires: null, p_revoked: true });
+    await rpc('pro_store_claim', { p_platform: 'android', p_key: 'abc123', p_user: U, p_product: 'languagedash_pro_monthly', p_expires: null, p_revoked: true });
     expect((await db.query(`SELECT revoked FROM pro_store_purchases WHERE platform = 'android' AND store_key = 'abc123'`)).rows[0].revoked).toBe(true);
   });
 

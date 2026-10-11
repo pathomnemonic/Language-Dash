@@ -1,101 +1,67 @@
 // tests/unit/cards.test.js
-// Card validation tests per Section 33.2 of the architecture document
+// The built-in deck of the default pair (English → Spanish): shape checks on every card the game can deal.
 
 import { describe, it, expect } from 'vitest';
-import { CARDS, SUBJECTS } from '../../js/cards.js';
+import { CARDS, SUBJECTS } from '../../js/cardhub.js';
 
 describe('Card collection — imports', () => {
-  it('imports CARDS as a non-empty array', () => {
+  it('has a non-empty deck once loaded', () => {
     expect(Array.isArray(CARDS)).toBe(true);
-    expect(CARDS.length).toBeGreaterThan(0);
+    expect(CARDS.length).toBeGreaterThan(900);
   });
 
-  it('imports SUBJECTS as an array of 15 canonical subjects', () => {
+  it('SUBJECTS are the 15 topics', () => {
     expect(SUBJECTS).toHaveLength(15);
   });
 });
 
 describe('Card collection — unique IDs', () => {
   it('has no duplicate card IDs', () => {
-    const ids = CARDS.map(c => c.id);
-    const uniqueIds = new Set(ids);
-    expect(uniqueIds.size).toBe(ids.length);
+    const ids = CARDS.map((c) => c.id);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 });
 
-describe('Card collection — canonical subjects', () => {
-  it('every card has a canonical subject', () => {
-    for (const card of CARDS) {
-      expect(SUBJECTS).toContain(card.subj);
-    }
+describe('Card collection — canonical topics', () => {
+  it('every card has one of the 15 topics', () => {
+    for (const card of CARDS) expect(SUBJECTS).toContain(card.subj);
   });
 });
 
 describe('Card collection — required fields', () => {
-  it('every card has id, bw, ans, d, and tp', () => {
+  it('every card has an id, one hint word, an answer, two wrong gates and a teaching line', () => {
     for (const card of CARDS) {
       expect(card.id).toBeTruthy();
-      expect(Array.isArray(card.bw)).toBe(true);
-      expect(card.bw.length).toBeGreaterThanOrEqual(1);
+      expect(card.bw).toHaveLength(1);
+      expect(card.bw[0]).toBeTruthy();
       expect(card.ans).toBeTruthy();
-      expect(Array.isArray(card.d)).toBe(true);
+      expect(card.d).toHaveLength(2);
       expect(card.tp).toBeTruthy();
     }
   });
 });
 
-describe('Card collection — exactly two unique distractors', () => {
-  it('every card has exactly 2 distractors', () => {
-    for (const card of CARDS) {
-      expect(card.d).toHaveLength(2);
-    }
-  });
-
-  it('distractors are unique within each card', () => {
+describe('Card collection — two different wrong gates', () => {
+  it('wrong gates differ from each other and from the answer', () => {
     for (const card of CARDS) {
       expect(card.d[0]).not.toBe(card.d[1]);
+      expect(card.d).not.toContain(card.ans);
+    }
+  });
+
+  it('ww keys only reference actual wrong gates', () => {
+    for (const card of CARDS) {
+      Object.keys(card.ww).forEach((k) => expect(card.d).toContain(k));
     }
   });
 });
 
-describe('Card collection — answer differs from distractors', () => {
-  it('answer is not equal to either distractor', () => {
+describe('Card collection — safe text', () => {
+  it('no card field contains HTML tags', () => {
+    const tag = /<[a-z][^>]*>/i;
     for (const card of CARDS) {
-      expect(card.ans).not.toBe(card.d[0]);
-      expect(card.ans).not.toBe(card.d[1]);
-    }
-  });
-});
-
-describe('Card collection — ww keys match distractors', () => {
-  it('ww keys only reference actual distractors', () => {
-    for (const card of CARDS) {
-      if (!card.ww) continue;
-      const wwKeys = Object.keys(card.ww);
-      for (const key of wwKeys) {
-        expect(card.d).toContain(key);
-      }
-    }
-  });
-});
-
-describe('Card collection — unsafe HTML detection', () => {
-  it('no card field contains HTML script tags', () => {
-    for (const card of CARDS) {
-      const allText = [
-        ...card.bw,
-        card.ans,
-        ...card.d,
-        card.tp,
-        ...(card.ww ? Object.values(card.ww) : []),
-        ...(card.pearls || [])
-      ].join(' ');
-
-      expect(allText).not.toMatch(/<script/i);
-      expect(allText).not.toMatch(/javascript:/i);
-      // Inline event-handler attributes inside an HTML tag (e.g. <img onerror=...>).
-      // Plain prose like "Peritonitis = surgical emergency" is legitimate.
-      expect(allText).not.toMatch(/<[a-z][^>]*\son\w+\s*=/i);
+      const text = [card.bw.join(' '), card.ans, card.d.join(' '), card.tp, Object.values(card.ww).join(' ')].join(' ');
+      expect(tag.test(text), card.id).toBe(false);
     }
   });
 });

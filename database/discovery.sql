@@ -1,5 +1,5 @@
 -- ================================================================
--- Dx Dash — Study-buddy and group discovery (NOT RELEASED YET)
+-- Language Dash — Study-buddy and group discovery (NOT RELEASED YET)
 --
 -- Lets players be found, and find others, to study with:
 --   * Study buddies: a player makes an opt-in listing (exam, exam date, subjects, pace, time zone) and gets a

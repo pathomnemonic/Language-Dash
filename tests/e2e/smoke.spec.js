@@ -27,7 +27,7 @@ test.describe('Smoke tests', () => {
     await page.locator('#settingsBtn').click();
     await expect(page.locator('.settings-card')).toHaveCount(7);
     await page.locator('.settings-card[data-section="study"]').click();
-    await expect(page.getByText(/How much more often you see cards you have never answered/)).toBeVisible();
+    await expect(page.getByText(/How much more often you see words you have never answered/)).toBeVisible();
     await page.locator('#screenSettings .back-btn').click();
     await expect(page.locator('.settings-card')).toHaveCount(7);
   });
@@ -50,20 +50,20 @@ test.describe('Smoke tests', () => {
     await expect(page.locator('#tutorialOverlay')).not.toHaveClass(/active/);
   });
 
-  test('the three question filters sit in one popup behind a single button on Home', async ({ page }) => {
+  test('the word filters sit in one popup behind a single button on Home', async ({ page }) => {
     await openApp(page);
     // Home shows one row, not the filters themselves
     await expect(page.locator('#screenHome #filtersBtn')).toBeVisible();
     await expect(page.locator('#screenHome #subjectToggle')).toHaveCount(0);
     await expect(page.locator('#screenHome #examFilterContainer')).toHaveCount(0);
-    await expect(page.locator('#filtersSummary')).toHaveText(/All subjects/);
+    await expect(page.locator('#filtersSummary')).toHaveText(/All topics/);
 
     await page.locator('#filtersBtn').click();
     await expect(page.locator('#filtersSheet')).toBeVisible();
-    // all three filters are on the page
+    // topics and word level are on the page; the advanced filters are gone
     await expect(page.locator('#filtersSheet #subjectToggle')).toBeVisible();
     await expect(page.locator('#filtersSheet #examFilterToggle')).toBeVisible();
-    await expect(page.locator('#filtersSheet #advancedFilterContainer')).toBeVisible();
+    await expect(page.locator('#filtersSheet #advancedFilterContainer')).toBeHidden();
 
     // picking one subject changes the summary on Home
     await page.locator('#subjectToggle').click();
@@ -71,7 +71,7 @@ test.describe('Smoke tests', () => {
     await page.locator('#subjectScroll .subject-chip').first().click();
     await page.locator('#filtersSheet .sheet-close').click();
     await expect(page.locator('#filtersSheet')).toBeHidden();
-    await expect(page.locator('#filtersSummary')).not.toHaveText(/All subjects/);
+    await expect(page.locator('#filtersSummary')).not.toHaveText(/All topics/);
   });
 
   test('badges live in the profile, and a new badge wears a red dot until the profile is seen', async ({ page }) => {
@@ -167,10 +167,10 @@ test.describe('Smoke tests', () => {
     await expect(page.locator('#screenFlashcard')).toBeVisible();
   });
 
-  test('the Exam Sim button opens the exam setup', async ({ page }) => {
+  test('the Word Quiz button opens the quiz setup', async ({ page }) => {
     await openApp(page);
     await page.locator('#homeChallengeBtn').click();
     await page.locator('#examBtn').click();
-    await expect(page.locator('#examContent')).toContainText(/exam block/i);
+    await expect(page.locator('#examContent')).toContainText(/timed block of words/i);
   });
 });

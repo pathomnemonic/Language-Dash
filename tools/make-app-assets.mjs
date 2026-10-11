@@ -1,5 +1,5 @@
 // tools/make-app-assets.mjs
-// Draws the app icon, splash and store images from the Dx Dash mark (tools/brand.mjs).
+// Draws the app icon, splash and store images from the Language Dash mark (tools/brand.mjs).
 //
 //   node tools/make-app-assets.mjs && npx capacitor-assets generate --android
 //

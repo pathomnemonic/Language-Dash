@@ -1,6 +1,6 @@
 /**
  * iap.js — the one connection to the store's in-app purchases (Google Play Billing / Apple StoreKit) for the phone
- * apps, through capacitor-plugin-cdv-purchase. The tip jar (consumable tips) and Dx Dash Pro (subscriptions) share it,
+ * apps, through capacitor-plugin-cdv-purchase. The tip jar (consumable tips) and Language Dash Pro (subscriptions) share it,
  * because the plugin keeps one store: every product is registered together, once, before it starts.
  *
  * Everything that touches the plugin goes through `createIap`, which a test can drive with a fake plugin.

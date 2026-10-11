@@ -38,7 +38,7 @@ async function isPaymentReturned(paymentIntentId) {
 async function refundPayment(paymentIntentId) {
   var res = await fetch('https://api.stripe.com/v1/refunds', {
     method: 'POST',
-    headers: { Authorization: 'Bearer ' + STRIPE_KEY, 'Content-Type': 'application/x-www-form-urlencoded', 'Idempotency-Key': 'dxdash-duplicate-' + paymentIntentId },
+    headers: { Authorization: 'Bearer ' + STRIPE_KEY, 'Content-Type': 'application/x-www-form-urlencoded', 'Idempotency-Key': 'languagedash-duplicate-' + paymentIntentId },
     body: new URLSearchParams({ payment_intent: paymentIntentId, reason: 'duplicate', 'metadata[why]': 'paid twice for the same Locker item' }).toString()
   });
   if (!res.ok) throw new Error('Stripe said ' + res.status + ' for the refund');

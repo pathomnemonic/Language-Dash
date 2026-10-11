@@ -35,8 +35,8 @@ describe('sharing: what goes in the feed', () => {
     expect(d.title).toBe('Bo ran Endless: 1,500 points');
     expect(d.facts).toEqual(['12/15 right (80%)', 'best streak 8', '3m 5s']);
     expect(describeActivity(run, true).title.startsWith('You ran')).toBe(true);
-    expect(describeActivity({ kind: 'milestone', payload: { name: 'Bo', cards: 500 } }, false).title).toBe('Bo has now met 500 cards');
-    expect(describeActivity({ kind: 'streak_days', payload: { name: 'Bo', days: 30 } }, true).title).toBe('You are on a 30-day study streak');
+    expect(describeActivity({ kind: 'milestone', payload: { name: 'Bo', cards: 500 } }, false).title).toBe('Bo has now met 500 words');
+    expect(describeActivity({ kind: 'streak_days', payload: { name: 'Bo', days: 30 } }, true).title).toBe('You are on a 30-day streak');
     expect(describeActivity({ kind: 'what', payload: {} }, false).title).toContain('did something great');
     expect(formatDuration(45)).toBe('45s');
   });

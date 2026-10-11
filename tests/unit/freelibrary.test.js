@@ -1,41 +1,38 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { FREE_CARD_IDS, FREE_CARD_IDS_BY_SUBJECT } from '../../js/freecards.js';
-import { CARDS, CARD_BY_ID, SUBJECTS, loadCards, setLibraryUnlocked, seededPool, libraryCounts, isFreeCard } from '../../js/cardhub.js';
-import { pickFreeCards } from '../../tools/pick-free-cards.mjs';
+import { FREE_CARD_IDS } from '../../js/freecards.js';
+import { CARDS, CARD_BY_ID, loadCards, setLibraryUnlocked, seededPool, libraryCounts, isFreeCard } from '../../js/cardhub.js';
 
 beforeAll(async () => { await loadCards(); });
 
-describe('the free library: 300 cards, evenly across the subjects', () => {
-  it('is exactly 300 distinct cards that all exist', () => {
+describe('the free library: the 300 most common words', () => {
+  it('is the cards ranked 1 to 300, and every one exists in the deck', () => {
     expect(FREE_CARD_IDS.size).toBe(300);
-    FREE_CARD_IDS.forEach((id) => expect(CARD_BY_ID.has(id)).toBe(true));
+    const free = Array.from(CARD_BY_ID.values()).filter((c) => FREE_CARD_IDS.has(c.id));
+    expect(free.length).toBeGreaterThan(280); // (a few words can be dropped for a pair)
+    free.forEach((c) => expect(c.rank).toBeLessThanOrEqual(300));
   });
-  it('has 20 from each of the 15 subjects', () => {
-    expect(Object.keys(FREE_CARD_IDS_BY_SUBJECT).sort()).toEqual(SUBJECTS.slice().sort());
-    SUBJECTS.forEach((s) => {
-      expect(FREE_CARD_IDS_BY_SUBJECT[s].length).toBe(20);
-      FREE_CARD_IDS_BY_SUBJECT[s].forEach((id) => expect(CARD_BY_ID.get(id).subj).toBe(s));
-    });
+  it('is the same set for every language pair (it is decided by rank)', () => {
+    expect(FREE_CARD_IDS.has('en-es-001')).toBe(true);
+    expect(FREE_CARD_IDS.has('ja-ko-300')).toBe(true);
+    expect(FREE_CARD_IDS.has('fr-de-301')).toBe(false);
+    expect(FREE_CARD_IDS.has('fr-de-1000')).toBe(false);
+    expect(FREE_CARD_IDS.has('nonsense')).toBe(false);
   });
-  it('is a fair taste: all difficulty levels, several question types, no flashcard-only cards', () => {
-    const levels = new Set(); const types = new Set();
-    FREE_CARD_IDS.forEach((id) => { const c = CARD_BY_ID.get(id); levels.add(c.baseDifficulty); types.add(c.questionType); expect(c.enabledModes && c.enabledModes.length === 1 && c.enabledModes[0] === 'flashcard').toBeFalsy(); });
-    expect(levels.size).toBeGreaterThanOrEqual(3);
-    expect(types.size).toBeGreaterThanOrEqual(2);
-  });
-  it('is the list the picker produces (so it can be regenerated, but must not be after launch)', () => {
-    const again = pickFreeCards(Array.from(CARD_BY_ID.values()), SUBJECTS, 20);
-    expect(again).toEqual(FREE_CARD_IDS_BY_SUBJECT);
+  it('is a fair taste: every topic and the easy level, no flashcard-only cards', () => {
+    const topics = new Set();
+    CARD_BY_ID.forEach((c) => { if (FREE_CARD_IDS.has(c.id)) { topics.add(c.subj); expect(c.baseDifficulty).toBe(1); expect(c.enabledModes).toBeUndefined(); } });
+    expect(topics.size).toBeGreaterThanOrEqual(10);
   });
 });
 
 describe('the card pool follows the library lock', () => {
   it('locked: only the free cards are playable, every card is still looked up by id', () => {
     setLibraryUnlocked(false);
-    expect(CARDS.length).toBe(300);
+    expect(CARDS.length).toBeGreaterThan(280);
+    expect(CARDS.length).toBeLessThanOrEqual(300);
     expect(CARDS.every((c) => isFreeCard(c.id))).toBe(true);
-    expect(CARD_BY_ID.size).toBeGreaterThan(3000);
-    expect(libraryCounts()).toMatchObject({ total: CARD_BY_ID.size, free: 300, playable: 300 });
+    expect(CARD_BY_ID.size).toBeGreaterThan(900);
+    expect(libraryCounts()).toMatchObject({ total: CARD_BY_ID.size, free: 300, playable: CARDS.length });
   });
   it('unlocked: all of them, in the same array (so every module sees it)', () => {
     const ref = CARDS;
@@ -49,6 +46,7 @@ describe('the card pool follows the library lock', () => {
     setLibraryUnlocked(false);
     const b = seededPool().map((c) => c.id);
     expect(a).toEqual(b);
-    expect(a.length).toBe(300);
+    expect(a.length).toBeGreaterThan(280);
+    setLibraryUnlocked(true);
   });
 });

@@ -1,4 +1,4 @@
-// pro-checkout — the website's way to buy Dx Dash Pro.
+// pro-checkout — the website's way to buy Language Dash Pro.
 //
 // The page calls this with the player's sign-in (a Supabase session) and one of:
 //   { action: 'prices' }                 -> the plans for sale, with real prices from Stripe
@@ -6,7 +6,7 @@
 //   { action: 'portal' }                 -> { url } of the Stripe page where they cancel or change a subscription
 //
 // Deploy:  supabase functions deploy pro-checkout
-// Secrets: STRIPE_SECRET_KEY, SITE_URL (https://yourname.github.io/buzzword-dash-v2), and one Price id per product:
+// Secrets: STRIPE_SECRET_KEY, SITE_URL (https://yourname.github.io/Language-Dash), and one Price id per product:
 //   STRIPE_PRICE_YEARLY, STRIPE_PRICE_PASS3M, STRIPE_PRICE_MONTHLY, STRIPE_PRICE_LIFETIME (any you do not sell can be left out)
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -243,7 +243,7 @@ Deno.serve(async function (req) {
         try {
           var live = await stripe('subscriptions?customer=' + encodeURIComponent(customerId) + '&status=all&limit=10');
           var running = ((live && live.data) || []).filter(function (x) { return ['active', 'trialing', 'past_due'].indexOf(x.status) >= 0; });
-          if (running.length) return json({ error: 'You already have an active subscription. Use Manage subscription in Settings → Dx Dash Pro.' }, 409);
+          if (running.length) return json({ error: 'You already have an active subscription. Use Manage subscription in Settings → Language Dash Pro.' }, 409);
         } catch (e) { if (staleCustomer(e)) customerId = ''; else throw e; }
       }
       var build = function (cust) {

@@ -1,5 +1,5 @@
 -- ================================================================
--- Dx Dash Pro: who has it, and the codes that grant it. Safe to run again.
+-- Language Dash Pro: who has it, and the codes that grant it. Safe to run again.
 --
 -- Pro bought in the phone apps lives in the store (Google Play / App Store) and is read from there. This file is for
 -- everything else: web payments (a Stripe webhook or you, with the service key, calls pro_grant), promo and

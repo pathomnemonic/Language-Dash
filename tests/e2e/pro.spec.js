@@ -1,4 +1,4 @@
-// tests/e2e/pro.spec.js — Dx Dash Pro is dormant until switched on (invisible, nothing limited), and when the remote
+// tests/e2e/pro.spec.js — Language Dash Pro is dormant until switched on (invisible, nothing limited), and when the remote
 // config turns it on the Settings row, the gates and the paywall appear.
 import { test, expect } from '@playwright/test';
 import { openApp } from './helpers.js';
@@ -8,7 +8,7 @@ async function openSettingsSection(page, section) {
   await page.locator(`.settings-card[data-section="${section}"]`).click();
 }
 
-test.describe('Dx Dash Pro', () => {
+test.describe('Language Dash Pro', () => {
   test.skip(({ browserName }) => browserName !== 'chromium', 'checked in Chromium');
 
   test('with nothing to buy (no payment link) nothing is limited and nothing is shown', async ({ page }) => {
@@ -29,7 +29,7 @@ test.describe('Dx Dash Pro', () => {
     await expect.poll(() => page.evaluate(() => window.__pro.proLive()), { timeout: 8000 }).toBe(true);
     await expect.poll(() => page.evaluate(() => window.__cards.length), { timeout: 8000 }).toBe(300);
     await openSettingsSection(page, 'pro');
-    await expect(page.locator('.pro-tab')).toHaveCount(1); // the Dx Dash Pro page: what Pro gets you
+    await expect(page.locator('.pro-tab')).toHaveCount(1); // the Language Dash Pro page: what Pro gets you
     await expect(page.locator('.pro-tab')).toContainText(/WHAT YOU GET/);
     await expect(page.locator('#proTabGet')).toBeVisible();
     await page.evaluate(() => window.__ui.show('screenHome'));
@@ -39,7 +39,7 @@ test.describe('Dx Dash Pro', () => {
     test.skip(!(await btn.count()), 'the offline pack row is not offered in this environment');
     await btn.click();
     await expect(page.locator('#proPaywall')).toBeVisible();
-    await expect(page.locator('#proPaywall')).toContainText(/Dx Dash Pro/);
+    await expect(page.locator('#proPaywall')).toContainText(/Language Dash Pro/);
     await expect(page.locator('#proPaywall')).toContainText(/300 of/);
     await page.locator('#proPaywallClose').click();
     await expect(page.locator('#proPaywall')).toHaveCount(0);

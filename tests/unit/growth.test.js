@@ -109,7 +109,7 @@ describe('share image footer', () => {
   it('shows the streak and cards met only when they are worth saying', () => {
     expect(shareFooterLine({})).toBe('');
     expect(shareFooterLine({ streakDays: 1, cardsMet: 10 })).toBe('');
-    expect(shareFooterLine({ streakDays: 12, cardsMet: 340 })).toBe('🔥 12-day streak  ·  340 cards met');
-    expect(shareFooterLine({ streakDays: 0, cardsMet: 1200 })).toBe('1,200 cards met');
+    expect(shareFooterLine({ streakDays: 12, cardsMet: 340 })).toBe('🔥 12-day streak  ·  340 words met');
+    expect(shareFooterLine({ streakDays: 0, cardsMet: 1200 })).toBe('1,200 words met');
   });
 });

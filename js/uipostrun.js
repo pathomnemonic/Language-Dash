@@ -12,6 +12,7 @@ import { describeRules } from './rules.js';
 import { runVerdict } from './flavor.js';
 import { localDateKey, trapFocus, releaseFocusTrap } from './uihelpers.js';
 import { openCardReport } from './cardreport.js';
+import { skinTitle } from './game/skins.js';
 import { getLanguage } from './lang/languages.js';
 import { getPairOrDefault, getShowRoman } from './lang/pair.js';
 
@@ -56,7 +57,7 @@ export var postRunMethods = {
     var verdict = createElement('p', { className: 'post-verdict', text: runVerdict(game.correct, game.wrong) });
     verdict.style.cssText = 'color:var(--accent-cyan);font-weight:800;font-size:14px;margin:2px 0';
     header.appendChild(verdict);
-    var skinInfo = game.currentSkin ? ' • Track: ' + game.currentSkin.name : '';
+    var skinInfo = game.currentSkin ? ' • Track: ' + skinTitle(game.currentSkin) : '';
     var runSummary = game.getRunSummary ? game.getRunSummary() : null;
     var customNote = runSummary && runSummary.custom ? ' • Custom rules: ' + describeRules(runSummary.rules && Object.assign({ custom: true }, runSummary.rules)) + ' (not ranked)' : '';
     var metaP = createElement('p', { text: 'Top pace: ' + (Math.round((game.peakPace || game.userSpeed || 0) * 10) / 10) + '×' + skinInfo + (game.continued ? ' (continued)' : '') + customNote });

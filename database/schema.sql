@@ -1,5 +1,5 @@
 -- ================================================================
--- Dx Dash — Supabase schema
+-- Language Dash — Supabase schema
 -- Version: 2.0.0
 --
 -- Run this file FIRST, then policies.sql, in the Supabase SQL editor.
@@ -706,7 +706,7 @@ $$;
 
 
 -- ==================== PLAYER FEEDBACK ====================
--- "Are you enjoying Dx Dash?" -> "Not really" lands here, as does Settings -> Send feedback. The owner reads the
+-- "Are you enjoying Language Dash?" -> "Not really" lands here, as does Settings -> Send feedback. The owner reads the
 -- inbox in the Supabase table editor (feedback_inbox) or: SELECT * FROM feedback_inbox LIMIT 50;
 -- Players can send but never read; five a day per player.
 
@@ -902,7 +902,7 @@ BEGIN
   -- exists. (The website's delete button does that through the payment function and deletes the account itself.)
   IF to_regclass('public.pro_entitlements') IS NOT NULL THEN
     IF EXISTS (SELECT 1 FROM pro_entitlements WHERE user_id = uid AND source = 'stripe' AND plan IN ('monthly', 'yearly', 'pass3m') AND until > now()) THEN
-      RAISE EXCEPTION 'You have a subscription that is still billing. Cancel it first (Settings, Dx Dash Pro, Manage subscription), then delete your account.';
+      RAISE EXCEPTION 'You have a subscription that is still billing. Cancel it first (Settings, Language Dash Pro, Manage subscription), then delete your account.';
     END IF;
   END IF;
   -- their payment records go too (those tables do not cascade from the login)

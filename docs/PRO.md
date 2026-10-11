@@ -1,4 +1,4 @@
-# Dx Dash Pro (ships with the first release)
+# Language Dash Pro (ships with the first release)
 
 Pro is on from day one. The reasoning, prices and numbers are in [MONETIZATION-STRATEGY.md](MONETIZATION-STRATEGY.md). This page is how it works and how to set it up.
 
@@ -19,13 +19,13 @@ Otherwise nothing is limited and no Pro screen shows. So a local build, a store 
 
 | id | Type | Suggested US price |
 |---|---|---|
-| `dxdash_pro_yearly` | auto-renewing subscription | 19.99 / year |
-| `dxdash_pro_pass3m` | auto-renewing subscription, 3-month period | 7.49 |
-| `dxdash_pro_monthly` | auto-renewing subscription, 1 month | 3.49 |
-| `dxdash_pro_lifetime` | **non-consumable** (one purchase) | 39.99 |
-| `dxdash_tip_small` / `_medium` / `_large` | consumable tips (see TIP-JAR.md) | 1.99 / 4.99 / 9.99 |
+| `languagedash_pro_yearly` | auto-renewing subscription | 19.99 / year |
+| `languagedash_pro_pass3m` | auto-renewing subscription, 3-month period | 7.49 |
+| `languagedash_pro_monthly` | auto-renewing subscription, 1 month | 3.49 |
+| `languagedash_pro_lifetime` | **non-consumable** (one purchase) | 39.99 |
+| `languagedash_tip_small` / `_medium` / `_large` | consumable tips (see TIP-JAR.md) | 1.99 / 4.99 / 9.99 |
 
-**Google Play:** Monetize → Subscriptions (one subscription "Dx Dash Pro" with three base plans yearly / 3-month / monthly; no store trial offer, the free trial is the account's, see below), an In-app product for Lifetime. **Apple:** one subscription group "Dx Dash Pro" holding the three subscriptions (no introductory offer), a non-consumable in-app purchase for Lifetime; accept the Paid Applications agreement, tax and bank details; attach the purchases to the version you submit and add a review screenshot of the paywall. Both stores need a build uploaded (internal track / TestFlight) before purchases work.
+**Google Play:** Monetize → Subscriptions (one subscription "Language Dash Pro" with three base plans yearly / 3-month / monthly; no store trial offer, the free trial is the account's, see below), an In-app product for Lifetime. **Apple:** one subscription group "Language Dash Pro" holding the three subscriptions (no introductory offer), a non-consumable in-app purchase for Lifetime; accept the Paid Applications agreement, tax and bank details; attach the purchases to the version you submit and add a review screenshot of the paywall. Both stores need a build uploaded (internal track / TestFlight) before purchases work.
 
 ## The free trial (every account)
 
@@ -33,7 +33,7 @@ Everyone who signs in with an account (not a guest) gets **7 days of Pro, once, 
 
 ## Web payments, codes and seats
 
-On the website the paywall shows your real Stripe prices and sends the player to Stripe's own payment page. Stripe then tells a small server function, which turns Pro on in the database; the page asks again when the player comes back. Nothing about payment is stored in the app. Four products work: yearly, 3-month pass, monthly and Lifetime. (There is no Full Library offer any more; Pro is the one thing for sale.) Renewals extend Pro by themselves, cancelling is done on Stripe's page (Settings → Dx Dash Pro → Manage), and a full refund of Lifetime takes it back.
+On the website the paywall shows your real Stripe prices and sends the player to Stripe's own payment page. Stripe then tells a small server function, which turns Pro on in the database; the page asks again when the player comes back. Nothing about payment is stored in the app. Four products work: yearly, 3-month pass, monthly and Lifetime. (There is no Full Library offer any more; Pro is the one thing for sale.) Renewals extend Pro by themselves, cancelling is done on Stripe's page (Settings → Language Dash Pro → Manage), and a full refund of Lifetime takes it back.
 
 **One-time setup (about an hour):**
 
@@ -45,10 +45,10 @@ On the website the paywall shows your real Stripe prices and sends the player to
    supabase functions deploy stripe-webhook --use-api
    ```
 4. **Function secrets** (Supabase dashboard → Edge Functions → Secrets, or `supabase secrets set ...`):
-   `STRIPE_SECRET_KEY` (Stripe → Developers → API keys), `SITE_URL` (your site address with no slash, e.g. `https://pathomnemonic.github.io/buzzword-dash-v2`), and one Price id each: `STRIPE_PRICE_YEARLY`, `STRIPE_PRICE_PASS3M`, `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_LIFETIME` (leave out any you do not want to sell).
+   `STRIPE_SECRET_KEY` (Stripe → Developers → API keys), `SITE_URL` (your site address with no slash, e.g. `https://pathomnemonic.github.io/Language-Dash`), and one Price id each: `STRIPE_PRICE_YEARLY`, `STRIPE_PRICE_PASS3M`, `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_LIFETIME` (leave out any you do not want to sell).
 5. **Webhook.** In Stripe → Developers → Webhooks add the endpoint `https://<your-project>.supabase.co/functions/v1/stripe-webhook`, choose the events `checkout.session.completed`, `invoice.paid` and `charge.refunded`, and save its **Signing secret** as the function secret `STRIPE_WEBHOOK_SECRET`.
 6. **Switch it on.** In GitHub add the repository variable `VITE_PRO_WEB_CHECKOUT` = `1` (Settings → Secrets and variables → Actions → Variables) and re-run the deploy. Until you do, the website behaves as fully free with no Pro screens. (`VITE_SUPABASE_URL` must be set too; it already is for the leaderboard.)
-7. **Test.** With Stripe in Test mode, open the site, tap a locked section → a plan → pay with card `4242 4242 4242 4242` (any future date and CVC). You should land back on the game with "Welcome to Dx Dash Pro!". Then switch Stripe to Live mode, swap the live key, Price ids and webhook secret into the function secrets, and you are selling.
+7. **Test.** With Stripe in Test mode, open the site, tap a locked section → a plan → pay with card `4242 4242 4242 4242` (any future date and CVC). You should land back on the game with "Welcome to Language Dash Pro!". Then switch Stripe to Live mode, swap the live key, Price ids and webhook secret into the function secrets, and you are selling.
 
 Notes: web Pro belongs to an **account**, so a guest is told to create one first (Friends → Account) or they lose it with their browser data. A subscription runs to the end of the paid period plus two days of grace. The same person can also hold Pro from the phone stores; whichever ends last wins. You see everything in Stripe, and who has Pro in the database views `pro_v_active`.
 
@@ -64,8 +64,8 @@ Edit `public/remote-config.json`:
 ```json
 "pro": {
   "enabled": true,
-  "plans": ["dxdash_pro_yearly", "dxdash_pro_pass3m", "dxdash_pro_monthly", "dxdash_pro_lifetime"],
-  "library": "dxdash_library",
+  "plans": ["languagedash_pro_yearly", "languagedash_pro_pass3m", "languagedash_pro_monthly", "languagedash_pro_lifetime"],
+  "library": "languagedash_library",
   "gates": {
     "card_library": "locked",
     "analytics_detail": "locked",
@@ -92,7 +92,7 @@ Chosen by `tools/pick-free-cards.mjs`: 20 per subject, spread across the three d
 - A **"300 of 3,010 cards free · UNLOCK"** strip on the subject picker, the card browser and every third results screen.
 - Locked sections of Stats ("🔒 Pro") and the report export.
 - A limit being hit (Anki import, offline pack, the 26th custom card, the 9th explanation of the day, the second exam block of the week).
-- Settings → About & help → Dx Dash Pro.
+- Settings → About & help → Language Dash Pro.
 Never during a run, never on first launch.
 
 ## Trying it
@@ -153,7 +153,7 @@ Anyone who already owned one before this keeps it.
   (action `item`; no per-item setup in Stripe: the amount comes from the catalog). The webhook grants the item
   (`pro_grant_item`, stored in the `pro_items` table) and `get_my_pro()` lists the member's items, which the app merges
   into their Locker on every refresh. In the phone apps each item is a one-time store product named
-  `dxdash_item_<item id>` (create them in Play Console / App Store Connect); until the store lists one, its button
+  `languagedash_item_<item id>` (create them in Play Console / App Store Connect); until the store lists one, its button
   reads "Soon" and is disabled. On the web, the app first asks `pro-checkout` (action `capabilities`) whether it
   supports items; an older deployment shows "Soon" and nobody is sent to pay for something it cannot deliver. Every tap says
   something (price confirm, sign-in prompt, "coming soon", or an explained failure).
@@ -206,24 +206,24 @@ Create each of these in **Play Console → Monetize → In-app products** and **
 
 | Product id | Type | USD | Item |
 | --- | --- | --- | --- |
-| `dxdash_item_avatar_m_king` | non-consumable | 2.99 | Attending Arthur |
-| `dxdash_item_avatar_m_alien` | non-consumable | 2.49 | Anatomy Abby |
-| `dxdash_item_avatar_m_robot` | non-consumable | 2.49 | MRI Mo |
-| `dxdash_item_avatar_m_wizard` | non-consumable | 1.99 | Pharmacist Pip |
-| `dxdash_item_avatar_m_ninja` | non-consumable | 1.99 | Night-Shift Nico |
-| `dxdash_item_monster_m_dragon` | non-consumable | 1.49 | Dragon Lecturer |
-| `dxdash_item_map_aquarium_imaging_center` | non-consumable | 1.49 | Aquarium Imaging Center |
-| `dxdash_item_map_dna_helix_tunnel` | non-consumable | 1.49 | DNA Helix Tunnel |
-| `dxdash_item_trail_fire` | non-consumable | 0.99 | Fire Trail |
-| `dxdash_item_trail_neural` | non-consumable | 0.99 | Neural Sparks |
-| `dxdash_item_trail_blood` | non-consumable | 0.99 | Blood Cells |
+| `languagedash_item_avatar_m_king` | non-consumable | 2.99 | Attending Arthur |
+| `languagedash_item_avatar_m_alien` | non-consumable | 2.49 | Anatomy Abby |
+| `languagedash_item_avatar_m_robot` | non-consumable | 2.49 | MRI Mo |
+| `languagedash_item_avatar_m_wizard` | non-consumable | 1.99 | Pharmacist Pip |
+| `languagedash_item_avatar_m_ninja` | non-consumable | 1.99 | Night-Shift Nico |
+| `languagedash_item_monster_m_dragon` | non-consumable | 1.49 | Dragon Lecturer |
+| `languagedash_item_map_aquarium_imaging_center` | non-consumable | 1.49 | Aquarium Imaging Center |
+| `languagedash_item_map_dna_helix_tunnel` | non-consumable | 1.49 | DNA Helix Tunnel |
+| `languagedash_item_trail_fire` | non-consumable | 0.99 | Fire Trail |
+| `languagedash_item_trail_neural` | non-consumable | 0.99 | Neural Sparks |
+| `languagedash_item_trail_blood` | non-consumable | 0.99 | Blood Cells |
 
 ## Checking phone-store purchases on the server (optional, recommended)
 
 Without it, a phone purchase is known only to the phone. With it (`supabase/functions/iap-verify`), the purchase is confirmed with Google Play / the App Store, attached to the player's account (so it shows on the website and on a new phone), a refund is noticed, and one purchase cannot be used on several accounts.
 
 1. Deploy it: `supabase functions deploy iap-verify`.
-2. Secrets. Google Play: `GOOGLE_PLAY_PACKAGE` (`com.pathomnemonic.dxdash`), `GOOGLE_SA_EMAIL`, `GOOGLE_SA_PRIVATE_KEY` (a service account added in Play Console → Users and permissions with "View financial data" and "Manage orders and subscriptions"). App Store: `APPLE_BUNDLE_ID`, `APPLE_IAP_ISSUER_ID`, `APPLE_IAP_KEY_ID`, `APPLE_IAP_PRIVATE_KEY` (App Store Connect → Users and Access → Integrations → In-App Purchase key).
+2. Secrets. Google Play: `GOOGLE_PLAY_PACKAGE` (`com.pathomnemonic.languagedash`), `GOOGLE_SA_EMAIL`, `GOOGLE_SA_PRIVATE_KEY` (a service account added in Play Console → Users and permissions with "View financial data" and "Manage orders and subscriptions"). App Store: `APPLE_BUNDLE_ID`, `APPLE_IAP_ISSUER_ID`, `APPLE_IAP_KEY_ID`, `APPLE_IAP_PRIVATE_KEY` (App Store Connect → Users and Access → Integrations → In-App Purchase key).
 3. Re-run `database/pro.sql` and `database/lockdown.sql`.
 4. Build the apps with `VITE_IAP_VERIFY=1` (and test with sandbox purchases first: `docs/PAYMENT-CHECKS.md` §4). If the function or a secret is missing, the app behaves exactly as before.
 

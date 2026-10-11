@@ -4,7 +4,7 @@ Play Console → your app → **Grow → Store presence → Main store listing**
 
 ## App name (max 30)
 ```
-Dx Dash: Board Exam Runner
+Language Dash: Board Exam Runner
 ```
 
 ## Short description (max 80)
@@ -16,7 +16,7 @@ Run the list. Dodge, dash and Dx USMLE & COMLEX questions.
 ```
 Run the list. Study for your boards by playing.
 
-Dx Dash shows you the clues from a classic exam vignette (the "buzzwords") and asks you to run into the correct diagnosis. Pick a lane, dodge the obstacles, keep your streak alive, and learn something every run.
+Language Dash shows you the clues from a classic exam vignette (the "buzzwords") and asks you to run into the correct diagnosis. Pick a lane, dodge the obstacles, keep your streak alive, and learn something every run.
 
 STUDY THAT STICKS
 • 3,000+ board-style questions across 15 subjects, for USMLE and COMLEX prep
@@ -41,13 +41,13 @@ KEEP GOING
 
 SOLO PLAY NEEDS NO INTERNET. No ads.
 
-Dx Dash is an educational game, not medical advice, and is not affiliated with or endorsed by the NBME, FSMB, NBOME or Anki. Content may contain errors; verify important facts with authoritative sources.
+Language Dash is an educational game, not medical advice, and is not affiliated with or endorsed by the NBME, FSMB, NBOME or Anki. Content may contain errors; verify important facts with authoritative sources.
 ```
 
 
 ## Release notes (max 500), for version 1.0
 ```
-First release of Dx Dash: run the list and learn the diagnosis. 3,000+ board-style questions, live head-to-head, flashcards, an exam simulator, smart FSRS reviews, friends feed and study groups.
+First release of Language Dash: run the list and learn the diagnosis. 3,000+ board-style questions, live head-to-head, flashcards, an exam simulator, smart FSRS reviews, friends feed and study groups.
 ```
 
 ## Graphics
@@ -60,9 +60,9 @@ First release of Dx Dash: run the list and learn the diagnosis. 3,000+ board-sty
 Tablet screenshots (the app is made for tablets and Chromebooks too, and Google ranks apps with them higher on large screens): 7-inch tablet `assets/store/play-tablet-7/` (1200 × 1920), 10-inch tablet `assets/store/play-tablet-10/` (1600 × 2560). Upload all of each, in order.
 
 ## Contact details (Store settings)
-- Website: `https://pathomnemonic.github.io/buzzword-dash-v2/`
+- Website: `https://pathomnemonic.github.io/Language-Dash/`
 - Email: **patho.mnemonic1@gmail.com** (shown publicly on the store page)
-- Privacy policy: `https://pathomnemonic.github.io/buzzword-dash-v2/privacy.html`
+- Privacy policy: `https://pathomnemonic.github.io/Language-Dash/privacy.html`
 
 ## Category and tags
 - App (not game) → **Education**. Tags: Education, Quiz/trivia, Medical.

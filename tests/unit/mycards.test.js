@@ -18,8 +18,8 @@ describe('My Cards with a big imported deck', () => {
     storage.load();
     ui._myCardsQuery = '';
     ui._myCardsPage = 0;
-    customCards.addMany(Array.from({ length: 120 }, (_, i) => ({ subject: 'Cardiology', buzzwords: ['Clue ' + i], answer: i === 77 ? 'Needle answer' : 'Answer ' + i, distractors: [], teachingPoint: 'tp' })));
-    customCards.add({ subject: 'Cardiology', buzzwords: ['Own clue'], answer: 'Own answer', distractors: ['Wrong A', 'Wrong B'], teachingPoint: 'mine' });
+    customCards.addMany(Array.from({ length: 120 }, (_, i) => ({ subject: 'Basics', buzzwords: ['Clue ' + i], answer: i === 77 ? 'Needle answer' : 'Answer ' + i, distractors: [], teachingPoint: 'tp' })));
+    customCards.add({ subject: 'Basics', buzzwords: ['Own clue'], answer: 'Own answer', distractors: ['Wrong A', 'Wrong B'], teachingPoint: 'mine' });
   });
 
   it('draws one page at a time instead of every card', () => {

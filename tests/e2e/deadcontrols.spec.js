@@ -8,7 +8,7 @@ import { openApp } from './helpers.js';
 
 // Things we must not click blindly (they wipe data, sign out, leave the page, or start a run), or that
 // intentionally do nothing visible on their own.
-const SKIP = /^go\b|daily 15|weekly gauntlet|friend challenge|exam sim|hide this|reminder|reset|delete|erase|wipe|sign ?out|log ?out|remove|play|start|begin|retry|leave|block|report|buy|\u{1FA99}|export|download|share|copy|file|upload|support|tip|review|rate|privacy|terms|license|open .*(page|site|link)|import|restore/iu;
+const SKIP = /^go\b|daily 15|weekly gauntlet|friend challenge|word quiz|hide this|reminder|reset|delete|erase|wipe|sign ?out|log ?out|remove|play|start|begin|retry|leave|block|report|buy|\u{1FA99}|export|download|share|copy|file|upload|support|tip|review|rate|privacy|terms|license|open .*(page|site|link)|import|restore/iu;
 
 const SCREENS = [
   ['screenStats', 'Stats'],
@@ -16,7 +16,7 @@ const SCREENS = [
   ['screenQuests', 'Quests'],
   ['screenProfile', 'Profile'],
   ['screenSettings', 'Settings'],
-  ['screenMyCards', 'My Cards'],
+  ['screenMyCards', 'My Words'],
   ['screenCardBrowser', 'Card browser'],
   ['screenHome', 'Home']
 ];
@@ -98,7 +98,7 @@ test.describe('no dead controls', () => {
 
 
 // The Home pop-ups (filters, speed, challenge, flashcards, today) are not screens, so they get their own pass.
-const SHEETS = ['filtersSheet', 'speedSheet', 'challengeSheet', 'flashcardsSheet', 'todaySheet'];
+const SHEETS = ['filtersSheet', 'langSheet', 'challengeSheet', 'flashcardsSheet', 'todaySheet'];
 
 test.describe('no dead controls in the Home pop-ups', () => {
   for (const sheet of SHEETS) {

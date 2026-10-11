@@ -27,14 +27,14 @@ describe('study report', () => {
   it('reads as a short message with no personal details', () => {
     const text = reportToText(r);
     expect(text).toContain('Language Dash study report (2026-10-05)');
-    expect(text).toContain('Study streak: 4 days (best 9)');
+    expect(text).toContain('Day streak: 4 days (best 9)');
     expect(text).toContain('• Cardiology: 90% of 50 (Mastered)');
     expect(text).not.toMatch(/Secret Name|a@b\.c/);
   });
 
   it('exports a spreadsheet that cannot run formulas', () => {
     const csv = reportToCsv(r);
-    expect(csv.split('\n')[0]).toBe('subject,correct,wrong,answered,accuracy_percent,mastery');
+    expect(csv.split('\n')[0]).toBe('topic,correct,wrong,answered,accuracy_percent,mastery');
     expect(csv).toContain("'=Evil");
     expect(csv).not.toMatch(/\n=Evil/);
   });
@@ -44,6 +44,6 @@ describe('study report', () => {
     expect(empty.answered).toBe(0);
     expect(empty.accuracy).toBeNull();
     expect(reportToText(empty)).toContain('Answered: 0');
-    expect(reportToCsv(empty)).toBe('subject,correct,wrong,answered,accuracy_percent,mastery\n');
+    expect(reportToCsv(empty)).toBe('topic,correct,wrong,answered,accuracy_percent,mastery\n');
   });
 });
