@@ -30,7 +30,7 @@ export function allIcons() {
 }
 
 var LEGACY = {
-  avatar_intern: '🧳', avatar_attending: '🎩', avatar_superhero: '🦸', avatar_robot: '🤖', avatar_wizard: '🧙',
+  avatar_intern: '🦊', avatar_attending: '🎩', avatar_superhero: '🦸', avatar_robot: '🤖', avatar_wizard: '🧙',
   avatar_zombie: '🧟', avatar_golden: '🏆', avatar_ambulance: '🚐', avatar_racecar: '🏎️', avatar_hearse: '🚌',
   avatar_nurse: '⚓', avatar_surgeon: '🥐', avatar_skeleton: '💃'
 };

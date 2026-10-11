@@ -198,9 +198,9 @@ var DEFAULTS = {
     monsterDefaultSeen: false,
 
     achievements: [],
-    ownedItems: ['avatar_intern', 'hat_none', 'trail_none', 'gear_none', 'cloth_none', 'monster_classic', 'monster_m_ghost', 'pal_none', 'pal_snail'],
+    ownedItems: ['avatar_intern', 'hat_none', 'trail_none', 'gear_none', 'cloth_none', 'monster_classic', 'hush_blot', 'pal_none', 'pal_snail'],
     equipped: {
-      monster: 'monster_m_ghost',
+      monster: 'hush_blot',
       skin: 'avatar_intern',
       hat: 'hat_none',
       trail: 'trail_none',
@@ -407,7 +407,7 @@ function migrateFromV1(old) {
   if (Array.isArray(old.ownedItems)) {
     data.progression.ownedItems = old.ownedItems.slice();
     // Ensure defaults are present
-    var requiredItems = ['avatar_intern', 'hat_none', 'trail_none', 'gear_none', 'cloth_none', 'monster_classic', 'monster_m_ghost'];
+    var requiredItems = ['avatar_intern', 'hat_none', 'trail_none', 'gear_none', 'cloth_none', 'monster_classic', 'hush_blot'];
     for (var ri = 0; ri < requiredItems.length; ri++) {
       if (data.progression.ownedItems.indexOf(requiredItems[ri]) < 0) {
         data.progression.ownedItems.push(requiredItems[ri]);
@@ -822,7 +822,7 @@ class Storage {
     }
 
     // Ensure required owned items
-    var requiredItems = ['avatar_intern', 'avatar_classic', 'hat_none', 'trail_none', 'gear_none', 'cloth_none', 'monster_classic', 'monster_m_ghost'];
+    var requiredItems = ['avatar_intern', 'avatar_classic', 'hat_none', 'trail_none', 'gear_none', 'cloth_none', 'monster_classic', 'hush_blot'];
     for (var i = 0; i < requiredItems.length; i++) {
       if (d.progression.ownedItems.indexOf(requiredItems[i]) < 0) {
         d.progression.ownedItems.push(requiredItems[i]);
@@ -931,14 +931,14 @@ class Storage {
     if (!d.progression.monsterDefaultSeen) {
       d.progression.monsterDefaultSeen = true;
       if (!d.progression.equipped.monster || d.progression.equipped.monster === 'monster_classic') {
-        d.progression.equipped.monster = 'monster_m_ghost';
+        d.progression.equipped.monster = 'hush_blot';
       }
     }
 
     // The original blocky characters and monsters are archived: anyone still wearing one moves to the
     // default (they keep owning it, so bringing the archive back restores it)
     if (isArchivedItem(d.progression.equipped.skin)) d.progression.equipped.skin = 'avatar_intern';
-    if (isArchivedItem(d.progression.equipped.monster)) d.progression.equipped.monster = 'monster_m_ghost';
+    if (isArchivedItem(d.progression.equipped.monster)) d.progression.equipped.monster = 'hush_blot';
 
     // Ensure equipped slots exist
     if (!d.progression.equipped.skin) d.progression.equipped.skin = 'avatar_intern';

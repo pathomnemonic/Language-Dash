@@ -326,12 +326,12 @@ describe('iap-verify: phone-store purchases', () => {
   it('Google Play: a refunded item is taken back, an unknown purchase gives nothing', async () => {
     const h = await boot('../../supabase/functions/iap-verify/index.js');
     storeReply = { status: 200, body: { purchaseState: 1 } };
-    const r = await call(h, { platform: 'android', product_id: 'languagedash_item_trail_fire', token: 'purchase-token-456' }, 'good');
+    const r = await call(h, { platform: 'android', product_id: 'languagedash_item_trail_lanterns', token: 'purchase-token-456' }, 'good');
     expect(r.body).toMatchObject({ ok: true, valid: false, revoked: true, granted: false });
     expect(db.find((c) => c[0] === 'pro_revoke_item')[1]).toMatchObject({ p_user: 'u1', p_item: 'trail_lanterns' });
     db.length = 0;
     storeReply = { status: 404, body: {} };
-    const unknown = await call(h, { platform: 'android', product_id: 'languagedash_item_trail_fire', token: 'purchase-token-789' }, 'good');
+    const unknown = await call(h, { platform: 'android', product_id: 'languagedash_item_trail_lanterns', token: 'purchase-token-789' }, 'good');
     expect(unknown.body).toMatchObject({ ok: true, valid: false, granted: false });
     expect(db.some((c) => c[0].startsWith('pro_grant') || c[0] === 'pro_store_claim')).toBe(false);
   });
@@ -352,7 +352,7 @@ describe('iap-verify: phone-store purchases', () => {
     const h = await boot('../../supabase/functions/iap-verify/index.js');
     storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.someone.else', productId: 'languagedash_pro_lifetime', type: 'Non-Consumable', originalTransactionId: '1' }) } };
     expect((await call(h, { platform: 'ios', product_id: 'languagedash_pro_lifetime', token: '2000000123456' }, 'good')).body).toMatchObject({ ok: true, valid: false, granted: false });
-    storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.example.app', productId: 'languagedash_item_trail_fire', type: 'Non-Consumable', originalTransactionId: '2' }) } };
+    storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.example.app', productId: 'languagedash_item_trail_lanterns', type: 'Non-Consumable', originalTransactionId: '2' }) } };
     expect((await call(h, { platform: 'ios', product_id: 'languagedash_pro_lifetime', token: '2000000123456' }, 'good')).status).toBe(400);
     storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.example.app', productId: 'languagedash_pro_lifetime', type: 'Non-Consumable', originalTransactionId: '3' }) } };
     claimResult = 'other_account';

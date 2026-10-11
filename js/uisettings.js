@@ -906,7 +906,7 @@ export var settingsMethods = {
           btnWrap.appendChild(paintBtn);
         }
 
-        if (type === 'trail' || type === 'monster' || type === 'pal') {
+        if (type === 'trail' || type === 'monster' || type === 'pal' || type === 'hat' || type === 'gear' || type === 'clothing') {
           row.style.cursor = 'pointer';
           row.addEventListener('click', function (e) {
             if (e.target && e.target.closest && e.target.closest('button')) return;
@@ -1008,12 +1008,12 @@ export var settingsMethods = {
     var shopItems = document.getElementById('shopItems');
     clearElement(shopItems);
 
-    var tabBar = createElement('div', { className: 'locker-tabs' + (FEATURES.studyBuddies ? ' five' : ''), attributes: { role: 'tablist', 'aria-label': 'Locker sections' } });
+    var tabBar = createElement('div', { className: 'locker-tabs ' + (FEATURES.studyBuddies ? 'six' : 'five'), attributes: { role: 'tablist', 'aria-label': 'Locker sections' } });
     var fresh = this._lockerFresh || [];
-    var tabOf = function (item) { return item.type === 'skin' ? 'heroes' : item.type === 'trail' ? 'trails' : item.type === 'monster' ? 'monsters' : item.type === 'map' ? 'maps' : item.type === 'pal' ? 'pals' : 'heroes'; };
+    var tabOf = function (item) { return item.type === 'skin' ? 'heroes' : item.type === 'trail' ? 'trails' : item.type === 'monster' ? 'monsters' : item.type === 'map' ? 'maps' : item.type === 'pal' ? 'pals' : (item.type === 'hat' || item.type === 'gear' || item.type === 'clothing') ? 'wardrobe' : 'heroes'; };
     var freshTabs = {};
     LOCKER_ITEMS.forEach(function (item) { if (fresh.indexOf(item.id) >= 0) freshTabs[tabOf(item)] = (freshTabs[tabOf(item)] || 0) + 1; });
-    [['heroes', '🦸', 'Heroes'], ['trails', '✨', 'Trails'], ['maps', '🗺️', 'Maps'], ['monsters', '👾', 'Monsters'], ['pals', '🐾', 'Pals']].filter(function (t) { return t[0] !== 'pals' || FEATURES.studyBuddies; }).forEach(function (t) {
+    [['heroes', '🦸', 'Heroes'], ['wardrobe', '👒', 'Wardrobe'], ['trails', '✨', 'Trails'], ['maps', '🗺️', 'Maps'], ['monsters', '👾', 'Monsters'], ['pals', '🐾', 'Pals']].filter(function (t) { return t[0] !== 'pals' || FEATURES.studyBuddies; }).forEach(function (t) {
       var b = createElement('button', {
         className: 'btn btn-sm locker-tab ' + (listOpen && tab === t[0] ? 'btn-primary' : 'btn-outline'),
         attributes: { type: 'button', role: 'tab', 'aria-selected': listOpen && tab === t[0] ? 'true' : 'false', 'aria-expanded': listOpen && tab === t[0] ? 'true' : 'false' }
@@ -1053,6 +1053,10 @@ export var settingsMethods = {
         'Fully customizable: colors, clothing, headwear and gear all work on these.'));
       if (!ARCHIVE_CLASSIC) shopItems.appendChild(renderGroup('skin', '🚗 Vehicles', isKind('vehicle'),
         'Ride in style. Vehicles cannot wear hats, clothing or gear.'));
+    } else if (tab === 'wardrobe') {
+      shopItems.appendChild(renderGroup('hat', '👒 Hats', null, 'Hats sit on any hero. Tap one (or the eye) to try it on in the display above.'));
+      shopItems.appendChild(renderGroup('gear', '🧳 Gear', null, 'Things a Wordrunner carries. Worn on the back, the chest or the hip.'));
+      shopItems.appendChild(renderGroup('clothing', '🧥 Clothing', null, 'Coats, scarves and shirts that go over a hero\'s own outfit.'));
     } else if (tab === 'trails') {
       shopItems.appendChild(renderGroup('trail', '✨ Trails', null, 'Trails work with every hero. Tap one to see it in the display above.'));
     } else if (tab === 'maps') {

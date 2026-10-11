@@ -1529,6 +1529,7 @@ body:not(.in-game) #noticeDock { bottom: calc(var(--safe-bottom, 0px) + 80px); }
 /* ---------- the Locker: three even tabs on one line, and the hero card ---------- */
 .locker-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0 6px; }
 .locker-tabs.five { grid-template-columns: repeat(5, 1fr); }
+.locker-tabs.six { grid-template-columns: repeat(6, 1fr); }
 .locker-tabs .locker-tab { width: 100%; white-space: nowrap; padding: 8px 1px; font-size: 10px; letter-spacing: 0; justify-content: center; position: relative; min-width: 0; }
 .locker-tabs .locker-tab { flex-direction: column; gap: 1px; line-height: 1.1; overflow: hidden; }
 .locker-tabs .locker-tab .tab-icon { display: block; font-size: 16px; line-height: 1.1; }

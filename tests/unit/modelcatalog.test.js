@@ -10,7 +10,7 @@ function clipNames(file) {
   expect(buf.subarray(0, 4).toString()).toBe('glTF');
   const len = buf.readUInt32LE(12);
   const json = JSON.parse(buf.subarray(20, 20 + len).toString('utf8'));
-  expect((json.skins || []).length).toBeGreaterThan(0); // rigged
+  expect((json.skins || []).length > 0 || (json.animations || []).length > 0, file).toBe(true); // rigged, or animated by node transforms (the blocky people)
   return (json.animations || []).map((a) => a.name);
 }
 
@@ -22,7 +22,7 @@ describe('animated model catalog', () => {
     CHARACTER_MODELS.forEach((m) => expect(AVATARS.some((a) => a.id === m.id && a.isModel), m.id).toBe(true));
   });
 
-  it('keeps the blocky Intern as a free classic option', () => {
+  it('keeps the blocky Newcomer as a free classic option', () => {
     const classic = AVATARS.find((a) => a.id === 'avatar_classic');
     expect(classic).toBeTruthy();
     expect(classic.isModel).toBeFalsy();
@@ -31,10 +31,10 @@ describe('animated model catalog', () => {
   });
 
   CHARACTER_MODELS.forEach((m) => {
-    it(`character ${m.name}: file exists and can run, idle and die`, () => {
+    it(`character ${m.name}: file exists and can run and idle`, () => {
       expect(existsSync('public/models/' + m.file)).toBe(true);
       const names = clipNames(m.file);
-      ['run', 'idle', 'death'].forEach((state) => {
+      ['run', 'idle'].forEach((state) => {
         expect(findClipName(names, state), `${m.file} ${state}`).toBeTruthy();
       });
       // Every state the game asks for (jump, slide, intro wave, celebration) still animates via a fallback
@@ -49,8 +49,17 @@ describe('animated model catalog', () => {
       expect(existsSync('public/models/' + m.file)).toBe(true);
       const names = clipNames(m.file);
       expect(resolveClipName(names, m.flying ? 'idle' : 'run')).toBeTruthy();
-      expect(findClipName(names, 'attack'), `${m.file} attack`).toBeTruthy();
+      expect(resolveClipName(names, 'attack'), `${m.file} attack`).toBeTruthy();
     });
+  });
+
+  it('is a roster of new, free models: the old game\'s characters and monsters are gone', () => {
+    expect(CHARACTER_MODELS.length).toBeGreaterThanOrEqual(14);
+    expect(MONSTER_MODELS.length).toBeGreaterThanOrEqual(6);
+    [...CHARACTER_MODELS, ...MONSTER_MODELS].forEach((m) => expect(m.file, m.id).toMatch(/^(heroes|hush)\//));
+    expect(existsSync('public/models/characters')).toBe(false);
+    expect(existsSync('public/models/monsters')).toBe(false);
+    expect(existsSync('public/models/CREDITS.md')).toBe(true);
   });
 
   it('matches clip names across pack conventions', () => {

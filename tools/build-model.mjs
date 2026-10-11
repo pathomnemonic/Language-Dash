@@ -4,7 +4,7 @@
 //   - drops animation clips the game never plays, resamples keyframes,
 //   - shrinks textures to <= 512px, then compresses meshes with EXT_meshopt_compression.
 //
-//   node tools/build-model.mjs <source.glb|gltf> <dest.glb> [--keep Clip1,Clip2] [--tex 512] [--scale 1]
+//   node tools/build-model.mjs <source.glb|gltf> <dest.glb> [--keep Clip1,Clip2] [--tex 512] [--rename Old=New,...]
 //
 // FBX sources are first converted with tools/fbx-to-glb.mjs.
 import { NodeIO } from '@gltf-transform/core';
@@ -20,6 +20,7 @@ const opt = (name, d) => { const i = argv.indexOf('--' + name); return i >= 0 ? 
 const [src, dest] = argv.filter((a, i) => !a.startsWith('--') && !(i > 0 && argv[i - 1].startsWith('--')));
 if (!src || !dest) { console.error('usage: node tools/build-model.mjs <src> <dest.glb> [--keep a,b] [--tex 512]'); process.exit(1); }
 const texMax = Number(opt('tex', 512));
+const renames = Object.fromEntries((opt('rename', '') ? opt('rename', '').split(',') : []).map((p) => p.split('=')));
 const keepList = opt('keep', '') ? opt('keep', '').split(',') : null;
 
 await MeshoptEncoder.ready;
@@ -29,6 +30,13 @@ const doc = await io.read(src);
 const root = doc.getRoot();
 
 for (const ext of root.listExtensionsUsed()) if (ext instanceof KHRMaterialsUnlit) ext.dispose();
+
+// white vertex colors (the farm animals carry them) only get in the way of recoloring a material
+for (const mesh of root.listMeshes()) for (const prim of mesh.listPrimitives()) {
+  const c = prim.getAttribute('COLOR_0');
+  if (c) { const min = []; c.getMin(min); if (min.slice(0, 3).every((v) => v >= (c.getComponentType() === 5121 ? 255 : 1))) prim.setAttribute('COLOR_0', null); }
+}
+for (const m of root.listMaterials()) if (renames[m.getName()]) m.setName(renames[m.getName()]);
 
 const names = root.listAnimations().map((a) => a.getName());
 const keep = new Set(keepList || []);

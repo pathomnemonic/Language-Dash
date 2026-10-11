@@ -18,7 +18,7 @@ describe('hats and the animated 3D characters', () => {
 
     const eq = storage.get('equipped');
     eq.skin = 'avatar_intern';
-    eq.hat = 'hat_crown';
+    eq.hat = 'hat_beret';
     storage.set('equipped', eq);
 
     const pg = buildPlayer();

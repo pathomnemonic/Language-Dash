@@ -46,7 +46,7 @@ var JUMP_VARIANTS = [
   { id: 'fallen_stretcher', builder: buildToppledBicycle,   bounds: { width: 2.0, height: 0.5, depth: 0.8 } },
   { id: 'medical_waste_bin',builder: buildScooter,          bounds: { width: 0.7, height: 0.7, depth: 0.7 } },
   // A porter pushing a luggage trolley toward you: animated, jump over the trolley
-  { id: 'orderly_gurney',    builder: buildLuggageTrolley,  bounds: { width: 2.2, height: 0.7, depth: 1.2 }, staff: ['characters/explorer.glb', 'characters/scout.glb', 'characters/adventurer.glb'] }
+  { id: 'orderly_gurney',    builder: buildLuggageTrolley,  bounds: { width: 2.2, height: 0.7, depth: 1.2 }, staff: ['heroes/ranger.glb', 'heroes/vest.glb', 'heroes/gamer.glb'] }
 ];
 
 var SLIDE_VARIANTS = [

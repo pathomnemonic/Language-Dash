@@ -8,9 +8,12 @@ import { setupEnvironment } from '../js/game/materials.js';
 
 const FACE = { w: 128, h: 128 };
 const BODY = { w: 104, h: 160 };
-// How much of the figure's height the face picture shows: realistic heroes have small heads, the chibi ones big.
-const REALISTIC = ['avatar_intern', 'avatar_m_nurse', 'avatar_m_paramedic', 'avatar_m_adventurer', 'avatar_m_king'];
-const HEAD_FRACTION = (id) => (REALISTIC.includes(id) ? 0.28 : id === 'avatar_m_rogue' ? 0.32 : 0.52);
+// How much of the figure's height the face picture shows (from the top). The blocky people have big square heads;
+// the animals face the camera, so the crop follows where each one's head sits.
+const HEAD = { avatar_intern: 0.75, hero_llama: 0.36, hero_horse: 0.4, hero_zebra: 0.42, hero_pug: 0.9, hero_cow: 0.8, hero_sheep: 0.85, hero_pig: 0.95, hero_beep: 0.62 };
+// The animals are shown three-quarter on, so the head reads as a head; the people and Pico face the camera.
+const YAW = { avatar_intern: 0.7, hero_llama: 0.7, hero_horse: 0.7, hero_zebra: 0.7, hero_pug: 0.7, hero_cow: 0.7, hero_sheep: 0.7, hero_pig: 0.7 };
+const HEAD_FRACTION = (id) => HEAD[id] || 0.3;
 
 window.renderPortraits = async function () {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
@@ -27,7 +30,7 @@ window.renderPortraits = async function () {
     await loadCharacterModel(url);
     const pg = buildModelCharacter(url, m.scale, undefined, []);
     pg.rotation.y = 0; // the runner already faces away from the game camera; here it faces the +Z camera
-    pg.children[0].rotation.y = 0;
+    pg.children[0].rotation.y = YAW[m.id] || 0;
     updateModelAnimation(pg, 0.4, 'idle');
     scene.add(pg);
     pg.updateMatrixWorld(true);
@@ -45,10 +48,11 @@ window.renderPortraits = async function () {
     };
     const headH = size.y * HEAD_FRACTION(m.id);
     const headTop = box.max.y + size.y * 0.01;
-    const face = shot(FACE, cx - headH / 2, cx + headH / 2, headTop - headH, headTop);
-    const bodyH = size.y * 1.06;
-    const bodyW = bodyH * (BODY.w / BODY.h);
-    const bodyBottom = box.min.y - size.y * 0.04;
+    const hx = YAW[m.id] ? box.max.x - headH * 0.5 : cx; // (a three-quarter animal looks toward +x)
+    const face = shot(FACE, hx - headH / 2, hx + headH / 2, headTop - headH, headTop);
+    const bodyW = Math.max(size.y * 1.06 * (BODY.w / BODY.h), size.x * 1.08);
+    const bodyH = bodyW * (BODY.h / BODY.w);
+    const bodyBottom = box.min.y - size.y * 0.04 - (bodyH - size.y * 1.06) / 2;
     const body = shot(BODY, cx - bodyW / 2, cx + bodyW / 2, bodyBottom, bodyBottom + bodyH);
     out[m.id] = { face, body, height: size.y };
     scene.remove(pg);

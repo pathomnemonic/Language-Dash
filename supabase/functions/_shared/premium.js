@@ -10,13 +10,13 @@
  */
 export var PREMIUM_ITEMS = {
   // heroes
-  avatar_m_king: 299,      // Attending Arthur
-  avatar_m_alien: 249,     // Anatomy Abby
-  avatar_m_robot: 249,     // MRI Mo
-  avatar_m_wizard: 199,    // Pharmacist Pip
-  avatar_m_ninja: 199,     // Night-Shift Nico
+  hero_beep: 299,          // Pico Pocketbot
+  hero_zebra: 249,         // Zola Zebra-Crossing
+  hero_horse: 249,         // Sagaan the Steppe Horse
+  hero_pirate: 199,        // Port-Side Nuno
+  hero_kimono: 199,        // Kaede of Kyoto
   // the monster
-  monster_m_dragon: 149,   // Dragon Lecturer
+  hush_murmur: 149,        // The Murmur
   // maps
   map_aquarium_imaging_center: 149,
   map_dna_helix_tunnel: 149,

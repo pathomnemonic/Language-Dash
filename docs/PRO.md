@@ -206,12 +206,12 @@ Create each of these in **Play Console → Monetize → In-app products** and **
 
 | Product id | Type | USD | Item |
 | --- | --- | --- | --- |
-| `languagedash_item_avatar_m_king` | non-consumable | 2.99 | Attending Arthur |
-| `languagedash_item_avatar_m_alien` | non-consumable | 2.49 | Anatomy Abby |
-| `languagedash_item_avatar_m_robot` | non-consumable | 2.49 | MRI Mo |
-| `languagedash_item_avatar_m_wizard` | non-consumable | 1.99 | Pharmacist Pip |
-| `languagedash_item_avatar_m_ninja` | non-consumable | 1.99 | Night-Shift Nico |
-| `languagedash_item_monster_m_dragon` | non-consumable | 1.49 | Dragon Lecturer |
+| `languagedash_item_hero_beep` | non-consumable | 2.99 | Pico Pocketbot |
+| `languagedash_item_hero_zebra` | non-consumable | 2.49 | Zola Zebra-Crossing |
+| `languagedash_item_hero_horse` | non-consumable | 2.49 | Sagaan the Steppe Horse |
+| `languagedash_item_hero_pirate` | non-consumable | 1.99 | Port-Side Nuno |
+| `languagedash_item_hero_kimono` | non-consumable | 1.99 | Kaede of Kyoto |
+| `languagedash_item_hush_murmur` | non-consumable | 1.49 | The Murmur |
 | `languagedash_item_map_aquarium_imaging_center` | non-consumable | 1.49 | Aquarium Imaging Center |
 | `languagedash_item_map_dna_helix_tunnel` | non-consumable | 1.49 | DNA Helix Tunnel |
 | `languagedash_item_trail_lanterns` | non-consumable | 0.99 | Sky Lanterns |

@@ -480,23 +480,22 @@ export var SHOP_ITEMS = [
 
   // --- Hats (humanoid only) ---
   { id: "hat_none", name: "No Hat", price: 0, type: "hat", color: null, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_cap", name: "Sailor Cap", price: 800, type: "hat", color: 0x40c4ff, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_headlamp", name: "Headlamp", price: 1200, type: "hat", color: 0xffd740, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_crown", name: "Golden Crown", price: 5000, type: "hat", color: 0xffd700, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_halo", name: "Halo", price: 3500, type: "hat", color: 0xffffaa, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_viking", name: "Viking Helmet", price: 2500, type: "hat", color: 0x886644, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_party", name: "Party Hat", price: 1000, type: "hat", color: 0xff44aa, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_chef", name: "Chef Hat", price: 1500, type: "hat", color: 0xffffff, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_graduation", name: "Scholar Cap", price: 2000, type: "hat", color: 0x111111, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_headmirror", name: "Monocle", price: 1000, type: "hat", color: 0xcccccc, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_bandana", name: "Bandana", price: 600, type: "hat", color: 0xff4444, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_tophat", name: "Top Hat", price: 3000, type: "hat", color: 0x111111, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_beanie", name: "Beanie", price: 400, type: "hat", color: 0x4466aa, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_cowboy", name: "Cowboy Hat", price: 1500, type: "hat", color: 0x886644, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_tiara", name: "Tiara", price: 4000, type: "hat", color: 0xffd700, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_propeller", name: "Propeller Hat", price: 800, type: "hat", color: 0xff4488, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_catears", name: "Cat Ears", price: 1200, type: "hat", color: 0xffaacc, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "hat_sunglasses", name: "Sunglasses", price: 700, type: "hat", color: 0x111111, compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_beret", name: "Parisian Beret", price: 400, type: "hat", color: 0xb5373b, icon: "🎨", desc: "Worn at an angle that says: I have opinions about croissants.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_paperboat", name: "Paper Boat Hat", price: 300, type: "hat", color: 0xf1ead6, icon: "⛵", desc: "Folded from yesterday's newspaper. Floats, mostly.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_bucket", name: "Bucket Hat", price: 500, type: "hat", color: 0x4aa56a, icon: "🪣", desc: "Rain, sun, ferry spray: it has handled all three.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_flatcap", name: "Flat Cap", price: 600, type: "hat", color: 0x8a7a66, icon: "🧢", desc: "A tweed cap from a Dublin market, ideal for haggling over idioms.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_tam", name: "Tam o' Shanter", price: 700, type: "hat", color: 0xd9432c, icon: "🏴", desc: "A Scottish bonnet with a red pom-pom you can spot across a glen.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_boater", name: "Gondolier's Boater", price: 800, type: "hat", color: 0xe9d8a0, icon: "🚣", desc: "A straw boater with a striped ribbon, straight off a Venice canal.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_panama", name: "Panama Hat", price: 900, type: "hat", color: 0xe3d3a1, icon: "👒", desc: "Woven in Ecuador, not Panama. Everyone corrects the name.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_bowler", name: "Bowler Hat", price: 1000, type: "hat", color: 0x2b3445, icon: "🎩", desc: "A London bowler: polite, round and always on time.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_ricehat", name: "Rice-Field Hat", price: 1100, type: "hat", color: 0xd7b66e, icon: "🌾", desc: "A wide woven straw cone that keeps off sun and rain from Hanoi to Hunan.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_fez", name: "Marrakech Fez", price: 1300, type: "hat", color: 0xb3262f, icon: "🕌", desc: "A red felt fez bought in the Marrakech souk, tassel included.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_pith", name: "Pith Helmet", price: 1500, type: "hat", color: 0xe9dcb8, icon: "🧭", desc: "For expeditions into the unexplored corners of verb tables.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_ushanka", name: "Ushanka", price: 1700, type: "hat", color: 0x8a8a92, icon: "❄️", desc: "A fur-flapped winter hat for a very long platform in Novosibirsk.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_aviator", name: "Aviator Cap", price: 2000, type: "hat", color: 0x7a4a2a, icon: "🛩️", desc: "Leather cap, goggles pushed up: for dawn flights over any border.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_laurel", name: "Laurel Wreath", price: 2500, type: "hat", color: 0x4aa56a, icon: "🏛️", desc: "For anyone who finishes a long run. Ancient Greece would approve.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_chullo", name: "Chullo", price: 2800, type: "hat", color: 0xd9432c, icon: "🏔️", desc: "A knitted Andean cap with ear flaps and tassels, from a market high above Cusco.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "hat_sombrero", name: "Wide Sombrero", price: 3500, type: "hat", color: 0xd9b366, icon: "🎉", desc: "A wide-brimmed sombrero for the longest, loudest fiesta.", compatibility: COMPAT_HUMANOID_ONLY },
 
   // --- Trails (all avatars) ---
   { id: "trail_none", name: "No Trail", price: 0, type: "trail", color: null, compatibility: COMPAT_ALL },
@@ -515,33 +514,33 @@ export var SHOP_ITEMS = [
 
   // --- Gear (humanoid only) ---
   { id: "gear_none", name: "No Gear", price: 0, type: "gear", color: null, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_steth", name: "Headphones", price: 1000, type: "gear", color: 0x888888, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_clip", name: "Phrasebook", price: 800, type: "gear", color: 0x8d6e3f, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_syringe", name: "Fountain Pen", price: 1200, type: "gear", color: 0x44aaff, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_defib", name: "Megaphone", price: 2500, type: "gear", color: 0xff4444, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_hammer", name: "Auction Gavel", price: 1500, type: "gear", color: 0xcc6622, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_mask", name: "Festival Mask", price: 600, type: "gear", color: 0x88ccdd, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_coffee", name: "Espresso Cup", price: 500, type: "gear", color: 0x8B4513, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_textbook", name: "Pocket Dictionary", price: 700, type: "gear", color: 0x2255aa, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_badge", name: "Guild Badge", price: 300, type: "gear", color: 0xffffff, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_wings", name: "Angel Wings", price: 5000, type: "gear", color: 0xffffff, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_backpack", name: "Backpack", price: 1500, type: "gear", color: 0x44aa44, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_shield_item", name: "Shield", price: 2500, type: "gear", color: 0x4488ff, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_katana", name: "Silver Quill", price: 3000, type: "gear", color: 0xcccccc, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_pager", name: "Travel Radio", price: 500, type: "gear", color: 0x333344, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "gear_ivbag", name: "Souvenir Backpack", price: 1800, type: "gear", color: 0x99ddff, compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_satchel", name: "Airmail Satchel", price: 300, type: "gear", color: 0x8b5a2b, icon: "✉️", desc: "A courier's satchel with red and blue airmail stripes.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_compass", name: "Brass Compass", price: 500, type: "gear", color: 0xd9a63a, icon: "🧭", desc: "Always points north. You choose the direction of the words.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_binoculars", name: "Binoculars", price: 700, type: "gear", color: 0x3b4452, icon: "🔭", desc: "For spotting gates (and birds) from far away.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_tube", name: "Map Tube", price: 800, type: "gear", color: 0x0e8c8a, icon: "🗺️", desc: "A tube of rolled-up maps. One of them is of the Library.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_camera", name: "Pocket Camera", price: 900, type: "gear", color: 0x2f3a4c, icon: "📷", desc: "Snap every sign you cannot read yet.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_pillow", name: "Travel Pillow", price: 1000, type: "gear", color: 0x7b3f6e, icon: "🛌", desc: "A neck pillow for the overnight train and the long vowels.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_umbrella", name: "Furled Umbrella", price: 1200, type: "gear", color: 0x5da9d6, icon: "☂️", desc: "Because it always rains in the one city you forgot to check.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_lantern", name: "Hand Lantern", price: 1400, type: "gear", color: 0xd9a63a, icon: "🏮", desc: "A hand lantern for the Library's lower stacks.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_spyglass", name: "Brass Spyglass", price: 1600, type: "gear", color: 0x8a5f1c, icon: "🔍", desc: "For reading road signs three villages away.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_ukulele", name: "Travelling Ukulele", price: 1800, type: "gear", color: 0xc98a4a, icon: "🎶", desc: "Plays three chords and a farewell song in four languages.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_fan", name: "Folding Fan", price: 2000, type: "gear", color: 0xd9432c, icon: "🌸", desc: "A paper hand fan for hot platforms and sharp comebacks.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_accordion", name: "Street Accordion", price: 2200, type: "gear", color: 0xb3262f, icon: "🎵", desc: "A squeezebox that has played every station platform in Europe.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_suitcase", name: "Sticker Suitcase", price: 2500, type: "gear", color: 0xd9432c, icon: "🧳", desc: "A hard-shell case with a sticker from every stop.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_kite", name: "Festival Kite", price: 2800, type: "gear", color: 0xd9432c, icon: "🪁", desc: "A diamond kite with a long tail that follows you across the sky.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "gear_globe", name: "Pocket Globe", price: 3500, type: "gear", color: 0x3e86c4, icon: "🌍", desc: "A little world to spin when you cannot choose where to go next.", compatibility: COMPAT_HUMANOID_ONLY },
 
   // --- Clothing (humanoid only) ---
   { id: "cloth_none", name: "No Clothing", price: 0, type: "clothing", color: null, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "cloth_scrubs", name: "Traveller's Jacket", price: 500, type: "clothing", color: 0x4488cc, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "cloth_labcoat", name: "Trench Coat", price: 1000, type: "clothing", color: 0xffffff, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "cloth_surgical_gown", name: "Explorer's Cloak", price: 800, type: "clothing", color: 0x44aa77, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "cloth_hawaiian", name: "Hawaiian Shirt", price: 1500, type: "clothing", color: 0xff6644, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "cloth_tuxedo", name: "Tuxedo", price: 3000, type: "clothing", color: 0x111111, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "cloth_jersey", name: "Sports Jersey", price: 1200, type: "clothing", color: 0xff2222, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "cloth_armor", name: "Body Armor", price: 4000, type: "clothing", color: 0x666677, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "cloth_cape_red", name: "Red Cape", price: 2000, type: "clothing", color: 0xdd2222, compatibility: COMPAT_HUMANOID_ONLY },
-  { id: "cloth_cape_rainbow", name: "Rainbow Cape", price: 5000, type: "clothing", color: 0xff44ff, compatibility: COMPAT_HUMANOID_ONLY }
+  { id: "cloth_scarf", name: "Tartan Scarf", price: 500, type: "clothing", color: 0xd9432c, icon: "🧣", desc: "A wool tartan scarf with fringe. Cosy in every climate.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "cloth_linen", name: "Linen Shirt", price: 800, type: "clothing", color: 0xe9dcc2, icon: "👕", desc: "A breezy linen shirt, creased by the best journeys.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "cloth_denim", name: "Denim Jacket", price: 1000, type: "clothing", color: 0x4a78b0, icon: "👖", desc: "Faded denim with brass buttons, the same in every language.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "cloth_slicker", name: "Rain Slicker", price: 1200, type: "clothing", color: 0xf2c230, icon: "🌧️", desc: "Bright yellow with a deep hood, ready for any harbour.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "cloth_tracksuit", name: "Tracksuit", price: 1500, type: "clothing", color: 0x0e8c8a, icon: "🏃", desc: "Teal with white stripes, made for sprinting through stations.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "cloth_happi", name: "Festival Happi", price: 2000, type: "clothing", color: 0x1f3a6b, icon: "🎐", desc: "A navy happi coat with a white collar, worn at Japanese summer festivals.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "cloth_vest", name: "Alpine Vest", price: 2200, type: "clothing", color: 0x2e9e5b, icon: "⛰️", desc: "A green waistcoat with red lacing, from a village above the tree line.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "cloth_parka", name: "Expedition Parka", price: 2800, type: "clothing", color: 0xd9742c, icon: "🧊", desc: "A hooded parka with a fur ruff for the coldest border crossings.", compatibility: COMPAT_HUMANOID_ONLY },
+  { id: "cloth_poncho", name: "Striped Poncho", price: 3000, type: "clothing", color: 0xd9432c, icon: "🌄", desc: "A woven poncho with fringe, in the colours of an Andean market.", compatibility: COMPAT_HUMANOID_ONLY },
 ];
 
 // --- Pals (see companions.js): a travel companion on the Home screen; one free, the rest to buy, and "no buddy" for anyone who prefers none ---
@@ -573,9 +572,11 @@ PALS.forEach(function (p) {
       intern.name = m.name;
       intern.desc = m.desc;
       intern.bodyColor = m.color;
+      intern.icon = m.icon;
       intern.parts = m.parts || [];
+      intern.scale = m.scale || 1.0;
       // (the Locker lists the shop entry, so it takes the hero's name too)
-      SHOP_ITEMS.forEach(function (it) { if (it.id === "avatar_intern") it.name = m.name; });
+      SHOP_ITEMS.forEach(function (it) { if (it.id === "avatar_intern") { it.name = m.name; it.icon = m.icon; it.color = m.color; } });
       return;
     }
     AVATARS.push({
@@ -589,7 +590,7 @@ PALS.forEach(function (p) {
       shoeColor: 0x222233,
       skinColor: 0xe0b090,
       hairColor: 0x332211,
-      scale: 1.0,
+      scale: m.scale || 1.0,
       legSpeed: 1.0,
       armSwing: 1.0,
       isModel: true,
@@ -625,9 +626,9 @@ var ARCHIVED_IDS = {};
 /** True for an archived character or monster (kept in code, hidden from players). */
 export function isArchivedItem(id) { return ARCHIVE_CLASSIC && ARCHIVED_IDS[id] === true; }
 
-// Delisted heroes: these models are painted as one picture, so they can only be tinted as a whole, not piece by piece.
-// For now the shop does not sell them; a player who already owns one keeps it (the Locker still shows it to them).
-export var DELISTED_HEROES = ["avatar_m_explorer", "avatar_m_scout", "avatar_m_zombie", "avatar_m_skeleton"];
+// Delisted heroes: ids the shop no longer sells; a player who already owns one keeps it (the Locker still shows it to them).
+// None at the moment: every hero in the roster is for sale.
+export var DELISTED_HEROES = [];
 
 /** True for a hero that is no longer sold (it stays with anyone who owns it). */
 export function isDelisted(id) { return DELISTED_HEROES.indexOf(id) >= 0; }

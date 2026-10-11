@@ -1,203 +1,101 @@
 /**
- * modelcatalog.js — the animated 3D characters and monsters.
+ * modelcatalog.js — the animated 3D heroes and Hush monsters.
  *
- * All models are by Quaternius, released CC0 (public domain), and were
- * downloaded from poly.pizza. See README "Credits". Paths are relative to the
- * site base (public/models/...).
+ * Every model here is a free download (CC0 unless noted) and is credited in public/models/CREDITS.md and the
+ * README: Kenney (Blocky Characters, 3D Platformer kit), Quaternius (Farm Animals, Animated Monsters, Cute Monsters)
+ * and the Khronos glTF sample Fox. Paths are relative to the site base (public/models/...).
  *
- * Characters become avatars (shop type "skin"); monsters become the Hush's relatives
- * (shop type "monster"). `flying` monsters hover above the runner, the rest
- * stalk along the ground behind them.
+ * Heroes become avatars (shop type "skin"); monsters become the Hush's relatives (shop type "monster").
+ * `flying` monsters hover above the runner, the rest stalk along the ground behind them.
  */
 
 /**
- * Colors a character can be dressed in. A palette is a list of swatches; "Original" (hex 0) is always
- * offered first and keeps the model's own color. Each character has its own parts and its own palettes.
+ * Colors a hero can be dressed in. A palette is a list of swatches; "Original" (hex 0) is always offered first
+ * and keeps the model's own color. Each hero has its own parts and its own palettes.
  */
 function swatches(list) {
   return [{ name: 'Original', hex: 0 }].concat(list.map(function (c) { return { name: c[0], hex: c[1] }; }));
 }
 
-var JACKETS = swatches([['Teal', 0x1fa3b5], ['Harbour blue', 0x5bc4dc], ['Navy', 0x2b4a8c], ['Sage green', 0x2e9e7c], ['Purple', 0x7a4fb5], ['Maroon', 0x9a2f45], ['Pink', 0xe86fa0], ['Black', 0x23262b]]);
-var PASTELS = swatches([['Rose', 0xf08aa8], ['Lilac', 0xb08ad8], ['Mint', 0x7fd6b4], ['Sky', 0x7fb8f0], ['Peach', 0xf4a77a], ['Butter', 0xf0d36a]]);
+var FUR = swatches([['Ginger', 0xc8742a], ['Chocolate', 0x5a3a24], ['Honey', 0xe0b060], ['Cream', 0xf0e2c0], ['Slate', 0x6a7480], ['Charcoal', 0x34363c]]);
+var WOOL = swatches([['Snow', 0xffffff], ['Rose', 0xf4b0c4], ['Sky', 0xa8d0f4], ['Mint', 0xa8e8cc], ['Butter', 0xf4e49a], ['Lilac', 0xcdb4ee]]);
 var DARKS = swatches([['Black', 0x1d1f24], ['Charcoal', 0x3b4048], ['Navy', 0x233a6b], ['Forest', 0x2f5a3a], ['Wine', 0x6a2a3a], ['Brown', 0x6a4a2a]]);
-var EARTH = swatches([['Olive', 0x5c6b3a], ['Khaki', 0xb59a63], ['Rust', 0xa8502a], ['Sand', 0xd8c28a], ['Slate', 0x56667a], ['Moss', 0x3f6b3a]]);
 var BRIGHTS = swatches([['Red', 0xd93030], ['Orange', 0xf08a24], ['Yellow', 0xf2cf2a], ['Lime', 0x8ad03a], ['Blue', 0x2a7ad9], ['Violet', 0x8a4fd9]]);
-var HIVIS = swatches([['Porter orange', 0xff6a1a], ['Porter yellow', 0xe8f030], ['Red', 0xd93030], ['Lime', 0x8ad03a], ['Blue', 0x2a7ad9], ['White', 0xf2f2f2]]);
-var SAFETY = swatches([['Safety yellow', 0xf2cf2a], ['White', 0xf2f2f2], ['Red', 0xd93030], ['Blue', 0x2a7ad9], ['Orange', 0xf08a24], ['Black', 0x1d1f24]]);
-var ROYAL = swatches([['Royal red', 0xb02a3a], ['Royal blue', 0x2a4aa8], ['Emerald', 0x1f8a5a], ['Purple', 0x6a3aa8], ['Black', 0x1d1f24], ['Gold', 0xd4a83a]]);
-var METALS = swatches([['Chrome', 0xc8d0d8], ['Gold', 0xd4a83a], ['Copper', 0xb8683a], ['Cobalt', 0x2a5ad9], ['Mint', 0x5ad9b0], ['Pink', 0xe86fa0]]);
-var ALIEN = swatches([['Green', 0x4ad05a], ['Violet', 0x9a5ae0], ['Blue', 0x3a8ae0], ['Pink', 0xe86fa0], ['Orange', 0xf08a24], ['Grey', 0x9aa4b0]]);
-var ORC = swatches([['Moss', 0x5a7a3a], ['Swamp', 0x3a6b4a], ['Slate', 0x56667a], ['Ember', 0xa8502a], ['Violet', 0x6a4a8a], ['Bone', 0xc8c0a0]]);
-var ROBES = swatches([['Midnight', 0x24306a], ['Violet', 0x6a3aa8], ['Crimson', 0xa82a3a], ['Emerald', 0x1f7a5a], ['Teal', 0x1f8a9a], ['Ash', 0x7a808a]]);
-var NINJA = swatches([['Black', 0x15161a], ['Crimson', 0xa82a2a], ['Navy', 0x1f2f5a], ['Forest', 0x2a5a3a], ['Violet', 0x4a2a6a], ['Snow', 0xe8eef2]]);
-var SKIN_TONES = swatches([['Fair', 0xf3d2b6], ['Light', 0xe6b48c], ['Tan', 0xc98f62], ['Brown', 0xa8734d], ['Deep', 0x6f4630], ['Ebony', 0x4a2e20]]);
-var HAIR_COLORS = swatches([['Black', 0x15110f], ['Dark brown', 0x3b2418], ['Auburn', 0x7a3a22], ['Blonde', 0xe0c070], ['Ginger', 0xb4521f], ['Silver', 0xb8bcc4], ['Pink', 0xe86fa0], ['Blue', 0x3a7ae0]]);
-// for characters painted as one picture: the whole figure takes the tint, so the choices are light enough to stay readable
+var HOOF = swatches([['Black', 0x1d1f24], ['Rose', 0xe08aa0], ['Gold', 0xd4a83a], ['Bone', 0xe8dcc0], ['Teal', 0x2a9a9a]]);
+var PIGS = swatches([['Pink', 0xf0a6b0], ['Peach', 0xf4c0a0], ['Spotted tan', 0xc89a6a], ['Lilac', 0xcdb4ee], ['Mint', 0xa8e8cc]]);
+var HORSES = swatches([['Bay', 0x7a4a30], ['Chestnut', 0xa8502a], ['Palomino', 0xe0b060], ['Grey', 0x9aa0a8], ['Black', 0x24262a], ['Cream', 0xf0e2c0]]);
+// for heroes painted as one picture: the whole figure takes the tint, so the choices are light enough to stay readable
 var WASH = swatches([['Rose', 0xff9fbd], ['Sky', 0x9fd0ff], ['Mint', 0x9fffcf], ['Sunny', 0xffe58a], ['Peach', 0xffb98a], ['Lilac', 0xcfa8ff], ['Ice', 0xd8f0ff]]);
-var SHOES = swatches([['White', 0xf2f2f2], ['Black', 0x1d1f24], ['Pink', 0xe86fa0], ['Sky', 0x7fb8f0], ['Red', 0xd93030]]);
 
 /**
- * The animated 3D characters. `parts` are the pieces of a character a player can recolor (each part
- * is one or more of the model's materials), with a palette that suits that piece. Characters whose
- * model is a single painted texture (Rancher Rafa, Mapmaker Mona, Jetlag Jo, Carlota Calavera) get one part that tints the whole figure.
- * Every hero is a Wordrunner of the Lexicon Guild (see docs/WORLD.md and js/stories.js).
+ * The animated 3D heroes. `parts` are the pieces of a hero a player can recolor (each part is one or more of
+ * the model's materials), with a palette that suits that piece. Models painted as one texture (the blocky people,
+ * the fox, Pico) get one part that tints the whole figure. `scale` sizes a hero against the standard runner
+ * height (long animals are shrunk so they fit a lane). Every hero is a Wordrunner of the Lexicon Guild
+ * (see docs/WORLD.md and js/stories.js). The free starter keeps the stable id "avatar_intern" that saves, the
+ * leaderboard and the database already know; its name and model are the fox's.
  */
 export var CHARACTER_MODELS = [
-  { id: 'avatar_intern', name: 'Tour-Guide Tiago', desc: 'Lisbon guide who leads with a tiny flag and says "this way, please" in six accents. (pt, es)', file: 'characters/doctor.glb', price: 0, icon: '🚩', color: 0x1fa3b5,
+  { id: 'avatar_intern', name: 'Fika Fox', desc: 'Stockholm courier who never skips a coffee break and learns one new word per cup. (sv, en)', file: 'heroes/fox.glb', price: 0, icon: '🦊', color: 0xe8742a, scale: 0.78,
+    parts: [{ key: 'tint', label: 'Fur wash', materials: ['fox_material'], palette: WASH }] },
+  { id: 'hero_dummy', name: 'Crash-Test Kuba', desc: 'Warsaw safety tester who falls over beautifully and gets back up every single time. (pl, en)', file: 'heroes/dummy.glb', price: 1000, icon: '🦺', color: 0xf2b134,
+    parts: [{ key: 'tint', label: 'Suit wash', materials: ['texture-d'], palette: WASH }] },
+  { id: 'hero_llama', name: 'Lola Llama', desc: 'Cusco pack-llama who carries four languages, six bags and one very small hat. (es, en)', file: 'heroes/llama.glb', price: 1400, icon: '🦙', color: 0xb08a63, scale: 1.15,
     parts: [
-      { key: 'top', label: 'Jacket', materials: ['LightBrown'], palette: JACKETS },
-      { key: 'pants', label: 'Trousers', materials: ['LightBlue'], palette: JACKETS },
-      { key: 'skin', label: 'Skin', materials: ['Skin', 'Skin_Darker'], palette: SKIN_TONES },
-      { key: 'hair', label: 'Hair', materials: ['Hair'], palette: HAIR_COLORS }
+      { key: 'wool', label: 'Wool', materials: ['Brown'], palette: FUR },
+      { key: 'face', label: 'Face & socks', materials: ['White'], palette: WOOL },
+      { key: 'hooves', label: 'Hooves & ears', materials: ['Grey'], palette: HOOF }
     ] },
-  { id: 'avatar_m_nurse', name: 'Captain Klara', desc: 'Gdansk ferry captain who announces every stop in three languages. Nobody has missed one. (pl, sv)', file: 'characters/nurse.glb', price: 1250, icon: '⚓', color: 0x5bc4dc,
+  { id: 'hero_pug', name: 'Percy Pug', desc: 'Piccadilly pug who has opinions about queueing and tea, and shares both loudly. (en, fr)', file: 'heroes/pug.glb', price: 1800, icon: '🐶', color: 0xe0c08a, scale: 0.8,
     parts: [
-      { key: 'top', label: 'Jacket', materials: ['White'], palette: PASTELS },
-      { key: 'pants', label: 'Trousers', materials: ['Orange'], palette: PASTELS },
-      { key: 'shoes', label: 'Shoes', materials: ['Grey'], palette: SHOES },
-      { key: 'skin', label: 'Skin', materials: ['Skin'], palette: SKIN_TONES },
-      { key: 'hair', label: 'Hair', materials: ['Hair_Blond', 'Hair_Brown'], palette: HAIR_COLORS }
+      { key: 'coat', label: 'Coat', materials: ['Beige'], palette: FUR },
+      { key: 'mask', label: 'Mask & ears', materials: ['Brown'], palette: DARKS }
     ] },
-  { id: 'avatar_m_paramedic', name: 'Platform Pavan', desc: 'Delhi station porter: bags on his head, every announcement by heart. (hi, en)', file: 'characters/paramedic.glb', price: 1700, icon: '🧳', color: 0xff6a1a,
+  { id: 'hero_professor', name: 'Nonno Nico', desc: 'Bologna grandfather who swears pasta is a language and teaches it with both hands. (it, en)', file: 'heroes/professor.glb', price: 2200, icon: '🍝', color: 0x9fc4ea,
+    parts: [{ key: 'tint', label: 'Shirt wash', materials: ['texture-i'], palette: WASH }] },
+  { id: 'hero_cow', name: 'Clara Cowbell', desc: 'Swiss alpine cow whose bell announces every sentence before she has finished it. (de, fr, it)', file: 'heroes/cow.glb', price: 2600, icon: '🐄', color: 0x3a3a40, scale: 0.85,
     parts: [
-      { key: 'helmet', label: 'Helmet', materials: ['Worker_Yellow'], palette: SAFETY },
-      { key: 'vest', label: 'Vest', materials: ['Worker_Vest'], palette: HIVIS },
-      { key: 'pants', label: 'Pants', materials: ['Brown'], palette: DARKS },
-      { key: 'skin', label: 'Skin', materials: ['Skin'], palette: SKIN_TONES }
+      { key: 'patches', label: 'Patches', materials: ['Black'], palette: DARKS },
+      { key: 'coat', label: 'Coat', materials: ['White'], palette: WOOL },
+      { key: 'nose', label: 'Nose', materials: ['Pink'], palette: PIGS }
     ] },
-  { id: 'avatar_m_intern', name: 'Trekker Tove', desc: 'Swedish hiker who answers "how far?" with "just over that hill". Always. (sv, en)', file: 'characters/explorer.glb', price: 850, icon: '🧭', color: 0x2288dd,
+  { id: 'hero_vest', name: 'Viennese Vera', desc: 'Vienna cafe waitress in a purple waistcoat who remembers every order in three languages. (de, it)', file: 'heroes/vest.glb', price: 3000, icon: '☕', color: 0x7b3f6e,
+    parts: [{ key: 'tint', label: 'Waistcoat wash', materials: ['texture-e'], palette: WASH }] },
+  { id: 'hero_ranger', name: 'Ranger Ravi', desc: 'Sikkim park ranger who names every bird in Hindi, then again in English for the tourists. (hi, en)', file: 'heroes/ranger.glb', price: 3400, icon: '🌲', color: 0x2e7a4a,
+    parts: [{ key: 'tint', label: 'Uniform wash', materials: ['texture-m'], palette: WASH }] },
+  { id: 'hero_sheep', name: 'Merino Mateo', desc: 'Patagonian sheep who counts everything in Spanish and falls asleep at eleven. Tonight it is ten. (es, en)', file: 'heroes/sheep.glb', price: 3800, icon: '🐑', color: 0xe8e8e8, scale: 0.85,
     parts: [
-      { key: 'shirt', label: 'Shirt', materials: ['Shirt'], palette: BRIGHTS },
-      { key: 'sleeves', label: 'Sleeves', materials: ['UnderShirt'], palette: EARTH },
-      { key: 'pants', label: 'Pants', materials: ['Pants'], palette: EARTH },
-      { key: 'boots', label: 'Boots', materials: ['Boots'], palette: DARKS },
-      { key: 'skin', label: 'Skin', materials: ['Skin'], palette: SKIN_TONES },
-      { key: 'hair', label: 'Hair', materials: ['Hair'], palette: HAIR_COLORS }
+      { key: 'wool', label: 'Wool', materials: ['White'], palette: WOOL },
+      { key: 'face', label: 'Face & legs', materials: ['Black'], palette: DARKS }
     ] },
-  { id: 'avatar_m_explorer', name: 'Rancher Rafa', desc: 'Pampas rancher who learned English from a radio drama and a very patient horse. (es, en)', file: 'characters/matt.glb', price: 2100, icon: '🐎', color: 0xc9a06a,
+  { id: 'hero_kimono', name: 'Kaede of Kyoto', desc: 'Tea-house host who corrects your politeness one gentle sip at a time. (ja, en)', file: 'heroes/kimono.glb', price: 4200, icon: '🍵', color: 0x1f8a6a,
+    parts: [{ key: 'tint', label: 'Kimono wash', materials: ['texture-n'], palette: WASH }] },
+  { id: 'hero_pig', name: 'Truffle Tonio', desc: 'Piedmont truffle pig with the best nose in Italy and a growing list of French phrases. (it, fr)', file: 'heroes/pig.glb', price: 4600, icon: '🐖', color: 0xe8a0a8, scale: 0.7,
     parts: [
-      { key: 'tint', label: 'Ranch wash', materials: ['Atlas'], palette: WASH }
+      { key: 'hide', label: 'Hide', materials: ['Hide'], palette: PIGS },
+      { key: 'hooves', label: 'Hooves', materials: ['Hooves'], palette: HOOF }
     ] },
-  { id: 'avatar_m_adventurer', name: 'Backpacker Bao', desc: 'Twelve countries so far; his phrasebook is mostly tape and sticky notes. (zh, ja)', file: 'characters/adventurer.glb', price: 2650, icon: '🎒', color: 0x8a6a3a,
+  { id: 'hero_horse', name: 'Sagaan the Steppe Horse', desc: 'Mongolian steppe horse who has outrun three storms and one very long phrasebook. (zh, ru)', file: 'heroes/horse.glb', price: 5000, icon: '🐎', color: 0x7a4a30, scale: 1.0,
     parts: [
-      { key: 'shirt', label: 'Shirt', materials: ['Green'], palette: BRIGHTS },
-      { key: 'pants', label: 'Pants', materials: ['Brown'], palette: EARTH },
-      { key: 'pack', label: 'Backpack', materials: ['LightGreen'], palette: HIVIS },
-      { key: 'skin', label: 'Skin', materials: ['Skin'], palette: SKIN_TONES },
-      { key: 'hair', label: 'Hair', materials: ['Hair'], palette: HAIR_COLORS }
+      { key: 'coat', label: 'Coat', materials: ['Coat'], palette: HORSES },
+      { key: 'mane', label: 'Mane', materials: ['Mane'], palette: DARKS }
     ] },
-  { id: 'avatar_m_rogue', name: 'Hoodie Hana', desc: 'Seoul night owl with six snack pockets who whispers the answer a beat early. (ko, ja)', file: 'characters/hooded.glb', price: 3200, icon: '🥟', color: 0x55506a,
+  { id: 'hero_pirate', name: 'Port-Side Nuno', desc: 'Porto harbour pilot with an eye patch (a gull, long story) and a parrot that only speaks Portuguese. (pt, en)', file: 'heroes/pirate.glb', price: 5500, icon: '🦜', color: 0x2f3a7a,
+    parts: [{ key: 'tint', label: 'Coat wash', materials: ['texture-p'], palette: WASH }] },
+  { id: 'hero_zebra', name: 'Zola Zebra-Crossing', desc: 'Serengeti-born crossing guard whose stripes are so crisp that everyone stops and looks both ways. (en, fr)', file: 'heroes/zebra.glb', price: 6000, icon: '🦓', color: 0xeeeeee, scale: 1.0,
     parts: [
-      { key: 'cloak', label: 'Hood & cloak', materials: ['DarkBrown'], palette: ROBES },
-      { key: 'pants', label: 'Pants', materials: ['Black'], palette: DARKS },
-      { key: 'tunic', label: 'Tunic & boots', materials: ['LightBrown'], palette: EARTH },
-      { key: 'skin', label: 'Skin', materials: ['Skin'], palette: SKIN_TONES }
+      { key: 'coat', label: 'Coat', materials: ['White'], palette: WOOL },
+      { key: 'stripes', label: 'Stripes', materials: ['Black'], palette: BRIGHTS }
     ] },
-  { id: 'avatar_m_scout', name: 'Mapmaker Mona', desc: 'Cairo mapmaker who doodles a smug camel on every map she draws. (ar, fr)', file: 'characters/scout.glb', price: 3850, icon: '🗺️', color: 0x3fa98a,
-    parts: [
-      { key: 'tint', label: 'Map wash', materials: ['rogue_texture'], palette: WASH }
-    ] },
-  { id: 'avatar_m_zombie', name: 'Jetlag Jo', desc: 'Landed three time zones ago and has not caught up. Still answers first. (en, es)', file: 'characters/zombie.glb', price: 4550, icon: '🥱', color: 0x6a9a5a,
-    parts: [
-      { key: 'tint', label: 'Travel wash', materials: ['Atlas'], palette: WASH }
-    ] },
-  { id: 'avatar_m_ninja', name: 'Nimble Nao', desc: 'Tokyo night courier on a silent bike: delivers parcels and perfect politeness. (ja, en)', file: 'characters/ninja.glb', price: 5250, icon: '🚲', color: 0x333344,
-    parts: [
-      { key: 'outfit', label: 'Outfit', materials: ['Ninja_Main'], palette: NINJA },
-      { key: 'sash', label: 'Sash', materials: ['Belt'], palette: BRIGHTS }
-    ] },
-  { id: 'avatar_m_skeleton', name: 'Carlota Calavera', desc: 'Fiesta skeleton from Oaxaca who rattles through every song and will not sit down. (es)', file: 'characters/skeleton.glb', price: 5950, icon: '💃', color: 0xe8e4d0,
-    parts: [
-      { key: 'tint', label: 'Fiesta wash', materials: ['Atlas.003', 'Material.002'], palette: WASH }
-    ] },
-  { id: 'avatar_m_orc', name: 'Gruff Gerda', desc: 'Big, green, unbothered Black Forest baker. Says "genau" like a full stop. (de, nl)', file: 'characters/orc.glb', price: 5950, icon: '🥨', color: 0x5a7a3a,
-    parts: [
-      { key: 'skin', label: 'Skin', materials: ['Orc_Main'], palette: ORC },
-      { key: 'belt', label: 'Belt', materials: ['Belt'], palette: EARTH },
-      { key: 'mohawk', label: 'Mohawk', materials: ['Orc_Hair'], palette: BRIGHTS }
-    ] },
-  { id: 'avatar_m_wizard', name: 'Polyglot Pip', desc: 'Casts spells in fourteen languages and mispronounces the fifteenth. (it, fr, en)', file: 'characters/wizard.glb', price: 7000, icon: '🧙', color: 0x6a3aa8,
-    parts: [
-      { key: 'robe', label: 'Robe & hat', materials: ['Wizard_Main'], palette: ROBES },
-      { key: 'trim', label: 'Trim', materials: ['Wizard_Secondary'], palette: METALS }
-    ] },
-  { id: 'avatar_m_alien', name: 'Abby Abroad', desc: 'An alien on exchange in Amsterdam: learned Dutch from bike bells and cheese labels. (nl, en)', file: 'characters/alien.glb', price: 8050, icon: '👽', color: 0x7ad07a,
-    parts: [
-      { key: 'skin', label: 'Skin', materials: ['Main'], palette: ALIEN },
-      { key: 'stripe', label: 'Stripe', materials: ['Stripe'], palette: BRIGHTS }
-    ] },
-  { id: 'avatar_m_robot', name: 'Babelbot Mo', desc: 'Built to translate anything; keeps translating the toaster by accident. (ja, zh, en)', file: 'characters/robot.glb', price: 8050, icon: '🤖', color: 0xaab4c4,
-    parts: [
-      { key: 'body', label: 'Body', materials: ['Main'], palette: METALS },
-      { key: 'trim', label: 'Trim', materials: ['Grey'], palette: BRIGHTS }
-    ] },
-  { id: 'avatar_m_hooded', name: 'Cipher Cass', desc: 'Hooded codebreaker who solves ciphers on cafe napkins between sips of tea. (ru, pl)', file: 'characters/rogue-hooded.glb', price: 5600, icon: '🔐', color: 0x3fa98a,
-    parts: [
-      { key: 'hood', label: 'Hood', materials: ['Head'], palette: NINJA, flat: true },
-      { key: 'skin', label: 'Skin', materials: ['Face'], palette: SKIN_TONES },
-      { key: 'cape', label: 'Cape', materials: ['Cape'], palette: NINJA },
-      { key: 'body', label: 'Jacket', materials: ['Body'], palette: JACKETS },
-      { key: 'arms', label: 'Sleeves', materials: ['Arms'], palette: JACKETS },
-      { key: 'legs', label: 'Trousers', materials: ['Legs'], palette: DARKS }
-    ] },
-  { id: 'avatar_m_barbarian', name: 'Haggler Hamza', desc: 'Souk stallholder who haggles in three languages and always adds a free fig. (ar, fr)', file: 'characters/barbarian.glb', price: 4200, icon: '🍈', color: 0xa8502a,
-    parts: [
-      { key: 'headwear', label: 'Helmet', materials: ['Headwear'], palette: EARTH },
-      { key: 'cape', label: 'Cape', materials: ['Cape'], palette: DARKS },
-      { key: 'body', label: 'Vest', materials: ['Body'], palette: HIVIS },
-      { key: 'arms', label: 'Arms', materials: ['Arms'], palette: HIVIS },
-      { key: 'legs', label: 'Legs', materials: ['Legs'], palette: DARKS },
-      { key: 'skin', label: 'Skin', materials: ['Face'], palette: SKIN_TONES },
-      { key: 'hair', label: 'Hair', materials: ['Head'], palette: HAIR_COLORS, flat: true }
-    ] },
-  { id: 'avatar_m_knight', name: 'Dame Dorotea', desc: 'Knight of the Great Library; guards the irregular-verbs shelf with a polished shield. (it, fr)', file: 'characters/knight.glb', price: 6300, icon: '🛡️', color: 0x9aa4b0,
-    parts: [
-      { key: 'headwear', label: 'Helmet', materials: ['Headwear'], palette: METALS },
-      { key: 'cape', label: 'Cape', materials: ['Cape'], palette: ROYAL },
-      { key: 'body', label: 'Armor', materials: ['Body'], palette: METALS },
-      { key: 'arms', label: 'Arms', materials: ['Arms'], palette: METALS },
-      { key: 'legs', label: 'Legs', materials: ['Legs'], palette: DARKS },
-      { key: 'skin', label: 'Skin', materials: ['Face'], palette: SKIN_TONES }
-    ] },
-  { id: 'avatar_m_mage', name: 'Professor Palimpsest', desc: 'Reads faded scripts nobody else can, with a cup of tea going cold beside her. (ar, ru)', file: 'characters/mage.glb', price: 7650, icon: '📜', color: 0x6a3aa8,
-    parts: [
-      { key: 'headwear', label: 'Hat', materials: ['Headwear'], palette: ROBES },
-      { key: 'cape', label: 'Cape', materials: ['Cape'], palette: ROBES },
-      { key: 'body', label: 'Robe', materials: ['Body'], palette: ROBES },
-      { key: 'arms', label: 'Arms', materials: ['Arms'], palette: ROBES },
-      { key: 'legs', label: 'Legs', materials: ['Legs'], palette: DARKS },
-      { key: 'skin', label: 'Skin', materials: ['Face'], palette: SKIN_TONES },
-      { key: 'hair', label: 'Hair', materials: ['Head'], palette: HAIR_COLORS, flat: true }
-    ] },
-  { id: 'avatar_m_king', name: 'Guildmaster Gustav', desc: 'Runs the Lexicon Guild. The crown suits him; the dictionary under his arm suits him more. (sv, de)', file: 'characters/king.glb', price: 11200, icon: '👑', color: 0xd4a83a,
-    parts: [
-      { key: 'tunic', label: 'Tunic & boots', materials: ['Metal'], palette: ROYAL },
-      { key: 'trousers', label: 'Trousers', materials: ['DarkBrown'], palette: DARKS },
-      { key: 'sleeves', label: 'Sleeves', materials: ['Blue'], palette: ROYAL },
-      { key: 'skin', label: 'Skin', materials: ['Skin'], palette: SKIN_TONES },
-      { key: 'hair', label: 'Hair & beard', materials: ['Hair_White'], palette: HAIR_COLORS },
-      { key: 'crown', label: 'Crown', materials: ['Gold'], palette: METALS }
-    ] }
+  { id: 'hero_beep', name: 'Pico Pocketbot', desc: 'A pocket-size translator gadget with far too much antenna. Beeps in Japanese when it is happy. (ja, ko)', file: 'heroes/beep.glb', price: 7400, icon: '📻', color: 0x7a4fb5, scale: 0.9,
+    parts: [{ key: 'tint', label: 'Casing wash', materials: ['colormap'], palette: WASH }] }
 ];
 
 /**
- * Characters that were retired because they were the same model as another one in a different color
- * (Captain Klara and two others were one mesh) or the same kind of robot. Players who owned
- * one are moved to the character it duplicated, and refunded.
+ * Heroes that were retired, with what they became. No saves from before the 3D roster rebuild exist, so there is
+ * nothing to migrate; the table stays so a future retirement has somewhere to go (storage.js reads it).
  */
-export var RETIRED_CHARACTERS = {
-  avatar_m_resident: { to: 'avatar_intern', price: 400 },
-  avatar_m_surgeon: { to: 'avatar_intern', price: 1000 },
-  avatar_robopro: { to: 'avatar_m_robot', price: 9000 },
-  // The six Classic women guides were replaced by Captain Klara (a full 3D character) with skin and hair choices
-  avatar_dr_maya: { to: 'avatar_m_nurse', price: 1500 },
-  avatar_dr_lin: { to: 'avatar_m_nurse', price: 2000 },
-  avatar_dr_amara: { to: 'avatar_m_nurse', price: 2500 },
-  avatar_dr_sofia: { to: 'avatar_m_nurse', price: 2800 },
-  avatar_dr_zuri: { to: 'avatar_m_nurse', price: 3000 },
-  avatar_dr_priya: { to: 'avatar_m_nurse', price: 3500 }
-};
+export var RETIRED_CHARACTERS = {};
 
 /** The recolorable parts of a character, or [] */
 export function getCharacterParts(id) {
@@ -207,13 +105,19 @@ export function getCharacterParts(id) {
   return [];
 }
 
+/**
+ * The Hush and its relatives. Each is a creepy-cute rigged model; `scale` sizes it against the standard monster
+ * height. They are all dark and quiet on purpose: the Hush eats words.
+ */
 export var MONSTER_MODELS = [
-  { id: 'monster_m_ghost', name: 'The Mumble', file: 'monsters/ghost.glb', price: 0, icon: '👻', color: 0x9aa8ff, flying: true, look: { color: 0x9fb4ff, emissive: 0x1a2a66, opacity: 0.62 } },
-  { id: 'monster_m_skull', name: 'The Static', file: 'monsters/skull.glb', price: 1550, icon: '☠️', color: 0xff9a4a, flying: true, look: { color: 0xffc08a, emissive: 0x5a1a00 } },
-  { id: 'monster_m_yeti', name: 'The Silent Letter', file: 'monsters/yeti.glb', price: 2250, icon: '🦍', color: 0xdfe8f0, flying: false },
-  { id: 'monster_m_brute', name: 'The Babble', file: 'monsters/brute.glb', price: 3150, icon: '👹', color: 0x8a5a4a, flying: false },
-  { id: 'monster_m_demon', name: 'The Mispronounced', file: 'monsters/demon.glb', price: 4200, icon: '😈', color: 0xcc3344, flying: false },
-  { id: 'monster_m_dragon', name: 'The Run-On', file: 'monsters/dragon.glb', price: 7700, icon: '🐉', color: 0x44aa66, flying: true }
+  { id: 'hush_blot', name: 'The Blot', file: 'hush/blot.glb', price: 0, icon: '🟢', color: 0x46cb29, flying: false, scale: 0.8 },
+  { id: 'hush_flutter', name: 'The Flutter', file: 'hush/flutter.glb', price: 1600, icon: '🦇', color: 0x6a3a8a, flying: true, scale: 0.9 },
+  { id: 'hush_drone', name: 'The Drone', file: 'hush/drone.glb', price: 2400, icon: '🐝', color: 0xd8a820, flying: true, scale: 0.8 },
+  { id: 'hush_stare', name: 'The Stare', file: 'hush/stare.glb', price: 3300, icon: '👁️', color: 0x9a7a52, flying: false },
+  { id: 'hush_snap', name: 'The Snap', file: 'hush/snap.glb', price: 4300, icon: '🦀', color: 0x9a2a2a, flying: false, scale: 0.9 },
+  { id: 'hush_prickle', name: 'The Prickle', file: 'hush/prickle.glb', price: 5300, icon: '🌵', color: 0x3a7a3a, flying: false },
+  { id: 'hush_gnarl', name: 'The Gnarl', file: 'hush/gnarl.glb', price: 6400, icon: '🌳', color: 0x6a4a2a, flying: false },
+  { id: 'hush_murmur', name: 'The Murmur', file: 'hush/murmur.glb', price: 7700, icon: '🐙', color: 0x2f5a3f, flying: true, scale: 0.9 }
 ];
 
 var MONSTER_BY_ID = {};

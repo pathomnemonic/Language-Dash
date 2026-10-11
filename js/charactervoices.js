@@ -4,8 +4,8 @@
  * These are not speech. A speech engine sounds robotic, so each reaction is a short vocal sound (a "woo-hoo",
  * a "yay", an "aww", an "oh no") built live with the Web Audio API from a buzzing voice source run through
  * vowel filters (formants), the way a real mouth shapes a sound. Each character has a different pitch and
- * vocal size, and a few have their own kind of noise (the robot beeps, the alien chirps, the zombie groans,
- * the skeleton rattles). Nothing is downloaded and nothing needs a license.
+ * vocal size, and a few have their own kind of noise (the pocket robot beeps; animals are just higher, lower or
+ * snortier voices). Nothing is downloaded and nothing needs a license.
  *
  * The profiles and the choosing of a reaction are plain data and functions so they can be tested; only
  * `playReaction` touches the audio context.
@@ -28,26 +28,21 @@ export var VOWELS = {
 
 /** @type {Object<string, CharacterSound>} */
 export var PROFILES = {
-  avatar_intern:       { name: 'Tour-Guide Tiago',    kit: 'voice',    f0: 125, size: 1.0,  bright: 1.0 },
-  avatar_m_nurse:      { name: 'Captain Klara',      kit: 'voice',    f0: 215, size: 1.17, bright: 1.1 },
-  avatar_m_paramedic:  { name: 'Platform Pavan', kit: 'voice',    f0: 106, size: 1.06, bright: 1.1 },
-  avatar_m_intern:     { name: 'Trekker Tove',      kit: 'voice',    f0: 190, size: 1.12, bright: 1.0 },
-  avatar_m_explorer:   { name: 'Rancher Rafa',        kit: 'voice',    f0: 105, size: 0.95, bright: 0.9 },
-  avatar_m_adventurer: { name: 'Backpacker Bao',    kit: 'voice',    f0: 109, size: 1.22, bright: 1.2 },
-  avatar_m_rogue:      { name: 'Hoodie Hana',  kit: 'voice',    f0: 182,  size: 0.92, bright: 0.8 },
-  avatar_m_scout:      { name: 'Mapmaker Mona',         kit: 'voice',    f0: 270, size: 1.25, bright: 1.25 },
-  avatar_m_zombie:     { name: 'Jetlag Jo', kit: 'zombie',   f0: 95,  size: 0.9,  bright: 0.6 },
-  avatar_m_ninja:      { name: 'Nimble Nao',         kit: 'voice',    f0: 142, size: 1.02, bright: 1.1 },
-  avatar_m_skeleton:   { name: 'Carlota Calavera',         kit: 'skeleton', f0: 235, size: 1.18, bright: 1.3 },
-  avatar_m_orc:        { name: 'Gruff Gerda',           kit: 'orc',      f0: 85,  size: 0.78, bright: 0.6 },
-  avatar_m_wizard:     { name: 'Polyglot Pip',      kit: 'voice',    f0: 112, size: 0.97, bright: 0.9 },
-  avatar_m_alien:      { name: 'Abby Abroad',         kit: 'alien',    f0: 520, size: 1.3,  bright: 1.4 },
-  avatar_m_robot:      { name: 'Babelbot Mo',     kit: 'robot',    f0: 330, size: 1.0,  bright: 1.0 },
-  avatar_m_hooded:     { name: 'Cipher Cass',     kit: 'voice',    f0: 240, size: 1.2,  bright: 1.2 },
-  avatar_m_barbarian:  { name: 'Haggler Hamza',      kit: 'voice',    f0: 92,  size: 0.88, bright: 0.8 },
-  avatar_m_knight:     { name: 'Dame Dorotea',        kit: 'voice',    f0: 205, size: 0.94, bright: 0.85 },
-  avatar_m_mage:       { name: 'Professor Palimpsest',  kit: 'voice',    f0: 223, size: 1.08, bright: 1.05 },
-  avatar_m_king:       { name: 'Guildmaster Gustav',          kit: 'voice',    f0: 118, size: 0.96, bright: 0.9 }
+  avatar_intern: { name: 'Fika Fox', kit: 'voice', f0: 330, size: 0.8, bright: 1.3 },
+  hero_dummy: { name: 'Crash-Test Kuba', kit: 'voice', f0: 120, size: 1.0, bright: 0.9 },
+  hero_llama: { name: 'Lola Llama', kit: 'voice', f0: 250, size: 1.15, bright: 1.0 },
+  hero_pug: { name: 'Percy Pug', kit: 'voice', f0: 300, size: 0.75, bright: 1.1 },
+  hero_professor: { name: 'Nonno Nico', kit: 'voice', f0: 100, size: 1.05, bright: 0.8 },
+  hero_cow: { name: 'Clara Cowbell', kit: 'voice', f0: 150, size: 1.4, bright: 0.7 },
+  hero_vest: { name: 'Viennese Vera', kit: 'voice', f0: 215, size: 1.15, bright: 1.1 },
+  hero_ranger: { name: 'Ranger Ravi', kit: 'voice', f0: 112, size: 1.0, bright: 1.0 },
+  hero_sheep: { name: 'Merino Mateo', kit: 'voice', f0: 380, size: 0.85, bright: 1.0 },
+  hero_kimono: { name: 'Kaede of Kyoto', kit: 'voice', f0: 260, size: 1.2, bright: 1.2 },
+  hero_pig: { name: 'Truffle Tonio', kit: 'voice', f0: 190, size: 0.95, bright: 0.8 },
+  hero_horse: { name: 'Sagaan the Steppe Horse', kit: 'voice', f0: 170, size: 1.3, bright: 0.9 },
+  hero_pirate: { name: 'Port-Side Nuno', kit: 'voice', f0: 88, size: 0.9, bright: 0.7 },
+  hero_zebra: { name: 'Zola Zebra-Crossing', kit: 'voice', f0: 230, size: 1.1, bright: 1.1 },
+  hero_beep: { name: 'Pico Pocketbot', kit: 'robot', f0: 420, size: 0.9, bright: 1.2 }
 };
 
 export var DEFAULT_PROFILE = PROFILES.avatar_intern;

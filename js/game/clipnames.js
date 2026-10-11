@@ -26,18 +26,21 @@ export var STATE_CLIPS = {
 
 /**
  * Each hero's own way to celebrate a right answer, where its pack has a clip that suits it better than the generic
- * wave. Keyed by the model's file name (without .glb); patterns run against the clip's base name. A hero not listed
+ * wave (the animals hop for joy, the fox looks around). Keyed by the model's file name (without .glb); patterns run against the clip's base name. A hero not listed
  * (or whose clip is missing) keeps the generic celebrate/wave/idle choice.
  */
-export var HERO_CELEBRATE = {};
+export var HERO_CELEBRATE = {
+  fox: [/^survey$/i],
+  llama: [/^jump$/i], zebra: [/^jump$/i], pug: [/^jump$/i], cow: [/^jump$/i], sheep: [/^jump$/i], horse: [/^jump$/i], pig: [/^jump$/i],
+  beep: [/^jump$/i]
+};
 
 /**
  * How fast a hero's run cycle plays, where its pack only ships a walk (the farm animals) or a slow gait. Keyed by the
  * model's file name; a hero not listed plays its run at 1x.
  */
 export var HERO_RUN_SCALE = {
-  llama: 1.9, zebra: 1.7, pug: 1.9, cow: 1.9, sheep: 1.9, horse: 1.7, pig: 1.9,
-  wolf: 1.4, cat: 1.5, dog: 1.5
+  llama: 1.9, zebra: 1.7, pug: 1.9, cow: 1.9, sheep: 1.9, horse: 1.7, pig: 1.9, beep: 1.6
 };
 
 /** The model file name a catalog path stands for: "heroes/fox.glb" -> "fox". */

@@ -302,7 +302,7 @@ export function buildMonster(id) {
     // Real animated model. If it is still downloading, show the classic
     // monster; "langdash:model-ready" makes the engine swap it in.
     var url = modelUrl(model.file);
-    var built = buildModelMonster(url, 5.5);
+    var built = buildModelMonster(url, 5.5 * (model.scale || 1));
     if (built) {
       built.userData.monsterParts = emptyParts();
       built.userData.displayScale = 1;

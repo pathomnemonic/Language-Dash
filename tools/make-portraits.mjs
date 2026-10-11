@@ -5,7 +5,7 @@ import { chromium } from '@playwright/test';
 import { writeFileSync, mkdirSync } from 'node:fs';
 
 const base = process.env.BASE || 'http://localhost:5173';
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM || undefined, args: ['--use-gl=swiftshader', '--ignore-gpu-blocklist', '--no-sandbox'] });
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--no-sandbox', '--ignore-gpu-blocklist', '--enable-unsafe-swiftshader'] });
 const page = await browser.newPage();
 page.on('pageerror', (e) => console.log('PAGEERR', e.message));
 await page.goto(base + '/tools/portraits.html');

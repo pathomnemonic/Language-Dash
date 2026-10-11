@@ -18,7 +18,7 @@ describe('comparing Stripe with the database', () => {
   it('finds a payment that was never delivered', () => {
     const out = reconcile([item('trail_lanterns', 'u1'), life('u2')], empty, NOW);
     expect(out.map((o) => o.problem + ':' + o.what)).toEqual(['paid, not delivered:item trail_lanterns', 'paid, not delivered:lifetime']);
-    expect(out[0]).toMatchObject({ user: 'u1', session: 'cs_trail_fire' });
+    expect(out[0]).toMatchObject({ user: 'u1', session: 'cs_trail_lanterns' });
   });
 
   it('finds a refunded or lost chargeback that is still held, and ignores a won one', () => {

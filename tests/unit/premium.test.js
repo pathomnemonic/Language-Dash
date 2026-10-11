@@ -45,7 +45,7 @@ describe('the premium catalog', () => {
     expect(isPremiumItem('constructor')).toBe(false);
     expect(premiumCents('trail_lanterns')).toBe(99);
     expect(formatUsd(299)).toBe('$2.99');
-    expect(itemProductId('trail_fireflies')).toBe('languagedash_item_trail_neural');
+    expect(itemProductId('trail_fireflies')).toBe('languagedash_item_trail_fireflies');
   });
 
   it('cannot be bought with coins or taken as the Pro gift', () => {
@@ -91,7 +91,7 @@ describe('what a member has paid for is theirs, and nothing takes it away', () =
   });
 
   it('a purchase through the store (phone app) is picked up too', async () => {
-    const iap = { start: async () => true, owned: (id) => id === 'languagedash_item_trail_blood', product: () => null, add() {}, price: () => null };
+    const iap = { start: async () => true, owned: (id) => id === 'languagedash_item_trail_sakura', product: () => null, add() {}, price: () => null };
     await refreshPro({ iap });
     expect(storage.ownsItem('trail_sakura')).toBe(true);
   });
