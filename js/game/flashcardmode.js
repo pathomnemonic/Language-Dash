@@ -57,8 +57,8 @@ function isCardEligibleForFlashcard(card) {
 function patchCardDefaults(c) {
   if (c.exams === undefined) c.exams = [];
   if (c.baseDifficulty === undefined) c.baseDifficulty = 2;
-  if (c.questionType === undefined) c.questionType = 'buzzword_dx';
-  if (c.source === undefined) c.source = 'clinical_medicine';
+  if (c.questionType === undefined) c.questionType = 'word';
+  if (c.source === undefined) c.source = 'vocabulary';
   if (c.tags === undefined) c.tags = c.subj ? [c.subj.toLowerCase()] : [];
   if (c.hx === undefined) c.hx = false;
   if (c.yr === undefined) c.yr = 2;
@@ -80,7 +80,7 @@ function buildCardPool(options) {
     : [];
   var allCards = CARDS.concat(customs);
 
-  // Explicit card list (study plan, exam review): bypasses subject/filter
+  // Explicit card list (study plan, word quiz review): bypasses subject/filter
   // selection but still respects disabled cards.
   if (Array.isArray(options.cardIds) && options.cardIds.length > 0) {
     var wanted = {};
@@ -229,7 +229,7 @@ function selectCards(pool, count) {
       chosen = weighted[weighted.length - 1];
       chosenIdx = weighted.length - 1;
     }
-    // A diagnosis with several cards is only dealt once per session
+    // A word with several cards is only dealt once per session
     if (!seenAnswers[answerKey(chosen.card.ans)]) {
       seenAnswers[answerKey(chosen.card.ans)] = true;
       selected.push(chosen.card);
@@ -372,7 +372,7 @@ export class FlashcardMode {
       buzzwords: card.bw,
       baseDifficulty: card.baseDifficulty || 2,
       exams: card.exams || [],
-      questionType: card.questionType || 'buzzword_dx',
+      questionType: card.questionType || 'word',
       revealed: this.state === SESSION_STATES.REVEALED
     };
   }

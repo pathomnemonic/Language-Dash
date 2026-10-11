@@ -121,7 +121,7 @@ export function getStartPose(style, t) {
 export var CAMERA_STYLES = ['sweep', 'orbit', 'rise'];
 
 /**
- * The look-back opening used when the exam monster is on: the camera starts in front of the runner,
+ * The look-back opening used when the Hush (the exam monster in code) is on: the camera starts in front of the runner,
  * looking back so the monster is seen lurking behind them, then swings around over the runner's shoulder
  * into the normal chase view, which leaves the monster behind the camera and out of sight. Not in the
  * random pool above; the engine picks it.
@@ -178,7 +178,7 @@ export var DEATH_STYLES = ['faceplant', 'tumble', 'spin_out', 'launch', 'collaps
 
 /**
  * Which deaths suit what happened. The runner is hit by something on the
- * ground, something overhead, or is caught by the exam monster.
+ * ground, something overhead, or is caught by the Hush.
  */
 var DEATH_BY_CAUSE = {
   ground: ['faceplant', 'tumble', 'launch', 'flatten'],

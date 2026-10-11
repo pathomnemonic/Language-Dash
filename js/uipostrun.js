@@ -1,5 +1,5 @@
 /**
- * uipostrun.js — Post-run summary and quick review screens.
+ * uipostrun.js — Post-run summary (the run report) and quick review screens.
  *
  * Split out of ui.js. These methods are attached to UI.prototype (see the end of ui.js), so
  * `this` is the UI controller and nothing about how they are called has changed.
@@ -12,6 +12,20 @@ import { describeRules } from './rules.js';
 import { runVerdict } from './flavor.js';
 import { localDateKey, trapFocus, releaseFocusTrap } from './uihelpers.js';
 import { openCardReport } from './cardreport.js';
+import { getLanguage } from './lang/languages.js';
+import { getPairOrDefault, getShowRoman } from './lang/pair.js';
+
+/** The word, with its pronunciation in brackets when it has one and the player has pronunciation on. */
+function withRoman(c) {
+  return c.ans + (c.ansRoman && getShowRoman() ? ' (' + c.ansRoman + ')' : '');
+}
+
+/** Mark a text element with the language it is written in (screen readers, fonts and right-to-left scripts). */
+function langOf(el, which) {
+  var l = getLanguage(getPairOrDefault()[which]);
+  if (l && el) { el.setAttribute('lang', l.code); el.setAttribute('dir', l.rtl ? 'rtl' : 'ltr'); }
+  return el;
+}
 
 export var postRunMethods = {
 
@@ -36,7 +50,7 @@ export var postRunMethods = {
 
     // Header
     var header = createElement('div', { className: 'post-header' });
-    header.appendChild(createElement('h2', { className: 'post-title', text: '📋 Case Review' }));
+    header.appendChild(createElement('h2', { className: 'post-title', text: '📋 Run Report' }));
     var scoreBig = createElement('div', { className: 'score-big', text: String(game.score) });
     header.appendChild(scoreBig);
     var verdict = createElement('p', { className: 'post-verdict', text: runVerdict(game.correct, game.wrong) });
@@ -45,13 +59,12 @@ export var postRunMethods = {
     var skinInfo = game.currentSkin ? ' • Track: ' + game.currentSkin.name : '';
     var runSummary = game.getRunSummary ? game.getRunSummary() : null;
     var customNote = runSummary && runSummary.custom ? ' • Custom rules: ' + describeRules(runSummary.rules && Object.assign({ custom: true }, runSummary.rules)) + ' (not ranked)' : '';
-    if (runSummary && Number(runSummary.userSpeed) < 1) customNote += ' • Slower than 1× (not ranked)';
-    var metaP = createElement('p', { text: 'Speed: ' + game.userSpeed + '×' + skinInfo + (game.continued ? ' (continued)' : '') + customNote });
+    var metaP = createElement('p', { text: 'Top pace: ' + (Math.round((game.peakPace || game.userSpeed || 0) * 10) / 10) + '×' + skinInfo + (game.continued ? ' (continued)' : '') + customNote });
     metaP.style.cssText = 'color:var(--text-muted);font-size:12px';
     header.appendChild(metaP);
     content.appendChild(header);
 
-    // Weakest subject this run (needs a few encounters to be meaningful)
+    // Weakest topic this run (needs a few encounters to be meaningful)
     var bySubject = {};
     game.runCards.forEach(function (r) {
       var subj = r.card && r.card.subj;
@@ -68,21 +81,21 @@ export var postRunMethods = {
       if (!weakest || a < weakest.acc) weakest = { subj: subj, acc: a, n: st.n, ok: st.ok };
     });
     if (weakest) {
-      var weakEl = createElement('div', { className: 'focus-area', text: '🎯 Focus area: ' + weakest.subj + ' (' + weakest.ok + '/' + weakest.n + ' correct)' });
+      var weakEl = createElement('div', { className: 'focus-area', text: '🎯 Practice next: ' + weakest.subj + ' (' + weakest.ok + '/' + weakest.n + ' correct)' });
       weakEl.style.cssText = 'text-align:center;font-size:12px;font-weight:700;color:var(--accent-gold);margin:6px 0';
       content.appendChild(weakEl);
     }
 
-    // Golden doctor notice
+    // Golden Quill notice
     if (game.wrong === 0 && game.correct >= 20 && storage.hasAchievement('ach_golden_doctor')) {
       var goldenNotice = createElement('div');
       goldenNotice.style.cssText = 'text-align:center;padding:12px;margin:10px 0;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,170,0,0.1));border:2px solid var(--accent-gold);border-radius:12px';
       goldenNotice.appendChild(createElement('div', { text: '🏆' }));
       goldenNotice.firstChild.style.fontSize = '24px';
-      var goldenText = createElement('div', { text: 'Golden Doctor Unlocked!' });
+      var goldenText = createElement('div', { text: 'Golden Quill Unlocked!' });
       goldenText.style.cssText = 'font-size:14px;font-weight:800;color:var(--accent-gold)';
       goldenNotice.appendChild(goldenText);
-      goldenNotice.appendChild(createElement('div', { text: 'Perfect run with 20+ correct! Check the Locker.' }));
+      goldenNotice.appendChild(createElement('div', { text: 'A perfect run with 20+ words! Check the Locker.' }));
       goldenNotice.lastChild.style.cssText = 'font-size:11px;color:var(--text-secondary)';
       content.appendChild(goldenNotice);
     }
@@ -106,10 +119,10 @@ export var postRunMethods = {
     });
     content.appendChild(statsRow);
 
-    // The review: two big buttons under the numbers. Each opens the cards in a full-screen pop-up, so the page
+    // The review: two big buttons under the numbers. Each opens the words in a full-screen pop-up, so the page
     // itself stays one calm screen (nothing is expanded until the player asks)
     var review = createElement('div', { className: 'post-review' });
-    var tabs = createElement('div', { className: 'post-review-tabs', attributes: { 'aria-label': 'Review your answers' } });
+    var tabs = createElement('div', { className: 'post-review-tabs', attributes: { 'aria-label': 'Review your words' } });
     function addOpen(key, icon, label, count, tone) {
       var b = createElement('button', { className: 'post-review-tab post-review-open ' + tone, attributes: { type: 'button', 'data-tab': key, 'aria-haspopup': 'dialog', 'aria-label': label + ': ' + count + '. Open to review in full screen.' } });
       b.appendChild(createElement('span', { className: 'post-review-count', text: String(count) }));
@@ -143,7 +156,7 @@ export var postRunMethods = {
 
     if (missed.length > 0) {
       var secRow = createElement('div', { className: 'post-secondary' });
-      var weakBtn = createElement('button', { className: 'btn btn-outline btn-sm btn-block', text: '🎯 Weakness', attributes: { id: 'weaknessBtn' } });
+      var weakBtn = createElement('button', { className: 'btn btn-outline btn-sm btn-block', text: '🎯 Tricky words', attributes: { id: 'weaknessBtn' } });
       secRow.appendChild(weakBtn);
       var qrBtn = createElement('button', { className: 'btn btn-outline btn-sm btn-block', text: '📝 Quick Review' });
       qrBtn.addEventListener('click', function () { self.showQuickReview(missed); });
@@ -172,7 +185,7 @@ export var postRunMethods = {
     this.updateRushVignette(0);
   },
 
-  /** One card of the review: what was asked, what the player chose, the right answer, and why. */
+  /** One word of the review: the hint, what the player chose, the right word (with how to say it), and what it means. */
   _reviewCard(r, ok) {
     var c = r.card;
     var card = createElement('div', { className: 'review-card' });
@@ -187,14 +200,15 @@ export var postRunMethods = {
       tagRow.appendChild(wrongTag);
     }
     var ansTag = createElement('span', { className: 'tag tag-correct' });
-    setText(ansTag, (ok ? '' : '✓ ') + c.ans);
+    setText(ansTag, (ok ? '' : '✓ ') + withRoman(c));
+    langOf(ansTag, 'target');
     tagRow.appendChild(ansTag);
     var subjTag = createElement('span', { className: 'tag tag-subject' });
     setText(subjTag, c.subj);
     tagRow.appendChild(subjTag);
     card.appendChild(tagRow);
     var tpEl = createElement('p');
-    setText(tpEl, ok ? c.tp : '📖 Rule: ' + c.tp);
+    setText(tpEl, ok ? c.tp : '📖 Word card: ' + c.tp);
     tpEl.style.marginTop = '5px';
     if (ok) tpEl.style.cssText = 'margin-top:4px;font-size:11px;color:var(--text-muted)';
     card.appendChild(tpEl);
@@ -202,20 +216,21 @@ export var postRunMethods = {
       var whyWrong = (c.ww && c.ww[r.choice]) || '';
       if (whyWrong) {
         var wwEl = createElement('p');
-        setText(wwEl, 'Why "' + r.choice + '" is wrong: ' + whyWrong);
+        setText(wwEl, '🚪 ' + whyWrong);
         wwEl.style.marginTop = '4px';
         card.appendChild(wwEl);
       }
       // A small flag in the corner of the card, so reports stay rare and deliberate
-      var reportBtn = createElement('button', { className: 'review-flag', text: '🚩', attributes: { type: 'button', 'aria-label': 'Report a problem with this card', title: 'Report a problem with this card' } });
+      var reportBtn = createElement('button', { className: 'review-flag', text: '🚩', attributes: { type: 'button', 'aria-label': 'Report a problem with this word', title: 'Report a problem with this word' } });
       reportBtn.addEventListener('click', function () { openCardReport(c, function (m) { self._showToast(m); }); });
       card.appendChild(reportBtn);
     }
+    if (this._hearButton) card.appendChild(this._hearButton(c));
     return card;
   },
 
   /**
-   * The full-screen review: the missed cards and the correct cards, a tab each, one list that scrolls.
+   * The full-screen review: the missed words and the correct words, a tab each, one list that scrolls.
    * @param {string} start 'missed' or 'correct'
    */
   openReviewPopup(start, missed, correctAll, total) {
@@ -245,11 +260,11 @@ export var postRunMethods = {
         tabBtns[k].classList.toggle('active', on);
         tabBtns[k].setAttribute('aria-selected', on ? 'true' : 'false');
       });
-      setText(title, key === 'missed' ? 'Questions you missed' : 'Questions you got right');
+      setText(title, key === 'missed' ? 'Words you missed' : 'Words you got right');
       clearElement(list);
       var rows = key === 'missed' ? missed : correctAll;
       if (!rows.length) {
-        list.appendChild(createElement('div', { className: 'post-review-empty', text: key === 'missed' ? (total > 0 ? '🎉 Nothing missed. A perfect run!' : 'No answers this run.') : 'No correct answers this run.' }));
+        list.appendChild(createElement('div', { className: 'post-review-empty', text: key === 'missed' ? (total > 0 ? '🎉 Nothing missed. A perfect run!' : 'No words this run.') : 'No correct words this run.' }));
       } else {
         rows.forEach(function (r) { list.appendChild(self._reviewCard(r, key === 'correct')); });
       }
@@ -271,13 +286,17 @@ export var postRunMethods = {
     if (!missedCards || missedCards.length === 0) return;
     var overlay = document.getElementById('quickReviewOverlay');
     if (!overlay) return;
+    var self = this;
     var idx = 0;
     var cards = missedCards;
 
     function showCard() {
       setText(document.getElementById('qrCounter'), (idx + 1) + ' / ' + cards.length);
       setText(document.getElementById('qrBuzzwords'), cards[idx].card.bw.join(' • '));
-      setText(document.getElementById('qrAnswer'), '✓ ' + cards[idx].card.ans);
+      var qrAns = document.getElementById('qrAnswer');
+      setText(qrAns, '✓ ' + withRoman(cards[idx].card));
+      langOf(qrAns, 'target');
+      if (self._hearButton) qrAns.appendChild(self._hearButton(cards[idx].card));
       setText(document.getElementById('qrTeaching'), cards[idx].card.tp);
       var qrDivider = document.getElementById('qrDivider');
       if (qrDivider) qrDivider.style.display = 'none';

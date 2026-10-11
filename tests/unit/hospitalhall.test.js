@@ -6,7 +6,7 @@ import { isChunkError, recoverFromChunkError } from '../../js/chunkrecovery.js';
 
 const hall = SKINS.find((s) => s.name === 'Hospital Hallway');
 
-describe('Hospital Hallway map', () => {
+describe('Library Hall map (skin key: Hospital Hallway)', () => {
   it('is a real map with its own corridor builders', () => {
     expect(hall).toBeTruthy();
     expect(isHospitalHall(hall)).toBe(true);

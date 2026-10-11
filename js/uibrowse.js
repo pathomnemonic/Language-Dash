@@ -1,5 +1,5 @@
 /**
- * uibrowse.js — Card browser and custom card list.
+ * uibrowse.js — the Phrasebook (word browser) and the custom word list.
  *
  * Split out of ui.js. These methods are attached to UI.prototype (see the end of ui.js), so
  * `this` is the UI controller and nothing about how they are called has changed.
@@ -13,6 +13,8 @@ import { SUBJECTS, CARDS } from './cardhub.js';
 import { storage } from './storage.js';
 import { customCards } from './customcards.js';
 import { debounce } from './uihelpers.js';
+import { getLanguage } from './lang/languages.js';
+import { getPairOrDefault, getShowRoman } from './lang/pair.js';
 
 export var browseMethods = {
 
@@ -28,7 +30,7 @@ export var browseMethods = {
       // Build controls (only once, kept mounted during typing)
       var searchInput = createElement('input', {
         className: 'card-browser-search',
-        attributes: { type: 'text', placeholder: '🔍 Search buzzwords, answers, teaching points...', id: 'cbSearch' }
+        attributes: { type: 'text', placeholder: '🔍 Search words, meanings, word cards...', id: 'cbSearch' }
       });
       searchInput.value = this.cardBrowserSearch || '';
       var debouncedSearch = debounce(function () {
@@ -44,10 +46,10 @@ export var browseMethods = {
       var filterRow = createElement('div', { className: 'card-browser-filters' });
 
       var subjectSelect = createElement('select', {
-        attributes: { id: 'cbSubjectFilter', 'aria-label': 'Filter by subject' }
+        attributes: { id: 'cbSubjectFilter', 'aria-label': 'Filter by topic' }
       });
       subjectSelect.style.cssText = 'padding:6px;border-radius:8px;background:rgba(30,15,70,0.6);color:#fff;border:1px solid rgba(187,102,255,0.15);font-size:11px';
-      subjectSelect.appendChild(createElement('option', { text: 'All Subjects', attributes: { value: '' } }));
+      subjectSelect.appendChild(createElement('option', { text: 'All Topics', attributes: { value: '' } }));
       SUBJECTS.forEach(function (s) {
         var opt = createElement('option', { text: s, attributes: { value: s } });
         if (self.cardBrowserSubject === s) opt.selected = true;
@@ -65,7 +67,7 @@ export var browseMethods = {
       });
       statusSelect.style.cssText = 'padding:6px;border-radius:8px;background:rgba(30,15,70,0.6);color:#fff;border:1px solid rgba(187,102,255,0.15);font-size:11px';
       ['all', 'seen', 'unseen', 'disabled'].forEach(function (val) {
-        var labels = { all: 'All Cards', seen: 'Seen', unseen: 'Unseen', disabled: 'Disabled' };
+        var labels = { all: 'All Words', seen: 'Seen', unseen: 'Unseen', disabled: 'Disabled' };
         var opt = createElement('option', { text: labels[val], attributes: { value: val } });
         if (self.cardBrowserFilter === val) opt.selected = true;
         statusSelect.appendChild(opt);
@@ -127,11 +129,11 @@ export var browseMethods = {
     // Count
     var countEl = createElement('div', {
       className: 'card-browser-stats',
-      text: 'Showing ' + (start + 1) + '-' + Math.min(start + pageSize, filtered.length) + ' of ' + filtered.length + ' cards'
+      text: 'Showing ' + (start + 1) + '-' + Math.min(start + pageSize, filtered.length) + ' of ' + filtered.length + ' words'
     });
     resultsContainer.appendChild(countEl);
 
-    // Cards list
+    // Words list
     var list = createElement('div', { className: 'card-browser-list' });
 
     displayCards.forEach(function (c) {
@@ -143,14 +145,16 @@ export var browseMethods = {
         className: 'card-browser-item' + (isDisabled ? ' disabled-card' : '') + (stat.wrong > 2 ? ' missed-card' : '')
       });
 
-      // Buzzwords (safe)
+      // Hint word (safe)
       var bwEl = createElement('div', { className: 'cb-buzzwords' });
       setText(bwEl, c.bw.join(' • '));
       item.appendChild(bwEl);
 
       // Answer (safe)
       var ansEl = createElement('div', { className: 'cb-answer' });
-      setText(ansEl, c.ans);
+      setText(ansEl, c.ans + (c.ansRoman && getShowRoman() ? ' (' + c.ansRoman + ')' : ''));
+      var tl = getLanguage(getPairOrDefault().target);
+      if (tl) { ansEl.setAttribute('lang', tl.code); ansEl.setAttribute('dir', tl.rtl ? 'rtl' : 'ltr'); }
       item.appendChild(ansEl);
 
       // Meta row
@@ -189,8 +193,8 @@ export var browseMethods = {
       });
       meta.appendChild(toggleBtn);
 
-      // A small flag to report a problem with this card (a clue that gives the answer away, a mistake, ...)
-      var flagBtn = createElement('button', { className: 'cb-flag', text: '🚩', attributes: { type: 'button', 'aria-label': 'Report a problem with this card', title: 'Report a problem with this card' } });
+      // A small flag to report a problem with this word (a wrong translation, a typo, ...)
+      var flagBtn = createElement('button', { className: 'cb-flag', text: '🚩', attributes: { type: 'button', 'aria-label': 'Report a problem with this word', title: 'Report a problem with this word' } });
       flagBtn.addEventListener('click', function (e) { e.stopPropagation(); openCardReport(c, function (m) { self._showToast(m); }); });
       meta.appendChild(flagBtn);
 
@@ -232,7 +236,7 @@ export var browseMethods = {
     var self = this;
 
     if (all.length === 0) {
-      var empty = createElement('div', { text: 'No custom cards yet. Tap "Create New Card" to add your own, or bring in cards from Anki below.' });
+      var empty = createElement('div', { text: 'No words of your own yet. Tap "Create New Word" to add one, or bring in words from Anki below.' });
       empty.style.cssText = 'text-align:center;padding:20px;color:var(--text-muted);font-size:13px';
       container.appendChild(empty);
       return;
@@ -250,13 +254,13 @@ export var browseMethods = {
 
     var flashOnly = all.filter(function (c) { return Array.isArray(c.enabledModes) && c.enabledModes.length === 1 && c.enabledModes[0] === 'flashcard'; });
 
-    var countLabel = createElement('p', { text: all.length + ' custom card' + (all.length === 1 ? '' : 's') + (flashOnly.length ? ' (' + flashOnly.length + ' flashcard-only)' : '') });
+    var countLabel = createElement('p', { text: all.length + ' word' + (all.length === 1 ? '' : 's') + ' of your own' + (flashOnly.length ? ' (' + flashOnly.length + ' flashcard-only)' : '') });
     countLabel.style.cssText = 'font-size:12px;color:var(--text-secondary);margin-bottom:8px';
     container.appendChild(countLabel);
 
-    // Search (only worth showing once there are enough cards to lose things in)
+    // Search (only worth showing once there are enough words to lose things in)
     if (all.length > 8) {
-      var search = createElement('input', { className: 'card-browser-search', attributes: { type: 'search', placeholder: '🔍 Search your cards', 'aria-label': 'Search your cards' } });
+      var search = createElement('input', { className: 'card-browser-search', attributes: { type: 'search', placeholder: '🔍 Search your words', 'aria-label': 'Search your words' } });
       search.value = this._myCardsQuery || '';
       search.addEventListener('input', debounce(function () {
         self._myCardsQuery = search.value;
@@ -268,7 +272,7 @@ export var browseMethods = {
       container.appendChild(search);
     }
 
-    // Bulk removal: an imported deck can be thousands of cards, which cannot be deleted one by one
+    // Bulk removal: an imported deck can be thousands of words, which cannot be deleted one by one
     if (all.length > 1) {
       var bulk = createElement('div');
       bulk.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin:6px 0';
@@ -276,19 +280,19 @@ export var browseMethods = {
         var delFlash = createElement('button', { className: 'btn btn-outline btn-sm', text: '🗑 Delete imported flashcards (' + flashOnly.length + ')', attributes: { type: 'button' } });
         delFlash.style.cssText = 'border-color:rgba(255,82,82,0.5);color:var(--accent-red)';
         delFlash.addEventListener('click', function () {
-          if (!confirm('Delete all ' + flashOnly.length + ' flashcard-only cards (the ones imported from Anki or a spreadsheet)? This cannot be undone.')) return;
+          if (!confirm('Delete all ' + flashOnly.length + ' flashcard-only words (the ones imported from Anki or a spreadsheet)? This cannot be undone.')) return;
           var n = customCards.removeWhere(function (c) { return Array.isArray(c.enabledModes) && c.enabledModes.length === 1 && c.enabledModes[0] === 'flashcard'; });
-          self._showToast('Deleted ' + n + ' cards.');
+          self._showToast('Deleted ' + n + ' words.');
           self.renderCustomCardList();
         });
         bulk.appendChild(delFlash);
       }
-      var delAll = createElement('button', { className: 'btn btn-outline btn-sm', text: '🗑 Delete all my cards', attributes: { type: 'button' } });
+      var delAll = createElement('button', { className: 'btn btn-outline btn-sm', text: '🗑 Delete all my words', attributes: { type: 'button' } });
       delAll.style.cssText = 'border-color:rgba(255,82,82,0.5);color:var(--accent-red)';
       delAll.addEventListener('click', function () {
-        if (!confirm('Delete ALL ' + all.length + ' of your custom cards? This cannot be undone. (Save a backup first if unsure.)')) return;
+        if (!confirm('Delete ALL ' + all.length + ' of your own words? This cannot be undone. (Save a backup first if unsure.)')) return;
         var n = customCards.removeWhere(function () { return true; });
-        self._showToast('Deleted ' + n + ' cards.');
+        self._showToast('Deleted ' + n + ' words.');
         self.renderCustomCardList();
       });
       bulk.appendChild(delAll);
@@ -296,7 +300,7 @@ export var browseMethods = {
     }
 
     if (query && cards.length === 0) {
-      container.appendChild(createElement('p', { text: 'No card matches "' + query + '".' }));
+      container.appendChild(createElement('p', { text: 'No word matches "' + query + '".' }));
       return;
     }
 
@@ -304,7 +308,7 @@ export var browseMethods = {
       var cardEl = createElement('div', { className: 'review-card' });
       cardEl.style.borderLeftColor = 'var(--accent-blue)';
 
-      // Buzzwords (safe text)
+      // Hint word (safe text)
       var h4 = createElement('h4');
       setText(h4, card.bw.join(' • '));
       cardEl.appendChild(h4);
@@ -319,7 +323,7 @@ export var browseMethods = {
       tagRow.appendChild(subjTag);
       cardEl.appendChild(tagRow);
 
-      // Teaching point (safe text)
+      // Word card (safe text)
       var tp = createElement('p');
       setText(tp, card.tp);
       tp.style.marginTop = '4px';
@@ -336,7 +340,7 @@ export var browseMethods = {
       var deleteBtn = createElement('button', { className: 'btn btn-outline btn-sm', text: '🗑️ Delete' });
       deleteBtn.style.cssText = 'border-color:rgba(255,82,82,0.5);color:var(--accent-red)';
       deleteBtn.addEventListener('click', function () {
-        if (confirm('Delete this card? This cannot be undone.')) {
+        if (confirm('Delete this word? This cannot be undone.')) {
           customCards.remove(card.id);
           self.renderCustomCardList();
         }

@@ -33,15 +33,14 @@ import { answerKey } from '../cardleaks.js';
 var LANE_X = [-3, 0, 3];
 
 // ===== CARD SCHEMA DEFAULTS =====
-// Until cardschema.js (Agent 8) is available, we patch defaults inline.
-// Once cardschema.js ships, replace with: import { normalizeCard } from '../cardschema.js';
+// Defaults for cards that come without every field (My words, older saves).
 
 function patchCardDefaults(c) {
   if (!c) return c;
   if (c.exams === undefined) c.exams = [];
   if (c.baseDifficulty === undefined) c.baseDifficulty = 2;
-  if (c.questionType === undefined) c.questionType = 'buzzword_dx';
-  if (c.source === undefined) c.source = 'clinical_medicine';
+  if (c.questionType === undefined) c.questionType = 'word';
+  if (c.source === undefined) c.source = 'vocabulary';
   if (c.tags === undefined) c.tags = c.subj ? [c.subj.toLowerCase()] : [];
   if (c.hx === undefined) c.hx = false;
   if (c.yr === undefined) c.yr = 2;
@@ -141,7 +140,7 @@ export function getCardPool(options) {
       if (c.enabledModes.indexOf(mode) < 0) continue;
     }
 
-    // ── Exam filter ──
+    // ── Word level filter (top100 / top300 / top600 / all) ──
     if (filters.exams && filters.exams.length > 0) {
       if (c.exams && c.exams.length > 0) {
         var examMatch = false;
@@ -153,7 +152,7 @@ export function getCardPool(options) {
         }
         if (!examMatch) continue;
       }
-      // Cards without exam tags pass through (backward compat)
+      // Cards without level tags pass through (backward compat)
     }
 
     // ── Question type filter ──
@@ -186,7 +185,7 @@ export function getCardPool(options) {
       cardIds: [],
       error: {
         code: 'NO_MATCHING_CARDS',
-        message: 'No cards match the selected subjects and filters. Adjust your filters and try again.'
+        message: 'No words match the selected topics and filters. Adjust your filters and try again.'
       }
     };
   }
@@ -337,7 +336,7 @@ export function pickCard(options) {
   // ── Adaptive weighted selection ──
   var now = Date.now();
 
-  // Answers shown recently (duplicate cards for the same diagnosis are
+  // Answers shown recently (duplicate cards for the same answer word are
   // legitimate extra practice, but shouldn't appear back to back).
   var recentAnswers = {};
   for (var ra = 0; ra < effectivePool.length; ra++) {

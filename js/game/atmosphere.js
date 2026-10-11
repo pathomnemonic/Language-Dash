@@ -24,7 +24,7 @@ export var ATMOSPHERES = {
   snow: { weight: 0, tint: 0xdfe8f4, mix: 0.55, light: 0.92, dir: 0xeef4ff, precipitation: 'snow' }
 };
 
-/** Which atmospheres this map may have (snow only falls on the Holiday Wards in winter; rain never falls indoors). */
+/** Which atmospheres this map may have (snow only falls on the Festival of Seasons (skin 'Holiday Wards') in winter; rain never falls indoors). */
 export function allowedAtmospheres(skin) {
   if (!skin || !skin.world || skin.indoor || skin.fixedSky) return [];
   var names = ['day', 'sunrise', 'golden', 'overcast', 'rain'];
@@ -77,7 +77,7 @@ export function applyAtmosphere(skin, name) {
   skin.light = base.light ? Object.assign({}, base.light) : null;
   skin.atmosphere = name || 'day';
   var a = name && ATMOSPHERES[name];
-  if (skin.fixedSky || !a || !a.tint || !skin.sky) return; // (a fixed sky, like the Prescription Sunset's, stays as painted)
+  if (skin.fixedSky || !a || !a.tint || !skin.sky) return; // (a fixed sky, like the Algarve Sunset's, stays as painted)
   skin.colors.bg = mixHex(base.bg, a.tint, a.mix);
   skin.sky.top = mixHex(base.sky.top || base.bg, a.tint, a.mix * 0.8);
   skin.sky.horizon = mixHex(base.sky.horizon || base.bg, a.tint, a.mix);

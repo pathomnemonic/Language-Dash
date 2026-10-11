@@ -1,7 +1,7 @@
 /**
  * hospitalhall.js — the four walled-in Great Library rooms (the file name is kept from the original game): the
- * Library Hall (skin_hospital_hallway), the Translators' Booth (skin_operating_room), the Rosetta Workshop
- * (skin_research_lab) and the Departures Platform (skin_ambulance_bay). A proper corridor with doors, bookcases,
+ * Library Hall (skin_hospital_hallway), the Translators Booth (skin_operating_room), the Codebreakers Lab
+ * (skin_research_lab) and the Midnight Platform (skin_ambulance_bay). A proper corridor with doors, bookcases,
  * a ceiling with light panels and rails, in the style of a Subway Surfers level.
  *
  * Walls repeat every HALL_PERIOD units (four 4-unit bays), so the corridor scrolls seamlessly while
@@ -217,7 +217,7 @@ function libraryDetails(g, side, z, k, xin) {
   }
 }
 
-// ---------- Translators' booth: glass interpreter booths, headset racks, sound-wave screens, "ON AIR" doors ----------
+// ---------- Translators Booth: glass interpreter booths, headset racks, sound-wave screens, "ON AIR" doors ----------
 function orDetails(g, side, z, k, xin) {
   if (k === 0 && side > 0) globe(g, xin(0.6), z + 1.0);
   if (k === 3 && side < 0) bookCart(g, xin(0.7), z - 1.4);
@@ -260,7 +260,7 @@ function orDetails(g, side, z, k, xin) {
   }
 }
 
-// ---------- Rosetta workshop: stone-cutters' benches, scrolls and tablets, a three-script stone ----------
+// ---------- Codebreakers Lab: stone-cutters' benches, scrolls and tablets, a three-script stone, cipher wheels, inkwells ----------
 function labDetails(g, side, z, k, xin) {
   var ink = [0x2a5f8f, 0xc0392b, 0x2f9e6f, 0x7a4aa0];
   if (k === 0 || k === 2) {
@@ -288,16 +288,24 @@ function labDetails(g, side, z, k, xin) {
     box(g, 0.9, 0.5, 1.4, 0x8a6a4a, xin(0.55), 0.25, z - 1.2);
     box(g, 0.5, 0.9, 0.5, 0xb8aa90, xin(0.6), 0.45, z + 1.2);
   } else {
-    // a block of stone in a carving frame with chisels
-    box(g, 0.9, 2.9, 3.0, 0x7a6a55, xin(0.45), 1.45, z);
-    box(g, 0.08, 1.4, 2.5, 0xd8cdb4, xin(0.93), 1.8, z);
-    for (var l = 0; l < 6; l++) box(g, 0.05, 0.05, 0.25 + (l % 3) * 0.1, 0x3a3a40, xin(0.98), 1.4 + (l % 4) * 0.25, z - 1.0 + l * 0.38);
-    box(g, 0.1, 0.3, 2.6, 0xc09a5a, xin(0.95), 2.65, z);
-    box(g, 0.06, 0.2, 0.8, 0x2a5f8f, xin(0.96), 0.6, z);
+    // a pair of giant cipher wheels on the wall: stacked discs with tick marks, and a brass pointer
+    box(g, 0.2, 2.9, 3.0, 0x6a5a45, xin(0.12), 1.45, z);
+    [[1.25, 0x2a5f8f, 0.9], [0.8, 0xc09a5a, 0.95]].forEach(function (w, wi) {
+      cylinder(g, w[0], 0.1, w[1], xin(0.22 + wi * 0.06), 1.8, z, Math.PI / 2);
+    });
+    for (var tk = 0; tk < 12; tk++) {
+      var ta = (tk / 12) * Math.PI * 2;
+      box(g, 0.05, 0.08, 0.2, 0xf5ecd0, xin(0.3), 1.8 + Math.cos(ta) * 1.05, z + Math.sin(ta) * 1.05);
+    }
+    box(g, 0.06, 0.1, 1.3, 0xd8a860, xin(0.38), 1.8, z);
+    // a bubbling inkwell on a stool
+    cylinder(g, 0.2, 0.5, 0x6a4529, xin(0.8), 0.25, z + 1.3);
+    cylinder(g, 0.16, 0.3, 0x1d2a3a, xin(0.8), 0.65, z + 1.3);
+    for (var bb = 0; bb < 3; bb++) { var bub = new THREE.Mesh(new THREE.SphereGeometry(0.05 + bb * 0.02, 6, 5), new THREE.MeshBasicMaterial({ color: 0x5fd0ff })); bub.position.set(xin(0.8), 0.95 + bb * 0.18, z + 1.3); g.add(bub); }
   }
 }
 
-// ---------- Departures platform: carriage doors, a departures board, pillars, trolleys and benches ----------
+// ---------- Midnight Platform: carriage doors, a departures board, pillars, trolleys and benches ----------
 function bayDetails(g, side, z, k, xin) {
   if (k === 0 || k === 2) {
     // train carriage side with a door and windows
@@ -320,6 +328,12 @@ function bayDetails(g, side, z, k, xin) {
     box(g, 0.6, 0.08, 2.2, 0x8a5a34, xin(0.7), 0.5, z);
     box(g, 0.08, 0.5, 2.2, 0x8a5a34, xin(0.45), 0.8, z);
     for (var lg = 0; lg < 2; lg++) box(g, 0.5, 0.5, 0.08, 0x3a3a40, xin(0.7), 0.25, z - 0.9 + lg * 1.8);
+    // the rubber duck on night duty, on the bench
+    var duck = new THREE.Mesh(new THREE.SphereGeometry(0.17, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffd23f }));
+    duck.position.set(xin(0.7), 0.7, z + 0.2); g.add(duck);
+    var duckHead = new THREE.Mesh(new THREE.SphereGeometry(0.11, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffd23f }));
+    duckHead.position.set(xin(0.7), 0.88, z + 0.28); g.add(duckHead);
+    box(g, 0.1, 0.04, 0.1, 0xff8a1f, xin(0.7), 0.86, z + 0.38);
     box(g, 0.6, 0.5, 0.7, 0xd9534f, xin(0.75), 0.25, z - 1.6);
     box(g, 0.5, 0.4, 0.6, 0x2fa48f, xin(0.75), 0.7, z - 1.6);
     box(g, 0.4, 0.3, 0.5, 0xf2c230, xin(0.75), 1.05, z - 1.6);
@@ -460,5 +474,5 @@ export function buildHallFloor(skin) {
   return g;
 }
 
-/** Every walled-in map (library hall, translators' booth, Rosetta workshop, departures platform). */
+/** Every walled-in map (library hall, translators' booth, Codebreakers Lab, departures platform). */
 export function isHospitalHall(skin) { return !!skin && (skin.wallType === 'hospital_hall' || /^room_/.test(skin.wallType)); }

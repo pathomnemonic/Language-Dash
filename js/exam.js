@@ -1,12 +1,11 @@
 /**
- * exam.js — Timed exam simulation.
+ * exam.js — the Word Quiz (internally still the "exam").
  *
- * A block of multiple-choice questions built from the player's card pool,
- * answered without instant feedback (like a real exam block), with a timer,
- * question navigation, flagging, and a results report by subject.
+ * A block of multiple-choice words built from the player's word pool: a hint word in the language you know and
+ * three words in the language you are learning. No instant feedback, a timer, navigation, flagging, and a results
+ * report by topic.
  *
- * The score is a practice signal from this game's own question bank, not a
- * prediction of a licensing-exam score.
+ * The score is a practice signal from this game's own word list, not a fluency test.
  */
 
 import { requireGate } from './pro.js';
@@ -16,6 +15,15 @@ import { storage } from './storage.js';
 import { uniqueByAnswer } from './cardleaks.js';
 import { getCardPool } from './game/gates.js';
 import { getSubjectStyle, getSubjectCssColor } from './game/subjectstyle.js';
+import { getLanguage } from './lang/languages.js';
+import { getPairOrDefault, getShowRoman } from './lang/pair.js';
+
+/** Mark an element with the language it is written in (fonts, screen readers, right-to-left scripts). */
+function langAttrs(el, which) {
+  var l = getLanguage(getPairOrDefault()[which]);
+  if (l) { el.setAttribute('lang', l.code); el.setAttribute('dir', l.rtl ? 'rtl' : 'ltr'); }
+  return el;
+}
 
 // ===== Pure logic (unit-tested) =====
 
@@ -38,7 +46,7 @@ function shuffle(items, rng) {
 export function buildExam(cards, count, rng) {
   rng = rng || Math.random;
   var usable = cards.filter(function (c) { return c && c.ans && Array.isArray(c.d) && c.d.length >= 2; });
-  var chosen = uniqueByAnswer(shuffle(usable, rng)).slice(0, count); // no diagnosis twice in one exam
+  var chosen = uniqueByAnswer(shuffle(usable, rng)).slice(0, count); // no word twice in one quiz
   return chosen.map(function (card) {
     var options = shuffle([card.ans, card.d[0], card.d[1]], rng);
     return { card: card, options: options, correctIndex: options.indexOf(card.ans) };
@@ -75,12 +83,12 @@ export function scoreExam(questions, answers) {
   };
 }
 
-/** Plain-language band for a practice score. */
+/** Plain-language band for a practice score (a practice signal from this game's words, not a fluency level). */
 export function readinessLabel(accuracy) {
-  if (accuracy >= 80) return { label: 'Strong', color: 'var(--accent-green)', note: 'You are answering at a high level on this material.' };
-  if (accuracy >= 65) return { label: 'On track', color: 'var(--accent-cyan)', note: 'Solid, with a few subjects worth tightening.' };
-  if (accuracy >= 50) return { label: 'Needs work', color: 'var(--accent-gold)', note: 'Focus on the weakest subjects below.' };
-  return { label: 'At risk', color: 'var(--accent-red)', note: 'Build the fundamentals with flashcards, then retake.' };
+  if (accuracy >= 80) return { label: 'Strong', color: 'var(--accent-green)', note: 'You know these words well.' };
+  if (accuracy >= 65) return { label: 'On track', color: 'var(--accent-cyan)', note: 'Solid, with a few topics worth tightening.' };
+  if (accuracy >= 50) return { label: 'Warming up', color: 'var(--accent-gold)', note: 'Focus on the trickiest topics below.' };
+  return { label: 'Just starting', color: 'var(--accent-red)', note: 'Build the basics with flashcards, then try again.' };
 }
 
 // ===== UI =====
@@ -108,7 +116,7 @@ function button(label, onClick, className, attrs) {
 }
 
 /**
- * Mount the exam screen.
+ * Mount the Word Quiz screen.
  * @param {HTMLElement} container
  * @param {object} [deps]
  * @param {function(object[])} [deps.startFlashcards] - start a flashcard session for these cards
@@ -132,11 +140,11 @@ export function unmountExam() {
 function renderSetup() {
   clearElement(_root);
   var wrap = createElement('div');
-  wrap.appendChild(createElement('p', { text: 'Simulate an exam block: no instant feedback, a running clock, and a full report by subject at the end. Uses your selected subjects and filters.' }));
+  wrap.appendChild(createElement('p', { text: 'A timed block of words: no instant feedback, a running clock, and a full report by topic at the end. Uses your selected topics and word level.' }));
   wrap.lastChild.style.cssText = 'font-size:12px;color:var(--text-secondary);margin-bottom:12px';
 
   var count = 20;
-  var pace = 90;
+  var pace = 20;
 
   function choiceRow(labelText, options, current, onPick) {
     var row = createElement('div');
@@ -166,17 +174,17 @@ function renderSetup() {
     return row;
   }
 
-  wrap.appendChild(choiceRow('Questions', [[10, '10'], [20, '20'], [40, '40 (full block)']], count, function (v) { count = v; }));
-  wrap.appendChild(choiceRow('Time per question', [[60, '60 s (hard)'], [90, '90 s (exam pace)'], [120, '120 s'], [0, 'Untimed']], pace, function (v) { pace = v; }));
+  wrap.appendChild(choiceRow('Words', [[10, '10'], [20, '20'], [40, '40 (full block)']], count, function (v) { count = v; }));
+  wrap.appendChild(choiceRow('Time per word', [[10, '10 s (hard)'], [20, '20 s'], [30, '30 s (relaxed)'], [0, 'Untimed']], pace, function (v) { pace = v; }));
 
   var history = storage.get('examResults') || [];
   if (history.length > 0) {
     var last = history[history.length - 1];
-    wrap.appendChild(createElement('div', { text: 'Last exam: ' + last.correct + '/' + last.total + ' (' + last.accuracy + '%) on ' + last.date }));
+    wrap.appendChild(createElement('div', { text: 'Last quiz: ' + last.correct + '/' + last.total + ' (' + last.accuracy + '%) on ' + last.date }));
     wrap.lastChild.style.cssText = 'font-size:11px;color:var(--text-muted);margin:8px 0';
   }
 
-  var startBtn = button('▶ Start exam', function () {
+  var startBtn = button('▶ Start quiz', function () {
     var pool = getCardPool({
       subjects: storage.get('selectedSubjects') || [],
       filters: {
@@ -190,7 +198,7 @@ function renderSetup() {
       mode: 'endless'
     });
     if (pool.error || pool.cards.length < 5) {
-      if (_deps.toast) _deps.toast('Not enough cards match your filters for an exam.');
+      if (_deps.toast) _deps.toast('Not enough words match your filters for a quiz.');
       return;
     }
     startExam(pool.cards, count, pace);
@@ -241,7 +249,7 @@ function renderQuestion() {
 
   var header = createElement('div');
   header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;margin-bottom:8px';
-  header.appendChild(createElement('span', { text: 'Question ' + (st.index + 1) + ' of ' + st.questions.length }));
+  header.appendChild(createElement('span', { text: 'Word ' + (st.index + 1) + ' of ' + st.questions.length }));
   header.appendChild(createElement('span', { text: st.limitSec > 0 ? '⏱ ' + formatTime(st.limitSec - (Date.now() - st.startedAt) / 1000) : '⏱ Untimed', attributes: { id: 'examClock' } }));
   _root.appendChild(header);
 
@@ -252,13 +260,13 @@ function renderQuestion() {
   tag.style.cssText = 'font-size:10px;color:' + getSubjectCssColor(q.card.subj) + ';font-weight:700;margin-bottom:8px';
   card.appendChild(tag);
   (q.card.bw || []).forEach(function (bw) {
-    card.appendChild(createElement('div', { text: '• ' + bw }));
-    card.lastChild.style.cssText = 'font-size:15px;font-weight:700;margin:4px 0';
+    card.appendChild(langAttrs(createElement('div', { text: bw }), 'known'));
+    card.lastChild.style.cssText = 'font-size:22px;font-weight:800;margin:4px 0;line-height:1.4';
   });
-  card.appendChild(createElement('div', { text: 'Which diagnosis fits best?' }));
+  card.appendChild(createElement('div', { text: 'Which word means the same?' }));
   card.lastChild.style.cssText = 'font-size:11px;color:var(--text-muted);margin-top:8px';
 
-  var group = createElement('div', { attributes: { role: 'radiogroup', 'aria-label': 'Answer choices' } });
+  var group = createElement('div', { attributes: { role: 'radiogroup', 'aria-label': 'Word gates' } });
   group.style.marginTop = '10px';
   q.options.forEach(function (opt, oi) {
     var chosen = st.answers[st.index] === oi;
@@ -267,7 +275,8 @@ function renderQuestion() {
       text: (oi + 1) + '. ' + opt,
       attributes: { type: 'button', role: 'radio', 'aria-checked': chosen ? 'true' : 'false' }
     });
-    b.style.cssText = 'text-align:left;margin:6px 0;white-space:normal';
+    b.style.cssText = 'text-align:left;margin:6px 0;white-space:normal;line-height:1.45';
+    langAttrs(b, 'target');
     b.addEventListener('click', function () { st.answers[st.index] = oi; renderQuestion(); });
     group.appendChild(b);
   });
@@ -287,14 +296,14 @@ function renderQuestion() {
   _root.appendChild(nav);
 
   // Question map
-  var map = createElement('div', { attributes: { 'aria-label': 'Question map' } });
+  var map = createElement('div', { attributes: { 'aria-label': 'Word map' } });
   map.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px;margin-top:12px';
   st.questions.forEach(function (_q, i) {
     var answered = st.answers[i] !== null;
     var m = createElement('button', {
       text: String(i + 1) + (st.flags[i] ? '🚩' : ''),
       className: 'btn btn-sm ' + (i === st.index ? 'btn-primary' : answered ? 'btn-green' : 'btn-outline'),
-      attributes: { type: 'button', 'aria-label': 'Question ' + (i + 1) + (answered ? ', answered' : ', unanswered') + (st.flags[i] ? ', flagged' : '') }
+      attributes: { type: 'button', 'aria-label': 'Word ' + (i + 1) + (answered ? ', answered' : ', unanswered') + (st.flags[i] ? ', flagged' : '') }
     });
     m.style.cssText = 'min-width:34px;padding:4px 6px;font-size:10px';
     m.addEventListener('click', function () { st.index = i; renderQuestion(); });
@@ -302,7 +311,7 @@ function renderQuestion() {
   });
   _root.appendChild(map);
 
-  _root.appendChild(button('End exam now', confirmFinish, 'btn-outline btn-block'));
+  _root.appendChild(button('End quiz now', confirmFinish, 'btn-outline btn-block'));
   _root.lastChild.style.marginTop = '10px';
 }
 
@@ -310,7 +319,7 @@ function confirmFinish() {
   var st = _state;
   if (!st) return;
   var unanswered = st.answers.filter(function (a) { return a === null; }).length;
-  var msg = unanswered > 0 ? unanswered + ' question(s) unanswered. Submit the exam anyway?' : 'Submit your exam?';
+  var msg = unanswered > 0 ? unanswered + ' word(s) unanswered. Submit the quiz anyway?' : 'Submit your quiz?';
   if (window.confirm(msg)) finishExam();
 }
 
@@ -340,7 +349,7 @@ function finishExam() {
   storage.finalizeExamSession(summary);
   var examFlagged = st.flags.filter(Boolean).length;
   track('exam_ended', { questions: result.total, answered: result.total - result.unanswered, correct: result.correct, duration_s: durationSec, outcome: st.limitSec > 0 && durationSec >= st.limitSec ? 'timeout' : 'finished', flagged: examFlagged });
-  // (main.js posts "scored X% on an exam simulation" to friends' feeds when the player has a public profile)
+  // (main.js posts "scored X% on a Word Quiz" to friends' feeds when the player has a public profile)
   document.dispatchEvent(new CustomEvent('dx:exam-finished', { detail: { accuracy: result.accuracy, total: result.total } }));
   renderResults(st, result, durationSec);
 }
@@ -351,19 +360,19 @@ function renderResults(st, result, durationSec) {
 
   var head = createElement('div');
   head.style.cssText = 'text-align:center;padding:10px 0';
-  head.appendChild(createElement('h2', { text: '📋 Exam complete' }));
+  head.appendChild(createElement('h2', { text: '📋 Quiz complete' }));
   head.appendChild(createElement('div', { text: result.correct + ' / ' + result.total }));
   head.lastChild.style.cssText = 'font-size:34px;font-weight:900;margin:6px 0';
   head.appendChild(createElement('div', { text: result.accuracy + '% — ' + band.label }));
   head.lastChild.style.cssText = 'font-size:15px;font-weight:800;color:' + band.color;
   head.appendChild(createElement('div', { text: band.note + ' Time used: ' + formatTime(durationSec) + '.' }));
   head.lastChild.style.cssText = 'font-size:11px;color:var(--text-muted);margin-top:4px';
-  head.appendChild(createElement('div', { text: 'Practice score from this game’s question bank, not a licensing-exam prediction.' }));
+  head.appendChild(createElement('div', { text: 'A practice score from this game’s own word list, not a test of how fluent you are.' }));
   head.lastChild.style.cssText = 'font-size:10px;color:var(--text-muted);margin-top:2px';
   _root.appendChild(head);
 
-  // By subject, weakest first
-  _root.appendChild(createElement('h3', { text: 'By subject' }));
+  // By topic, weakest first
+  _root.appendChild(createElement('h3', { text: 'By topic' }));
   _root.lastChild.style.cssText = 'margin:8px 0 6px';
   var subjects = Object.keys(result.bySubject).sort(function (a, b) {
     var A = result.bySubject[a], B = result.bySubject[b];
@@ -397,7 +406,7 @@ function renderResults(st, result, durationSec) {
       var chosen = st.answers[i] === null ? 'No answer' : q.options[st.answers[i]];
       item.appendChild(createElement('p', { text: 'Your answer: ' + chosen }));
       item.lastChild.style.cssText = 'font-size:11px;color:var(--accent-red)';
-      item.appendChild(createElement('p', { text: 'Correct: ' + q.card.ans }));
+      item.appendChild(createElement('p', { text: 'Correct: ' + q.card.ans + (q.card.ansRoman && getShowRoman() ? ' (' + q.card.ansRoman + ')' : '') }));
       item.lastChild.style.cssText = 'font-size:12px;font-weight:700;color:var(--accent-green)';
       if (q.card.tp) {
         item.appendChild(createElement('p', { text: q.card.tp }));
@@ -410,11 +419,11 @@ function renderResults(st, result, durationSec) {
   var actions = createElement('div');
   actions.style.cssText = 'display:flex;gap:6px;margin-top:14px;flex-wrap:wrap';
   if (missed.length > 0 && _deps.startFlashcards) {
-    actions.appendChild(button('📖 Study missed cards', function () {
+    actions.appendChild(button('📖 Practice missed words', function () {
       _deps.startFlashcards(missed.map(function (q) { return q.card.id; }));
     }, 'btn-primary'));
   }
-  actions.appendChild(button('🔁 New exam', renderSetup, 'btn-green'));
+  actions.appendChild(button('🔁 New quiz', renderSetup, 'btn-green'));
   actions.appendChild(button('🏠 Home', function () { if (_deps.goHome) _deps.goHome(); }, 'btn-outline'));
   Array.prototype.forEach.call(actions.children, function (b) { b.style.flex = '1'; });
   _root.appendChild(actions);

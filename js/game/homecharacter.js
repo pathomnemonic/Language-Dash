@@ -1,5 +1,5 @@
 /**
- * homecharacter.js — Fullscreen home scene with flying 3D medical props
+ * homecharacter.js — Fullscreen home scene with flying 3D travel and language props (suitcases, globes, speech bubbles...)
  *
  * AGENT 15 REPLACEMENT — Architecture contract §24.1, §31:
  *
@@ -41,11 +41,11 @@ var PROP_RECYCLE_Z = 8;
 
 // Gesture types
 var GESTURE_NONE = 0;
-var GESTURE_CLIPBOARD = 1;
-var GESTURE_STETHOSCOPE = 2;
+var GESTURE_PHRASEBOOK = 1;
+var GESTURE_POINT_MAP = 2;
 var GESTURE_HEAD_TILT = 3;
 var GESTURE_WAVE = 4;
-var GESTURE_STETHOSCOPE_LISTEN = 5;
+var GESTURE_CUP_EAR = 5;
 var GESTURE_JUMPING_JACKS = 6;
 var GESTURE_FLEXING = 7;
 var GESTURE_LOOKING_AT_WATCH = 8;
@@ -645,11 +645,11 @@ export class HomeCharacter {
                 this.gestureTimer = 0;
 
                 switch (this.currentGesture) {
-                    case GESTURE_CLIPBOARD: this.gestureDuration = 1.8; break;
-                    case GESTURE_STETHOSCOPE: this.gestureDuration = 1.5; break;
+                    case GESTURE_PHRASEBOOK: this.gestureDuration = 1.8; break;
+                    case GESTURE_POINT_MAP: this.gestureDuration = 1.5; break;
                     case GESTURE_HEAD_TILT: this.gestureDuration = 1.2; break;
                     case GESTURE_WAVE: this.gestureDuration = 2.0; break;
-                    case GESTURE_STETHOSCOPE_LISTEN: this.gestureDuration = 2.0; break;
+                    case GESTURE_CUP_EAR: this.gestureDuration = 2.0; break;
                     case GESTURE_JUMPING_JACKS: this.gestureDuration = 2.5; break;
                     case GESTURE_FLEXING: this.gestureDuration = 2.0; break;
                     case GESTURE_LOOKING_AT_WATCH: this.gestureDuration = 1.8; break;
@@ -664,14 +664,14 @@ export class HomeCharacter {
             var bell = Math.sin(this.gestureProgress * Math.PI);
 
             switch (this.currentGesture) {
-                case GESTURE_CLIPBOARD:
+                case GESTURE_PHRASEBOOK:
                     gestureArmR = -0.8 * bell;
                     gestureArmL = -0.5 * bell;
                     gestureHeadTiltX = 0.12 * bell;
                     gestureLeanX = 0.04 * bell;
                     break;
 
-                case GESTURE_STETHOSCOPE:
+                case GESTURE_POINT_MAP:
                     gestureArmR = -1.0 * bell;
                     gestureArmL = -0.2 * bell;
                     gestureHeadTiltZ = -0.08 * bell;
@@ -689,7 +689,7 @@ export class HomeCharacter {
                     gestureLeanX = -0.03 * bell;
                     break;
 
-                case GESTURE_STETHOSCOPE_LISTEN:
+                case GESTURE_CUP_EAR:
                     gestureArmR = -1.3 * bell;
                     gestureHeadTiltZ = 0.1 * bell;
                     gestureLeanX = 0.08 * bell;

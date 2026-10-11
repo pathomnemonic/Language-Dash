@@ -1,8 +1,8 @@
 /**
  * firstweek.js — a short checklist for a new player's first two weeks.
  *
- * Seven small steps that show the parts of the game that make studying stick (a run, flashcards, the Daily 15,
- * an exam date, a trail, a three-day streak, a profile friends can find). Each step is done by doing the thing, not
+ * Seven small steps that show the parts of the game that make words stick (a run, flashcards, the Daily 15,
+ * a goal date, a trail, a three-day streak, a profile friends can find). Each step is done by doing the thing, not
  * by tapping a box; the checklist hides itself when it is finished, after two weeks, or when the player hides it.
  * Pure functions (the card is drawn in uihome.js), so the rules are tested directly.
  */
@@ -14,10 +14,10 @@ export var STEPS = [
   { id: 'run', label: 'Finish your first run', action: 'play' },
   { id: 'flashcards', label: 'Try a flashcard session', action: 'flashcards' },
   { id: 'daily', label: 'Play the Daily 15', action: 'challenge' },
-  { id: 'exam', label: 'Set your exam date in your profile', action: 'profile' },
+  { id: 'exam', label: 'Set a goal date (a trip, a visit, a test) in your passport', action: 'profile' },
   { id: 'trail', label: 'Equip a trail in the Locker', action: 'locker' },
-  { id: 'streak', label: 'Study three days in a row', action: null },
-  { id: 'profile', label: 'Make your profile visible so friends can find you', action: 'friends' }
+  { id: 'streak', label: 'Keep the hearth lit three days in a row', action: null },
+  { id: 'profile', label: 'Make your passport visible so friends can find you', action: 'friends' }
 ];
 
 /**

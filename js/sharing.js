@@ -92,12 +92,12 @@ export function describeActivity(e, mine) {
       return { icon: '🏃', title: who + ' ran ' + (MODE_NAMES[p.mode] || 'a run') + ': ' + num(p.score).toLocaleString() + ' points', facts: facts };
     }
     case 'new_best': return { icon: '🏅', title: who + ' set a new best score: ' + num(p.score).toLocaleString(), facts: [] };
-    case 'streak': return { icon: '🔥', title: who + ' hit a ' + num(p.streak) + '-answer streak', facts: [] };
+    case 'streak': return { icon: '🔥', title: who + ' hit a ' + num(p.streak) + '-word streak', facts: [] };
     case 'tournament': return { icon: '🏆', title: who + ' took part in an old weekly tournament (#' + num(p.rank) + ' of ' + num(p.total) + ')', facts: [] };
-    case 'exam': return { icon: '📝', title: who + ' scored ' + num(p.accuracy) + '% on an exam simulation', facts: [] };
-    case 'group_join': return { icon: '👪', title: who + ' joined a study group', facts: [] };
-    case 'milestone': return { icon: '🎓', title: who + ' ' + verb('have', 'has') + ' now met ' + num(p.cards).toLocaleString() + ' cards', facts: [] };
-    case 'streak_days': return { icon: '📆', title: who + ' ' + verb('are', 'is') + ' on a ' + num(p.days) + '-day study streak', facts: [] };
+    case 'exam': return { icon: '📝', title: who + ' scored ' + num(p.accuracy) + '% on a Word Quiz', facts: [] };
+    case 'group_join': return { icon: '👪', title: who + ' joined a word group', facts: [] };
+    case 'milestone': return { icon: '🎓', title: who + ' ' + verb('have', 'has') + ' now met ' + num(p.cards).toLocaleString() + ' words', facts: [] };
+    case 'streak_days': return { icon: '📆', title: who + ' ' + verb('are', 'is') + ' on a ' + num(p.days) + '-day streak', facts: [] };
     default: return { icon: '✨', title: who + ' did something great', facts: [] };
   }
 }

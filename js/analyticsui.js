@@ -10,7 +10,7 @@ import { analyticsEndpoint } from './analytics/backend.js';
 
 export var COLLECTED = [
   'How you play: which modes, how long, how many questions, scores and how fast you answer.',
-  'Which cards were shown and whether you got them right (so weak questions can be fixed).',
+  'Which words were shown and whether you got them right (so weak words can be fixed).',
   'What you open, buy or equip in the app, and which settings you use.',
   'Your device type, screen size, language, app version and how smoothly the game runs.',
   'Crashes and errors: where they happened and a short message.',
@@ -18,7 +18,7 @@ export var COLLECTED = [
 ];
 export var NEVER = [
   'Your name, e-mail, password, contacts or location.',
-  'Anything you type (custom card text, notes, feedback).',
+  'Anything you type (your own words, notes, feedback).',
   'Advertising IDs, or anything shared with ad companies. Nothing is sold.'
 ];
 

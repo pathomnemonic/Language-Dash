@@ -1,7 +1,5 @@
 /**
- * ankiimport.js — Anki card import with standards-compliant parsing
- *
- * Owns: js/ankiimport.js (Agent 9)
+ * ankiimport.js — Anki vocabulary import (front = word you know, back = word you are learning) with standards-compliant parsing
  *
  * Supports:
  * - Standards-compliant CSV/TSV parsing (RFC 4180 style with liberal extensions)
@@ -28,6 +26,7 @@ import { applyProLock } from './proui.js';
 import { track } from './analytics/index.js';
 import { IMPORT_PATHS, FORMAT_HELP, FORMAT_EXAMPLE, buildAiPrompt, parseAiReply } from './importguide.js';
 import { copyText } from './platform.js';
+import { SUBJECTS } from './cardschema.js';
 
 // ===== LIMITS =====
 var MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB
@@ -211,8 +210,8 @@ function parseDelimitedText(text, options) {
   // Skip a header row when asked, or when it plainly is one ("Front,Back", "Question,Answer"...)
   var startRow = options.hasHeaders ? 1 : 0;
   if (!options.hasHeaders && rows.length > 1 && rows[0].length >= 2 &&
-      /^(front|question|prompt|term|q|clue|clues|buzzwords?)$/i.test(rows[0][0].trim()) &&
-      /^(back|answer|a|definition|response|diagnosis)$/i.test(rows[0][1].trim())) {
+      /^(front|question|prompt|term|word|hint|known|q|clue|clues)$/i.test(rows[0][0].trim()) &&
+      /^(back|answer|a|translation|target|meaning|definition|response)$/i.test(rows[0][1].trim())) {
     startRow = 1;
   }
 
@@ -528,7 +527,7 @@ function importRaw(cards, options) {
   }
 
   var customCards = _dependencies.customCards;
-  if (!requireGate('anki_import', { used: cards.length })) return { imported: 0, rejected: 0, warnings: ['Importing a deck this size needs Dx Dash Pro.'] };
+  if (!requireGate('anki_import', { used: cards.length })) return { imported: 0, rejected: 0, warnings: ['Importing a deck this size needs Language Dash Pro.'] };
 
   var limit = Math.min(cards.length, MAX_CARDS_PER_IMPORT);
   var batch = [];
@@ -546,7 +545,7 @@ function importRaw(cards, options) {
 
     // A raw flashcard-only card (Section 9.4): no distractors, so it is only offered in Flashcard mode
     batch.push({
-      subject: 'Multisystem / Mixed',
+      subject: 'Basics',
       buzzwords: [front],
       answer: back,
       distractors: [],
@@ -721,19 +720,12 @@ function _saveConvertedCards(convertedCards) {
 
   var customCards = _dependencies.customCards;
 
-  var SUBJECTS = [
-    'Neurology', 'Cardiology', 'Nephrology', 'Psychiatry', 'Gastroenterology',
-    'Pulmonology', 'Infectious Disease', 'Endocrinology', 'Hematology/Oncology',
-    'Rheumatology', 'Obstetrics/Gynecology', 'Pediatrics', 'Surgery',
-    'Emergency Medicine', 'Multisystem / Mixed'
-  ];
-
   for (var i = 0; i < convertedCards.length; i++) {
     var card = convertedCards[i];
     try {
-      var subject = card.subject || 'Multisystem / Mixed';
+      var subject = card.subject || 'Basics';
       if (SUBJECTS.indexOf(subject) < 0) {
-        subject = 'Multisystem / Mixed';
+        subject = 'Basics';
       }
 
       customCards.add({
@@ -869,7 +861,7 @@ function _renderUI() {
   };
 
   var section = _el('div', { className: 'anki-import-section' });
-  section.appendChild(_el('h4', { text: '📥 Bring in your own cards' }));
+  section.appendChild(_el('h4', { text: '📥 Bring in your own words' }));
   section.appendChild(_el('p', { text: 'Two ways in. Pick one; both take a minute.', style: muted }));
 
   // ----- How-to (always visible; the first path is open) -----
@@ -884,7 +876,7 @@ function _renderUI() {
   });
 
   // ----- Path 1: flashcards -----
-  var ankiHead = _el('h5', { text: 'Anki or spreadsheet cards', style: { margin: '14px 0 4px' } });
+  var ankiHead = _el('h5', { text: 'Anki or spreadsheet word lists', style: { margin: '14px 0 4px' } });
   applyProLock(ankiHead, 'anki_import');
   section.appendChild(ankiHead);
   var fileInput = _el('input', {
@@ -895,9 +887,9 @@ function _renderUI() {
   section.appendChild(fileInput);
 
   var pasteArea = _el('textarea', {
-    rows: 5, placeholder: 'Or paste cards here: front, a tab or comma, then back. One card per line.', style: fieldStyle
+    rows: 5, placeholder: 'Or paste words here: the word you know, a tab or comma, then the word you are learning. One pair per line.', style: fieldStyle
   });
-  pasteArea.setAttribute('aria-label', 'Paste cards, one per line');
+  pasteArea.setAttribute('aria-label', 'Paste word pairs, one per line');
   section.appendChild(pasteArea);
 
   var help = _el('ul', { style: { margin: '6px 0', paddingLeft: '18px', fontSize: '11px', lineHeight: '1.5', color: 'var(--text-secondary, #aaa)' } });
@@ -915,19 +907,19 @@ function _renderUI() {
   var rawImportBtn = _el('button', { className: 'btn btn-primary btn-block', text: 'Import as flashcards' });
   rawImportBtn.type = 'button';
   section.appendChild(rawImportBtn);
-  section.appendChild(_el('p', { text: 'Flashcards show up in Flashcard mode. They do not appear as runner questions because they have no wrong answers; use the AI route below for that.', style: Object.assign({}, muted, { marginTop: '6px', fontSize: '11px' }) }));
+  section.appendChild(_el('p', { text: 'Word pairs show up in Flashcard mode. They are not runner gates because they have no wrong words; use the AI route below for that.', style: Object.assign({}, muted, { marginTop: '6px', fontSize: '11px' }) }));
 
   // ----- Path 2: quiz cards through an AI chat -----
-  section.appendChild(_el('h5', { text: 'Make runner questions with an AI chat', style: { margin: '16px 0 4px' } }));
+  section.appendChild(_el('h5', { text: 'Make runner gates with an AI chat', style: { margin: '16px 0 4px' } }));
   var copyPromptBtn = _el('button', { className: 'btn btn-outline btn-block', text: '1. Copy AI prompt' });
   copyPromptBtn.type = 'button';
   section.appendChild(copyPromptBtn);
-  section.appendChild(_el('p', { text: '2. Paste it into ChatGPT, Claude or Gemini, then paste your cards below it and send. 3. Copy the reply and paste it here:', style: Object.assign({}, muted, { margin: '6px 0' }) }));
+  section.appendChild(_el('p', { text: '2. Paste it into ChatGPT, Claude or Gemini, then paste your word pairs below it and send. 3. Copy the reply and paste it here:', style: Object.assign({}, muted, { margin: '6px 0' }) }));
 
   var aiArea = _el('textarea', { rows: 5, placeholder: 'Paste the AI’s reply here (the JSON).', style: fieldStyle });
   aiArea.setAttribute('aria-label', 'Paste the AI reply');
   section.appendChild(aiArea);
-  var aiImportBtn = _el('button', { className: 'btn btn-primary btn-block', text: '4. Import quiz cards', style: { marginTop: '6px' } });
+  var aiImportBtn = _el('button', { className: 'btn btn-primary btn-block', text: '4. Import as runner words', style: { marginTop: '6px' } });
   aiImportBtn.type = 'button';
   section.appendChild(aiImportBtn);
 
@@ -995,7 +987,7 @@ function _renderUI() {
       if (!t) { showPreview(null); return; }
       var r = parseDelimitedText(t);
       showPreview(r);
-      if (!r.cards.length) setStatus('No cards found yet. Each line needs a front, a tab or comma, then a back.', RED);
+      if (!r.cards.length) setStatus('No word pairs found yet. Each line needs a word you know, a tab or comma, then the word you are learning.', RED);
       else setStatus('');
     }, 250);
   });
@@ -1045,7 +1037,7 @@ function _renderUI() {
   copyPromptBtn.addEventListener('click', async function () {
     var ok = await copyText(buildAiPrompt());
     if (ok) {
-      setStatus('Prompt copied. Open your AI chat, paste it, then paste your cards underneath.', GREEN);
+      setStatus('Prompt copied. Open your AI chat, paste it, then paste your word pairs underneath.', GREEN);
     } else {
       aiArea.value = buildAiPrompt();
       aiArea.select();
@@ -1057,19 +1049,19 @@ function _renderUI() {
     try {
       var parsed = parseAiReply(aiArea.value);
       if (parsed.error) { setStatus(parsed.error, RED); return; }
-      if (!_dependencies || !_dependencies.customCards) { setStatus('Cards are not available right now.', RED); return; }
+      if (!_dependencies || !_dependencies.customCards) { setStatus('My words are not available right now.', RED); return; }
       var res = _dependencies.customCards.importJSON(JSON.stringify(parsed.cards));
       var skipped = parsed.skipped + res.rejectedCount;
       var firstErr = res.rejected[0] && res.rejected[0].errors && res.rejected[0].errors[0];
       setStatus(
-        'Imported ' + res.importedCount + ' quiz card' + (res.importedCount === 1 ? '' : 's') + '.' +
+        'Imported ' + res.importedCount + ' runner word' + (res.importedCount === 1 ? '' : 's') + '.' +
         (skipped ? ' ' + skipped + ' skipped' + (firstErr ? ' (' + firstErr.message + ')' : '') + '.' : '') +
         (res.importedCount ? ' They are in your runs now. Skim them in My Cards.' : ''),
         res.importedCount > 0 ? GREEN : RED
       );
       if (res.importedCount > 0) {
         aiArea.value = '';
-        if (_dependencies.toast) _dependencies.toast('Imported ' + res.importedCount + ' quiz cards.');
+        if (_dependencies.toast) _dependencies.toast('Imported ' + res.importedCount + ' runner words.');
       }
     } catch (e) {
       setStatus('Something went wrong: ' + (e.message || String(e)), RED);

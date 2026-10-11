@@ -29,10 +29,15 @@ var EFFECT_MS = 600;    // how long a jump / slide / rush animation shows
 
 /** A sample question for the last practice step. The answer lane is never the middle one. */
 var SAMPLE = {
-  clue: 'Episodic headaches, sweating and palpitations with high blood pressure',
-  answer: 'Pheochromocytoma',
-  wrong: ['Hypothyroidism', 'Addison disease']
+  clue: 'dog',
+  answer: 'perro',
+  wrong: ['gato', 'casa']
 };
+
+/** The control text still says "diagnosis gate" in older builds of controlhints.js: always say what the gate means. */
+function gateIntro(c) {
+  return String(c.intro || 'move into the matching gate').replace(/the correct diagnosis gate/i, 'the gate with the same meaning');
+}
 
 /**
  * The tutorial's steps, worded for this device (touch or keyboard).
@@ -42,28 +47,28 @@ export function buildSteps(controls, dashControl) {
   var c = controls || getControlText(undefined, dashControl);
   var t = c.touch;
   return [
-    { id: 'welcome', kind: 'info', icon: 'Dx', title: 'Welcome to Dx Dash!',
-      text: 'You will see medical buzzwords, then ' + c.intro + '. Let\'s practice each move. It takes a couple of minutes, and you can leave any time with the × in the corner.',
+    { id: 'welcome', kind: 'info', icon: 'LD', title: 'Welcome to Language Dash!',
+      text: 'A word you know flashes at the top, and three gates show words in the language you are learning. You ' + gateIntro(c) + '. Let\'s practice each move. It takes a couple of minutes, and you can leave any time with the × in the corner.',
       button: 'Start practice' },
     { id: 'left', kind: 'action', action: 'moveLeft', title: 'Move left',
       prompt: t ? '👈 Swipe left' : '⬅ Press ' + keysPhrase('moveLeft'),
-      text: 'Every lane holds a different diagnosis. Switch lanes to pick yours.' },
+      text: 'Every lane holds a different word. Switch lanes to pick yours.' },
     { id: 'right', kind: 'action', action: 'moveRight', title: 'Move right',
       prompt: t ? 'Swipe right 👉' : 'Press ' + keysPhrase('moveRight') + ' ➡',
       text: 'Now the other way.' },
     { id: 'jump', kind: 'action', action: 'jump', obstacle: 'ground', title: 'Jump',
       prompt: t ? '👆 Swipe up' : '⬆ Press ' + keysPhrase('jump'),
-      text: 'Jump over beds, crates and cones on the ground.' },
+      text: 'Jump over crates, barrels and cones on the ground.' },
     { id: 'slide', kind: 'action', action: 'slide', obstacle: 'overhead', title: 'Slide',
       prompt: t ? '👇 Swipe down' : '⬇ Press ' + keysPhrase('slide'),
-      text: 'Slide under hanging lights and signs.' },
-    { id: 'answer', kind: 'answer', title: 'Pick the diagnosis',
-      text: 'Read the clue, then ' + c.intro + '. Stay in a lane for a moment to lock it in.' },
+      text: 'Slide under hanging signs and banners.' },
+    { id: 'answer', kind: 'answer', title: 'Pick the matching word',
+      text: 'Read the word at the top, then ' + gateIntro(c) + '. Stay in a lane for a moment to lock it in.' },
     { id: 'rush', kind: 'action', action: 'rush', title: 'Rush', dashButton: t && dashControl === 'button',
       prompt: t ? (dashControl === 'button' ? '⚡ Tap the Dash button' : '👆👆 Double-tap') : 'Press ' + keysPhrase('rush'),
-      text: 'Now that you can pick a lane: sure of the answer? Dash through the gate for bonus points. Obstacles cannot hurt you while you dash, and it pulls in every coin on the way.' },
+      text: 'Now that you can pick a lane: sure of the word? Dash through the gate for bonus points. Obstacles cannot hurt you while you dash, and it pulls in every coin on the way.' },
     { id: 'done', kind: 'info', icon: '🎉', title: 'Go and explore!',
-      text: 'That is how a run works. Everything else is waiting behind the little red dots: tap a button or tab with a red dot and it will show you around. Try them all, they are quick, and they are where the rewards are. You can replay this any time from the How to Play button on Home.',
+      text: 'That is how a run works: one word in, one word out, and keep ahead of the Hush. Everything else is waiting behind the little red dots: tap a button or tab with a red dot and it will show you around. Try them all, they are quick, and they are where the rewards are. You can replay this any time from the How to Play button on Home.',
       button: 'Start playing' }
   ];
 }
@@ -190,7 +195,7 @@ export function startTutorial(opts) {
       complete('✓ Correct! ' + SAMPLE.answer);
     } else if (lane !== CENTER_LANE) {
       if (picked) picked.classList.add('wrong');
-      say('Not quite. That does not fit the clue. Try another lane.', 'bad');
+      say('Not quite. That word does not match. Try another lane.', 'bad');
       later(function () { if (picked) picked.classList.remove('wrong'); }, 900);
     }
   }
@@ -234,7 +239,7 @@ export function startTutorial(opts) {
       arena.appendChild(laneEl);
     }
     if (step.kind === 'answer') {
-      arena.appendChild(createElement('div', { className: 'tut-clue', text: '🩺 ' + SAMPLE.clue }));
+      arena.appendChild(createElement('div', { className: 'tut-clue', text: '💬 ' + SAMPLE.clue }));
     }
     if (step.obstacle) {
       arena.appendChild(createElement('div', {

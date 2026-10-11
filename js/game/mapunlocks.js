@@ -1,7 +1,7 @@
 /**
  * mapunlocks.js — when each map becomes a reward.
  *
- * Everyone starts with the four hospital rooms. Every other map unlocks at a player level, one more every five levels
+ * Everyone starts with the four Great Library rooms (Library Hall, Translators Booth, Codebreakers Lab, Midnight Platform). Every other map unlocks at a player level, one more every five levels
  * (5, 10, 15, ...), in the order below. A player who does not want to wait can buy any map early in the Locker.
  */
 

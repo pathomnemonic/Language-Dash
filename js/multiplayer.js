@@ -1,6 +1,6 @@
 /**
  * multiplayer.js — PeerJS transport, match protocol, and deterministic utilities
- * for Dx Dash multiplayer.
+ * for Language Dash multiplayer.
  *
  * Protocol version: 3
  * Owner: Agent 11
@@ -36,11 +36,13 @@
  * between browsers with DTLS encryption.
  */
 import { uniqueByAnswer } from './cardleaks.js';
+import { getLanguage } from './lang/languages.js';
+import { getPairOrDefault } from './lang/pair.js';
 
 
 // ===== CONSTANTS =====
 
-var PEER_PREFIX = 'buzzworddash3-';
+var PEER_PREFIX = 'languagedash1-';
 var peerLoadPromise = null;
 
 /** @type {3} */
@@ -171,7 +173,7 @@ export function buildEncounterPlan(options) {
 
   if (cards.length === 0) return [];
 
-  // One card per diagnosis, so a shared deck never repeats a diagnosis
+  // One card per answer word, so a shared deck never repeats a gate word as the answer
   var shuffled = seededShuffle(uniqueByAnswer(cards), rng);
   var plan = [];
 
@@ -255,7 +257,11 @@ export function hashCardPool(cards) {
     return 0;
   });
 
+  // The language pair is part of the hash (ids start with "known-target-"), so two players on different pairs never match
+  var pair = pairOfCards(sorted);
   var hash = 5381;
+  var head = pair ? 'pair:' + pair.known + '>' + pair.target + '|' : '';
+  for (var h = 0; h < head.length; h++) hash = ((hash << 5) + hash + head.charCodeAt(h)) | 0;
   for (var i = 0; i < sorted.length; i++) {
     var c = sorted[i];
     var str = c.id + '|' + c.ans + '|' + (c.d ? c.d.join(',') : '');
@@ -265,6 +271,46 @@ export function hashCardPool(cards) {
   }
 
   return (hash >>> 0).toString(16);
+}
+
+// ===== LANGUAGE PAIR (the two players must hold the same one) =====
+
+/** The pair a card id belongs to: "en-es-007" is { known: 'en', target: 'es' }. Null for ids of any other shape (My words). */
+export function pairOfCardId(id) {
+  var m = /^([a-z]{2})-([a-z]{2})-\d{3}$/.exec(String(id || ''));
+  return m && getLanguage(m[1]) && getLanguage(m[2]) ? { known: m[1], target: m[2] } : null;
+}
+
+/** The pair of a card pool (from its first built-in card), or null. */
+export function pairOfCards(cards) {
+  for (var i = 0; i < (cards || []).length; i++) {
+    var p = pairOfCardId(cards[i].id);
+    if (p) return p;
+  }
+  return null;
+}
+
+/** "English → Spanish" */
+export function pairLabel(pair) {
+  var k = pair && getLanguage(pair.known);
+  var t = pair && getLanguage(pair.target);
+  return k && t ? k.name + ' \u2192 ' + t.name : '';
+}
+
+/**
+ * The message to show when a friend's card-pool hash differs from ours. When their pair is known and differs from
+ * ours it names it; otherwise it asks both players to update the game.
+ * @param {{known: string, target: string}|null} [theirPair] the pair carried by the challenge link or match config
+ * @param {{known: string, target: string}|null} [myPair] defaults to the player's saved pair
+ * @returns {string}
+ */
+export function pairMismatchMessage(theirPair, myPair) {
+  var mine = myPair || getPairOrDefault();
+  var label = pairLabel(theirPair);
+  if (label && (!mine || theirPair.known !== mine.known || theirPair.target !== mine.target)) {
+    return 'You and your friend need the same language pair (' + label + ').';
+  }
+  return 'You and your friend need the same language pair and the latest version of the game. Update both and try again.';
 }
 
 // ===== MATCH CONFIG VALIDATION =====
@@ -620,6 +666,7 @@ export class Multiplayer {
         includeCustomCards: false
       },
       cardPoolHash: config.cardPoolHash || '',
+      pair: config.pair || getPairOrDefault(),
       contentVersion: config.contentVersion || '',
       skinId: config.skinId || '',
       modeConfig: finalModeConfig
@@ -1001,6 +1048,7 @@ export class Multiplayer {
             matchId: payload.matchId,
             skinId: payload.skinId || '',
             cardPoolHash: payload.cardPoolHash || '',
+            pair: payload.pair && pairLabel(payload.pair) ? { known: payload.pair.known, target: payload.pair.target } : null,
             contentVersion: payload.contentVersion || ''
           });
         }

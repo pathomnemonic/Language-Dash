@@ -342,7 +342,7 @@ function announceGroupJoin() {
 }
 
 function renderGroups(body) {
-  body.appendChild(note('Private boards for a class or study group. Share the code so classmates can join.'));
+  body.appendChild(note('Private boards for a class or a word group. Share the code so friends can join.'));
 
   // Create / join
   var forms = createElement('div');
@@ -415,7 +415,7 @@ function renderGroups(body) {
       goalBox.lastChild.style.cssText = 'font-size:13px;margin:6px 0';
       if (goal) {
         var pct = Math.min(100, Math.round(total / goal * 100));
-        goalBox.appendChild(note(total.toLocaleString() + ' / ' + goal.toLocaleString() + ' cards studied by the group this week' + (total >= goal ? ' \u2705' : '')));
+        goalBox.appendChild(note(total.toLocaleString() + ' / ' + goal.toLocaleString() + ' words practiced by the group this week' + (total >= goal ? ' \u2705' : '')));
         var bar = createElement('div', { attributes: { role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(goal), 'aria-valuenow': String(Math.min(total, goal)), 'aria-label': 'Group weekly goal' } });
         bar.style.cssText = 'height:8px;border-radius:4px;background:rgba(255,255,255,0.12);overflow:hidden;margin:4px 0 8px';
         var fill = createElement('div');
@@ -423,7 +423,7 @@ function renderGroups(body) {
         bar.appendChild(fill);
         goalBox.appendChild(bar);
         rows.slice(0, 5).forEach(function (r) {
-          goalBox.appendChild(note(r.player_name + ': ' + r.cards + ' cards'));
+          goalBox.appendChild(note(r.player_name + ': ' + r.cards + ' words'));
         });
       } else {
         goalBox.appendChild(note(selected && selected.is_owner ? 'No goal set yet.' : 'The group owner has not set a goal yet.'));
@@ -431,12 +431,12 @@ function renderGroups(body) {
       if (selected && selected.is_owner) {
         var setRow = createElement('div');
         setRow.style.cssText = 'display:flex;gap:6px;margin-top:6px';
-        var goalInput = createElement('input', { attributes: { type: 'number', min: '50', max: '100000', step: '50', placeholder: 'Cards per week (50+)', 'aria-label': 'Weekly goal in cards', value: goal ? String(goal) : '' } });
+        var goalInput = createElement('input', { attributes: { type: 'number', min: '50', max: '100000', step: '50', placeholder: 'Words per week (50+)', 'aria-label': 'Weekly goal in words', value: goal ? String(goal) : '' } });
         goalInput.style.cssText = 'flex:1;padding:8px 10px;border-radius:10px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3)';
         setRow.appendChild(goalInput);
         setRow.appendChild(btn('Set goal', function () {
           var v = parseInt(goalInput.value, 10);
-          if (!(v >= 50 && v <= 100000)) { _deps.toast('Enter a goal between 50 and 100,000 cards.'); return null; }
+          if (!(v >= 50 && v <= 100000)) { _deps.toast('Enter a goal between 50 and 100,000 words.'); return null; }
           return lb().setGroupGoal(_state.groupId, v).then(function (res) {
             _deps.toast(res.success ? 'Goal updated.' : (res.error || 'Could not set the goal.'));
             render();

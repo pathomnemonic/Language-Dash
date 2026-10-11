@@ -62,6 +62,7 @@ import { getDashControl } from './dashcontrol.js';
 import { getLanguage } from './lang/languages.js';
 import { getPairOrDefault, getShowRoman } from './lang/pair.js';
 import { streakCallout } from './flavor.js';
+import { pairLabel } from './langui.js';
 import { dailyReward, loginStep } from './progress.js';
 import { newlyAffordable, markSeen } from './lockerdots.js';
 import { showDailyRewardModal } from './rewardsui.js';
@@ -1617,6 +1618,7 @@ class UI {
   _settingsSections() {
     var pro = proLive() ? [{ id: 'pro', icon: '⚡', title: 'Language Dash Pro', desc: isPro() ? 'Your membership, your gift and billing' : 'What Pro gets you, and the free 7-day trial' }] : [];
     return pro.concat([
+      { id: 'languages', icon: '🌍', title: 'Languages', desc: pairLabel() + ' · Change the language you speak or the one you are learning' },
       { id: 'sound', icon: '🔊', title: 'Sound', desc: 'Music, effects, volume and reading aloud' },
       { id: 'look', icon: '🎨', title: 'Look & performance', desc: 'Colors, camera, graphics and frame rate' },
       { id: 'keys', icon: '⌨️', title: 'Keyboard', desc: 'Choose the keys for moving, dashing and Auto-Pilot' },

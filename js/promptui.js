@@ -21,7 +21,7 @@ export function getShareUrl() {
   return appPublicUrl();
 }
 
-var SHARE_TEXT = 'I have been studying with Language Dash, a free endless runner for USMLE and COMLEX questions. Come run the list with me.';
+var SHARE_TEXT = 'I have been learning words with Language Dash, a free endless runner for 15 languages. Come run the lexicon with me.';
 
 /** Share the game: the system share sheet if there is one, otherwise copy the link. @returns {Promise<'shared'|'copied'|'failed'>} */
 export function shareGame() {
@@ -78,7 +78,7 @@ var COPY = {
     action: '👤 Make an account'
   },
   share: {
-    text: 'Know someone who is studying for boards? Send them Language Dash. It is free.',
+    text: 'Know someone learning a language? Send them Language Dash. It is free.',
     action: '📣 Share with a friend'
   },
   review: {
@@ -129,7 +129,7 @@ export function attachPromptCard(deps) {
   // Apple's rules (5.6.1) ask apps to use the system rating box and not to screen people by mood first, so on iPhone the
   // rating ask is one plain step, and feedback is a separate, neutral button available to everyone.
   var plainRating = kind === 'review' && getNativePlatform() === 'ios';
-  if (plainRating) copy = { text: 'If Language Dash is helping you study, a rating helps other students find it.', action: '⭐ Rate Language Dash' };
+  if (plainRating) copy = { text: 'If Language Dash is helping you learn words, a rating helps other learners find it.', action: '⭐ Rate Language Dash' };
   var box = document.createElement('div');
   box.className = 'prompt-card';
   box.setAttribute('data-prompt', kind);
@@ -177,7 +177,7 @@ export function attachPromptCard(deps) {
 
   /** Step two for a happy player: would they rate it? (The store's own rating box first, then the store page.) */
   function askToRate() {
-    text.textContent = 'Great to hear! Would you rate Language Dash on the ' + (isIosBuild() ? 'App Store' : 'Play Store') + '? It takes a few seconds and helps other students find it.';
+    text.textContent = 'Great to hear! Would you rate Language Dash on the ' + (isIosBuild() ? 'App Store' : 'Play Store') + '? It takes a few seconds and helps other learners find it.';
     while (row.firstChild) row.removeChild(row.firstChild);
     button('⭐ Sure, rate it', 'btn-gold', function () {
       track('rating_prompt', Object.assign({ step: 'store_opened' }, promptFacts));

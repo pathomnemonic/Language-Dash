@@ -57,8 +57,8 @@ describe('exam simulation', () => {
   it('labels readiness bands', () => {
     expect(readinessLabel(85).label).toBe('Strong');
     expect(readinessLabel(70).label).toBe('On track');
-    expect(readinessLabel(55).label).toBe('Needs work');
-    expect(readinessLabel(20).label).toBe('At risk');
+    expect(readinessLabel(55).label).toBe('Warming up');
+    expect(readinessLabel(20).label).toBe('Just starting');
   });
 
   it('persists an exam once and feeds spaced repetition', () => {

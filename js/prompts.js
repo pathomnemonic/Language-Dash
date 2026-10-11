@@ -3,7 +3,7 @@
  *
  * The rules are about being welcome, not about squeezing every last tap out of someone:
  *  - Only on the results screen after a good moment (a strong run, a new best score), never during a
- *    run or an exam, never on the first runs.
+ *    run or a Word Quiz, never on the first runs.
  *  - One ask at a time, and not twice in a row: a few days apart, and each kind backs off further every
  *    time it is skipped (14, 28, 56 days) and stops after three asks.
  *  - "Don't ask again" is per kind and respected for good. Doing the thing (sharing, rating, signing in)

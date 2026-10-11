@@ -1,7 +1,7 @@
 /**
  * studyplan.js — pure calculations behind the weak-spot dashboard.
  *
- * Takes the player's card statistics and works out what is due, what is
+ * Takes the player's word statistics and works out what is due, what is
  * weakest, and a short plan for today. No DOM and no storage access here so
  * it can be unit-tested.
  */
@@ -13,7 +13,7 @@ var DAY = 24 * 60 * 60 * 1000;
  * @param {object} input.cardStats - { [cardId]: {seen, correct, wrong, due} }
  * @param {object[]} input.cards - card objects (id, subj, questionType)
  * @param {object} input.subjectStats - { [subject]: {correct, wrong} }
- * @param {number} input.goal - daily card goal
+ * @param {number} input.goal - daily word goal
  * @param {number} input.studiedToday
  * @param {number} [input.now]
  */
@@ -25,7 +25,7 @@ export function buildStudyPlan(input) {
   var byId = {};
   input.cards.forEach(function (c) { byId[c.id] = c; });
 
-  // ---- due cards and 7-day forecast ----
+  // ---- due words and 7-day forecast ----
   var dueIds = [];
   var forecast = [0, 0, 0, 0, 0, 0, 0];
   Object.keys(input.cardStats).forEach(function (id) {
@@ -41,13 +41,13 @@ export function buildStudyPlan(input) {
   // Most overdue first
   dueIds.sort(function (a, b) { return input.cardStats[a].due - input.cardStats[b].due; });
 
-  // ---- accuracy by question type ----
+  // ---- accuracy by kind of word (all words are plain 'word' ones in Language Dash) ----
   var types = {};
   Object.keys(input.cardStats).forEach(function (id) {
     var s = input.cardStats[id];
     var c = byId[id];
     if (!s || !s.seen || !c) return;
-    var t = c.questionType || 'buzzword_dx';
+    var t = c.questionType || 'word';
     types[t] = types[t] || { seen: 0, correct: 0 };
     types[t].seen += s.seen;
     types[t].correct += s.correct;
@@ -56,7 +56,7 @@ export function buildStudyPlan(input) {
     return { type: t, seen: types[t].seen, accuracy: Math.round(types[t].correct / types[t].seen * 100) };
   }).sort(function (a, b) { return a.accuracy - b.accuracy; });
 
-  // ---- weakest subject (needs a minimum of data) ----
+  // ---- weakest topic (needs a minimum of data) ----
   /** @type {{subject: string, accuracy: number, total: number} | null} */
   var weakest = null;
   Object.keys(input.subjectStats || {}).forEach(function (subj) {
@@ -71,9 +71,9 @@ export function buildStudyPlan(input) {
   var remaining = Math.max(0, (input.goal || 20) - (input.studiedToday || 0));
   /** @type {Array<{kind: string, label: string, count?: number, subject?: string}>} */
   var steps = [];
-  if (dueIds.length > 0) steps.push({ kind: 'due', count: Math.min(dueIds.length, 20), label: 'Review ' + Math.min(dueIds.length, 20) + ' due card' + (Math.min(dueIds.length, 20) === 1 ? '' : 's') });
+  if (dueIds.length > 0) steps.push({ kind: 'due', count: Math.min(dueIds.length, 20), label: 'Review ' + Math.min(dueIds.length, 20) + ' due word' + (Math.min(dueIds.length, 20) === 1 ? '' : 's') });
   if (weakest) steps.push({ kind: 'weak', subject: weakest.subject, label: 'Drill ' + weakest.subject + ' (' + Math.round(weakest.accuracy * 100) + '% correct)' });
-  if (remaining > 0) steps.push({ kind: 'goal', count: remaining, label: 'Study ' + remaining + ' more card' + (remaining === 1 ? '' : 's') + ' to hit your daily goal' });
+  if (remaining > 0) steps.push({ kind: 'goal', count: remaining, label: 'Practice ' + remaining + ' more word' + (remaining === 1 ? '' : 's') + ' to hit your daily goal' });
 
   return {
     dueIds: dueIds,

@@ -165,7 +165,7 @@ function showWebGLNotice() {
   note.id = 'webglNotice';
   note.setAttribute('role', 'status');
   note.style.cssText = 'font-size:12px;color:var(--accent-gold);text-align:center;margin:6px 12px 0';
-  note.textContent = 'Graphics (WebGL) are not available in this browser, so the runner cannot start. Flashcards, the exam simulator, stats and everything else still work.';
+  note.textContent = 'Graphics (WebGL) are not available in this browser, so the runner cannot start. Flashcards, the Word Quiz, stats and everything else still work.';
   area.appendChild(note);
 }
 
@@ -474,7 +474,7 @@ function configureMultiplayer(client, content) {
 // =========================================================================
 //  MODE STARTER  —  Canonical game.start(options) [2] §6.2
 // =========================================================================
-/** Start this week's Gauntlet: the same 30 seeded cards for everyone, with one life. */
+/** Start this week's Gauntlet: the same 30 seeded words for everyone, with one life. */
 function startTournament() {
   Promise.all([import('./challenge.js'), import('./multiplayer.js')]).then(function (mods) {
     var challenge = mods[0];
@@ -534,18 +534,18 @@ function postActivities(summary, result) {
   if (days) throttledActivity('streak_days', { name: name, days: days }, 60000);
 }
 
-// A finished exam simulation goes to friends' feeds (only for a signed-in player with a public, named profile)
+// A finished Word Quiz goes to friends' feeds (only for a signed-in player with a public, named profile)
 document.addEventListener('dx:exam-finished', function (e) {
   if (!leaderboardModule || !leaderboardModule.leaderboard.isAuthenticated()) return;
   if (!storage.get('profileVisible') || !storage.get('profileName')) return;
   var d = (e && e.detail) || {};
-  if (!(d.total >= 10)) return; // a quick handful of questions is not worth announcing
+  if (!(d.total >= 10)) return; // a quick handful of words is not worth announcing
   throttledActivity('exam', { name: storage.get('profileName'), accuracy: Math.round(Number(d.accuracy) || 0) });
 });
 
 var _lastStudySync = -1;
 
-/** Tell the server how many cards we studied this week (for group goals). */
+/** Tell the server how many words we practiced this week (for group goals). */
 function syncWeeklyStudy() {
   if (!leaderboardModule || !leaderboardModule.leaderboard.isAuthenticated()) return;
   var cards = storage.getWeeklyCards();
@@ -592,7 +592,7 @@ function showChallengeBanner(challenge) {
   title.textContent = (challenge.from || 'A friend') + ' challenges you!';
   var body = document.createElement('div');
   body.style.cssText = 'font-size:12px;color:var(--text-secondary);margin-bottom:12px';
-  body.textContent = challenge.n + ' questions, same order for both of you. Score to beat: ' + challenge.score.toLocaleString();
+  body.textContent = challenge.n + ' words, same order for both of you. Score to beat: ' + challenge.score.toLocaleString();
   var accept = document.createElement('button');
   accept.className = 'btn btn-green btn-block';
   accept.textContent = 'Accept challenge';
@@ -623,9 +623,9 @@ function handleChallengeLink() {
     // Clear the hash so a refresh does not re-open the banner.
     history.replaceState(null, '', window.location.pathname + window.location.search);
     return import('./multiplayer.js').then(function (mp) {
-      // A link that carries its card ids plays those cards even after the card set has changed
+      // A link that carries its word ids plays those words even after the word set has changed
       if (!challenge.ids && challenge.hash && challenge.hash !== mp.hashCardPool(seededPool())) {
-        ui._showToast('This challenge uses a different card set. Ask your friend to update the game.');
+        ui._showToast('This challenge uses a different word set. Ask your friend to update the game.');
         return;
       }
       showChallengeBanner(challenge);
@@ -706,7 +706,7 @@ function attachTipPrompt() {
   box.style.cssText = 'margin:14px 0;padding:12px;border-radius:12px;border:1px solid rgba(255,215,0,0.4);text-align:center;background:rgba(255,215,0,0.06)';
   var text = document.createElement('div');
   text.style.cssText = 'font-size:12px;color:var(--text-secondary);margin-bottom:8px';
-  text.textContent = 'Enjoying Language Dash? It is free and always will be. If it is helping your studying, a small tip helps keep it going.';
+  text.textContent = 'Enjoying Language Dash? It is free and always will be. If it is helping your words stick, a small tip helps keep it going.';
   box.appendChild(text);
 
   var row = document.createElement('div');
@@ -855,8 +855,8 @@ function attachGauntletResult() {
       head.textContent = '\uD83D\uDEE1\uFE0F Weekly Gauntlet cleared!';
       hint.textContent = firstClear ? '\uD83C\uDFC5 Badge earned and +' + GAUNTLET_REWARD + ' coins. A new Gauntlet starts next week.' : 'Already cleared this week. Nice run. A new Gauntlet starts next week.';
     } else {
-      head.textContent = '\uD83D\uDEE1\uFE0F Weekly Gauntlet: ' + game.encountersDone + ' of ' + size + ' cards';
-      hint.textContent = 'The same ' + size + ' cards all week, and you can retry as often as you like. Clear them on a single life.';
+      head.textContent = '\uD83D\uDEE1\uFE0F Weekly Gauntlet: ' + game.encountersDone + ' of ' + size + ' words';
+      hint.textContent = 'The same ' + size + ' words all week, and you can retry as often as you like. Clear them on a single life.';
     }
     box.appendChild(head);
     box.appendChild(hint);
@@ -889,7 +889,7 @@ function attachChallengeResult(finalScore) {
   content.insertBefore(box, content.children[1] || null);
 }
 
-/** Play a list of cards in the runner (the study plan's "Run it" button). */
+/** Play a list of words in the runner (the study plan's "Run it" button). */
 function startStudyPlanRun(cardIds) {
   if (!requireGate('mode_study')) return;
   trackEvent('study_plan_changed', { action: 'run_started' });
@@ -922,11 +922,11 @@ function startMode(mode) {
   if (!areCardsReady()) {
     ui._showToast(loadingLine());
     loadCards().then(function () { startMode(mode); }).catch(function () {
-      ui._showToast('Could not load the questions. Check your connection and try again.');
+      ui._showToast('Could not load the words. Check your connection and try again.');
     });
     return;
   }
-  if (!webglOk) { ui._showToast('The runner needs WebGL, which is not available here. Try Flashcards or the Exam Sim!'); return; }
+  if (!webglOk) { ui._showToast('The runner needs WebGL, which is not available here. Try Flashcards or the Word Quiz!'); return; }
   if (mode === 'tournament') { startTournament(); return; }
   if (mode === 'daily' && storage.get('dailyDone')) {
     ui._showToast('Daily already cleared! New one drops tomorrow.', 2200);
@@ -943,7 +943,7 @@ function startMode(mode) {
       return s.wrong > 0 || (s.seen > 0 && s.correct / s.seen < 0.7);
     });
     if (weakCards.length < 3) {
-      ui._showToast('Not enough missed cards yet. Play more rounds first!', 2200);
+      ui._showToast('Not enough missed words yet. Play more rounds first!', 2200);
       return;
     }
   }
@@ -1193,7 +1193,7 @@ function hideBootSplash() {
 
 var flyersOn = null;
 
-/** The medical odds and ends flying out of the middle of the home backdrop (off for reduced motion). */
+/** The word-themed odds and ends flying out of the middle of the home backdrop (off for reduced motion). */
 function refreshFlyers() {
   var layer = document.getElementById('bgFlyers');
   if (!layer) return;
@@ -1237,7 +1237,7 @@ function askToRestoreProgress(found) {
   var h = document.createElement('h2');
   h.textContent = 'Welcome back! Restore your progress?';
   var p = document.createElement('p');
-  p.textContent = 'Your game started empty, but an earlier copy of your progress is still on this device: ' + found.answered.toLocaleString() + ' cards answered, ' + found.coins.toLocaleString() + ' coins, about level ' + Math.max(1, found.level) + '. Restore it?';
+  p.textContent = 'Your game started empty, but an earlier copy of your progress is still on this device: ' + found.answered.toLocaleString() + ' words answered, ' + found.coins.toLocaleString() + ' coins, about level ' + Math.max(1, found.level) + '. Restore it?';
   var buttons = document.createElement('div');
   buttons.className = 'tut-buttons';
   var yes = document.createElement('button');
@@ -1507,7 +1507,7 @@ function init() {
           if (!mod.leaderboard.isAuthenticated() && waited < 8000) { waited += 500; setTimeout(go, 500); return; }
           ui._showToast('Thank you! Setting up your purchase…', 3000);
           waitForWebPayment(mod.leaderboard).then(function (r) {
-            ui._showToast(r.active ? 'Welcome to Language Dash Pro! 🎉' : r.library ? 'All cards unlocked! 🎉' : 'Payment received. It can take a minute to show: open Settings → Language Dash Pro and tap Check again.', 4000);
+            ui._showToast(r.active ? 'Welcome to Language Dash Pro! 🎉' : r.library ? 'All words unlocked! 🎉' : 'Payment received. It can take a minute to show: open Settings → Language Dash Pro and tap Check again.', 4000);
           });
         };
         go();
@@ -2107,7 +2107,7 @@ function checkStudyReminder() {
   storage.set('lastReminderDate', today);
   var remaining = (storage.get('dailyGoal') || 20) - storage.getStudiedToday();
   var options = {
-    body: remaining + ' more card' + (remaining === 1 ? '' : 's') + ' to hit today\u2019s goal.',
+    body: remaining + ' more word' + (remaining === 1 ? '' : 's') + ' to hit today\u2019s goal.',
     icon: 'icon.svg',
     tag: 'daily-reminder'
   };

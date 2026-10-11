@@ -1,5 +1,5 @@
 /**
- * uiprofile.js — Stats, profile, calendar and quests screens.
+ * uiprofile.js — Stats, Passport (profile), calendar and quests screens.
  *
  * Split out of ui.js. These methods are attached to UI.prototype (see the end of ui.js), so
  * `this` is the UI controller and nothing about how they are called has changed.
@@ -178,12 +178,12 @@ export var profileMethods = {
     // Stats grid
     var statsGrid = createElement('div', { className: 'profile-stats-grid' });
     [
-      { val: totalCards, label: 'Cards Studied' },
+      { val: totalCards, label: 'Words Practiced' },
       { val: totalAcc + '%', label: 'Accuracy' },
       { val: bestScore, label: 'Best Score' },
       { val: '🔥 ' + bestStreak, label: 'Best Streak' },
       { val: playTimeMin + 'm', label: 'Play Time' },
-      { val: '📅 ' + studyStreak, label: 'Study Streak' }
+      { val: '📅 ' + studyStreak, label: 'Day Streak' }
     ].forEach(function (s) {
       var stat = createElement('div', { className: 'profile-stat' });
       stat.appendChild(createElement('div', { className: 'val', text: String(s.val) }));
@@ -219,10 +219,10 @@ export var profileMethods = {
 
     // Badges: every badge, earned or not. Earned ones can be pinned to the profile (up to 6); the ones
     // earned since the profile was last open wear a red dot until the player leaves this screen.
-    // Study streak calendar, just above the badges
+    // Hearth streak calendar, just above the badges
     var calendarBox = createElement('details', { className: 'profile-fold', attributes: { id: 'streakBox' } });
     var calSum = createElement('summary', { className: 'profile-fold-sum' });
-    calSum.appendChild(createElement('span', { className: 'profile-fold-title', text: '📅 Study streak' }));
+    calSum.appendChild(createElement('span', { className: 'profile-fold-title', text: '📅 Hearth streak' }));
     calSum.appendChild(createElement('span', { className: 'profile-fold-state', text: '🔥 ' + studyStreak + (studyStreak === 1 ? ' day' : ' days') }));
     calendarBox.appendChild(calSum);
     var calendar = createElement('div', { className: 'streak-calendar', attributes: { id: 'streakCalendar' } });
@@ -393,7 +393,7 @@ export var profileMethods = {
       container.appendChild(missedBox);
     }
 
-    // Today's bonus subject, with what it pays and how much of today's bonus is already earned
+    // Today's bonus topic, with what it pays and how much of today's bonus is already earned
     var bonusSubject = bonusSubjectFor(today, SUBJECTS);
     if (bonusSubject) {
       var paid = storage.get('bonusCoins') || {};
@@ -401,10 +401,10 @@ export var profileMethods = {
       var tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
       var bonusBox = createElement('div', { className: 'quest-item bonus-card', attributes: { id: 'bonusCard' } });
       var bonusTop = createElement('div', { className: 'bonus-top' });
-      bonusTop.appendChild(createElement('div', { className: 'quest-title', text: '\u2B50 Bonus subject today: ' + bonusSubject }));
+      bonusTop.appendChild(createElement('div', { className: 'quest-title', text: '\u2B50 Bonus topic today: ' + bonusSubject }));
       bonusTop.appendChild(createElement('div', { className: 'quest-reward', text: earned >= BONUS_COINS_CAP ? 'Maxed \u2705' : earned + '/' + BONUS_COINS_CAP + ' \uD83E\uDE99' }));
       bonusBox.appendChild(bonusTop);
-      bonusBox.appendChild(createElement('div', { className: 'bonus-detail', text: '+' + BONUS_COINS_PER_CORRECT + ' \uD83E\uDE99 for every right answer in ' + bonusSubject + ', up to ' + BONUS_COINS_CAP + ' a day. Tomorrow: ' + bonusSubjectFor(localDateKey(tomorrow), SUBJECTS) + '.' }));
+      bonusBox.appendChild(createElement('div', { className: 'bonus-detail', text: '+' + BONUS_COINS_PER_CORRECT + ' \uD83E\uDE99 for every right word in ' + bonusSubject + ', up to ' + BONUS_COINS_CAP + ' a day. Tomorrow: ' + bonusSubjectFor(localDateKey(tomorrow), SUBJECTS) + '.' }));
       var bonusBar = createElement('div', { className: 'quest-bar', attributes: { role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(BONUS_COINS_CAP), 'aria-valuenow': String(earned), 'aria-label': 'Bonus coins earned today' } });
       var bonusFill = createElement('div', { className: 'quest-fill' });
       bonusFill.style.width = Math.round(earned / BONUS_COINS_CAP * 100) + '%';

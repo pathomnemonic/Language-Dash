@@ -41,7 +41,8 @@ export var SCENERY_FILES = {
   skull: 'props/skull.glb',
   bone: 'props/bone.glb',
   tree: 'props/tree.glb',
-  // Rooms (hospital hallway, operating room, lab, ambulance bay)
+  // Leftover models from the original game's hospital rooms (kept so saved files and tests stay valid; the Great
+  // Library rooms in hospitalhall.js no longer use them)
   med_wheelchair: 'medical/wheelchair.glb',
   med_ivstand: 'medical/ivstand.glb',
   med_doctor: 'medical/doctor.glb',
@@ -55,7 +56,7 @@ export var SCENERY_FILES = {
 };
 
 /** Keys used as floating props beside the track. */
-export var PROP_KEYS = ['streetlight', 'monitor', 'aircon', 'sign', 'telescope', 'heart', 'firstaid', 'potion', 'skull', 'bone'];
+export var PROP_KEYS = ['streetlight', 'monitor', 'aircon', 'sign', 'telescope', 'potion', 'tree'];
 
 var _cache = {}; // key -> { scene, box: Box3 }
 var _preload = null;
@@ -206,12 +207,14 @@ export function buildHanging(key, hang) {
 var SIDE_PERIOD = 28;
 
 /**
- * Only the skeleton maps have giant models drifting beside the track (the skull and bones
- * look right there); every other map uses the classic themed floating props instead. Each entry: [model key, height].
+ * Only two maps have giant models drifting beside the track: the Calavera Fiesta (map key 'Skeletal Corridor': a
+ * giant sugar skull and bones look right at the party) and the Berlin Disco Cellar (map key 'X-Ray Vision': stage
+ * spotlights and chandeliers); every other map uses the classic themed floating props instead.
+ * Each entry: [model key, height]. (Map names here are the stable keys from skins.js, not the display titles.)
  */
 export var SIDE_THEMES = {
   'Skeletal Corridor': [['bone', 7], ['skull', 5.5]],
-  'X-Ray Vision': [['skull', 6], ['bone', 7]]
+  'X-Ray Vision': [['spotlight', 5.5], ['chandelier', 5], ['spotlight', 6.5]]
 };
 
 
@@ -229,7 +232,7 @@ export function getSideTheme(skinName) {
 export function buildSideScenery(skinName) {
   if (!useSceneryModels()) return null;
   var theme = getSideTheme(skinName);
-  if (!theme) return null; // only the bone maps get giant models; the rest keep the classic floating props
+  if (!theme) return null; // only the party maps get giant models; the rest keep the classic floating props
   if (!theme.every(function (t) { return isSceneryReady(t[0]); })) return null;
   var group = new THREE.Group();
   group.userData.isSideScenery = true;

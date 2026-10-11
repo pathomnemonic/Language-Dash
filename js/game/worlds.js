@@ -3,7 +3,7 @@
  *
  * A world map is described by a skin (colours, fog, light, sky: see skins.js) with a `world` id, and a world module in
  * js/game/maps/ that knows how to build one bay of wall, the floor, the fixtures overhead and the things that move.
- * Like the Hospital Hallway, a world repeats every WORLD_PERIOD units (four bays) so it scrolls without a seam.
+ * Like the Library Hall, a world repeats every WORLD_PERIOD units (four bays) so it scrolls without a seam.
  *
  * track.js and skinbuilders.js call in here when a skin has a world; everything else about a map (gates, coins, the
  * runner) works the same as on any other map.

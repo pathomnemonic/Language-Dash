@@ -1,10 +1,14 @@
 /**
  * challenge.js — async challenges shared as links.
  *
- * A challenge is a seeded set of cards plus the sender's score. It travels in
+ * A challenge is a seeded set of words (cards) plus the sender's score and language pair. It travels in
  * the URL hash (#c=...), so no server is needed: the friend opens the link,
  * plays the same cards in the same order, and compares scores.
  */
+
+import { isLanguageCode } from './lang/languages.js';
+import { getPairOrDefault } from './lang/pair.js';
+import { pairMismatchMessage } from './multiplayer.js';
 
 export var CHALLENGE_SIZE = 15;
 var MAX_NAME = 30;
@@ -41,7 +45,7 @@ function cleanIds(ids, n) {
 
 /**
  * Encode a challenge for sharing.
- * @param {{seed: number, n: number, from: string, score: number, hash: string, ids?: string[]}} challenge
+ * @param {{seed: number, n: number, from: string, score: number, hash: string, ids?: string[], pair?: {known: string, target: string}}} challenge
  *   `ids` are the card ids of the run, so the link still plays the same cards after the card set is updated
  * @returns {string} URL-safe token
  */
@@ -54,6 +58,8 @@ export function encodeChallenge(challenge) {
     c: Math.max(0, Math.floor(challenge.score || 0)),
     h: String(challenge.hash || '')
   };
+  var pair = pairOfIds(challenge.ids) || (challenge.pair && challenge.pair.known && challenge.pair.target ? challenge.pair : null);
+  if (pair) body.p = pair.known + '>' + pair.target;
   var ids = cleanIds(challenge.ids, body.n);
   if (ids) body.i = ids;
   return toBase64Url(JSON.stringify(body));
@@ -63,7 +69,7 @@ export function encodeChallenge(challenge) {
  * Decode and validate a token. Never trusts its contents: every field is
  * type- and range-checked, and the name is treated as plain text.
  * @param {string} token
- * @returns {{seed: number, n: number, from: string, score: number, hash: string, ids: string[]|null}|null}
+ * @returns {{seed: number, n: number, from: string, score: number, hash: string, ids: string[]|null, pair: {known: string, target: string}|null}|null}
  */
 export function decodeChallenge(token) {
   try {
@@ -78,11 +84,39 @@ export function decodeChallenge(token) {
       from: typeof o.f === 'string' ? o.f.slice(0, MAX_NAME) : '',
       score: o.c,
       hash: typeof o.h === 'string' ? o.h.slice(0, 16) : '',
-      ids: cleanIds(o.i, o.n)
+      ids: cleanIds(o.i, o.n),
+      pair: parsePair(o.p) || pairOfIds(cleanIds(o.i, o.n))
     };
   } catch (e) {
     return null;
   }
+}
+
+/** "en>es" -> { known: 'en', target: 'es' } (only real languages), else null. */
+function parsePair(text) {
+  var m = /^([a-z]{2})>([a-z]{2})$/.exec(String(text || ''));
+  return m && isLanguageCode(m[1]) && isLanguageCode(m[2]) && m[1] !== m[2] ? { known: m[1], target: m[2] } : null;
+}
+
+/** The language pair the card ids of a challenge belong to (ids look like "en-es-007"), or null. */
+function pairOfIds(ids) {
+  if (!ids || !ids.length) return null;
+  var m = /^([a-z]{2})-([a-z]{2})-\d{3}$/.exec(ids[0]);
+  return m ? parsePair(m[1] + '>' + m[2]) : null;
+}
+
+/**
+ * Does this challenge link belong to another language pair than the player's? Returns the message to show, or ''.
+ * (Works with or without card ids on the link: the pair travels with it.)
+ * @param {{pair?: {known: string, target: string}|null}} challenge a decoded challenge
+ * @param {{known: string, target: string}} [myPair] defaults to the saved pair
+ * @returns {string}
+ */
+export function challengePairMismatch(challenge, myPair) {
+  var theirs = challenge && challenge.pair;
+  var mine = myPair || getPairOrDefault();
+  if (!theirs || (theirs.known === mine.known && theirs.target === mine.target)) return '';
+  return pairMismatchMessage(theirs, mine);
 }
 
 /** Build the full shareable URL. */
@@ -121,7 +155,7 @@ export function isoWeekKey(date) {
  * @returns {number} integer in [1, 2147483646]
  */
 export function tournamentSeed(weekKey) {
-  var text = 'buzzword-tournament-' + weekKey;
+  var text = 'languagedash-tournament-' + weekKey;
   var h = 2166136261;
   for (var i = 0; i < text.length; i++) {
     h ^= text.charCodeAt(i);

@@ -1,5 +1,5 @@
 /**
- * cartoon.js — the little bits of camp the upgraded body-and-science maps share: faces on everything, lightning bolts,
+ * cartoon.js — the little bits of camp the upgraded carnival maps share: faces on everything, lightning bolts,
  * capsules, drops, hanging light strings, a lit sign and a few painted floor and sky pictures.
  *
  * Everything here is built from the mapkit shapes, so it merges into the same few draw calls as the rest of a bay, and
@@ -64,7 +64,7 @@ export function bolt(g, size, color, x, y, z, o) {
   return extrude(g, boltShape(size), 0.1 * size, color, x, y, z, Object.assign({ bulb: true, curve: 2 }, o || {}));
 }
 
-/** A capsule lying along z (a pill, a sausage of myelin, a bacterium). */
+/** A capsule lying along z (a sausage, a candy, a glowing bean). */
 export function capsule(g, r, len, color, x, y, z, o) {
   o = o || {};
   var yaw = o.ry || 0;
@@ -78,7 +78,7 @@ export function capsule(g, r, len, color, x, y, z, o) {
   return grp;
 }
 
-/** A teardrop (a drop of blood or water), point up, about 2r tall. */
+/** A teardrop (a drop of rain or water), point up, about 2r tall. */
 export function drop(g, r, color, x, y, z, o) {
   ball(g, r, color, x, y, z, Object.assign({ seg: 8 }, o || {}));
   return cone(g, r * 0.82, r * 1.5, color, x, y + r * 1.0, z, Object.assign({ seg: 8 }, o || {}));

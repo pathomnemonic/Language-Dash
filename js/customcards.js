@@ -1,9 +1,10 @@
 /**
- * customcards.js — User-created custom cards repository
+ * customcards.js — "My words": the player's own hint/answer pairs
  *
- * Stores custom cards in localStorage separately from save data.
- * Custom cards use the same schema as built-in cards so they
- * seamlessly enter the card selection pool during gameplay.
+ * A custom card is one hint word (in the player's language) and one answer word (in the language they are learning),
+ * optionally with two wrong gate words. Pairs without wrong gates are flashcard-only; with two they are playable in
+ * the runner too. Stored in localStorage separately from save data, with the same schema as built-in cards, so they
+ * enter the card selection pool during gameplay.
  *
  * ARCHITECTURE CONTRACT (Agent 8):
  * - Must NOT import from cards.js (prevents circular dependency)
@@ -16,7 +17,7 @@
  * - Supports repository subscriptions via subscribe(listener)
  * - localStorage allows up to 5 MiB per origin
  *
- * Maximum custom cards: 500 (to prevent localStorage overflow)
+ * Maximum custom cards: 5,000 (to prevent localStorage overflow)
  */
 
 import {
@@ -43,7 +44,7 @@ function _notifyListeners() {
   }
 }
 
-/** A card the game can show: an object with an id, a list of clues and an answer. */
+/** A card the game can show: an object with an id, a hint word and an answer word. */
 function _usable(c) {
   return !!c && typeof c === 'object' && !Array.isArray(c) && typeof c.id === 'string' && c.id !== '__proto__' &&
     Array.isArray(c.bw) && c.bw.length > 0 && typeof c.ans === 'string' && c.ans.length > 0;
@@ -111,7 +112,7 @@ export var customCards = {
   /**
    * Add a new custom card.
    *
-   * @param {object} cardData - { subject, buzzwords, answer, distractors, teachingPoint, whyWrong1, whyWrong2 }
+   * @param {object} cardData - { subject (a topic), buzzwords ([hint word]), answer, distractors, teachingPoint (a note), whyWrong1, whyWrong2 }
    * @returns {{ success: boolean, card: object|null, errors: ValidationIssue[], warnings: ValidationIssue[] }}
    */
   add: function(cardData) {
@@ -122,7 +123,7 @@ export var customCards = {
       return {
         success: false,
         card: null,
-        errors: [{ code: 'MAX_CARDS_REACHED', path: '', message: 'Maximum of ' + MAX_CUSTOM_CARDS + ' custom cards reached', severity: 'error' }],
+        errors: [{ code: 'MAX_CARDS_REACHED', path: '', message: 'Maximum of ' + MAX_CUSTOM_CARDS + ' words in My words reached', severity: 'error' }],
         warnings: []
       };
     }
@@ -147,9 +148,7 @@ export var customCards = {
       return result;
     }
 
-    // Answer-leak check (warning only, not blocking)
-    var leakWarnings = _checkAnswerLeaks(card);
-    var allWarnings = result.warnings.concat(leakWarnings);
+    var allWarnings = result.warnings;
 
     cards.push(card);
     this._saveAll(cards);
@@ -194,7 +193,7 @@ export var customCards = {
       if (cards.length >= MAX_CUSTOM_CARDS) {
         out.limitReached = true;
         out.rejected += inputs.length - i;
-        out.warnings.push('Stopped at ' + MAX_CUSTOM_CARDS + ' custom cards, the most the app keeps. Delete some in My Cards to add more.');
+        out.warnings.push('Stopped at ' + MAX_CUSTOM_CARDS + ' words, the most the app keeps. Delete some in My words to add more.');
         break;
       }
       var card = _buildCardFromInput(inputs[i]);
@@ -259,8 +258,6 @@ export var customCards = {
       return result;
     }
 
-    var leakWarnings = _checkAnswerLeaks(updatedCard);
-
     cards[index] = updatedCard;
     this._saveAll(cards);
     _notifyListeners();
@@ -269,7 +266,7 @@ export var customCards = {
       success: true,
       card: updatedCard,
       errors: [],
-      warnings: result.warnings.concat(leakWarnings)
+      warnings: result.warnings
     };
   },
 
@@ -463,12 +460,14 @@ export var customCards = {
 function _buildCardFromInput(cardData) {
   var card = {
     id: 'custom_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
-    subj: cardData.subject || 'Multisystem / Mixed',
+    subj: cardData.subject || 'Basics',
     bw: Array.isArray(cardData.buzzwords) ? cardData.buzzwords : [],
     ans: cardData.answer || '',
     d: Array.isArray(cardData.distractors) ? cardData.distractors : [],
     tp: cardData.teachingPoint || '',
     ww: {},
+    questionType: 'word',
+    source: 'vocabulary',
     isCustom: true,
     createdAt: Date.now()
   };
@@ -496,49 +495,4 @@ function _hasPlaceholderDistractors(card) {
   }
 
   return false;
-}
-
-/**
- * Check for answer leaks in buzzwords (warning-level only).
- */
-function _checkAnswerLeaks(card) {
-  var warnings = [];
-
-  if (!card.ans || !Array.isArray(card.bw)) return warnings;
-
-  var ansWords = card.ans
-    .toLowerCase()
-    .split(/[\s\-/()]+/)
-    .filter(function(w) { return w.length > 4; });
-
-  // Get distractor words for comparison
-  var distractorWords = new Set();
-  if (Array.isArray(card.d)) {
-    for (var di = 0; di < card.d.length; di++) {
-      if (typeof card.d[di] === 'string') {
-        card.d[di].toLowerCase().split(/[\s\-/()]+/).forEach(function(w) {
-          if (w.length > 4) distractorWords.add(w);
-        });
-      }
-    }
-  }
-
-  for (var bi = 0; bi < card.bw.length; bi++) {
-    if (typeof card.bw[bi] !== 'string') continue;
-    var bwLower = card.bw[bi].toLowerCase();
-
-    for (var wi = 0; wi < ansWords.length; wi++) {
-      if (bwLower.indexOf(ansWords[wi]) >= 0 && !distractorWords.has(ansWords[wi])) {
-        warnings.push({
-          code: 'ANSWER_LEAK',
-          path: 'bw[' + bi + ']',
-          message: 'Buzzword "' + card.bw[bi] + '" may reveal the answer word "' + ansWords[wi] + '"',
-          severity: 'warning'
-        });
-        break;
-      }
-    }
-  }
-
-  return warnings;
 }

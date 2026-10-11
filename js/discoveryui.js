@@ -14,8 +14,10 @@ import { createElement, clearElement } from './dom.js';
 import { btn, note, rowShell, nameBlock } from './friendsdom.js';
 import { fillProfilePicture } from './profileicons.js';
 import { SUBJECTS } from './cardmeta.js';
+import { LANGUAGES } from './lang/languages.js';
 
-export var BUDDY_EXAMS = ['USMLE Step 1', 'USMLE Step 2 CK', 'COMLEX Level 1', 'COMLEX Level 2', 'Other'];
+/** What a word buddy is learning (the server stores this in its 30-character "exam" column). */
+export var BUDDY_EXAMS = LANGUAGES.map(function (l) { return 'Learning ' + l.name; }).concat(['Other']);
 export var BUDDY_PACES = [['relaxed', 'Relaxed'], ['steady', 'Steady'], ['intense', 'Intense']];
 export var REPORT_REASONS = [['spam', 'Spam'], ['harassment', 'Harassment'], ['inappropriate_name', 'Inappropriate name'], ['other', 'Something else']];
 
@@ -89,7 +91,7 @@ function offsetLabel(h) {
  * @param {{lb: object, storage: object, toast: function(string), rerender: function(): void}} ctx
  */
 export function renderDiscoverTab(body, ctx) {
-  body.appendChild(note('Find people to study with. You only appear here if you turn it on, and you can turn it off any time. Nobody can message you: the only way to reach you is a friend request, which you can ignore.'));
+  body.appendChild(note('Find people to practice with. You only appear here if you turn it on, and you can turn it off any time. Nobody can message you: the only way to reach you is a friend request, which you can ignore.'));
 
   var listingBox = createElement('div');
   listingBox.style.cssText = 'background:var(--bg-card);border-radius:12px;padding:10px;margin:8px 0;border:var(--border-card)';
@@ -104,36 +106,36 @@ export function renderDiscoverTab(body, ctx) {
   ctx.lb.getBuddyListing().then(function (listing) {
     renderListing(listingBox, listing);
     if (listing && listing.discoverable) renderBuddies(buddies);
-    else buddies.appendChild(note('Turn on "Let others find me" to see study buddies.'));
+    else buddies.appendChild(note('Turn on "Let others find me" to see word buddies.'));
   });
   renderGroupSearch(groups);
 
   function renderListing(box, listing) {
     clearElement(box);
-    box.appendChild(createElement('div', { text: '🤝 Study buddy listing' }));
+    box.appendChild(createElement('div', { text: '🤝 Word buddy listing' }));
     box.lastChild.style.cssText = 'font-size:13px;font-weight:700';
     var exam = select(BUDDY_EXAMS, listing ? listing.exam : (BUDDY_EXAMS.indexOf(ctx.storage.get('examName')) >= 0 ? ctx.storage.get('examName') : BUDDY_EXAMS[0]));
-    box.appendChild(field('My exam', exam, 'buddyExam'));
+    box.appendChild(field('I am learning', exam, 'buddyExam'));
     var date = createElement('input', { attributes: { type: 'date', value: (listing && listing.exam_date) || ctx.storage.get('examDate') || '' } });
-    box.appendChild(field('Exam date', date, 'buddyDate'));
+    box.appendChild(field('Goal date', date, 'buddyDate'));
     var pace = select(BUDDY_PACES, listing ? listing.pace : 'steady');
     box.appendChild(field('Pace', pace, 'buddyPace'));
 
     var chosen = {};
     ((listing && listing.subjects) || []).forEach(function (s) { chosen[s] = true; });
-    var chips = createElement('div', { attributes: { role: 'group', 'aria-label': 'Subjects I am studying' } });
+    var chips = createElement('div', { attributes: { role: 'group', 'aria-label': 'Topics I am practicing' } });
     chips.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin:6px 0';
     SUBJECTS.forEach(function (s) {
       var chip = createElement('button', { className: 'btn btn-sm ' + (chosen[s] ? 'btn-primary' : 'btn-outline'), text: s, attributes: { type: 'button', 'aria-pressed': chosen[s] ? 'true' : 'false' } });
       chip.addEventListener('click', function () {
-        if (!chosen[s] && Object.keys(chosen).length >= 8) { ctx.toast('Pick up to 8 subjects.'); return; }
+        if (!chosen[s] && Object.keys(chosen).length >= 8) { ctx.toast('Pick up to 8 topics.'); return; }
         chosen[s] = !chosen[s];
         chip.className = 'btn btn-sm ' + (chosen[s] ? 'btn-primary' : 'btn-outline');
         chip.setAttribute('aria-pressed', chosen[s] ? 'true' : 'false');
       });
       chips.appendChild(chip);
     });
-    box.appendChild(createElement('div', { text: 'Subjects (up to 8)' }));
+    box.appendChild(createElement('div', { text: 'Topics (up to 8)' }));
     box.lastChild.style.cssText = 'font-size:11px;color:var(--text-muted)';
     box.appendChild(chips);
 
@@ -141,7 +143,7 @@ export function renderDiscoverTab(body, ctx) {
     on.checked = !!(listing && listing.discoverable);
     var onRow = field('Let others find me', on, 'buddyOn');
     box.appendChild(onRow);
-    box.appendChild(createElement('div', { className: 'setting-sublabel', text: 'Shows your name, picture, exam, exam date, subjects and pace to other players who have turned this on. Not your scores, runs or location.' }));
+    box.appendChild(createElement('div', { className: 'setting-sublabel', text: 'Shows your name, picture, language, goal date, topics and pace to other players who have turned this on. Not your scores, runs or location.' }));
 
     box.appendChild(btn('Save', function () {
       return ctx.lb.setBuddyListing({
@@ -163,7 +165,7 @@ export function renderDiscoverTab(body, ctx) {
   }
 
   function renderBuddies(el) {
-    el.appendChild(createElement('h3', { text: '👋 Study buddies for you' }));
+    el.appendChild(createElement('h3', { text: '👋 Word buddies for you' }));
     el.lastChild.style.cssText = 'font-size:13px;margin:12px 0 4px';
     var list = createElement('div');
     list.appendChild(note('Looking…'));
@@ -202,8 +204,8 @@ export function renderDiscoverTab(body, ctx) {
     form.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px';
     var input = createElement('input', { attributes: { type: 'search', maxlength: '40', placeholder: 'Search group names', 'aria-label': 'Search groups', value: _query } });
     input.style.cssText = 'flex:1;min-width:140px;padding:8px 10px;border-radius:10px;background:rgba(30,15,70,.8);color:#fff;border:1px solid rgba(187,102,255,.3)';
-    var exam = select([['', 'Any exam']].concat(BUDDY_EXAMS.map(function (e) { return [e, e]; })), _examFilter);
-    exam.setAttribute('aria-label', 'Exam');
+    var exam = select([['', 'Any language']].concat(BUDDY_EXAMS.map(function (e) { return [e, e]; })), _examFilter);
+    exam.setAttribute('aria-label', 'Language');
     var results = createElement('div');
     function run() {
       _query = input.value.trim();
@@ -216,7 +218,7 @@ export function renderDiscoverTab(body, ctx) {
         rows.forEach(function (g) {
           var row = rowShell();
           row.style.flexWrap = 'wrap';
-          var sub = [g.exam || 'Any exam', g.member_count + ' member' + (Number(g.member_count) === 1 ? '' : 's'), 'by ' + g.owner_name, g.join_mode === 'request' ? 'owner approves' : 'open'];
+          var sub = [g.exam || 'Any language', g.member_count + ' member' + (Number(g.member_count) === 1 ? '' : 's'), 'by ' + g.owner_name, g.join_mode === 'request' ? 'owner approves' : 'open'];
           row.appendChild(nameBlock(g.name, sub.join('  ·  ')));
           if (g.requested) {
             row.appendChild(btn('Requested ✓ (cancel)', function () {
@@ -261,11 +263,11 @@ export function renderGroupDiscoverySettings(container, group, ctx) {
   var pub = createElement('input', { attributes: { type: 'checkbox' } });
   pub.checked = group.visibility === 'public';
   box.appendChild(field('Public', pub, 'groupPublic'));
-  var exam = select([['', 'No exam tag']].concat(BUDDY_EXAMS.map(function (e) { return [e, e]; })), group.exam || '');
-  box.appendChild(field('Exam', exam, 'groupExam'));
+  var exam = select([['', 'No language tag']].concat(BUDDY_EXAMS.map(function (e) { return [e, e]; })), group.exam || '');
+  box.appendChild(field('Language', exam, 'groupExam'));
   var join = select([['open', 'Anyone can join'], ['request', 'I approve each person']], group.join_mode || 'open');
   box.appendChild(field('Joining', join, 'groupJoin'));
-  box.appendChild(createElement('div', { className: 'setting-sublabel', text: 'A public group can be found by name and exam. Members still see only what groups already show.' }));
+  box.appendChild(createElement('div', { className: 'setting-sublabel', text: 'A public group can be found by name and language. Members still see only what groups already show.' }));
   box.appendChild(btn('Save', function () {
     return ctx.lb.setGroupDiscovery(group.id, pub.checked, exam.value, join.value).then(function (res) {
       ctx.toast(res.success ? 'Saved.' : (res.error || 'Could not save.'));

@@ -109,16 +109,16 @@ export function dailyTrack() {
 
 // ---------- ranks and prestige ----------
 
-/** The medical ladder. Each rank starts at its level. Past the last one the ranks start over with stars (prestige). */
+/** The Wordrunner ladder. Each rank starts at its level. Past the last one the ranks start over with stars (prestige). */
 export var RANKS = [
-  { level: 1, title: 'Intern', icon: '🩺' },
-  { level: 5, title: 'Resident', icon: '💉' },
-  { level: 10, title: 'Fellow', icon: '🔬' },
-  { level: 20, title: 'Attending', icon: '🥼' },
-  { level: 35, title: 'Chief', icon: '🏥' },
-  { level: 50, title: 'Dean', icon: '🎓' }
+  { level: 1, title: 'Tourist', icon: '🧳' },
+  { level: 5, title: 'Phrasebook Pal', icon: '📒' },
+  { level: 10, title: 'Wordrunner', icon: '🏃' },
+  { level: 20, title: 'Linguist', icon: '🔤' },
+  { level: 35, title: 'Polyglot', icon: '🌍' },
+  { level: 50, title: 'Babel Master', icon: '🗼' }
 ];
-/** After the Dean, every this many levels is one more star. */
+/** After Babel Master, every this many levels is one more star. */
 export var PRESTIGE_EVERY = 25;
 
 /**
@@ -135,14 +135,14 @@ export function rankForLevel(level) {
   return { title: r.title, icon: r.icon, stars: stars, index: index, label: r.title + (stars > 0 ? ' ' + new Array(stars + 1).join('★') : '') };
 }
 
-// ---------- the subject of the day ----------
+// ---------- the topic of the day ----------
 
-/** Coins for each correct answer on the subject of the day. */
+/** Coins for each correct word in the topic of the day. */
 export var BONUS_COINS_PER_CORRECT = 4;
-/** The most the bonus pays in one day, so it is a nudge toward a subject and not a farm. */
+/** The most the bonus pays in one day, so it is a nudge toward a topic and not a farm. */
 export var BONUS_COINS_CAP = 80;
 
-/** A small stable number from text (the same everywhere, so everyone's subject of the day is the same). */
+/** A small stable number from text (the same everywhere, so everyone's topic of the day is the same). */
 function hashText(text) {
   var h = 2166136261;
   for (var i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -150,8 +150,8 @@ function hashText(text) {
 }
 
 /**
- * Today's bonus subject: the same for everyone on a given date. The subjects go round in a fixed shuffled order, one
- * a day, so it is never the same subject two days running and every subject gets its turn.
+ * Today's bonus topic: the same for everyone on a given date. The topics go round in a fixed shuffled order, one
+ * a day, so it is never the same topic two days running and every topic gets its turn.
  */
 export function bonusSubjectFor(dateKey, subjects) {
   if (!subjects || !subjects.length) return '';
@@ -161,7 +161,7 @@ export function bonusSubjectFor(dateKey, subjects) {
   return order[((day % order.length) + order.length) % order.length];
 }
 
-/** Coins earned today for correct answers in the bonus subject (never more than what is left of today's cap). */
+/** Coins earned today for correct words in the bonus topic (never more than what is left of today's cap). */
 export function bonusCoinsFor(correctInBonus, alreadyToday) {
   var left = Math.max(0, BONUS_COINS_CAP - Math.max(0, alreadyToday || 0));
   return Math.min(left, Math.max(0, correctInBonus || 0) * BONUS_COINS_PER_CORRECT);
@@ -194,7 +194,7 @@ export function nextGoalLine(o) {
   }
   if (o.dailyGoal > 0 && o.dailyDone < o.dailyGoal) {
     var left = o.dailyGoal - o.dailyDone;
-    options.push({ cards: left, text: left + ' more card' + (left === 1 ? '' : 's') + ' to reach today\'s goal' });
+    options.push({ cards: left, text: left + ' more word' + (left === 1 ? '' : 's') + ' to reach today\'s goal' });
   }
   if (o.cheapestWanted && o.cheapestWanted.price > o.coins) {
     var short = o.cheapestWanted.price - o.coins;

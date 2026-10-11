@@ -1,7 +1,7 @@
 /**
  * tutorialrun.js — the how-to-play, played in the real game.
  *
- * The tutorial is an ordinary run on the real track with the real top bar, clue and answer gates, but
+ * The tutorial is an ordinary run on the real track with the real top bar, hint word and answer gates, but
  * nothing arrives on its own: a coach card at the bottom of the screen asks for one move at a time, and
  * only then sends the obstacle or the question that needs it. The welcome and finish pages are full
  * pages over the screen; the run starts when "Start practice" is pressed. After the last practice step the run is
@@ -14,6 +14,7 @@
  */
 
 import { storage } from './storage.js';
+import { CARDS } from './cardhub.js';
 import { createStepTracker } from './analytics/steptracker.js';
 import { createElement, clearElement } from './dom.js';
 import { buildSteps } from './tutorial.js';
@@ -29,8 +30,38 @@ var RETRY_MS = 1400;         // pause before a missed obstacle or question is se
 var WATCH_MS = 120;          // how often an obstacle on the way is checked
 var OBSTACLE_GRACE_MS = 1500; // an obstacle is only judged missed once it is this old and gone
 
-/** The two questions: one to answer (learned first), one to dash through. Each is a card id looked up at start. */
-export var TUTORIAL_CARD_IDS = ['en004', 'su022'];
+/** How many easy words the guided run picks from the deck. */
+var TUTORIAL_WORDS = 6;
+
+/**
+ * The guided run's words: the first 6 usable cards of the current deck by frequency rank, so the tutorial always
+ * uses the easiest words of whatever pair is being learned. [0] is the question to answer, [1] the one to dash through.
+ * @param {object[]} [cards] defaults to the loaded deck (cardhub CARDS)
+ * @returns {string[]} card ids (empty while the deck is still loading)
+ */
+export function getTutorialCardIds(cards) {
+  var list = (cards || CARDS || []).filter(function (c) {
+    return c && c.id && c.bw && c.bw[0] && c.ans && c.d && c.d.length >= 2;
+  });
+  list.sort(function (a, b) { return (a.rank || 0) - (b.rank || 0) || (a.id < b.id ? -1 : 1); });
+  return list.slice(0, TUTORIAL_WORDS).map(function (c) { return c.id; });
+}
+
+/**
+ * Same list as getTutorialCardIds(), as a live array so existing imports keep working: it is refilled whenever the deck
+ * (re)loads, and at the moment the tutorial opens.
+ */
+export var TUTORIAL_CARD_IDS = [];
+
+export function refreshTutorialCardIds() {
+  var ids = getTutorialCardIds();
+  TUTORIAL_CARD_IDS.length = 0;
+  ids.forEach(function (id) { TUTORIAL_CARD_IDS.push(id); });
+  return TUTORIAL_CARD_IDS;
+}
+
+refreshTutorialCardIds();
+if (typeof window !== 'undefined') window.addEventListener('langdash:cards-ready', refreshTutorialCardIds);
 
 var _session = null;
 
@@ -60,6 +91,9 @@ export function requestCloseGameTutorial() {
  */
 export function startGameTutorial(env) {
   var game = env.game;
+  refreshTutorialCardIds();
+  // the two words come from the deck (callers may pass their own; with none, the easiest words are used)
+  var cardIds = env.cardIds && env.cardIds.length >= 2 ? env.cardIds.slice() : TUTORIAL_CARD_IDS.slice();
   var coach = document.getElementById('tutorialCoach');   // the card docked over the track (practice steps)
   var page = document.getElementById('tutorialOverlay');  // the full pages (welcome and finish)
   if (!coach || !page || _session) return false;
@@ -143,6 +177,8 @@ export function startGameTutorial(env) {
   function quietHud(on) { if (hud) hud.classList.toggle('tut-no-question', on); }
 
   function sendQuestion(cardId) {
+    // (the deck can still have been loading when the tutorial opened: fill the words in now)
+    if (!cardId || cardIds.length < 2) { cardIds = refreshTutorialCardIds().slice(); cardId = cardId || cardIds[0]; }
     quietHud(false);
     game.tutorialEncounter(cardId);
   }
@@ -151,8 +187,8 @@ export function startGameTutorial(env) {
     var step = steps[index];
     locked = false;
     if (step.kind === 'action' && step.obstacle) sendObstacle(step);
-    else if (step.id === 'answer') sendQuestion(env.cardIds[0]);
-    else if (step.id === 'rush') sendQuestion(env.cardIds[1]);
+    else if (step.id === 'answer') sendQuestion(cardIds[0]);
+    else if (step.id === 'rush') sendQuestion(cardIds[1]);
   }
 
   // ---- what the game tells us ---------------------------------------------------------------
@@ -173,13 +209,13 @@ export function startGameTutorial(env) {
         if (game.lastResolvedRushed) complete('✓ That is a rush!');
         else {
           say('The gate passed without a rush. ' + step.prompt + ' before it arrives.', 'bad');
-          later(function () { if (!locked && !closed) { say(''); sendQuestion(env.cardIds[1]); } }, RETRY_MS);
+          later(function () { if (!locked && !closed) { say(''); sendQuestion(cardIds[1]); } }, RETRY_MS);
         }
       } else if (step.id === 'answer') {
         if (data && data.correct) complete('✓ Correct!');
         else {
-          say('Not quite. Read the clue again and try this one.', 'bad');
-          later(function () { if (!locked && !closed) { say(''); sendQuestion(env.cardIds[0]); } }, RETRY_MS);
+          say('Not quite. Read the word at the top again and try this one.', 'bad');
+          later(function () { if (!locked && !closed) { say(''); sendQuestion(cardIds[0]); } }, RETRY_MS);
         }
       }
     }
@@ -236,11 +272,11 @@ export function startGameTutorial(env) {
     if (step.kind === 'info') {
       card.appendChild(createElement('p', { className: 'tut-text', text: step.text }));
     } else if (step.kind === 'account') {
-      card.appendChild(createElement('p', { className: 'tut-text', text: 'Make a free account and everything you earn here stays yours.' }));
+      card.appendChild(createElement('p', { className: 'tut-text', text: 'Make a free account and the words you learn here stay yours.' }));
       var perks = createElement('ul', { className: 'tut-perks' });
-      ['☁ Your coins, streak, badges and unlocks follow you to any phone or computer.',
+      ['☁ Your coins, hearth streak, badges and word progress follow you to any phone or computer.',
         '🛟 Nothing is lost if you clear your browser, switch phones or reinstall.',
-        '👥 Add friends, join study groups and see their highlights.'].forEach(function (t) { perks.appendChild(createElement('li', { text: t })); });
+        '👥 Add friends, join study groups and race them in Versus.'].forEach(function (t) { perks.appendChild(createElement('li', { text: t })); });
       card.appendChild(perks);
       var formHost = createElement('div', { className: 'tut-account', attributes: { id: 'tutAccountForm' } });
       card.appendChild(formHost);
@@ -299,7 +335,7 @@ export function startGameTutorial(env) {
     clearElement(page);
     page.classList.remove('active');
     releaseFocusTrap();
-    env.begin(env.cardIds);
+    env.begin(cardIds);
   }
 
   function next() {
@@ -316,7 +352,7 @@ export function startGameTutorial(env) {
     if (closed || isExitConfirmOpen()) return;
     confirmExitTutorial({
       title: 'Are you sure?',
-      text: 'Without an account, your coins, streak, badges and unlocks live on this one device only. Clear your browser or change phones and they are gone, and you cannot add friends or join study groups. It is free and takes about 20 seconds.',
+      text: 'Without an account, your coins, streak, badges and word progress live on this one device only. Clear your browser or change phones and they are gone, and you cannot add friends or join study groups. It is free and takes about 20 seconds.',
       stayLabel: 'Make my account',
       exitLabel: 'Skip for now',
       onExit: function () { next(); }

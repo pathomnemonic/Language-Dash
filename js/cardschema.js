@@ -1,11 +1,11 @@
 /**
  * cardschema.js — Card schema validation, normalization, and canonical enums
  *
- * This module is the single source of truth for:
- * - Canonical subject names
- * - Exam filter identifiers
- * - Question type identifiers
- * - Source discipline identifiers
+ * A card is ONE hint word in the player's language (bw: [word]), ONE answer word in the language being learned (ans),
+ * and two wrong gate words (d: [a, b]). This module is the single source of truth for:
+ * - Canonical topic names (SUBJECTS, the 15 topics)
+ * - Word-level identifiers (EXAM_FILTERS: top100, top300, top600, all)
+ * - Question type and source identifiers (always 'word' / 'vocabulary')
  * - Card schema version
  * - Card validation and normalization functions
  *
@@ -13,48 +13,25 @@
  * - Must NOT import from cards.js or customcards.js
  * - Must NOT import from storage.js or ui.js
  * - Exports pure functions and constants only
- * - Runtime validation must not silently rewrite medically meaningful text
+ * - Runtime validation must not silently rewrite the player's words
  * - Returns structured { success, card, errors, warnings } results
  */
 
-export var CARD_SCHEMA_VERSION = '2.0.0';
+import { TOPICS, LEVELS } from './lang/topics.js';
 
-export var SUBJECTS = Object.freeze([
-  'Neurology',
-  'Cardiology',
-  'Nephrology',
-  'Psychiatry',
-  'Gastroenterology',
-  'Pulmonology',
-  'Infectious Disease',
-  'Endocrinology',
-  'Hematology/Oncology',
-  'Rheumatology',
-  'Obstetrics/Gynecology',
-  'Pediatrics',
-  'Surgery',
-  'Emergency Medicine',
-  'Multisystem / Mixed'
-]);
+export var CARD_SCHEMA_VERSION = '3.0.0';
 
-export var EXAM_FILTERS = Object.freeze([
-  'step1', 'step2', 'step3',
-  'comlex1', 'comlex2',
-  'shelf_im', 'shelf_surg', 'shelf_peds', 'shelf_obgyn',
-  'shelf_psych', 'shelf_neuro', 'shelf_fm'
-]);
+/** The 15 topics (see lang/topics.js). */
+export var SUBJECTS = TOPICS;
 
-export var QUESTION_TYPES = Object.freeze([
-  'buzzword_dx', 'dx_to_tx', 'dx_to_workup', 'mechanism',
-  'side_effect', 'lab_dx', 'pharm', 'prevention', 'management'
-]);
+/** The word levels a card can belong to: first 100, 300, 600 or all 1,000 words. */
+export var EXAM_FILTERS = Object.freeze(LEVELS.map(function (l) { return l.id; }));
 
-export var SOURCE_DISCIPLINES = Object.freeze([
-  'pathology', 'pharmacology', 'physiology', 'biochemistry',
-  'microbiology', 'anatomy', 'embryology', 'behavioral',
-  'biostatistics', 'clinical_medicine', 'surgery_principles',
-  'genetics', 'immunology', 'ethics'
-]);
+/** Every card is a single word to translate. */
+export var QUESTION_TYPES = Object.freeze(['word']);
+
+/** Where a card's word comes from. */
+export var SOURCE_DISCIPLINES = Object.freeze(['vocabulary']);
 
 // All valid runner game modes
 var RUNNER_MODES = [
@@ -66,10 +43,10 @@ var RUNNER_MODES = [
 var ALL_MODES = RUNNER_MODES.concat(['flashcard']);
 
 // Maximum limits
-var MAX_BUZZWORD_LENGTH = 120;  // characters per buzzword
-var MAX_BUZZWORDS = 8;
-var MAX_ANSWER_LENGTH = 200;
-var MAX_DISTRACTOR_LENGTH = 200;
+var MAX_BUZZWORD_LENGTH = 60;   // characters in the hint word (a short phrase is still fine)
+var MAX_BUZZWORDS = 1;          // one hint word per card
+var MAX_ANSWER_LENGTH = 60;
+var MAX_DISTRACTOR_LENGTH = 60;
 var MAX_TEACHING_POINT_LENGTH = 1000;
 var MAX_PEARL_LENGTH = 500;
 var MAX_PEARLS = 10;
@@ -188,40 +165,40 @@ export function validateCard(input, options) {
 
   // subj
   if (!input.subj || typeof input.subj !== 'string') {
-    errors.push(issue('MISSING_SUBJECT', 'subj', 'Card must have a subject (subj)', 'error'));
+    errors.push(issue('MISSING_SUBJECT', 'subj', 'Card must have a topic (subj)', 'error'));
   } else if (SUBJECTS.indexOf(input.subj) < 0) {
-    errors.push(issue('INVALID_SUBJECT', 'subj', 'Subject "' + input.subj + '" is not a canonical subject', 'error'));
+    errors.push(issue('INVALID_SUBJECT', 'subj', 'Topic "' + input.subj + '" is not one of the 15 topics', 'error'));
   }
 
-  // bw (buzzwords)
+  // bw (the hint word, in the player's language)
   if (!Array.isArray(input.bw) || input.bw.length === 0) {
-    errors.push(issue('MISSING_BUZZWORDS', 'bw', 'Card must have at least one buzzword', 'error'));
+    errors.push(issue('MISSING_BUZZWORDS', 'bw', 'Card must have a hint word', 'error'));
   } else {
     var hasNonEmpty = false;
     for (var bi = 0; bi < input.bw.length; bi++) {
       if (typeof input.bw[bi] !== 'string') {
-        errors.push(issue('INVALID_BUZZWORD_TYPE', 'bw[' + bi + ']', 'Buzzword must be a string', 'error'));
+        errors.push(issue('INVALID_BUZZWORD_TYPE', 'bw[' + bi + ']', 'Hint word must be a string', 'error'));
       } else {
         if (input.bw[bi].trim().length > 0) hasNonEmpty = true;
         if (input.bw[bi].length > MAX_BUZZWORD_LENGTH) {
-          warnings.push(issue('BUZZWORD_TOO_LONG', 'bw[' + bi + ']', 'Buzzword exceeds recommended maximum length', 'warning'));
+          warnings.push(issue('BUZZWORD_TOO_LONG', 'bw[' + bi + ']', 'Hint word is longer than a word or short phrase', 'warning'));
         }
         if (containsHTML(input.bw[bi])) {
-          errors.push(issue('HTML_IN_BUZZWORD', 'bw[' + bi + ']', 'Buzzword contains HTML tags', 'error'));
+          errors.push(issue('HTML_IN_BUZZWORD', 'bw[' + bi + ']', 'Hint word contains HTML tags', 'error'));
         }
       }
     }
     if (!hasNonEmpty) {
-      errors.push(issue('EMPTY_BUZZWORDS', 'bw', 'Card must have at least one non-empty buzzword', 'error'));
+      errors.push(issue('EMPTY_BUZZWORDS', 'bw', 'Card must have a non-empty hint word', 'error'));
     }
     if (input.bw.length > MAX_BUZZWORDS) {
-      warnings.push(issue('TOO_MANY_BUZZWORDS', 'bw', 'Card has more than ' + MAX_BUZZWORDS + ' buzzwords', 'warning'));
+      warnings.push(issue('TOO_MANY_BUZZWORDS', 'bw', 'A card has one hint word; only the first is shown', 'warning'));
     }
   }
 
   // ans (answer)
   if (!input.ans || typeof input.ans !== 'string' || input.ans.trim() === '') {
-    errors.push(issue('MISSING_ANSWER', 'ans', 'Card must have a non-empty answer', 'error'));
+    errors.push(issue('MISSING_ANSWER', 'ans', 'Card must have an answer word', 'error'));
   } else {
     if (input.ans.length > MAX_ANSWER_LENGTH) {
       warnings.push(issue('ANSWER_TOO_LONG', 'ans', 'Answer exceeds recommended maximum length', 'warning'));
@@ -251,19 +228,13 @@ export function validateCard(input, options) {
     }
   }
 
-  // tp (teaching point)
-  if (!input.tp || typeof input.tp !== 'string' || input.tp.trim() === '') {
-    if (strict) {
-      errors.push(issue('MISSING_TEACHING_POINT', 'tp', 'Card must have a teaching point', 'error'));
-    } else {
-      warnings.push(issue('MISSING_TEACHING_POINT', 'tp', 'Card is missing a teaching point', 'warning'));
-    }
-  } else {
+  // tp (an example or memory note): optional
+  if (typeof input.tp === 'string' && input.tp.trim() !== '') {
     if (input.tp.length > MAX_TEACHING_POINT_LENGTH) {
-      warnings.push(issue('TEACHING_POINT_TOO_LONG', 'tp', 'Teaching point exceeds recommended maximum length', 'warning'));
+      warnings.push(issue('TEACHING_POINT_TOO_LONG', 'tp', 'Note exceeds recommended maximum length', 'warning'));
     }
     if (containsHTML(input.tp)) {
-      warnings.push(issue('HTML_IN_TEACHING_POINT', 'tp', 'Teaching point contains HTML tags', 'warning'));
+      warnings.push(issue('HTML_IN_TEACHING_POINT', 'tp', 'Note contains HTML tags', 'warning'));
     }
   }
 
@@ -302,7 +273,7 @@ export function validateCard(input, options) {
   if (input.source !== undefined && typeof input.source === 'string') {
     if (SOURCE_DISCIPLINES.indexOf(input.source) < 0) {
       warnings.push(issue('INVALID_SOURCE', 'source',
-        'Source discipline "' + input.source + '" is not canonical', 'warning'));
+        'Source "' + input.source + '" is not canonical', 'warning'));
     }
   }
 
@@ -318,7 +289,7 @@ export function validateCard(input, options) {
     for (var ei = 0; ei < input.exams.length; ei++) {
       if (EXAM_FILTERS.indexOf(input.exams[ei]) < 0) {
         warnings.push(issue('INVALID_EXAM', 'exams[' + ei + ']',
-          'Exam filter "' + input.exams[ei] + '" is not canonical', 'warning'));
+          'Word level "' + input.exams[ei] + '" is not canonical', 'warning'));
       }
     }
   }
@@ -405,7 +376,7 @@ function _validateDistractors(input, errors, warnings) {
 
 /**
  * Normalize a card input, applying safe defaults for missing optional fields.
- * Does NOT silently rewrite medically meaningful text.
+ * Does NOT silently rewrite the player's words.
  *
  * @param {object} input
  * @param {object} [options]
@@ -438,11 +409,11 @@ export function normalizeCard(input, options) {
     warnings.push(issue('DEFAULT_APPLIED', 'baseDifficulty', 'Added default baseDifficulty of 2', 'warning'));
   }
   if (card.questionType === undefined) {
-    card.questionType = 'buzzword_dx';
+    card.questionType = 'word';
     warnings.push(issue('DEFAULT_APPLIED', 'questionType', 'Added default questionType', 'warning'));
   }
   if (card.source === undefined) {
-    card.source = 'clinical_medicine';
+    card.source = 'vocabulary';
     warnings.push(issue('DEFAULT_APPLIED', 'source', 'Added default source', 'warning'));
   }
   if (card.tags === undefined) {

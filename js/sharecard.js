@@ -30,11 +30,11 @@ export function topSubjects(runCards) {
     .sort(function (a, b) { return b.n - a.n; }).slice(0, 3);
 }
 
-/** "🔥 12-day streak · 340 cards met": the long-term side of the story, only when there is something to say. */
+/** "🔥 12-day streak · 340 words met": the long-term side of the story, only when there is something to say. */
 export function shareFooterLine(data) {
   var bits = [];
   if ((data.streakDays || 0) >= 2) bits.push('🔥 ' + data.streakDays + '-day streak');
-  if ((data.cardsMet || 0) >= 25) bits.push(Number(data.cardsMet).toLocaleString() + ' cards met');
+  if ((data.cardsMet || 0) >= 25) bits.push(Number(data.cardsMet).toLocaleString() + ' words met');
   return bits.join('  ·  ');
 }
 
@@ -89,12 +89,12 @@ export function renderShareCard(data) {
   ctx.fillText('LANGUAGE DASH', W / 2, 150);
   ctx.font = '600 34px "Segoe UI", sans-serif';
   ctx.fillStyle = '#b9a8ff';
-  ctx.fillText('USMLE & COMLEX Board Runner', W / 2, 205);
+  ctx.fillText('Run the lexicon.', W / 2, 205);
 
   // Player + mode
   ctx.fillStyle = '#ffffff';
   ctx.font = '700 46px "Segoe UI", sans-serif';
-  ctx.fillText((data.name || 'A future doctor').slice(0, 24), W / 2, 330);
+  ctx.fillText((data.name || 'A new Wordrunner').slice(0, 24), W / 2, 330);
   ctx.fillStyle = '#18ffff';
   ctx.font = '600 32px "Segoe UI", sans-serif';
   ctx.fillText(data.modeLabel + (data.trackName ? '  ·  ' + data.trackName : ''), W / 2, 380);
@@ -128,7 +128,7 @@ export function renderShareCard(data) {
     ctx.fillText(s[1], x + 135, 905);
   });
 
-  // Top subjects
+  // Top topics
   var subjects = data.subjects || [];
   if (subjects.length) {
     ctx.fillStyle = '#b9a8ff';

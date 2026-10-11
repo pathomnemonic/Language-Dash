@@ -7,9 +7,9 @@
  *
  * Every step is a little harder than the one before:
  *   - helpers disappear one by one: Auto-pilot (step 1), Shield (3), Magnet (4),
- *     2x Score (6), Frenzy (8). From step 8 (the top of Fellow) there are no power-ups.
+ *     2x Score (6), Frenzy (8). From step 8 (the top of Wordrunner) there are no power-ups.
  *   - heart pickups, which win back a life, get rarer from step 4 and are gone from
- *     step 9 (the start of Attending, about halfway up).
+ *     step 9 (the start of Linguist, about halfway up).
  *   - the track gets faster: a little each step at first, then a good bit each step
  *     once the helpers are gone (+12% at step 8, +60% at the top).
  *
@@ -18,12 +18,12 @@
  */
 
 export var LEAGUES = [
-  { id: 'intern', name: 'Intern', icon: '🩺', min: 0 },
-  { id: 'resident', name: 'Resident', icon: '📋', min: 300 },
-  { id: 'fellow', name: 'Fellow', icon: '🔬', min: 700 },
-  { id: 'attending', name: 'Attending', icon: '🥼', min: 1200 },
-  { id: 'chief', name: 'Chief', icon: '🏥', min: 1900 },
-  { id: 'dean', name: 'Dean', icon: '🎓', min: 2700 },
+  { id: 'intern', name: 'Tourist', icon: '🧳', min: 0 },
+  { id: 'resident', name: 'Phrasebook Pal', icon: '📒', min: 300 },
+  { id: 'fellow', name: 'Wordrunner', icon: '🏃', min: 700 },
+  { id: 'attending', name: 'Linguist', icon: '🔤', min: 1200 },
+  { id: 'chief', name: 'Polyglot', icon: '🌍', min: 1900 },
+  { id: 'dean', name: 'Babel Master', icon: '🗼', min: 2700 },
   { id: 'legend', name: 'Legend', icon: '👑', min: 3600 }
 ];
 

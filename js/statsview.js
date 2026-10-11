@@ -1,13 +1,13 @@
 /**
- * statsview.js — the Performance tab.
+ * statsview.js — the Stats tab (how your words are going).
  *
  * Laid out the way a game dashboard is: the one thing to do next sits at the top as a big button, three numbers
  * you can read at a glance sit under it, and everything else is folded into sections that open when tapped. Only
  * short labels and numbers are shown by default; explanations live in the section they belong to.
  *
- *   Today card      goal progress, streak, and the next study step (more steps fold under "More ways")
- *   Three tiles     due now, accuracy, days to the exam (each opens its section)
- *   Sections        Reviews coming up, Subjects (level and accuracy), Weakest concepts, Lifetime, Plan settings
+ *   Today card      goal progress, streak, and the next practice step (more steps fold under "More ways")
+ *   Three tiles     due now, accuracy, days to your goal date (each opens its section)
+ *   Sections        Reviews coming up, Topics (level and accuracy), Trickiest words, Lifetime, Plan settings
  */
 
 import { checkGate, requireGate } from './pro.js';
@@ -73,7 +73,7 @@ function section(id, icon, title, hint, build, gateFeature, lockedNote) {
     h.textContent = '🔒 Pro';
     d.classList.add('perf-locked');
     build = function (b) {
-      b.appendChild(el('div', 'perf-note', (lockedNote || 'This view is part of Language Dash Pro: the full breakdown of how you are doing and where to aim next.') + ' It is part of Language Dash Pro.'));
+      b.appendChild(el('div', 'perf-note', (lockedNote || 'This view is part of Language Dash Pro: the full breakdown of how your words are going and where to aim next.') + ' It is part of Language Dash Pro.'));
       var go = createElement('button', { className: 'btn btn-gold btn-sm', text: 'UNLOCK PRO', attributes: { type: 'button' } });
       go.addEventListener('click', function () { requireGate(gateFeature, { trigger: 'stats_' + id }); });
       b.appendChild(go);
@@ -103,7 +103,7 @@ export function liveCards() {
   return CARDS.concat(customCards.getAll()).filter(function (c) { return disabled.indexOf(c.id) < 0; });
 }
 
-/** The cards each plan step is about (for the runner; flashcards pick their own). */
+/** The words each plan step is about (for the runner; flashcards pick their own). */
 function stepCards(step, plan, cards) {
   var stats = storage.get('cardStats') || {};
   if (step.kind === 'due') return plan.dueIds.slice(0, 20);
@@ -123,7 +123,7 @@ function stepCards(step, plan, cards) {
 export function shortLabel(step) {
   if (step.kind === 'due') return 'Review ' + step.count + ' due';
   if (step.kind === 'weak') return 'Drill ' + step.subject;
-  return step.count + ' new cards';
+  return step.count + ' new words';
 }
 
 export function stepButtons(ui, step, plan, cards, small, before) {
@@ -131,11 +131,11 @@ export function stepButtons(ui, step, plan, cards, small, before) {
   var run = createElement('button', { className: 'btn btn-green ' + (small ? 'btn-sm' : ''), text: '🏃 Run it', attributes: { type: 'button', 'aria-label': 'Run ' + shortLabel(step) } });
   run.addEventListener('click', function () {
     if (before) before();
-    // Flashcard-only cards (imported from Anki) have no wrong answers, so the runner cannot use them: only the others go
+    // Flashcard-only words (imported from Anki) have no wrong gates, so the runner cannot use them: only the others go
     var runnable = {};
     cards.forEach(function (c) { if (!Array.isArray(c.enabledModes) || c.enabledModes.length === 0 || c.enabledModes.indexOf('study') >= 0) runnable[c.id] = true; });
     var ids = stepCards(step, plan, cards).filter(function (id) { return runnable[id]; });
-    if (ui.onStudyPlanRun && ids.length) ui.onStudyPlanRun(ids); else ui._showToast('No cards for the runner in this step. Use Cards to study them as flashcards.');
+    if (ui.onStudyPlanRun && ids.length) ui.onStudyPlanRun(ids); else ui._showToast('No words for the runner in this step. Use Flashcards to practice them.');
   });
   var flash = createElement('button', { className: 'btn btn-outline ' + (small ? 'btn-sm' : ''), text: '🗂 Flashcards', attributes: { type: 'button', 'aria-label': 'Flashcards: ' + shortLabel(step) } });
   flash.addEventListener('click', function () {
@@ -149,7 +149,7 @@ export function stepButtons(ui, step, plan, cards, small, before) {
   return row;
 }
 
-/** Today's study plan and the cards it is drawn from (shared with the Today popup on Home). */
+/** Today's practice plan and the words it is drawn from (shared with the Today popup on Home). */
 export function getTodayPlan() {
   var cards = liveCards();
   var plan = buildStudyPlan({
@@ -206,7 +206,7 @@ export function renderPerformance(container, ui) {
   top.appendChild(el('span', 'perf-hero-streak', '🔥 ' + streak.streak + (streak.streak === 1 ? ' day' : ' days')));
   hero.appendChild(top);
   var goalLine = el('div', 'perf-goal-line');
-  goalLine.appendChild(el('span', '', '🎯 ' + Math.min(done, goal) + ' / ' + goal + ' cards'));
+  goalLine.appendChild(el('span', '', '🎯 ' + Math.min(done, goal) + ' / ' + goal + ' words'));
   if (done >= goal) goalLine.appendChild(el('span', 'perf-goal-done', 'Goal reached ✅'));
   hero.appendChild(goalLine);
   var goalBar = bar(done / goal, done >= goal ? 'var(--accent-green)' : 'var(--accent-gold)', 'Daily goal progress');
@@ -232,8 +232,8 @@ export function renderPerformance(container, ui) {
   var twAll = storage.get('totalWrong');
   var accAll = (tcAll + twAll) >= MIN_ANSWERS_FOR_STATS ? tcAll / (tcAll + twAll) : null;
   tiles.appendChild(tile('🎯', accAll === null ? '—' : Math.round(accAll * 100) + '%', 'Accuracy', function () { openSection('subjects'); }, accAll === null ? null : pctColor(accAll)));
-  var examLocked = !checkGate('analytics_detail').allowed; // (the exam date and its countdown are part of Pro)
-  tiles.appendChild(tile(examLocked ? '🔒' : '📅', examLocked ? 'Pro' : (pace && pace.daysLeft >= 0 ? pace.daysLeft + 'd' : 'Set'), 'To exam', function () { openSection('settings'); }, examLocked ? 'var(--accent-gold)' : null));
+  var examLocked = !checkGate('analytics_detail').allowed; // (the goal date and its countdown are part of Pro)
+  tiles.appendChild(tile(examLocked ? '🔒' : '📅', examLocked ? 'Pro' : (pace && pace.daysLeft >= 0 ? pace.daysLeft + 'd' : 'Set'), 'To goal', function () { openSection('settings'); }, examLocked ? 'var(--accent-gold)' : null));
   container.appendChild(tiles);
 
   // ---------- Folded sections ----------
@@ -260,7 +260,7 @@ export function renderPerformance(container, ui) {
     body.appendChild(chart);
   }));
 
-  // A card counts as mastered once it has been answered at least 3 times and is right 80% of the time or more
+  // A word counts as mastered once it has been answered at least 3 times and is right 80% of the time or more
   var masteredBy = {};
   var totalBy = {};
   var cardStatsAll = storage.get('cardStats') || {};
@@ -270,7 +270,7 @@ export function renderPerformance(container, ui) {
     if (st && st.seen >= 3 && st.correct / st.seen >= 0.8) masteredBy[c.subj] = (masteredBy[c.subj] || 0) + 1;
   });
   var masteredTotal = Object.keys(masteredBy).reduce(function (n, k) { return n + masteredBy[k]; }, 0);
-  secs.appendChild(section('subjects', '📚', 'Subjects', masteredTotal ? masteredTotal + ' mastered' : accuracyHint(), function (body) {
+  secs.appendChild(section('subjects', '📚', 'Topics', masteredTotal ? masteredTotal + ' mastered' : accuracyHint(), function (body) {
     var any = false;
     SUBJECTS.forEach(function (s) {
       var ss = storage.getSubjectStat(s);
@@ -287,43 +287,29 @@ export function renderPerformance(container, ui) {
       chip.style.color = lv.color;
       head.appendChild(chip);
       r.appendChild(head);
-      // the bar is how much of the subject you have mastered (cards, not answers), so it fills as you learn
+      // the bar is how much of the topic you have mastered (words, not answers), so it fills as you learn
       var m = masteredBy[s] || 0;
       var all = totalBy[s] || 0;
-      r.appendChild(bar(all ? m / all : 0, 'var(--accent-green)', s + ': ' + m + ' of ' + all + ' cards mastered'));
+      r.appendChild(bar(all ? m / all : 0, 'var(--accent-green)', s + ': ' + m + ' of ' + all + ' words mastered'));
       var enough = total >= MIN_ANSWERS_FOR_STATS;
-      r.appendChild(el('div', 'perf-row-sub', m + ' of ' + all + ' cards mastered  ·  ' + (enough ? Math.round(a * 100) + '% correct  ·  ' : '') + total + ' answered' + (enough ? '' : ' (accuracy after ' + MIN_ANSWERS_FOR_STATS + ')')));
+      r.appendChild(el('div', 'perf-row-sub', m + ' of ' + all + ' words mastered  ·  ' + (enough ? Math.round(a * 100) + '% correct  ·  ' : '') + total + ' answered' + (enough ? '' : ' (accuracy after ' + MIN_ANSWERS_FOR_STATS + ')')));
       body.appendChild(r);
     });
-    if (!any) body.appendChild(el('p', 'perf-empty', 'Answer some cards and your subjects show up here.'));
-    // A percentage from a handful of answers is misleading (one answer is "100%"), so a type only shows once it has
-    // at least MIN_ANSWERS_FOR_STATS answers behind it
-    var typesShown = plan.typeAccuracy.filter(function (t) { return t.seen >= MIN_ANSWERS_FOR_STATS; });
-    if (plan.typeAccuracy.length > 0) {
-      body.appendChild(el('div', 'perf-subhead', 'By question type'));
-      if (!typesShown.length) body.appendChild(el('p', 'perf-empty', 'Answer ' + MIN_ANSWERS_FOR_STATS + ' questions of a type and its accuracy shows up here.'));
-      typesShown.slice(0, 5).forEach(function (t) {
-        var r = el('div', 'perf-line');
-        r.appendChild(el('span', 'perf-line-name', t.type.replace(/_/g, ' ')));
-        r.appendChild(bar(t.accuracy / 100, pctColor(t.accuracy / 100), t.type.replace(/_/g, ' ') + ' ' + t.accuracy + '% correct'));
-        r.appendChild(el('span', 'perf-line-val', t.accuracy + '%'));
-        body.appendChild(r);
-      });
-    }
-    body.appendChild(el('div', 'perf-note', 'A card is mastered after 3+ answers at 80% or better. Levels: New under 10 answers, Learning, Solid (25+ answers at 70%+), Mastered (50+ answers at 85%+).'));
-  }, 'analytics_detail', 'See your accuracy and mastery for every subject and system, so you know where to spend your time.'));
+    if (!any) body.appendChild(el('p', 'perf-empty', 'Answer some words and your topics show up here.'));
+    body.appendChild(el('div', 'perf-note', 'A word is mastered after 3+ answers at 80% or better. Levels: New under 10 answers, Learning, Solid (25+ answers at 70%+), Mastered (50+ answers at 85%+). This is a practice signal from this game\'s own word list, not a test of how fluent you are.'));
+  }, 'analytics_detail', 'See your accuracy and mastery for every topic, so you know where to spend your time.'));
 
   var weak = cards.map(function (c) {
     var s = storage.getCardStat(c.id);
     return s.seen < 2 ? null : { card: c, accuracy: s.correct / s.seen, seen: s.seen };
   }).filter(Boolean).sort(function (a, b) { return a.accuracy - b.accuracy; }).slice(0, 5);
-  secs.appendChild(section('weak', '🎯', 'Weakest concepts', weak.length ? String(weak.length) : '', function (body) {
+  secs.appendChild(section('weak', '🎯', 'Trickiest words', weak.length ? String(weak.length) : '', function (body) {
     if (weak.length === 0) { body.appendChild(el('p', 'perf-empty', 'Play more to see weak areas.')); return; }
     weak.forEach(function (w) {
       var row = createElement('button', { className: 'perf-weak', attributes: { type: 'button', 'aria-label': 'Review ' + w.card.ans } });
       var pct = el('span', 'perf-weak-pct', Math.round(w.accuracy * 100) + '%');
       var ans = el('span', 'perf-weak-ans');
-      setText(ans, w.card.ans); // (custom card text: never markup)
+      setText(ans, w.card.ans); // (your own word text: never markup)
       var subj = el('span', 'perf-weak-subj');
       setText(subj, w.card.subj);
       var mid = el('span', 'perf-weak-mid');
@@ -338,14 +324,14 @@ export function renderPerformance(container, ui) {
       });
       body.appendChild(row);
     });
-  }, 'analytics_detail', 'See your weakest concepts, ranked, with one tap to drill them.'));
+  }, 'analytics_detail', 'See your trickiest words, ranked, with one tap to drill them.'));
 
-  secs.appendChild(section('lifetime', '🏅', 'Lifetime', storage.get('totalEncounters') + ' cards', function (body) {
+  secs.appendChild(section('lifetime', '🏅', 'Lifetime', storage.get('totalEncounters') + ' words', function (body) {
     var tc = storage.get('totalCorrect');
     var tw = storage.get('totalWrong');
     var acc = (tc + tw) > 0 ? Math.round(tc / (tc + tw) * 100) : 0;
     var grid = el('div', 'perf-lifetime');
-    [['Cards', storage.get('totalEncounters'), null], ['Correct', tc, 'var(--accent-green)'], ['Wrong', tw, 'var(--accent-red)'], ['Accuracy', acc + '%', null], ['Best score', storage.get('bestScore'), 'var(--accent-gold)']].forEach(function (s) {
+    [['Words', storage.get('totalEncounters'), null], ['Correct', tc, 'var(--accent-green)'], ['Wrong', tw, 'var(--accent-red)'], ['Accuracy', acc + '%', null], ['Best score', storage.get('bestScore'), 'var(--accent-gold)']].forEach(function (s) {
       var t = el('div', 'perf-stat');
       var v = el('div', 'perf-stat-val', String(s[1]));
       if (s[2]) v.style.color = s[2];
@@ -356,17 +342,17 @@ export function renderPerformance(container, ui) {
     body.appendChild(grid);
   }));
 
-  secs.appendChild(section('settings', '⚙', 'Plan settings', pace ? (pace.daysLeft >= 0 ? pace.daysLeft + ' days to exam' : 'Date passed') : 'No exam date', function (body) {
+  secs.appendChild(section('settings', '⚙', 'Plan settings', pace ? (pace.daysLeft >= 0 ? pace.daysLeft + ' days to go' : 'Date passed') : 'No goal date', function (body) {
     var paceLine = el('div', 'perf-pace');
     paceLine.id = 'examPaceLine';
     function refreshPace() {
       var st = storage.get('cardStats') || {};
       var un = cards.filter(function (c) { return !st[c.id] || !st[c.id].seen; }).length;
       var p = examPace({ examDate: storage.get('examDate') || '', unseen: un, due: storage.getDueCount(), dailyGoal: storage.get('dailyGoal') || 20 });
-      paceLine.textContent = p ? p.text : 'Add your exam date and the plan paces the days you have left.';
+      paceLine.textContent = p ? p.text : 'Add a goal date (a trip, a visit, a test) and the plan paces the days you have left.';
     }
     var r1 = el('div', 'perf-field');
-    var l1 = createElement('label', { text: '📅 Exam date', attributes: { for: 'examDateInput' } });
+    var l1 = createElement('label', { text: '📅 Goal date', attributes: { for: 'examDateInput' } });
     var input = createElement('input', { attributes: { type: 'date', id: 'examDateInput', value: storage.get('examDate') || '' } });
     input.addEventListener('change', function () {
       var hadDate = !!storage.get('examDate');
@@ -394,7 +380,7 @@ export function renderPerformance(container, ui) {
     r2.appendChild(sel);
     body.appendChild(r2);
     body.appendChild(el('div', 'perf-note', 'ⓘ Reviews are timed by FSRS, the same algorithm Anki uses. A higher number means more reviews.'));
-  }, 'analytics_detail', 'Set your exam date and get a daily target that gets you there in time.'));
+  }, 'analytics_detail', 'Set a goal date and get a daily target that gets you there in time.'));
 
   if (_scrollTo) {
     var target = document.getElementById('perf-' + _scrollTo);

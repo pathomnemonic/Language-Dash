@@ -13,7 +13,7 @@ import { FEATURES } from './features.js';
 
 /** Things on Home and the tab bar, most worth trying first. (Versus and Friends need the backend, so a build without one has neither.) */
 export var HOME_DISCOVERIES = [
-  { id: 'home:streak', selector: '#streakChip', label: 'Your study streak' },
+  { id: 'home:streak', selector: '#streakChip', label: 'Your hearth streak' },
   { id: 'home:today', selector: '#studyGoal', label: 'Today: your goal and reviews' },
   { id: 'home:filters', selector: '#filtersBtn', label: 'Filters: choose your questions' },
   { id: 'home:languages', selector: '#langBtn', label: 'Languages: change what you learn' },
@@ -36,7 +36,7 @@ export var MENU_DISCOVERIES = [
     { id: 'settings:keys', selector: '.settings-card[data-section="keys"]', label: 'New: choose your keyboard keys' },
     { id: 'settings:look', selector: '.settings-card[data-section="look"]', label: 'Look and performance' },
     { id: 'settings:rules', selector: '.settings-card[data-section="rules"]', label: 'Your rules' },
-    { id: 'settings:study', selector: '.settings-card[data-section="study"]', label: 'Study settings' }
+    { id: 'settings:study', selector: '.settings-card[data-section="study"]', label: 'Practice settings' }
   ] },
   { prefix: 'locker:', parent: '.nav-item[data-screen="screenShop"]', parentLabel: 'The Locker has tabs you have not opened', items: [
     { id: 'locker:heroes', tab: 0, label: 'Heroes' },

@@ -1,5 +1,5 @@
 /**
- * reminders.js — the daily study reminder, in the browser and inside the phone app.
+ * reminders.js — the daily word reminder, in the browser and inside the phone app.
  *
  * A browser can show a notification while the page is open (the Notification API). The Android app's web view has
  * no such API, so inside the app the reminder is a real scheduled notification from the phone itself, which also
@@ -14,7 +14,7 @@ var _testPlugin = null;
 var _plugin = null;
 
 export var REMINDER_TITLE = 'Language Dash';
-export var REMINDER_BODY = 'Time to study. Keep your streak going! 🔥';
+export var REMINDER_BODY = 'Time for a few words. Keep the hearth lit! 🔥';
 
 function loadPlugin() {
   if (_testPlugin) return Promise.resolve(_testPlugin);

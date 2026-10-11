@@ -54,11 +54,11 @@ export function reportToText(r) {
   var lines = [];
   lines.push('Language Dash study report (' + r.generated + ')');
   lines.push('Level ' + r.level + (r.rank ? ' · ' + r.rank : ''));
-  lines.push('Study streak: ' + r.studyStreak + ' day' + (r.studyStreak === 1 ? '' : 's') + ' (best ' + r.bestStudyStreak + ')');
-  lines.push('Answered: ' + r.answered + (r.accuracy === null ? '' : ' · ' + r.accuracy + '% correct') + ' · ' + r.cardsTouched + ' different cards seen');
+  lines.push('Day streak: ' + r.studyStreak + ' day' + (r.studyStreak === 1 ? '' : 's') + ' (best ' + r.bestStudyStreak + ')');
+  lines.push('Answered: ' + r.answered + (r.accuracy === null ? '' : ' · ' + r.accuracy + '% correct') + ' · ' + r.cardsTouched + ' different words seen');
   if (r.subjects.length) {
     lines.push('');
-    lines.push('By subject:');
+    lines.push('By topic:');
     r.subjects.forEach(function (s) {
       lines.push('• ' + s.subject + ': ' + s.accuracy + '% of ' + (s.correct + s.wrong) + ' (' + s.mastery + ')');
     });
@@ -73,9 +73,9 @@ function csvCell(v) {
   return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
 
-/** The per-subject numbers as a spreadsheet. */
+/** The per-topic numbers as a spreadsheet. */
 export function reportToCsv(r) {
-  var rows = [['subject', 'correct', 'wrong', 'answered', 'accuracy_percent', 'mastery']];
+  var rows = [['topic', 'correct', 'wrong', 'answered', 'accuracy_percent', 'mastery']];
   r.subjects.forEach(function (s) { rows.push([s.subject, s.correct, s.wrong, s.correct + s.wrong, s.accuracy, s.mastery]); });
   return rows.map(function (row) { return row.map(csvCell).join(','); }).join('\n') + '\n';
 }

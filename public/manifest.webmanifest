@@ -1,7 +1,7 @@
 {
   "name": "Language Dash",
   "short_name": "Language Dash",
-  "description": "Run the list. An endless runner for USMLE & COMLEX board prep",
+  "description": "Run the lexicon. An endless runner for learning words in 15 languages",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

@@ -6,7 +6,7 @@ import { LOCKER_ITEMS } from '../../js/game/shopdata.js';
 const maps = LOCKER_ITEMS.filter((i) => i.type === 'map');
 
 describe('maps in the Locker', () => {
-  it('every map that is not an indoor hospital map is for sale, and nothing else is', () => {
+  it('every map that is not one of the four free Great Library rooms is for sale, and nothing else is', () => {
     const outdoor = SKINS.filter((s) => !isIndoorSkin(s));
     expect(maps.map((m) => m.skinId).sort()).toEqual(outdoor.map((s) => s.id).sort());
     maps.forEach((m) => {
@@ -17,7 +17,7 @@ describe('maps in the Locker', () => {
     expect(SKINS.filter(isIndoorSkin).length).toBeGreaterThanOrEqual(4);
   });
 
-  it('exactly four hospital rooms are free; every other map is a reward or has to be bought', () => {
+  it('exactly four Great Library rooms are free; every other map is a reward or has to be bought', () => {
     const free = SKINS.filter(isIndoorSkin).map((s) => s.name).sort();
     expect(free).toEqual(['Ambulance Bay', 'Hospital Hallway', 'Operating Room', 'Research Lab']);
     ['Neon ER', 'Prescription Sunset', 'Surgical Theater', 'Candy Lab'].forEach((name) => {

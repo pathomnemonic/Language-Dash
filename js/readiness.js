@@ -1,14 +1,15 @@
 /**
- * readiness.js — mastery levels per subject, and a pace to an exam date.
+ * readiness.js — mastery levels per topic, and a pace to a goal date (a trip, a visit, a test: whatever you set).
  *
- * Mastery is deliberately plain: it comes from how many cards you have answered in a subject and how often you got
- * them right, the same numbers shown next to it, so it is always obvious where a level comes from.
+ * Mastery is deliberately plain: it comes from how many words you have answered in a topic and how often you got
+ * them right, the same numbers shown next to it, so it is always obvious where a level comes from. It is a practice
+ * signal from this game's own word list, not a measure of fluency.
  */
 
 import { DAY_MS } from './fsrs.js';
 
 /**
- * A plain level for a subject from the cards answered and the share answered correctly.
+ * A plain level for a topic from the words answered and the share answered correctly.
  * New (under 10 answers), Learning, Solid (25+ answers, 70%+), Mastered (50+ answers, 85%+).
  * @param {number} correct
  * @param {number} wrong
@@ -34,20 +35,20 @@ export function daysUntil(dateKey, now) {
 }
 
 /**
- * A pace for the days left: how many new cards a day finishes the player's subjects, and a short line to say it.
+ * A pace for the days left: how many new words a day finishes the player's topics, and a short line to say it.
  * @param {{examDate: string, unseen: number, due: number, dailyGoal: number, now?: number}} input
  */
 export function examPace(input) {
   var left = daysUntil(input.examDate, input.now);
   if (left === null) return null;
-  if (left < 0) return { daysLeft: left, perDay: 0, text: 'Your exam date has passed. Set a new one in Settings.' };
-  if (left === 0) return { daysLeft: 0, perDay: 0, text: 'Exam day. Review what is due and rest.' };
+  if (left < 0) return { daysLeft: left, perDay: 0, text: 'Your goal date has passed. Set a new one in Settings.' };
+  if (left === 0) return { daysLeft: 0, perDay: 0, text: 'Goal day! Review what is due, then go use your words.' };
   // keep the last two days for review only, once there is time for that
   var teaching = left > 4 ? left - 2 : left;
   var perDay = Math.ceil((input.unseen || 0) / teaching);
   var text = left + ' day' + (left === 1 ? '' : 's') + ' to go. ';
-  if ((input.unseen || 0) === 0) text += 'You have met every card: keep reviewing what is due.';
-  else text += 'About ' + perDay + ' new card' + (perDay === 1 ? '' : 's') + ' a day covers the rest' + (left > 4 ? ', leaving the last two days for review.' : '.');
-  if (perDay > Math.max(input.dailyGoal || 20, 20) * 3) text += ' That is a lot: consider choosing fewer subjects.';
+  if ((input.unseen || 0) === 0) text += 'You have met every word: keep reviewing what is due.';
+  else text += 'About ' + perDay + ' new word' + (perDay === 1 ? '' : 's') + ' a day covers the rest' + (left > 4 ? ', leaving the last two days for review.' : '.');
+  if (perDay > Math.max(input.dailyGoal || 20, 20) * 3) text += ' That is a lot: consider choosing fewer topics.';
   return { daysLeft: left, perDay: perDay, text: text };
 }

@@ -41,7 +41,7 @@ export var HAZARD_BY_SKIN = {
 };
 
 export var HAZARDS = {
-  blackout: { label: 'Neural blackout!', duration: 3.0, speed: 1.0 },
+  blackout: { label: 'Lights out!', duration: 3.0, speed: 1.0 },
   pulse: { label: 'Pulse wave!', duration: 3.5, speed: 1.0 },
   quake: { label: 'Tremor!', duration: 2.5, speed: 1.0 },
   fog: { label: 'Dense fog!', duration: 3.5, speed: 1.0 },

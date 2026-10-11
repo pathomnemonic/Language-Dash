@@ -1,8 +1,8 @@
 /**
  * mapkit.js — the building blocks the bright "world" maps are made of.
  *
- * A world map (Pediatric Playland, Cafeteria Carnival, ...) repeats every WORLD_PERIOD units, exactly like the
- * Hospital Hallway: four 4-unit bays per side, so the scenery can scroll past forever without a seam. This file holds
+ * A world map (Alphabet Playroom, Tokyo Night Market, ...) repeats every WORLD_PERIOD units, exactly like the
+ * Library Hall: four 4-unit bays per side, so the scenery can scroll past forever without a seam. This file holds
  * what every one of them needs:
  *
  *  - lit, cached materials (so thousands of pieces merge into a handful of draw calls) and "bulb" materials that glow

@@ -1,5 +1,5 @@
 /**
- * uisettings.js — Settings, rule settings, color pickers and the Locker shop.
+ * uisettings.js — Settings, rule settings, color pickers and the Locker (the shop).
  *
  * Split out of ui.js. These methods are attached to UI.prototype (see the end of ui.js), so
  * `this` is the UI controller and nothing about how they are called has changed.
@@ -29,6 +29,7 @@ import { canRemind, requestReminderPermission } from './reminders.js';
 import { isNative } from './native.js';
 import { canDownloadPack, downloadPack, packStatus, formatBytes } from './offlinepack.js';
 import { loadCards } from './cardhub.js';
+import { renderLanguageSheet, pairLabel } from './langui.js';
 import { buildStudyReport, reportToText, reportToCsv } from './studyreport.js';
 import { copyText, saveFile } from './platform.js';
 import { canRate, rateTheApp, openStorePage } from './review.js';
@@ -121,6 +122,12 @@ export var settingsMethods = {
     draw();
   },
 
+  /** Open the Languages popup (the same one Home's Languages button opens). */
+  _openLanguages() {
+    renderLanguageSheet(document.getElementById('langSheetBody'));
+    this.openSheet('langSheet');
+  },
+
   renderSettings() {
     var self = this;
     var content = document.getElementById('settingsContent');
@@ -142,7 +149,10 @@ export var settingsMethods = {
         text.appendChild(createElement('span', { className: 'settings-card-desc', text: sec.desc }));
         card.appendChild(text);
         card.appendChild(createElement('span', { className: 'settings-card-arrow', text: '›' }));
-        card.addEventListener('click', function () { self._settingsSection = sec.id; self.renderSettings(); });
+        card.addEventListener('click', function () {
+          if (sec.id === 'languages') { self._openLanguages(); return; } // (a popup, not a page)
+          self._settingsSection = sec.id; self.renderSettings();
+        });
         hub.appendChild(card);
       });
       content.appendChild(hub);
@@ -160,9 +170,9 @@ export var settingsMethods = {
       sound: [
         { key: 'musicOn', label: '🎵 Music', desc: 'Background music while you run.', type: 'toggle' },
         { key: 'masterVolume', label: '🔊 Master volume', desc: 'The overall loudness of everything.', type: 'range', min: 0, max: 1, step: 0.1, pct: true },
-        { key: 'sfxVolume', label: '💥 Sound effects', desc: 'Jumps, coins, answers, menus and rewards.', type: 'range', min: 0, max: 1, step: 0.1, pct: true },
+        { key: 'sfxVolume', label: '💥 Sound effects', desc: 'Jumps, coins, right and wrong gates, menus and rewards.', type: 'range', min: 0, max: 1, step: 0.1, pct: true },
         { key: 'musicVolume', label: '🎶 Music volume', desc: 'How loud the background music is.', type: 'range', min: 0, max: 1, step: 0.1, pct: true },
-        { key: 'ttsEnabled', label: '🗣 Read questions aloud', desc: 'Your device reads the clues and answers out loud.', type: 'toggle' }
+        { key: 'ttsEnabled', label: '🗣 Say the words aloud', desc: 'Your device says the hint in your language and the gate words in the language you are learning, each in its own voice.', type: 'toggle' }
       ].concat(canVibrate() ? [
         { key: 'hapticsEnabled', label: '📳 Vibration', desc: 'A short buzz when you answer, collect a power-up or get caught. Turn off if you prefer your phone still.', type: 'toggle' }
       ] : []).concat(FEATURES.characterVoices ? [
@@ -170,11 +180,11 @@ export var settingsMethods = {
       ] : []),
       look: [
         { key: 'uiTheme', label: '🎨 Colors', desc: 'Surprise me changes the whole color of the menus after every run: purple, ocean blue, forest green, ember red and more. Seasonal follows the date. Or pick a season by hand, or Classic for the original colors.', type: 'select', options: THEME_CHOICES },
-        { key: 'nightMode', label: '🌙 Night Shift', desc: 'Darker, softer colors for studying late at night.', type: 'toggle' },
+        { key: 'nightMode', label: '🌙 Night Shift', desc: 'Darker, softer colors for late-night practice.', type: 'toggle' },
         { key: 'colorblindMode', label: '👁 Colorblind-safe colors', desc: 'Swaps red and green cues for colors that are easier to tell apart.', type: 'toggle' },
         { key: 'dyslexiaFont', label: '🔤 Dyslexia-friendly font', desc: 'Switches every word in the game to OpenDyslexic, a typeface with weighted bottoms that keep letters from flipping, with a little more room between letters and lines.', type: 'toggle' },
         { key: 'handedness', label: '🖐 Button side', desc: 'Moves the Dash and Auto-Pilot buttons to the side your thumb rests on. Swiping to change lane works anywhere on the screen either way.', type: 'select', options: [['right', 'Right hand (buttons on the right)'], ['left', 'Left hand (buttons on the left)']] },
-        { key: 'dashControl', label: '⚡ Dash control', desc: 'How you dash toward the answer gates. Double-tap the screen, use an on-screen Dash button (handy if double-taps trigger by accident), or turn dashing off. The keyboard Space and Shift keys always dash on a computer.', type: 'select', options: [['auto', 'Automatic (button on phones, double-tap on computers)'], ['double', 'Double-tap the screen'], ['button', 'On-screen Dash button'], ['off', 'Off']] },
+        { key: 'dashControl', label: '⚡ Dash control', desc: 'How you dash toward the gates. Double-tap the screen, use an on-screen Dash button (handy if double-taps trigger by accident), or turn dashing off. The keyboard Space and Shift keys always dash on a computer.', type: 'select', options: [['auto', 'Automatic (button on phones, double-tap on computers)'], ['double', 'Double-tap the screen'], ['button', 'On-screen Dash button'], ['off', 'Off']] },
         { key: 'cameraView', label: '🎥 Camera', desc: 'How far behind your runner the camera sits. Close feels faster, Far shows more of the track.', type: 'select', options: [['default', 'Standard'], ['close', 'Close'], ['far', 'Far']] },
         { key: 'quality', label: '🎮 Graphics', desc: 'Auto picks what suits your device. Lower settings run smoother on older devices (the game reloads when you change this).', type: 'select', options: [['auto', 'Auto'], ['high', 'High (all 3D)'], ['medium', 'Medium (3D character)'], ['low', 'Low (fastest)']] },
         { key: 'ambientParticles', label: '🌟 Floating glow particles', desc: 'Soft glowing specks drifting across the track. Pretty, but they can be distracting while you read. Off by default.', type: 'toggle' },
@@ -182,13 +192,13 @@ export var settingsMethods = {
         { key: 'batterySaver', label: '🎞 30 frames per second', desc: 'Keeps the game at a steady 30 fps: cooler, smoother and easier on the battery. Turn off for up to 60 fps on a fast device.', type: 'toggle' }
       ],
       data: [
-        { key: 'sendDiagnostics', label: '🩹 Help fix problems', desc: 'Sends an anonymous report when the game crashes or runs slowly: a short message, where it happened, the app version and your graphics level. Never your name, scores, cards or account. Off unless you turn it on.', type: 'toggle' }
+        { key: 'sendDiagnostics', label: '🩹 Help fix problems', desc: 'Sends an anonymous report when the game crashes or runs slowly: a short message, where it happened, the app version and your graphics level. Never your name, scores, words or account. Off unless you turn it on.', type: 'toggle' }
       ],
       study: [
-        { key: 'dailyGoal', label: '🎯 Daily goal', desc: 'How many cards you aim to study each day. Hitting it keeps your streak going.', type: 'range', min: 5, max: 100, step: 5, unit: ' cards' },
+        { key: 'dailyGoal', label: '🎯 Daily goal', desc: 'How many words you aim to practice each day. Hitting it keeps your streak going.', type: 'range', min: 5, max: 100, step: 5, unit: ' words' },
         { key: 'reminders', label: '🔔 Daily reminder', desc: 'A notification at your reminder time. In the phone app it arrives even when the app is closed, and skips a day when you have already hit your goal.', type: 'toggle' },
         { key: 'reminderHour', label: '⏰ Reminder time', desc: 'The hour of the day for the reminder (0 is midnight, 13 is 1 pm).', type: 'range', min: 0, max: 23, step: 1, unit: ':00' },
-        { key: 'cardFreshnessWeight', label: '🆕 New-card priority', desc: 'How much more often you see cards you have never answered. 1 treats every card the same; 10 brings new cards up much more often than ones you already know.', type: 'range', min: 1, max: 10, step: 1 }
+        { key: 'cardFreshnessWeight', label: '🆕 New-word priority', desc: 'How much more often you see words you have never answered. 1 treats every word the same; 10 brings new words up much more often than ones you already know.', type: 'range', min: 1, max: 10, step: 1 }
       ]
     };
 
@@ -335,7 +345,7 @@ export var settingsMethods = {
         var packLabel = createElement('div');
         packLabel.style.flex = '1';
         packLabel.appendChild(createElement('div', { className: 'setting-label-text', text: '📶 Play with no connection' }));
-        packLabel.appendChild(createElement('span', { className: 'setting-sublabel', text: 'Saves all the questions, heroes, monsters and maps on this device (about 15 MB) so everything works without internet, on a plane or in the library basement.' }));
+        packLabel.appendChild(createElement('span', { className: 'setting-sublabel', text: 'Saves all the words, heroes, monsters and maps on this device (about 15 MB) so everything works without internet, on a plane or in the library basement.' }));
         var packState = createElement('span', { className: 'setting-sublabel', text: packStatus(storage.get('offlinePackAt')) });
         packState.id = 'offlinePackState';
         packLabel.appendChild(packState);
@@ -368,21 +378,21 @@ export var settingsMethods = {
       var reportRow2 = createElement('div', { className: 'setting-row', attributes: { id: 'studyReportRow' } });
       var reportLabel2 = createElement('div');
       reportLabel2.style.flex = '1';
-      reportLabel2.appendChild(createElement('div', { className: 'setting-label-text', text: '📊 Study report' }));
-      reportLabel2.appendChild(createElement('span', { className: 'setting-sublabel', text: 'A summary of your level, streak and accuracy by subject to paste into a message, or a spreadsheet file. It has no name or account details: only what you choose to send.' }));
+      reportLabel2.appendChild(createElement('div', { className: 'setting-label-text', text: '📊 Practice report' }));
+      reportLabel2.appendChild(createElement('span', { className: 'setting-sublabel', text: 'A summary of your level, streak and accuracy by topic to paste into a message, or a spreadsheet file. It has no name or account details: only what you choose to send.' }));
       reportRow2.appendChild(reportLabel2);
       var reportBtns2 = createElement('div');
       var copyReport = createElement('button', { className: 'btn btn-outline btn-sm', text: 'Copy', attributes: { type: 'button', id: 'copyStudyReport' } });
       copyReport.addEventListener('click', function () {
         if (!requireGate('analytics_detail', { trigger: 'export_report' })) return;
-        copyText(reportToText(buildStudyReport(storage.data))).then(function (ok) { self._showToast(ok ? 'Study report copied.' : 'Could not copy. Try the spreadsheet instead.'); });
+        copyText(reportToText(buildStudyReport(storage.data))).then(function (ok) { self._showToast(ok ? 'Practice report copied.' : 'Could not copy. Try the spreadsheet instead.'); });
       });
       var csvReport = createElement('button', { className: 'btn btn-outline btn-sm', text: 'CSV', attributes: { type: 'button', id: 'csvStudyReport' } });
       csvReport.addEventListener('click', function () {
         if (!requireGate('analytics_detail', { trigger: 'export_csv' })) return;
         var blob = new Blob([reportToCsv(buildStudyReport(storage.data))], { type: 'text/csv' });
-        saveFile(blob, 'dx-dash-study-report-' + new Date().toISOString().slice(0, 10) + '.csv').then(function (how) {
-          self._showToast(how === 'failed' ? 'Could not save the file.' : 'Study report saved.');
+        saveFile(blob, 'language-dash-report-' + new Date().toISOString().slice(0, 10) + '.csv').then(function (how) {
+          self._showToast(how === 'failed' ? 'Could not save the file.' : 'Practice report saved.');
         });
       });
       applyProLock(copyReport, 'analytics_detail');
@@ -416,8 +426,8 @@ export var settingsMethods = {
       var reportRow = createElement('div', { className: 'setting-row' });
       var reportLabel = createElement('div');
       reportLabel.style.flex = '1';
-      reportLabel.appendChild(createElement('div', { className: 'setting-label-text', text: '🚩 Card reports' }));
-      reportLabel.appendChild(createElement('span', { className: 'setting-sublabel', text: 'Save the list of cards you flagged as wrong or confusing, to send to the author.' }));
+      reportLabel.appendChild(createElement('div', { className: 'setting-label-text', text: '🚩 Word reports' }));
+      reportLabel.appendChild(createElement('span', { className: 'setting-sublabel', text: 'Save the list of words you flagged as wrong or confusing, to send to the author.' }));
       reportRow.appendChild(reportLabel);
       var reportBtn = createElement('button', { className: 'btn btn-outline btn-sm', text: 'Export', attributes: { type: 'button' } });
       reportBtn.addEventListener('click', function () { self.exportCardReports(); });
@@ -508,7 +518,7 @@ export var settingsMethods = {
       content.appendChild(aboutRow);
       var disclaimer = createElement('div', {
         className: 'setting-sublabel',
-        text: 'Language Dash is a study aid, not medical advice. Content may contain errors; verify important facts against authoritative sources.'
+        text: 'Language Dash is a practice game, not a language course or a fluency test. Word lists and translations may contain mistakes; check anything important with a teacher or a good dictionary.'
       });
       disclaimer.style.cssText = 'margin:4px 0 12px;line-height:1.4;font-size:11px';
       content.appendChild(disclaimer);
@@ -516,10 +526,10 @@ export var settingsMethods = {
       credits.appendChild(createElement('summary', { text: '🎨 Credits' }));
       var creditsBody = createElement('div', { className: 'howto-body' });
       [
-        'Characters, monsters, props, the hospital bed and traffic cone: Quaternius (CC0). Screens and signs: Kenney (CC0). More props: CreativeTrio, iPoly3D (CC0).',
+        'Characters, monsters and props: Quaternius (CC0). Screens and signs: Kenney (CC0). More props: CreativeTrio, iPoly3D (CC0).',
         'Bright-map props (food, kitchen, furniture, pumpkins, buildings): KayKit Restaurant, Halloween, City Builder and Furniture Bits by Kay Lousberg (CC0).',
-        'Hospital, lab and ambulance set pieces, from Poly Pizza (CC BY 3.0): Wheelchair and Ambulance by Poly by Google; IV stand by Daisuke Takeoka; Doctor and Ambulance by jeremy; Wet Floor Sign by J-Toastie; Microscope and Lab Desk by Colonel Cthulu; Science Tubes by Ryan Donaldson; Fire Extinguisher by Jarlan Perez.',
-        'Doctor, nurse and paramedic: Quaternius characters (CC0).',
+        'More set pieces, from Poly Pizza (CC BY 3.0): Wheelchair and Ambulance by Poly by Google; IV stand by Daisuke Takeoka; Doctor and Ambulance by jeremy; Wet Floor Sign by J-Toastie; Microscope and Lab Desk by Colonel Cthulu; Science Tubes by Ryan Donaldson; Fire Extinguisher by Jarlan Perez.',
+        'Hero characters: Quaternius (CC0).',
         'Scout: KayKit Adventurers Rogue by Kay Lousberg (CC0), www.kaylousberg.com.',
         'Interface font: Fredoka (SIL Open Font License 1.1); big titles: Jersey 10 and Press Start 2P (SIL Open Font License 1.1).',
         'Dyslexia-friendly font: OpenDyslexic by Abbie Gonzalez (SIL Open Font License 1.1).'
@@ -557,7 +567,7 @@ export var settingsMethods = {
     content.appendChild(heading);
     var note = createElement('div', {
       className: 'setting-sublabel',
-      text: 'Turn things off for endless, study and weakness runs. To keep rankings fair, a run with any rule changed still counts for your own progress but is not posted to leaderboards. Daily, challenges, the Gauntlet and multiplayer always use standard rules.'
+      text: 'Turn things off for endless, study and tricky-word runs. To keep rankings fair, a run with any rule changed still counts for your own progress but is not posted to leaderboards. Daily, challenges, the Gauntlet and multiplayer always use standard rules.'
     });
     note.style.cssText = 'margin-bottom:8px;line-height:1.4;font-size:11px';
     content.appendChild(note);
@@ -1039,9 +1049,9 @@ export var settingsMethods = {
     } else if (tab === 'maps') {
       shopItems.appendChild(this._renderMapsTab());
     } else if (tab === 'pals') {
-      shopItems.appendChild(renderGroup('pal', '🐾 Study buddies', null, 'A buddy lives on your Home screen. It cheers your streaks, naps when you are away and cheers you on in its own way. Tap one to hear it say hello.'));
+      shopItems.appendChild(renderGroup('pal', '🐾 Word pals', null, 'A buddy lives on your Home screen. It cheers your streaks, naps when you are away and cheers you on in its own way. Tap one to hear it say hello.'));
     } else {
-      shopItems.appendChild(renderGroup('monster', '👾 Exam Monsters', null, 'The monster that chases you. Tap one to see it in the display above.'));
+      shopItems.appendChild(renderGroup('monster', '👾 The Hush and Co.', null, 'The monster that chases you. Tap one to see it in the display above.'));
     }
     document.dispatchEvent(new CustomEvent('dx:attention-changed')); // (the tabs wear their red dots)
   },
@@ -1065,7 +1075,7 @@ export var settingsMethods = {
   },
 
   /**
-   * The Maps tab: the indoor hospital maps are free for everyone; the rest are bought here. Every map you own
+   * The Maps tab: the indoor maps are free for everyone; the rest are bought here. Every map you own
    * joins the rotation, and one can be made your favorite (a run then stays on it).
    */
   _renderMapsTab() {
@@ -1075,7 +1085,7 @@ export var settingsMethods = {
     var heading = createElement('h3', { text: '🗺️ Maps' });
     heading.style.cssText = 'margin:12px 0 6px;font-size:14px;color:var(--text-secondary)';
     wrap.appendChild(heading);
-    var intro = createElement('div', { className: 'setting-sublabel', text: 'Runs rotate through the maps you own. The ' + free.length + ' hospital rooms are yours from the start. Every other map unlocks as a reward, one more every ' + UNLOCK_EVERY + ' levels, or you can buy it early. Tap one to see it above.' });
+    var intro = createElement('div', { className: 'setting-sublabel', text: 'Runs rotate through the maps you own. The ' + free.length + ' indoor rooms are yours from the start. Every other map unlocks as a reward, one more every ' + UNLOCK_EVERY + ' levels, or you can buy it early. Tap one to see it above.' });
     intro.style.cssText = 'margin:-2px 0 8px;line-height:1.4';
     wrap.appendChild(intro);
 
