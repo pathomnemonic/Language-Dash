@@ -18,7 +18,6 @@ var RED = 0xe8412e;
 var WOOD = 0xb9783c;
 var WOOD_D = 0x6e4428;
 var CREAM = 0xfff1d6;
-var TEAL = 0x20c4b0;
 var YELLOW = 0xffd23f;
 var PINK = 0xffb8c8;
 var MINT = 0xa8ecd0;
@@ -308,7 +307,7 @@ function sushi(g, S, z) {
   belt.rotation.x = -Math.PI / 2;
   belt.position.set(X(side, 0.62), 1.075, z);
   g.add(belt);
-  [-1.2, 0, 1.2].forEach(function (dz) { cyl(g, 0.2, 0.2, 0.06, RED, X(side, 1.75), 0.55, z + dz, { seg: 6 }); cyl(g, 0.04, 0.04, 0.5, DARK, X(side, 1.75), 0.27, z + dz, { seg: 4 }); });
+  [-1.2, 0, 1.2].forEach(function (dz) { cyl(g, 0.14, 0.14, 0.06, RED, X(side, 1.06), 0.55, z + dz, { seg: 6 }); cyl(g, 0.035, 0.035, 0.5, DARK, X(side, 1.06), 0.27, z + dz, { seg: 4 }); });
   nigiri(g, X(side, 0.9), 3.3, z - 0.4, 1.3);
   vendor(g, X(side, 0.2), z + 0.6, 0x2f4f93, S.turn);
 }

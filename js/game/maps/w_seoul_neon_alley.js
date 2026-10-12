@@ -242,7 +242,7 @@ function cart(g, S, z) {
   cyl(g, 0.25, 0.25, 0.2, 0xf4f4ee, X(side, 0.6), 1.0, z + 0.7, { seg: 6 });
   // stools
   [-0.9, 0.9].forEach(function (dz) { cyl(g, 0.2, 0.2, 0.05, RED, X(side, 1.6), 0.5, z + dz, { seg: 6 }); cyl(g, 0.04, 0.04, 0.5, DARK, X(side, 1.6), 0.25, z + dz, { seg: 4 }); });
-  atlasQuad(g, A, 'hz2', 2.2, 0.77, X(side, 1.45), 2.0 + 0.45, z + 1.6, { rx: 0 });
+  atlasQuad(g, A, 'hz2', 1.4, 0.49, X(side, 1.0), 2.5, z + 1.6, {});
   bulbRow(g, side, 1.6, 2.35, z, 3.6, 9);
   bulbRow(g, side, 0.1, 2.35, z, 3.6, 9);
 }
