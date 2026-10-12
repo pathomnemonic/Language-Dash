@@ -175,7 +175,7 @@ function waferStack(g, x, y, z, n, r) {
   var m = mat(0xffffff, { map: waferTex(), r: 0.7 });
   for (var i = 0; i < n; i++) {
     cyl(g, r, r, 0.07, 0xe8a850, x, y + 0.04 + i * 0.1, z, { seg: 10, mat: m, ry: i * 0.4 });
-    cyl(g, r * 0.97, r * 0.97, 0.03, CARAMEL, x, y + 0.095 + i * 0.1, z, { seg: 10 });
+    if (i % 2 === 0) cyl(g, r * 0.97, r * 0.97, 0.03, CARAMEL, x, y + 0.095 + i * 0.1, z, { seg: 10 });
   }
 }
 
