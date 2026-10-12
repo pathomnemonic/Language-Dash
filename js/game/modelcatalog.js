@@ -107,17 +107,17 @@ export function getCharacterParts(id) {
 
 /**
  * The Hush and its relatives. Each is a creepy-cute rigged model; `scale` sizes it against the standard monster
- * height. They are all dark and quiet on purpose: the Hush eats words.
+ * height (the wide ones are shrunk so none fills the screen when it catches the runner). They are all dark and quiet on purpose: the Hush eats words.
  */
 export var MONSTER_MODELS = [
-  { id: 'hush_blot', name: 'The Blot', file: 'hush/blot.glb', price: 0, icon: '🟢', color: 0x46cb29, flying: false, scale: 0.8 },
-  { id: 'hush_flutter', name: 'The Flutter', file: 'hush/flutter.glb', price: 1600, icon: '🦇', color: 0x6a3a8a, flying: true, scale: 0.9 },
-  { id: 'hush_drone', name: 'The Drone', file: 'hush/drone.glb', price: 2400, icon: '🐝', color: 0xd8a820, flying: true, scale: 0.8 },
-  { id: 'hush_stare', name: 'The Stare', file: 'hush/stare.glb', price: 3300, icon: '👁️', color: 0x9a7a52, flying: false },
-  { id: 'hush_snap', name: 'The Snap', file: 'hush/snap.glb', price: 4300, icon: '🦀', color: 0x9a2a2a, flying: false, scale: 0.9 },
-  { id: 'hush_prickle', name: 'The Prickle', file: 'hush/prickle.glb', price: 5300, icon: '🌵', color: 0x3a7a3a, flying: false },
-  { id: 'hush_gnarl', name: 'The Gnarl', file: 'hush/gnarl.glb', price: 6400, icon: '🌳', color: 0x6a4a2a, flying: false },
-  { id: 'hush_murmur', name: 'The Murmur', file: 'hush/murmur.glb', price: 7700, icon: '🐙', color: 0x2f5a3f, flying: true, scale: 0.9 }
+  { id: 'hush_blot', name: 'The Blot', file: 'hush/blot.glb', price: 0, icon: '🟢', color: 0x46cb29, flying: false, scale: 0.5 },
+  { id: 'hush_flutter', name: 'The Flutter', file: 'hush/flutter.glb', price: 1600, icon: '🦇', color: 0x6a3a8a, flying: true, scale: 0.55 },
+  { id: 'hush_drone', name: 'The Drone', file: 'hush/drone.glb', price: 2400, icon: '🐝', color: 0xd8a820, flying: true, scale: 0.55 },
+  { id: 'hush_stare', name: 'The Stare', file: 'hush/stare.glb', price: 3300, icon: '👁️', color: 0x9a7a52, flying: false, scale: 0.8 },
+  { id: 'hush_snap', name: 'The Snap', file: 'hush/snap.glb', price: 4300, icon: '🦀', color: 0x9a2a2a, flying: false, scale: 0.5 },
+  { id: 'hush_prickle', name: 'The Prickle', file: 'hush/prickle.glb', price: 5300, icon: '🌵', color: 0x3a7a3a, flying: false, scale: 0.75 },
+  { id: 'hush_gnarl', name: 'The Gnarl', file: 'hush/gnarl.glb', price: 6400, icon: '🌳', color: 0x6a4a2a, flying: false, scale: 0.75 },
+  { id: 'hush_murmur', name: 'The Murmur', file: 'hush/murmur.glb', price: 7700, icon: '🐙', color: 0x2f5a3f, flying: true, scale: 0.4 }
 ];
 
 var MONSTER_BY_ID = {};
