@@ -8,8 +8,6 @@ import { canvasTex } from '../mapkit.js';
 
 var CJK = '"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC","WenQuanYi Zen Hei","Noto Sans CJK TC",sans-serif';
 var INK = '#3a2540';
-var MINT = '#a8ecd6';
-var PINKS = ['#ff8fb8', '#ffb3cd', '#ff6fa0'];
 var PASTEL = ['#ff9ec4', '#7fe3cf', '#ffe27a', '#9bd3ff', '#ffb98a', '#b6ee8a'];
 export var NEON = ['#ff6fa8', '#2fd9c6', '#ffd23f', '#5bb8ff'];
 

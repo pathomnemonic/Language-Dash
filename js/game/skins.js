@@ -112,16 +112,16 @@ export var SKINS = [
     fog: { near: 55, far: 150 },
     light: { ambient: 0.9, hemi: 0.85, dir: 0.8 },
     colors: {
-      bg: 0xc4f7d8, sky: 0xc4f7d8,
-      ground: 0x46d68a, groundStripe: 0xff7ac8, groundAccent: 0x7af0a8,
-      wallA: 0x9af5cf, wallB: 0xff7ac8, wallGlow: 0xffe14a,
-      archMain: 0xffffff, archGlow: 0xff7ac8,
+      bg: 0xd0f5e4, sky: 0xd0f5e4,
+      ground: 0xd9f6ea, groundStripe: 0xff8fb8, groundAccent: 0xffd84a,
+      wallA: 0xc8f2e4, wallB: 0xff8fb8, wallGlow: 0xffd84a,
+      archMain: 0xffffff, archGlow: 0xff8fb8,
       lane: 0xffffff,
-      gateBase: 0x5a2fc0, gateGlow: 0xffe14a,
-      particle: 0xffffff, particleB: 0xd8fff0,
+      gateBase: 0x2a7f8f, gateGlow: 0xffd84a,
+      particle: 0xffd0e6, particleB: 0xbff5e6,
       coin: 0xffcc22,
-      ambient: 0xffffff, hemiTop: 0xeafff2, hemiBot: 0x8fd8b0,
-      dirLight: 0xfffff0
+      ambient: 0xffffff, hemiTop: 0xf0fff8, hemiBot: 0xf0b8d0,
+      dirLight: 0xfffff4
     }
   },
   {
@@ -286,17 +286,19 @@ export var SKINS = [
     archType: 'world',
     groundType: 'world',
     particleType: 'dust_motes',
+    fog: { near: 55, far: 130 },
+    light: { ambient: 0.95, hemi: 0.9, dir: 0.85 },
     colors: {
-      bg: 0xd2c4a8, sky: 0xe0d4ba,
-      ground: 0x7a6a55, groundStripe: 0x4e4232, groundAccent: 0x645644,
-      wallA: 0xe9dfca, wallB: 0x8a6a3a, wallGlow: 0xffc46a,
-      archMain: 0xe0d4b8, archGlow: 0xffffff,
-      lane: 0xc09a5a,
-      gateBase: 0x5a4118, gateGlow: 0xffbf4a,
-      particle: 0xffffff, particleB: 0xeadcc0,
+      bg: 0xf8e6b4, sky: 0xf8e6b4,
+      ground: 0xeccb8a, groundStripe: 0xd9663a, groundAccent: 0xf6dfaa,
+      wallA: 0xffe9b0, wallB: 0x2f9e8c, wallGlow: 0xffc46a,
+      archMain: 0xe8c890, archGlow: 0xfff0c8,
+      lane: 0xfff0c8,
+      gateBase: 0x6a4a1a, gateGlow: 0xffbf4a,
+      particle: 0xfff6d8, particleB: 0xbff0e4,
       coin: 0xffcc22,
-      ambient: 0xf0e2c6, hemiTop: 0xf8eed8, hemiBot: 0x7a6a50,
-      dirLight: 0xffffff
+      ambient: 0xfff2d6, hemiTop: 0xfff8e6, hemiBot: 0xe0b078,
+      dirLight: 0xfff4dc
     }
   },
   {
