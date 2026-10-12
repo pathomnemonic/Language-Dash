@@ -527,11 +527,11 @@ export var settingsMethods = {
       credits.appendChild(createElement('summary', { text: '🎨 Credits' }));
       var creditsBody = createElement('div', { className: 'howto-body' });
       [
-        'Characters, monsters and props: Quaternius (CC0). Screens and signs: Kenney (CC0). More props: CreativeTrio, iPoly3D (CC0).',
+        'Props: Quaternius (CC0). Screens and signs: Kenney (CC0). More props: CreativeTrio, iPoly3D (CC0).',
         'Bright-map props (food, kitchen, furniture, pumpkins, buildings): KayKit Restaurant, Halloween, City Builder and Furniture Bits by Kay Lousberg (CC0).',
-        'More set pieces, from Poly Pizza (CC BY 3.0): Wheelchair and Ambulance by Poly by Google; IV stand by Daisuke Takeoka; Doctor and Ambulance by jeremy; Wet Floor Sign by J-Toastie; Microscope and Lab Desk by Colonel Cthulu; Science Tubes by Ryan Donaldson; Fire Extinguisher by Jarlan Perez.',
-        'Hero characters: Quaternius (CC0).',
-        'Scout: KayKit Adventurers Rogue by Kay Lousberg (CC0), www.kaylousberg.com.',
+        'Heroes: farm animals (llama, zebra, pug, cow, sheep, horse, pig) by Quaternius (CC0); the people by Kenney, Blocky Characters (CC0); Pico by Kenney, Starter Kit 3D Platformer (CC0).',
+        'Fika Fox: model by PixelMannen (CC0); rigging and animation by tomkranis; glTF conversion by @AsoboStudio and @scurest (CC BY 4.0), via Khronos glTF-Sample-Assets.',
+        'Hush monsters: Quaternius, Animated Monster Pack and Cute Animated Monsters (CC0).',
         'Fonts: Fraunces and DM Sans (SIL Open Font License 1.1).',
         'Dyslexia-friendly font: OpenDyslexic by Abbie Gonzalez (SIL Open Font License 1.1).'
       ].forEach(function (t) { creditsBody.appendChild(createElement('div', { className: 'howto-item', text: t })); });

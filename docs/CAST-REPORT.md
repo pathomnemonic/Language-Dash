@@ -1,39 +1,36 @@
 # Cast report
 
-Heroes (ids, 3D files, parts and palettes unchanged; names, descs, icons, colors new). Backstories (long form) are in js/stories.js.
+Heroes and Hush monsters were rebuilt from new free 3D models (see docs/HEROES-REPORT.md and public/models/CREDITS.md). Backstories (long form) are in js/stories.js.
 
-| id | name | one-liner |
-|---|---|---|
-| avatar_intern | Tour-Guide Tiago | Lisbon guide who leads with a tiny flag and says "this way, please" in six accents. (pt, es) |
-| avatar_m_nurse | Captain Klara | Gdansk ferry captain who announces every stop in three languages. Nobody has missed one. (pl, sv) |
-| avatar_m_paramedic | Platform Pavan | Delhi station porter: bags on his head, every announcement by heart. (hi, en) |
-| avatar_m_intern | Trekker Tove | Swedish hiker who answers "how far?" with "just over that hill". Always. (sv, en) |
-| avatar_m_explorer | Rancher Rafa | Pampas rancher who learned English from a radio drama and a very patient horse. (es, en) |
-| avatar_m_adventurer | Backpacker Bao | Twelve countries so far; his phrasebook is mostly tape and sticky notes. (zh, ja) |
-| avatar_m_rogue | Hoodie Hana | Seoul night owl with six snack pockets who whispers the answer a beat early. (ko, ja) |
-| avatar_m_scout | Mapmaker Mona | Cairo mapmaker who doodles a smug camel on every map she draws. (ar, fr) |
-| avatar_m_zombie | Jetlag Jo | Landed three time zones ago and has not caught up. Still answers first. (en, es) |
-| avatar_m_ninja | Nimble Nao | Tokyo night courier on a silent bike: delivers parcels and perfect politeness. (ja, en) |
-| avatar_m_skeleton | Carlota Calavera | Fiesta skeleton from Oaxaca who rattles through every song and will not sit down. (es) |
-| avatar_m_orc | Gruff Gerda | Big, green, unbothered Black Forest baker. Says "genau" like a full stop. (de, nl) |
-| avatar_m_wizard | Polyglot Pip | Casts spells in fourteen languages and mispronounces the fifteenth. (it, fr, en) |
-| avatar_m_alien | Abby Abroad | An alien on exchange in Amsterdam: learned Dutch from bike bells and cheese labels. (nl, en) |
-| avatar_m_robot | Babelbot Mo | Built to translate anything; keeps translating the toaster by accident. (ja, zh, en) |
-| avatar_m_hooded | Cipher Cass | Hooded codebreaker who solves ciphers on cafe napkins between sips of tea. (ru, pl) |
-| avatar_m_barbarian | Haggler Hamza | Souk stallholder who haggles in three languages and always adds a free fig. (ar, fr) |
-| avatar_m_knight | Dame Dorotea | Knight of the Great Library; guards the irregular-verbs shelf with a polished shield. (it, fr) |
-| avatar_m_mage | Professor Palimpsest | Reads faded scripts nobody else can, with a cup of tea going cold beside her. (ar, ru) |
-| avatar_m_king | Guildmaster Gustav | Runs the Lexicon Guild. The crown suits him; the dictionary under his arm suits him more. (sv, de) |
+| id | name | model | one-liner |
+|---|---|---|---|
+| avatar_intern | Fika Fox | heroes/fox.glb | Stockholm courier who never skips a coffee break and learns one new word per cup. (sv, en) |
+| hero_dummy | Crash-Test Kuba | heroes/dummy.glb | Warsaw safety tester who falls over beautifully and gets back up every single time. (pl, en) |
+| hero_llama | Lola Llama | heroes/llama.glb | Cusco pack-llama who carries four languages, six bags and one very small hat. (es, en) |
+| hero_pug | Percy Pug | heroes/pug.glb | Piccadilly pug who has opinions about queueing and tea, and shares both loudly. (en, fr) |
+| hero_professor | Nonno Nico | heroes/professor.glb | Bologna grandfather who swears pasta is a language and teaches it with both hands. (it, en) |
+| hero_cow | Clara Cowbell | heroes/cow.glb | Swiss alpine cow whose bell announces every sentence before she has finished it. (de, fr, it) |
+| hero_vest | Viennese Vera | heroes/vest.glb | Vienna cafe waitress in a purple waistcoat who remembers every order in three languages. (de, it) |
+| hero_ranger | Ranger Ravi | heroes/ranger.glb | Sikkim park ranger who names every bird in Hindi, then again in English for the tourists. (hi, en) |
+| hero_sheep | Merino Mateo | heroes/sheep.glb | Patagonian sheep who counts everything in Spanish and falls asleep at eleven. Tonight it is ten. (es, en) |
+| hero_kimono | Kaede of Kyoto | heroes/kimono.glb | Tea-house host who corrects your politeness one gentle sip at a time. (ja, en) |
+| hero_pig | Truffle Tonio | heroes/pig.glb | Piedmont truffle pig with the best nose in Italy and a growing list of French phrases. (it, fr) |
+| hero_horse | Sagaan the Steppe Horse | heroes/horse.glb | Mongolian steppe horse who has outrun three storms and one very long phrasebook. (zh, ru) |
+| hero_pirate | Port-Side Nuno | heroes/pirate.glb | Porto harbour pilot with an eye patch (a gull, long story) and a parrot that only speaks Portuguese. (pt, en) |
+| hero_zebra | Zola Zebra-Crossing | heroes/zebra.glb | Serengeti-born crossing guard whose stripes are so crisp that everyone stops and looks both ways. (en, fr) |
+| hero_beep | Pico Pocketbot | heroes/beep.glb | A pocket-size translator gadget with far too much antenna. Beeps in Japanese when it is happy. (ja, ko) |
 
-Hush family (monster_m_* ids/files/flags unchanged)
+Hush family
 
-- monster_m_ghost: The Mumble (the Mumble (free))
-- monster_m_skull: The Static (the Static)
-- monster_m_yeti: The Silent Letter (the Silent Letter)
-- monster_m_brute: The Babble (the Babble)
-- monster_m_demon: The Mispronounced (the Mispronounced (false friends))
-- monster_m_dragon: The Run-On (the Run-On)
-- Classic builders (js/game/monsters.js): monster_classic The Hush, monster_wraith Echo Wraith, monster_golem Dictionary Golem (back label LEXICON), monster_kraken Tongue-Twister Kraken (label TWIST). The wraith back label reads SHHH!
+- hush_blot: The Blot (hush/blot.glb)
+- hush_flutter: The Flutter (hush/flutter.glb)
+- hush_drone: The Drone (hush/drone.glb)
+- hush_stare: The Stare (hush/stare.glb)
+- hush_snap: The Snap (hush/snap.glb)
+- hush_prickle: The Prickle (hush/prickle.glb)
+- hush_gnarl: The Gnarl (hush/gnarl.glb)
+- hush_murmur: The Murmur (hush/murmur.glb)
+- Classic builders (js/game/monsters.js): monster_classic The Hush, monster_wraith Echo Wraith, monster_golem Dictionary Golem, monster_kraken Tongue-Twister Kraken (procedural, archived from the Locker).
 
 Other changes
 - Pals (js/companions.js): ids kept; renamed Maneki, Fetch, Lapin, Raposa, Mochi, Buho, Kaeru, Octo-Lingo, Long. New: pal_parrot (Polly Glot), pal_tortoise (Tortuga), pal_crane (Origami), pal_dictionary (Pocket Dictionary). Test updated.
