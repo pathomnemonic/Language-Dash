@@ -180,7 +180,7 @@ export var settingsMethods = {
         { key: 'characterVoices', label: '💬 Character voices', desc: 'Your runner cheers when you score and groans when you miss, each with a voice of their own.', type: 'toggle' }
       ] : []),
       look: [
-        { key: 'uiTheme', label: '🎨 Colors', desc: 'Automatic is Paper by day and Night Train after dark. Or pick Paper, Night Train, Sunset Bazaar, Harbour Blue, Matcha or Postcard Pink by hand, or let Surprise me change the look after every run.', type: 'select', options: THEME_CHOICES },
+        { key: 'uiTheme', label: '🎨 Colors', desc: 'Surprise me (the default) changes the look after every run. Automatic is Paper by day and Night Train after dark. Or pick Paper, Night Train, Sunset Bazaar, Harbour Blue, Matcha or Postcard Pink by hand.', type: 'select', options: THEME_CHOICES },
         { key: 'nightMode', label: '🌙 Night Shift', desc: 'Night Train colors for late-night practice, whatever the Colors setting says.', type: 'toggle' },
         { key: 'colorblindMode', label: '👁 Colorblind-safe colors', desc: 'Swaps red and green cues for colors that are easier to tell apart.', type: 'toggle' },
         { key: 'dyslexiaFont', label: '🔤 Dyslexia-friendly font', desc: 'Switches every word in the game to OpenDyslexic, a typeface with weighted bottoms that keep letters from flipping, with a little more room between letters and lines.', type: 'toggle' },

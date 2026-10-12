@@ -225,8 +225,8 @@ describe('the Paper Passport colors', () => {
     localStorage.clear();
     const { storage } = await import('../../js/storage.js');
     storage.load();
-    expect(storage.get('uiTheme')).toBe('auto');   // new players start on Automatic: Paper by day, Night Train after dark
-    ['surprise', 'classic', 'winter', 'ocean', 'auto'].forEach((old) => {
+    expect(storage.get('uiTheme')).toBe('surprise');   // new players start on Surprise me: the look rotates after every run
+    ['classic', 'winter', 'ocean'].forEach((old) => {
       storage.data.settings.uiTheme = old;
       storage.data.settings.themePaperSeen = false;
       storage._ensureInvariants();

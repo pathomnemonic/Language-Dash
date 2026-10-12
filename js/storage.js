@@ -137,7 +137,7 @@ var DEFAULTS = {
     handedness: 'right',    // accessibility: which side the Dash / Auto-Pilot buttons sit on ('right' | 'left')
     relaxedPace: false,     // accessibility: slower track, no speed-up (single-player runs only; unranked)
     quality: 'auto',
-    uiTheme: 'auto',
+    uiTheme: 'surprise',
     themePaperSeen: false,
     reviewTipSeen: false,   // the first results screen after the tutorial points out the review section
     lockerSeen: [],
@@ -890,7 +890,7 @@ class Storage {
     if (!d.settings.themePaperSeen) {
       d.settings.themePaperSeen = true;
       delete d.settings.themeSurpriseSeen;
-      var paperLooks = ['auto', 'paper', 'night', 'sunset', 'harbour', 'matcha', 'postcard'];
+      var paperLooks = ['auto', 'paper', 'night', 'sunset', 'harbour', 'matcha', 'postcard', 'surprise'];
       if (paperLooks.indexOf(d.settings.uiTheme) === -1) d.settings.uiTheme = 'auto';
     }
 

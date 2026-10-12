@@ -176,6 +176,6 @@ describe('saved progress survives a reload', () => {
     delete raw.settings.uiTheme;
     localStorage.setItem('langdash_save_v1', JSON.stringify(raw));
     storage.load();
-    expect(storage.get('uiTheme')).toBe('auto');
+    expect(storage.get('uiTheme')).toBe('surprise');
   });
 });

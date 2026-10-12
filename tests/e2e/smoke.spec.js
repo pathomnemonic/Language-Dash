@@ -124,6 +124,8 @@ test.describe('Smoke tests', () => {
 
   test('the first run opens the tutorial once; skipping ends the first run', async ({ page }) => {
     await page.goto('/');
+    // (a build with analytics asks first, once, on a fresh profile)
+    await page.getByRole('button', { name: 'No thanks' }).click({ timeout: 4000 }).catch(() => {});
     await expect(page.locator('#tutorialOverlay')).toHaveClass(/active/);
     await closeTutorial(page);
     await expect(page.locator('#tutorialOverlay')).not.toHaveClass(/active/);
