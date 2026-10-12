@@ -10,7 +10,7 @@
  */
 
 import * as THREE from 'three';
-import { box, cyl, ball, slab, canvasTex, floorPanel, sideCtx, combine, xform, mat, bulb } from '../mapkit.js';
+import { box, cyl, ball, slab, canvasTex, floorPanel, sideCtx, combine, xform, mat } from '../mapkit.js';
 import { animated, features, swarm } from '../mapfx.js';
 import { makeAtlas, atlasQuad, mural, neonText, plainText, rrect, prng, stars, rowOf, periodFlat } from './asia_kit.js';
 
@@ -272,8 +272,8 @@ function extras() {
     swarm({ geo: streakGeo(), material: mater, count: 10, seed: 19 + i, colors: [0xff3a3a, 0xff5a4a, 0xff8a3a], area: { x: [side * 8.6, side * 10.0], y: [0.15, 0.15], z: [-150, 10] }, k: 1, vz: [-14, -6], scale: [1, 1.4] });
   });
   stars(90, { colors: [0xffffff, 0xfff2c0, 0xcfe6ff] });
-  features(pearl, { x: -36, spacing: 150, count: 2, z0: -80 });
-  features(pagodaTower, { x: 34, spacing: 150, count: 2, z0: -150 });
+  features(pearl, { x: -25, spacing: 150, count: 2, z0: -80 });
+  features(pagodaTower, { x: 27, spacing: 150, count: 2, z0: -150 });
 }
 
 export var w_shanghai_night_highway = { id: 'w_shanghai_night_highway', indoor: false, bay: bay, center: center, arch: arch, ground: ground, extras: extras };

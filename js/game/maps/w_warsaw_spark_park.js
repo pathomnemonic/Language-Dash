@@ -398,7 +398,7 @@ function arch(g, z, i) {
     var y0 = y - Math.sin(t0 * Math.PI) * 0.55, y1 = y - Math.sin(t1 * Math.PI) * 0.55;
     cyl(g, 0.012, 0.012, Math.hypot(x1 - x0, y1 - y0), NAVY, (x0 + x1) / 2, (y0 + y1) / 2, z, { rz: Math.atan2(y1 - y0, x1 - x0) - Math.PI / 2, seg: 3 });
   }
-  sign(g, BANNERS[i % BANNERS.length], [BLUE, RED, NAVY, 0xff8a1f][i % 4], [WHITE, WHITE, SUN, WHITE][i % 4], 4.2, 0.8, 0, H - 1.5, z + 0.05, { border: SUN });
+  sign(g, BANNERS[i % BANNERS.length], [BLUE, RED, NAVY, 0xff8a1f][i % 4], [WHITE, WHITE, SUN, WHITE][i % 4], 3.3, 0.66, 0, H - 1.25, z + 0.05, { border: SUN });
   [-1, 1].forEach(function (s2) {
     cyl(g, 0.012, 0.012, 0.6, NAVY, s2 * 2.0, H - 0.95, z, { seg: 3 });
     extrude(g, boltShape(1.1), 0.12, SUN, s2 * 4.5, H - 1.4, z, { bulb: true, curve: 2 });

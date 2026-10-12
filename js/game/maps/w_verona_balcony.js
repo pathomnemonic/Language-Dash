@@ -508,7 +508,7 @@ function arch(g, z, i) {
     cyl(g, 0.012, 0.012, Math.hypot(x1 - x0, y1 - y0), 0x6a5040, (x0 + x1) / 2, (y0 + y1) / 2, z, { rz: Math.atan2(y1 - y0, x1 - x0) - Math.PI / 2, seg: 3 });
   }
   // a banner of love in a different language each time
-  sign(g, BANNERS[i % BANNERS.length], [ROSE, GOLD, RED][i % 3], [0xffffff, ROSE, 0xffe9a0][i % 3], 4.4, 0.8, 0, H - 1.5, z + 0.05, { border: 0xffffff });
+  sign(g, BANNERS[i % BANNERS.length], [ROSE, GOLD, RED][i % 3], [0xffffff, ROSE, 0xffe9a0][i % 3], 3.4, 0.66, 0, H - 1.25, z + 0.05, { border: 0xffffff });
   [-1, 1].forEach(function (s) { cyl(g, 0.012, 0.012, 0.6, 0x6a5040, s * 2.1, H - 0.95, z, { seg: 3 }); });
   // paper heart lanterns at the sides
   [-1, 1].forEach(function (s, n) {

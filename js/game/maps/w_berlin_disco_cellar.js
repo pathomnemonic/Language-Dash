@@ -160,7 +160,7 @@ function floorPicture() {
 function ceilingPicture() {
   // 11.6 across, 16 along, 40 px/unit: a brick barrel vault with cream ribs
   return canvasTex('bd_ceiling', 464, 640, function (ctx, w, h) {
-    bricks(ctx, 0, w, 0, h, rngOf(9), ['#f08a52', '#f79a62', '#e8784a', '#ffa872']);
+    bricks(ctx, 0, w, 0, h, rngOf(9), ['#f58aa0', '#f99ab0', '#ee7a98', '#ffb0c0']);
     ctx.fillStyle = '#ffe7c4';
     for (var r = 0; r < 4; r++) ctx.fillRect(0, r * 160 + 76, w, 18);
     var g = ctx.createLinearGradient(0, 0, w, 0);
