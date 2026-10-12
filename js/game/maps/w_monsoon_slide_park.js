@@ -24,8 +24,6 @@ var TEAL = 0x1fb8b4;
 var BLUE = 0x2f86e0;
 var YELLOW = 0xffd23f;
 var GREEN = 0x34b45a;
-var PINK = 0xff6f91;
-var CREAM = 0xfff1d8;
 var WOOD = 0xb8763a;
 var TUBE = [RED, YELLOW, TEAL, ORANGE];
 
@@ -221,9 +219,6 @@ function decalMat(tex, fallback) {
   var k = tex ? tex.uuid : 'x' + fallback;
   return _decals[k] || (_decals[k] = new THREE.MeshBasicMaterial({ color: tex ? 0xffffff : fallback, map: tex || null, alphaTest: 0.4, side: THREE.DoubleSide }));
 }
-function decal(g, tex, fallback, w, h, x, y, z, yaw) {
-  return quad(g, w, h, 0xffffff, x, y, z, { mat: decalMat(tex, fallback), ry: yaw || 0 });
-}
 
 var _plateMats = {};
 function plateMat(tex, fallback) {
@@ -234,16 +229,6 @@ function plateMat(tex, fallback) {
 /** A hanging sign standing across the view (it faces the runner), hung from a short rail. */
 function plate(g, tex, fallback, w, h, x, y, z, yaw) {
   quad(g, w, h, 0xffffff, x, y, z, { mat: plateMat(tex, fallback), ry: yaw || 0 });
-}
-
-var _ico = {};
-/** A small faceted bead (20 triangles): marigolds, gumdrops. */
-function bead(g, r, color, x, y, z) {
-  var geo = _ico[r] || (_ico[r] = new THREE.IcosahedronGeometry(r, 0));
-  var m = new THREE.Mesh(geo, mat(color, { r: 0.5 }));
-  m.position.set(x, y, z);
-  g.add(m);
-  return m;
 }
 
 var _water = null;
@@ -261,7 +246,7 @@ function frontWall(g, S, z) {
   });
   // the swag hangs in a plane facing the track
   var gt = garlandTex();
-  var q = quad(g, 4, 1, 0xffffff, S.in(0.55), 2.45, z, { mat: decalMat(gt, MARIGOLD), ry: S.turn });
+  quad(g, 4, 1, 0xffffff, S.in(0.55), 2.45, z, { mat: decalMat(gt, MARIGOLD), ry: S.turn });
 }
 
 function chai(g, S, z) {
@@ -412,7 +397,7 @@ var SIGNS = [['hello', 'नमस्ते', 'Namaste · Hello', 0xfff1d8, 0xc23
 function arch(g, z, i) {
   // a splash ring to run through: a big half ring standing on the walls, with a banner and spray nozzles
   var c = RINGS[i % 4];
-  ring(g, 4.95, 0.22, c, 0, 0.05, z, { seg: 20, tube: 5, arc: Math.PI, sy: 1.12, r: 0.4 });
+  ring(g, 4.95, 0.22, c, 0, 0.05, z, { seg: 20, tube: 5, arc: Math.PI, sy: 1.12, r: 0.4, e: c, ei: 0.5 });
   [-1, 1].forEach(function (s, n) {
     ball(g, 0.34, c, s * 4.95, 0.35, z, { seg: 6, sy: 0.7 });
     cone(g, 0.12, 0.45, 0xffffff, s * 4.95, 5.3, z, { seg: 4, rz: Math.PI });

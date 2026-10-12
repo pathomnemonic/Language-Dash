@@ -145,14 +145,13 @@ function floorPicture() {
   // 12 across, 16 along, 48 px/unit: a dance floor of 1.5-unit coloured tiles
   return canvasTex('bd_floor', 576, 768, function (ctx, w, h) {
     ctx.fillStyle = '#fff6e8'; ctx.fillRect(0, 0, w, h);
-    var s = 72;
+    var s = 48;
     for (var j = 0; j * s < h + s; j++) {
       for (var i = 0; i * s < w + s; i++) {
-        var c = CSS[(i * 2 + j * 3 + ((i + j) % 2)) % CSS.length];
+        var c = ['#ff8ac8', '#6fd8f5', '#ffe070', '#a4ea78', '#ffaa66', '#c0a0ff'][(i * 2 + j * 3 + ((i + j) % 2)) % 6];
         var g = ctx.createRadialGradient(i * s + s / 2, j * s + s / 2, 4, i * s + s / 2, j * s + s / 2, s * 0.7);
-        g.addColorStop(0, '#ffffff'); g.addColorStop(0.35, c); g.addColorStop(1, c);
-        ctx.fillStyle = g; ctx.fillRect(i * s + 3, j * s + 3, s - 6, s - 6);
-        ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(i * s + 3, j * s + 3, s - 6, 5);
+        g.addColorStop(0, '#ffffff'); g.addColorStop(0.6, c); g.addColorStop(1, c);
+        ctx.fillStyle = g; ctx.fillRect(i * s + 2, j * s + 2, s - 4, s - 4);
       }
     }
   });
@@ -282,10 +281,10 @@ function center(g, z) {
 
 function arch(g, z, i) {
   // a brick rib across the vault, spots hanging from it and a string of bulbs along it
-  ring(g, 5.2, 0.14, 0xffe7c4, 0, H - 2.6, z, { arc: Math.PI, seg: 20, tube: 4, sy: 0.55 });
+  ring(g, 5.2, 0.14, 0xffe7c4, 0, H - 1.5, z, { arc: Math.PI, seg: 20, tube: 4, sy: 0.27 });
   for (var n = 0; n < 9; n++) {
     var a = Math.PI * (n + 0.5) / 9;
-    ball(g, 0.1, CLUB[(n + i) % 6], Math.cos(a) * 5.2, H - 2.6 + Math.sin(a) * 5.2 * 0.55, z, { seg: 5, bulb: true });
+    ball(g, 0.1, CLUB[(n + i) % 6], Math.cos(a) * 5.2, H - 1.5 + Math.sin(a) * 5.2 * 0.27, z, { seg: 5, bulb: true });
   }
   [-1, 1].forEach(function (s, n) {
     cyl(g, 0.02, 0.02, 0.6, 0x3a2a5a, s * 3.2, H - 0.3, z, { seg: 3 });
@@ -298,12 +297,19 @@ function arch(g, z, i) {
 
 function mirrorBall(n) {
   var m = new THREE.Group();
-  var geo = new THREE.IcosahedronGeometry(0.9, 1);
-  var pieces = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0xf4f8ff, roughness: 0.25, metalness: 0.5, flatShading: true, envMapIntensity: 0.9 }));
+  var geo = new THREE.IcosahedronGeometry(0.75, 1).toNonIndexed();
+  var tint = ['#ffffff', '#9fe6ff', '#ffc0e0', '#fff0a0'].map(function (c) { return new THREE.Color(c); });
+  var cols = new Float32Array(geo.attributes.position.count * 3);
+  for (var f = 0; f < geo.attributes.position.count / 3; f++) {
+    var c = tint[(f * 7 + (f >> 2)) % 4];
+    for (var v = 0; v < 3; v++) { cols[(f * 3 + v) * 3] = c.r; cols[(f * 3 + v) * 3 + 1] = c.g; cols[(f * 3 + v) * 3 + 2] = c.b; }
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+  var pieces = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.3, metalness: 0.3, flatShading: true, envMapIntensity: 0.9 }));
   m.add(pieces);
   cyl(m, 0.02, 0.02, 1.4, 0x555566, 0, 1.1, 0, { seg: 3 });
   cyl(m, 0.12, 0.12, 0.08, 0x555566, 0, 1.8, 0, { seg: 6 });
-  m.position.y = H - 2.4;
+  m.position.y = H - 2.0;
   m.userData.keep = true;
   animated(m);
   spin(m, 'y', 0.6, n);

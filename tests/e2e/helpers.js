@@ -18,6 +18,9 @@ export async function openApp(page, path = '/', opts = {}) {
   for (let t = 0; t < 40; t++) {
     const ready = await page.evaluate(() => !!(window.__storage && window.__storage.get('firstRunComplete')) || !!document.querySelector('#tutCloseBtn')).catch(() => false);
     if (ready) break;
+    // (a build with analytics configured asks once on a fresh profile; a player who says no is the quietest case)
+    const consent = page.getByRole('button', { name: 'No thanks' });
+    if (await page.locator('#analyticsConsent').isVisible().catch(() => false)) await consent.click().catch(() => {});
     await page.waitForTimeout(250);
   }
   for (let i = 0; i < 10; i++) {

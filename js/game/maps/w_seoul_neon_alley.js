@@ -77,7 +77,7 @@ function facades() {
 function wetAsphalt() {
   return canvasTex('seoul_floor', 576, 768, function (ctx, w, h) {
     var rnd = prng(9);
-    ctx.fillStyle = '#41627e';
+    ctx.fillStyle = '#2f7f8c';
     ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = 'rgba(255,255,255,0.05)';
     for (var i = 0; i < 400; i++) ctx.fillRect(rnd() * w, rnd() * h, 3, 3);
@@ -86,7 +86,7 @@ function wetAsphalt() {
       for (var k = 0; k < 10; k++) {
         var x = s ? w - rnd() * 130 : rnd() * 130;
         var y = rnd() * h;
-        var col = k % 2 ? 'rgba(255,92,136,0.5)' : 'rgba(34,230,216,0.5)';
+        var col = k % 2 ? 'rgba(255,92,136,0.7)' : 'rgba(120,255,240,0.6)';
         var grd = ctx.createLinearGradient(x, y, x, y + 90);
         grd.addColorStop(0, col); grd.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = grd; ctx.fillRect(x - 6, y, 12 + rnd() * 18, 60 + rnd() * 90);
@@ -275,7 +275,7 @@ function arch(g, z, i) {
 }
 
 function ground(g) {
-  slab(g, 400, 400, 0x41627e, 0, -0.02, -190, { r: 1 });
+  slab(g, 400, 400, 0x2f7f8c, 0, -0.02, -190, { r: 1 });
 }
 
 function puff() { return combine([{ geo: new THREE.SphereGeometry(0.2, 6, 5), color: 0xffffff }]); }
