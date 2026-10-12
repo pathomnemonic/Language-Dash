@@ -187,20 +187,20 @@ export var SKINS = [
     wallType: 'world',
     archType: 'world',
     groundType: 'world',
-    particleType: 'blood_cells',
+    particleType: 'capsule_bits',
     fog: { near: 55, far: 150 },
     light: { ambient: 0.9, hemi: 0.85, dir: 0.8 },
     colors: {
-      bg: 0xffc6d8, sky: 0xffc6d8,
-      ground: 0xfff0f5, groundStripe: 0xff3d5e, groundAccent: 0xffc2d6,
-      wallA: 0xffc2d6, wallB: 0xff3d5e, wallGlow: 0xffd23f,
-      archMain: 0xffffff, archGlow: 0xff3d5e,
+      bg: 0xffd9a8, sky: 0xffd9a8,
+      ground: 0xf6d0a0, groundStripe: 0xe0305a, groundAccent: 0xf2b87a,
+      wallA: 0xf4a27c, wallB: 0xe0305a, wallGlow: 0xffc83a,
+      archMain: 0xfff0d0, archGlow: 0xff8fb0,
       lane: 0xffffff,
-      gateBase: 0x2a4fd0, gateGlow: 0xffd23f,
+      gateBase: 0xc4243c, gateGlow: 0xffc83a,
       particle: 0xffffff, particleB: 0xffd0e0,
       coin: 0xffcc22,
-      ambient: 0xffffff, hemiTop: 0xfff2f6, hemiBot: 0xe8a0b8,
-      dirLight: 0xfff4f4
+      ambient: 0xffffff, hemiTop: 0xfff2dc, hemiBot: 0xf0a888,
+      dirLight: 0xfff0d0
     }
   },
   {
@@ -366,19 +366,19 @@ export var SKINS = [
     wallType: 'world',
     archType: 'world',
     groundType: 'world',
-    particleType: 'calcium_dust',
+    particleType: 'capsule_bits',
     fog: { near: 55, far: 150 },
     light: { ambient: 0.9, hemi: 0.85, dir: 0.8 },
     colors: {
-      bg: 0xcfeeff, sky: 0xcfeeff,
-      ground: 0xeefaff, groundStripe: 0x2f7bff, groundAccent: 0xcdefff,
-      wallA: 0xb8ecff, wallB: 0x2f7bff, wallGlow: 0x39e6ff,
-      archMain: 0xffffff, archGlow: 0xff5fc0,
+      bg: 0xffd8b8, sky: 0xffd8b8,
+      ground: 0xfff0e0, groundStripe: 0xff4fa8, groundAccent: 0xffd0a0,
+      wallA: 0xe8703a, wallB: 0xff4fa8, wallGlow: 0x2ec8f0,
+      archMain: 0xffe7c4, archGlow: 0xff4fa8,
       lane: 0xffffff,
-      gateBase: 0x1a3fa0, gateGlow: 0x39e6ff,
-      particle: 0xffffff, particleB: 0xd0f0ff,
+      gateBase: 0x7a3acc, gateGlow: 0x2ec8f0,
+      particle: 0xffffff, particleB: 0xffd0f0,
       coin: 0xffcc22,
-      ambient: 0xffffff, hemiTop: 0xeaf8ff, hemiBot: 0x9ac8e8,
+      ambient: 0xffffff, hemiTop: 0xfff2e8, hemiBot: 0xf0a8a0,
       dirLight: 0xffffff
     }
   },
@@ -395,8 +395,8 @@ export var SKINS = [
     fog: { near: 55, far: 150 },
     light: { ambient: 0.9, hemi: 0.85, dir: 0.85 },
     colors: {
-      bg: 0xcfeaff, sky: 0x9ed8ff,
-      ground: 0xdff0ff, groundStripe: 0x9ecbff, groundAccent: 0xb5d8ff,
+      bg: 0xfff0d0, sky: 0xffe6a8,
+      ground: 0xf2d4a2, groundStripe: 0xffd23f, groundAccent: 0xecc78e,
       wallA: 0xfff3dc, wallB: 0xff7ab8, wallGlow: 0xffd23f,
       archMain: 0xffffff, archGlow: 0xffd23f,
       lane: 0x5aa0ff,
@@ -653,15 +653,15 @@ export var SKINS = [
     fog: { near: 55, far: 150 },
     light: { ambient: 0.9, hemi: 0.85, dir: 0.8 },
     colors: {
-      bg: 0xfff0a0, sky: 0xfff0a0,
-      ground: 0xbcd6ee, groundStripe: 0x2f9bff, groundAccent: 0x8fb0d0,
-      wallA: 0xffe14a, wallB: 0x2f9bff, wallGlow: 0xffe14a,
+      bg: 0xbfe6ff, sky: 0xbfe6ff,
+      ground: 0xfff0a8, groundStripe: 0x2f9bff, groundAccent: 0xffe070,
+      wallA: 0xffe14a, wallB: 0x2f9bff, wallGlow: 0xcfeaff,
       archMain: 0xffffff, archGlow: 0x2f9bff,
       lane: 0xffffff,
       gateBase: 0x1a3fa0, gateGlow: 0xffe14a,
-      particle: 0xffffff, particleB: 0xfff4b0,
+      particle: 0xffffff, particleB: 0xcfeaff,
       coin: 0xffcc22,
-      ambient: 0xffffff, hemiTop: 0xfffbe0, hemiBot: 0xd8c060,
+      ambient: 0xffffff, hemiTop: 0xfffbe0, hemiBot: 0xe8d890,
       dirLight: 0xffffff
     }
   }

@@ -63,3 +63,8 @@ export async function hasWebGL(page) {
     return !!(c.getContext('webgl2') || c.getContext('webgl'));
   });
 }
+
+/** True when this build has a backend (Supabase): Friends, accounts, Pro and the real-money Locker items only exist then. */
+export async function hasBackend(page) {
+  return page.evaluate(() => !document.documentElement.classList.contains('no-backend'));
+}

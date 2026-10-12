@@ -135,11 +135,11 @@ function wallPicture(side) {
 function floorPicture() {
   // 12 across, 16 along, 48 px/unit: sunny paving of cream slabs with blue joints and little spark marks
   return canvasTex('ws_floor', 576, 768, function (ctx, w, h) {
-    ctx.fillStyle = '#2f9bff'; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = '#9ad2ff'; ctx.fillRect(0, 0, w, h);
     var rnd = rngOf(13);
     for (var j = 0; j < 8; j++) for (var i = 0; i < 6; i++) {
       var c = ['#fff3b8', '#ffe98a', '#fff9d6', '#ffe070'][(i + j * 2) % 4];
-      ctx.fillStyle = c; ctx.fillRect(i * 96 + 4, j * 96 + 4, 88, 88);
+      ctx.fillStyle = c; ctx.fillRect(i * 96 + 2, j * 96 + 2, 92, 92);
       ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.fillRect(i * 96 + 4, j * 96 + 4, 88, 5);
       if ((i + j) % 3 === 0) {
         // a little blue spark in the slab

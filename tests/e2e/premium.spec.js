@@ -4,10 +4,11 @@
 // the player to the payment page.
 
 import { test, expect } from '@playwright/test';
-import { openApp } from './helpers.js';
+import { openApp, hasBackend } from './helpers.js';
 
 async function openTrails(page, fake) {
   await openApp(page, '/?debug=1');
+  test.skip(!(await hasBackend(page)), 'real-money items are only sold by a build with a backend');
   await page.evaluate((src) => { const f = eval('(' + src + ')'); window.__calls = []; window.__ui.getLeaderboard = () => f(window.__calls); }, fake);
   await page.evaluate(() => window.__ui.show('screenShop'));
   await page.waitForTimeout(900);
@@ -65,10 +66,12 @@ test.describe('premium Locker items', () => {
 });
 
 test('premium maps show a dollar price (never "level 0" or coins) and are not owned', async ({ page }) => {
+  test.setTimeout(60000);
   await openApp(page, '/?debug=1');
+  test.skip(!(await hasBackend(page)), 'real-money items are only sold by a build with a backend');
   await page.evaluate(() => window.__ui.show('screenShop'));
   await page.waitForTimeout(900);
-  await page.locator('#shopItems [role="tab"]', { hasText: 'Maps' }).first().click();
+  await page.locator('#shopItems [role="tab"]', { hasText: 'Maps' }).first().click({ timeout: 25000 }); // (the map preview loads a scene, which can stall the frames the click waits on)
   await page.waitForTimeout(700);
   for (const id of ['map_dna_helix_tunnel', 'map_aquarium_imaging_center']) {
     const row = page.locator('[data-map="' + id + '"]');
