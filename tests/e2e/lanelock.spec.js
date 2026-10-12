@@ -14,7 +14,8 @@ test.describe('Lane switching at the last moment', () => {
     await openApp(page, '/?debug=1');
     test.skip(!(await hasWebGL(page)), 'WebGL unavailable in this environment');
     await page.waitForFunction(() => window.__game && window.__storage);
-    await page.evaluate(() => window.__storage.set('userSpeed', 10)); // more encounters in less time
+    // (there is no speed setting now: the pace ramps by itself, so ask for the steepest ramp to get more encounters in less time)
+    await page.evaluate(() => window.__storage.set('speedRamp', { on: true, every: 1, step: 2 }));
 
     await page.evaluate(() => {
       const g = window.__game;

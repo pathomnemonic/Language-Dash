@@ -104,7 +104,7 @@ export function getQuality() {
 
 export function isLowQuality() { return getQuality() === 'low'; }
 
-/** Animated 3D character and monster models (medium and up). */
+/** Extra animated people on obstacles (medium and up). The player's hero and the monster are shown on every tier. */
 export function useCharacterModels() { return getQuality() !== 'low'; }
 
 /** 3D obstacle and scenery models, bloom and shadows (high only). */

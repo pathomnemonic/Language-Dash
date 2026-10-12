@@ -22,7 +22,6 @@ import * as THREE from 'three';
 import { storage } from '../storage.js';
 import { SHOP_ITEMS, AVATARS } from './shopdata.js';
 import { loadCharacterModel, buildModelCharacter } from './charactermodel.js';
-import { useCharacterModels } from './quality.js';
 import { paperizeMaterials } from './paper.js';
 import { buildHat, buildGear, buildClothing, gearSlot } from './cosmetics.js';
 import { measureHead, measureTorso, findHips } from './cosmetfit.js';
@@ -668,7 +667,7 @@ export function buildPlayer() {
         return printedLook(buildVehicle(avatar));
     }
 
-    if (avatar.isModel && useCharacterModels()) {
+    if (avatar.isModel) { // every tier shows the hero the player picked (a fox must not turn into a person on Low)
         // Real animated model. If it is still downloading, show the
         // procedural stand-in; "langdash:model-ready" triggers a rebuild.
         var url = (import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/') + avatar.modelUrl;

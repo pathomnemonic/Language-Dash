@@ -234,17 +234,19 @@ export var SKINS = [
     archType: 'world',
     groundType: 'world',
     particleType: 'dust_motes',
+    fog: { near: 60, far: 160 },
+    light: { ambient: 0.95, hemi: 0.9, dir: 0.85 },
     colors: {
-      bg: 0xd9c19a, sky: 0xe8d5b0,
-      ground: 0x9a6b45, groundStripe: 0x6a4529, groundAccent: 0x84583a,
-      wallA: 0xf3e6c8, wallB: 0x7a4a2a, wallGlow: 0xffd68a,
-      archMain: 0xe8d3aa, archGlow: 0xffffff,
-      lane: 0xd8a860,
-      gateBase: 0x5a3414, gateGlow: 0xffd23f,
-      particle: 0xffffff, particleB: 0xf5e2b5,
+      bg: 0xf6e2b4, sky: 0xf6e2b4,
+      ground: 0xd9a064, groundStripe: 0xc78a4a, groundAccent: 0xe6b878,
+      wallA: 0xfbefd2, wallB: 0xb9733a, wallGlow: 0xffd68a,
+      archMain: 0xf0d9a8, archGlow: 0xfff2c8,
+      lane: 0xfff0c8,
+      gateBase: 0x7a4a22, gateGlow: 0xffd23f,
+      particle: 0xfff6d8, particleB: 0xffe4a8,
       coin: 0xffcc22,
-      ambient: 0xf6e6c4, hemiTop: 0xfff2d6, hemiBot: 0x7a5a3a,
-      dirLight: 0xffffff
+      ambient: 0xfff0d2, hemiTop: 0xfff6e0, hemiBot: 0xc8905a,
+      dirLight: 0xfff2d8
     }
   },
   {

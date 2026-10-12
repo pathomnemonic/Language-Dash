@@ -13,7 +13,6 @@
 import * as THREE from 'three';
 import { buildExamMonster, getMonsterParts } from './exammonster.js';
 import { getMonsterModel, modelUrl } from './modelcatalog.js';
-import { useCharacterModels } from './quality.js';
 import { buildModelMonster, loadCharacterModel } from './charactermodel.js';
 import { paperizeMaterials } from './paper.js';
 
@@ -298,7 +297,7 @@ function applyMonsterLook(root, look) {
  */
 export function buildMonster(id) {
   var model = getMonsterModel(id);
-  if (model && useCharacterModels()) {
+  if (model) {
     // Real animated model. If it is still downloading, show the classic
     // monster; "langdash:model-ready" makes the engine swap it in.
     var url = modelUrl(model.file);
