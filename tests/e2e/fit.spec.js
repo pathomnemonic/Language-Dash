@@ -196,6 +196,7 @@ for (const [w, h] of [[360, 640], [390, 780]]) {
 }
 
 test('opening a Locker tab does not change the size of the page', async ({ page }) => {
+  test.setTimeout(90000); // (the Locker's 3D preview is slow to render without a GPU)
   await open(page, 360, 640);
   await page.evaluate(() => window.__ui.show('screenShop'));
   await page.waitForTimeout(800);
@@ -232,7 +233,9 @@ test('badge names are readable, earned or not', async ({ page }) => {
 
 // ───────── prices must be readable ─────────
 test('a premium item\'s price is shown in the plain reading font, not the pixel one', async ({ page }) => {
+  test.setTimeout(90000);
   await open(page, 390, 780);
+  test.skip(!(await hasBackend(page)), 'real-money items are only sold by a build with a backend');
   await page.evaluate(() => window.__ui.show('screenShop'));
   await page.waitForTimeout(900);
   await page.locator('#shopItems [role="tab"]', { hasText: 'Trails' }).first().click();
@@ -247,6 +250,7 @@ test('a premium item\'s price is shown in the plain reading font, not the pixel 
 // ───────── switching tabs must not jump ─────────
 for (const [w, h] of [[360, 640], [390, 780], [320, 568]]) {
   test(`switching tabs: nothing moves or changes size as a tab appears, first visit or later, at ${w}x${h}`, async ({ page }) => {
+    test.setTimeout(120000); // (ten tab visits, two of them to the Locker's 3D preview, which is slow without a GPU)
     await open(page, w, h);
     await page.waitForTimeout(1500);
     const tabs = ['screenStats', 'screenShop', 'screenQuests', 'screenProfile', 'screenHome', 'screenStats', 'screenShop', 'screenQuests', 'screenProfile', 'screenHome'];
@@ -273,8 +277,10 @@ for (const [w, h] of [[360, 640], [390, 780], [320, 568]]) {
 
 // ───────── the Go Pro banner ─────────
 test('the trial banner shows "N days left" in full, even on the narrowest phone', async ({ page }) => {
+  test.setTimeout(90000);
   await page.addInitScript(() => { try { localStorage.setItem('ld_pro_force_sell', '1'); localStorage.setItem('ld_pro', JSON.stringify({ active: true, source: 'server', plan: 'trial', trial: true, until: Date.now() + 7 * 86400000 - 3600000, provenAt: Date.now(), since: Date.now() })); } catch (e) { /* no storage */ } });
   await open(page, 320, 568);
+  test.skip(!(await hasBackend(page)), 'Pro only exists in a build with a backend');
   await page.evaluate(() => window.__ui.show('screenHome'));
   await page.waitForTimeout(900);
   const r = await page.evaluate(() => { const t = document.getElementById('homeProTitle'); const box = t.parentElement.getBoundingClientRect(); const tb = t.getBoundingClientRect(); return { text: t.textContent, fits: tb.right <= box.right + 1 && t.scrollWidth <= t.clientWidth + 1 }; });
@@ -290,6 +296,7 @@ test('Home has no league / rank line, only the logo and what you can tap', async
 });
 
 test('pinned badges on the profile always show their names', async ({ page }) => {
+  test.setTimeout(90000);
   for (const [w, h] of [[360, 640], [390, 780], [360, 560]]) {
     await open(page, w, h);
     await page.evaluate(() => window.__ui.show('screenProfile'));

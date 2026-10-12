@@ -174,8 +174,8 @@ function sign(g, S, idx, w, h, x, y, z, turn) {
 function waferStack(g, x, y, z, n, r) {
   var m = mat(0xffffff, { map: waferTex(), r: 0.7 });
   for (var i = 0; i < n; i++) {
-    cyl(g, r, r, 0.07, 0xe8a850, x, y + 0.04 + i * 0.1, z, { seg: 14, mat: m, ry: i * 0.4 });
-    cyl(g, r * 0.97, r * 0.97, 0.03, CARAMEL, x, y + 0.095 + i * 0.1, z, { seg: 14 });
+    cyl(g, r, r, 0.07, 0xe8a850, x, y + 0.04 + i * 0.1, z, { seg: 10, mat: m, ry: i * 0.4 });
+    cyl(g, r * 0.97, r * 0.97, 0.03, CARAMEL, x, y + 0.095 + i * 0.1, z, { seg: 10 });
   }
 }
 
@@ -200,9 +200,9 @@ function pipeRun(g, S, z, c) {
 function waferScene(g, S, z) {
   var x = S.in(0.15) - S.side * 0.0;
   // behind the belt: a tower of fresh wafers and a big sign
-  waferStack(g, S.in(0.8), 0, z - 1.0, 14, 0.4);
-  waferStack(g, S.in(0.8), 0, z + 0.2, 9, 0.4);
-  waferStack(g, S.in(0.8), 0, z + 1.3, 5, 0.4);
+  waferStack(g, S.in(0.8), 0, z - 1.0, 10, 0.4);
+  waferStack(g, S.in(0.8), 0, z + 0.2, 6, 0.4);
+  waferStack(g, S.in(0.8), 0, z + 1.3, 4, 0.4);
   sign(g, S, 0, 2.2, 1.1, S.in(0.35), 3.4, z - 0.2);
   sign(g, S, 1, 1.4, 0.7, S.in(0.35), 2.45, z + 1.4, 0.4);
   // a hanging oven hood over the belt
@@ -215,7 +215,7 @@ function syrupScene(g, S, z) {
   [-1.1, 1.1].forEach(function (dz, i) {
     var x = S.in(0.9);
     var c = i ? 0xff80a6 : 0x5fd0f0;
-    cyl(g, 0.4, 0.4, 2.4, c, x, 1.4, z + dz, { seg: 10 });
+    cyl(g, 0.4, 0.4, 2.4, c, x, 1.4, z + dz, { seg: 8 });
     ball(g, 0.4, 0xd88a30, x, 2.6, z + dz, { seg: 10, sy: 0.7 });
     cyl(g, 0.08, 0.08, 0.5, 0xffffff, x, 3.0, z + dz, { seg: 6 });
     box(g, 0.05, 1.1, 0.2, 0xe89a28, x - S.side * 0.4, 1.4, z + dz, { bulb: true });
@@ -224,8 +224,8 @@ function syrupScene(g, S, z) {
   });
   // an overhead vat dripping syrup onto the belt
   var vx = S.in(0.9) - S.side * 0.3;
-  ball(g, 0.9, 0xff9a2a, vx, 4.0, z, { seg: 12, sy: 0.9 });
-  cyl(g, 0.95, 0.95, 0.12, 0xffffff, vx, 4.55, z, { seg: 12 });
+  ball(g, 0.9, 0xff9a2a, vx, 4.0, z, { seg: 9, sy: 0.9 });
+  cyl(g, 0.95, 0.95, 0.12, 0xffffff, vx, 4.55, z, { seg: 9 });
   cone(g, 0.2, 0.5, 0xd88a30, vx - S.side * 0.3, 3.0, z, { seg: 6, rz: Math.PI });
   [0, 1].forEach(function (d) { ball(g, 0.07, 0xc87a20, vx - S.side * 0.3, 2.6 - d * 0.55, z, { seg: 5, sy: 1.4 }); });
   sign(g, S, 12, 1.6, 0.8, S.in(0.1), 5.0, z, 0.3);
@@ -248,12 +248,12 @@ function tulipCrates(g, S, z) {
       var tx = x + ((t % 3) - 1) * 0.26;
       var tz = zz + (Math.floor(t / 3) - 0.8) * 0.3;
       cyl(g, 0.012, 0.012, 0.5, 0x3fb85a, tx, 0.85, tz, { seg: 3 });
-      ball(g, 0.1, TULIPS[(t + i) % 5], tx, 1.12, tz, { seg: 5, sy: 1.3 });
+      cone(g, 0.1, 0.24, TULIPS[(t + i) % 5], tx, 1.12, tz, { seg: 5, rz: Math.PI });
     }
   }
   // a stacked second layer, clogs on the floor in front of the crates
   box(g, 0.8, 0.5, 0.9, 0xc98a52, S.in(0.8), 0.78, z - 0.6);
-  for (var t2 = 0; t2 < 5; t2++) { cyl(g, 0.012, 0.012, 0.45, 0x3fb85a, S.in(0.8) + (t2 % 2) * 0.2 - 0.1, 1.2, z - 0.8 + t2 * 0.12, { seg: 3 }); ball(g, 0.1, TULIPS[t2], S.in(0.8) + (t2 % 2) * 0.2 - 0.1, 1.45, z - 0.8 + t2 * 0.12, { seg: 5, sy: 1.3 }); }
+  for (var t2 = 0; t2 < 5; t2++) { cyl(g, 0.012, 0.012, 0.45, 0x3fb85a, S.in(0.8) + (t2 % 2) * 0.2 - 0.1, 1.2, z - 0.8 + t2 * 0.12, { seg: 3 }); cone(g, 0.1, 0.24, TULIPS[t2], S.in(0.8) + (t2 % 2) * 0.2 - 0.1, 1.45, z - 0.8 + t2 * 0.12, { seg: 5, rz: Math.PI }); }
   [[-1.5, YELLOW], [-1.2, BLUE], [-0.9, RED], [1.4, BLUE], [1.7, YELLOW]].forEach(function (c, i) { clogs(g, S.in(0.35) - S.side * 0.0, 0, z + c[0] * 1.0 + 0.3, S.turn - 1.5708 * (i % 2 ? 0.2 : -0.2), c[1]); });
   sign(g, S, 5, 1.7, 0.85, S.in(0.1), 3.4, z - 0.7, 0.3);
   sign(g, S, 6, 1.5, 0.75, S.in(0.1), 2.5, z + 1.3, 0.4);
@@ -263,8 +263,8 @@ function tinStation(g, S, z) {
   // stacks of Delft-blue stroopwafel tins
   var tinMat = mat(0xffffff, { map: tinTex(), r: 0.5 });
   [[-1.2, 4], [-0.2, 3], [0.8, 5], [1.7, 2]].forEach(function (p, i) {
-    for (var h = 0; h < p[1]; h++) cyl(g, 0.38, 0.38, 0.32, 0xffffff, S.in(0.8), 0.17 + h * 0.34, z + p[0], { seg: 14, mat: tinMat });
-    cyl(g, 0.4, 0.4, 0.05, i % 2 ? RED : ORANGE, S.in(0.8), 0.19 + p[1] * 0.34, z + p[0], { seg: 14 });
+    for (var h = 0; h < p[1]; h++) cyl(g, 0.38, 0.38, 0.32, 0xffffff, S.in(0.8), 0.17 + h * 0.34, z + p[0], { seg: 10, mat: tinMat });
+    cyl(g, 0.4, 0.4, 0.05, i % 2 ? RED : ORANGE, S.in(0.8), 0.19 + p[1] * 0.34, z + p[0], { seg: 10 });
   });
   sign(g, S, 3, 1.7, 0.85, S.in(0.1), 3.5, z - 0.5, 0.3);
   sign(g, S, 9, 1.4, 0.7, S.in(0.1), 2.5, z + 1.4, 0.4);
@@ -328,12 +328,12 @@ function wallGear(side) {
     var outer = new THREE.Group();
     var cols = [[PINK, YELLOW], [TEAL, ORANGE], [YELLOW, BLUE]][i % 3];
     var r = 1.1 + (i % 2) * 0.35;
-    var rig = makeGear(r, cols[0], cols[1], 10);
+    var rig = makeGear(r, cols[0], cols[1], 8);
     rig.position.set(0, 3.6 + (i % 2) * 0.4, 0.2);
     outer.add(rig);
     spin(rig, 'z', (i % 2 ? -1 : 1) * side * 0.5);
     // a smaller gear meshing with it
-    var small = makeGear(r * 0.55, cols[1], cols[0], 7);
+    var small = makeGear(r * 0.55, cols[1], cols[0], 6);
     small.position.set(r * 1.6, rig.position.y + r * 0.5, 0.2);
     outer.add(small);
     spin(small, 'z', (i % 2 ? 1 : -1) * side * 0.9);
@@ -371,26 +371,26 @@ function extras() {
   // the belts flow, and the wafers on them ride along
   flow(beltTex(), 0, 0.3);
   var wafer = combine([
-    { geo: new THREE.CylinderGeometry(0.26, 0.26, 0.05, 12), color: 0xf2b860 },
-    { geo: new THREE.CylinderGeometry(0.25, 0.25, 0.03, 12), color: 0x8a4a1a, matrix: xform(0, 0.04, 0) },
-    { geo: new THREE.CylinderGeometry(0.26, 0.26, 0.05, 12), color: 0xe8a850, matrix: xform(0, 0.08, 0) },
+    { geo: new THREE.CylinderGeometry(0.26, 0.26, 0.05, 8), color: 0xf2b860 },
+    { geo: new THREE.CylinderGeometry(0.25, 0.25, 0.03, 8), color: 0x8a4a1a, matrix: xform(0, 0.04, 0) },
+    { geo: new THREE.CylinderGeometry(0.26, 0.26, 0.05, 8), color: 0xe8a850, matrix: xform(0, 0.08, 0) },
     { geo: new THREE.BoxGeometry(0.4, 0.02, 0.03), color: 0xb8742a, matrix: xform(0, 0.12, 0.07) },
     { geo: new THREE.BoxGeometry(0.4, 0.02, 0.03), color: 0xb8742a, matrix: xform(0, 0.12, -0.07) },
     { geo: new THREE.BoxGeometry(0.03, 0.02, 0.4), color: 0xb8742a, matrix: xform(0.07, 0.12, 0) },
     { geo: new THREE.BoxGeometry(0.03, 0.02, 0.4), color: 0xb8742a, matrix: xform(-0.07, 0.12, 0) }
   ]);
   [-1, 1].forEach(function (side, i) {
-    swarm({ geo: wafer, count: 44, seed: 5 + i * 3, colors: [0xffffff], area: { x: [side * 4.85, side * 4.85], y: [0.93, 0.93], z: [-145, 8] }, k: 1, vz: [-1.2, -1.2], scale: [1.0, 1.0] });
+    swarm({ geo: wafer, count: 28, seed: 5 + i * 3, colors: [0xffffff], area: { x: [side * 4.85, side * 4.85], y: [0.93, 0.93], z: [-145, 8] }, k: 1, vz: [-1.2, -1.2], scale: [1.0, 1.0] });
   });
-  features(wallGear(-1), { x: -5.25, z0: -26, spacing: 26, count: 6, yaw: Math.PI / 2 });
-  features(wallGear(1), { x: 5.25, z0: -39, spacing: 26, count: 6, yaw: -Math.PI / 2 });
-  features(wallWindmill, { x: -5.2, z0: -14, spacing: 36, count: 4, yaw: Math.PI / 2 });
-  features(wallWindmill, { x: 5.2, z0: -32, spacing: 36, count: 4, yaw: -Math.PI / 2 });
+  features(wallGear(-1), { x: -5.25, z0: -26, spacing: 38, count: 4, yaw: Math.PI / 2 });
+  features(wallGear(1), { x: 5.25, z0: -45, spacing: 38, count: 4, yaw: -Math.PI / 2 });
+  features(wallWindmill, { x: -5.2, z0: -16, spacing: 48, count: 3, yaw: Math.PI / 2 });
+  features(wallWindmill, { x: 5.2, z0: -40, spacing: 48, count: 3, yaw: -Math.PI / 2 });
   // steam and sweet bubbles rising beside the line
-  var puff = combine([{ geo: new THREE.SphereGeometry(0.22, 8, 6), color: 0xffffff }]);
+  var puff = combine([{ geo: new THREE.SphereGeometry(0.22, 6, 4), color: 0xffffff }]);
   var puffMat = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.5, depthWrite: false });
   [-1, 1].forEach(function (side, i) {
-    swarm({ geo: puff, material: puffMat, count: 22, seed: 40 + i, colors: [0xffffff, 0xffe6c0, 0xffd0e0], area: { x: [side * 4.6, side * 5.3], y: [1.2, 5.8], z: [-135, 8] }, k: 1, vy: [0.4, 0.9], wobble: 0.12, scale: [0.5, 1.3] });
+    swarm({ geo: puff, material: puffMat, count: 14, seed: 40 + i, colors: [0xffffff, 0xffe6c0, 0xffd0e0], area: { x: [side * 4.6, side * 5.3], y: [1.2, 5.8], z: [-135, 8] }, k: 1, vy: [0.4, 0.9], wobble: 0.12, scale: [0.5, 1.3] });
   });
 }
 

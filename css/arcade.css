@@ -1933,7 +1933,7 @@ body:not(.in-game) #noticeDock { bottom: calc(var(--safe-bottom, 0px) + 80px); }
 #questList .quest-item { position: relative; }
 #questList .quest-item.has-claim > .quest-title, #questList .quest-item.has-claim > .quest-bar, #questList .quest-item.has-claim > .quest-claim-row { margin-right: 104px; }
 #questList .quest-item.has-claim .quest-claim-row .btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); min-height: 34px; min-width: 92px; padding: 4px 8px; }
-@media (max-height: 700px) {
+@media (max-height: 800px) {
   #questList .quest-item { padding: 5px 10px; margin: 3px 0; }
   #questList .quest-title { font-size: 11px; line-height: 1.2; }
   #questList .quest-bar { height: 7px; margin: 3px 0 1px; }

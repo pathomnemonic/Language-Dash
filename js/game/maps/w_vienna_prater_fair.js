@@ -87,7 +87,7 @@ function stripes(c) { return stripeTex(c, 0xffffff, 6); }
 
 function canopy(g, S, x, y, z, w, c) {
   // a pyramid roof with a ball on top
-  cone(g, w * 0.75, 0.9, c, x, y, z, { seg: 4, ry: Math.PI / 4 });
+  cone(g, w * 0.7, 0.9, c, x, y, z, { seg: 4 });
   ball(g, 0.12, YELLOW, x, y + 0.55, z, { seg: 6 });
 }
 

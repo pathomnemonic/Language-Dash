@@ -112,7 +112,7 @@ function shade(hex, t) {
 
 /** One soft puff of a cloud: unlit paper-cut colour, so it never turns grey in shade. */
 function puff(g, r, color, x, y, z, o) {
-  return ball(g, r, color, x, y, z, Object.assign({ seg: 7, bulb: true }, o || {}));
+  return ball(g, r, color, x, y, z, Object.assign({ seg: 6, bulb: true }, o || {}));
 }
 
 /** A puffy cloud: overlapping flat-coloured puffs in three tones, long in z. */
@@ -120,8 +120,8 @@ function cloudBlob(g, x, y, z, s, color, stretch) {
   var c = color || CLOUD;
   var st = stretch || 1;
   puff(g, 1.0 * s, shade(c, -0.07), x, y, z, { sy: 0.75, sz: st });
-  puff(g, 0.78 * s, c, x, y - 0.08 * s, z + 1.1 * s * st, { sy: 0.75, seg: 6 });
-  puff(g, 0.78 * s, shade(c, -0.04), x, y - 0.08 * s, z - 1.1 * s * st, { sy: 0.75, seg: 6 });
+  puff(g, 0.78 * s, c, x, y - 0.08 * s, z + 1.1 * s * st, { sy: 0.75, seg: 5 });
+  puff(g, 0.78 * s, shade(c, -0.04), x, y - 0.08 * s, z - 1.1 * s * st, { sy: 0.75, seg: 5 });
   puff(g, 0.6 * s, shade(c, 0.5), x + 0.1 * s, y + 0.55 * s, z + 0.3 * s, { sy: 0.8, seg: 6 });
 }
 
@@ -182,7 +182,7 @@ function moonScene(g, S, z) {
   var my = 4.2;
   var ry = yaw(S, 0.3);
   // the moon: a crescent lying like a cradle, with a baby star asleep in it
-  extrude(g, crescent(), 0.35, 0xffe27a, mx, my, z, { ry: ry, rz: Math.PI / 2 + S.side * 0.3, curve: 14, mat: mat(0xffe27a, { e: 0xffc84a, ei: 0.35, r: 0.5 }) }).scale.setScalar(1.6);
+  extrude(g, crescent(), 0.35, 0xffe27a, mx, my, z, { ry: ry, rz: Math.PI / 2 + S.side * 0.3, curve: 8, mat: mat(0xffe27a, { e: 0xffc84a, ei: 0.35, r: 0.5 }) }).scale.setScalar(1.6);
   var sx = mx - S.side * 0.1;
   ball(g, 0.28, 0xfff0a0, sx, my + 0.15, z, { seg: 8, bulb: true });
   extrude(g, starShape(0.34, 0.16, 5), 0.1, 0xffffff, sx, my + 0.55, z, { ry: ry, bulb: true });
@@ -206,7 +206,7 @@ function hushBubbles(g, S, z) {
     var x = S.out(b[0]) - S.side * 0.2;
     var y = b[1] - 0.3;
     var zz = z + b[3] * 0.9;
-    ball(g, b[2], 0xcfe8ff, x, y, zz, { seg: 10, mat: bubbleMat });
+    ball(g, b[2], 0xcfe8ff, x, y, zz, { seg: 8, mat: bubbleMat });
     ball(g, b[2] * 0.2, 0xffffff, x - S.side * 0.1, y + b[2] * 0.55, zz - S.side * -0.1, { seg: 5, sx: 1.5, bulb: true });
     atlasQuad(g, hushAtlas(), 4, 4, (base + i * 3) % 16, b[2] * 1.3, b[2] * 0.65, x - S.side * (b[2] * 0.62), y, zz, { ry: yaw(S, 0.4) });
   });
@@ -265,9 +265,9 @@ function bay(g, side, z, k) {
   var S = sideCtx(side);
   S.k = k;
   // a soft rail of cloud puffs along the edge of the walkway, and a sea of cloud below it
-  for (var i = 0; i < 4; i++) puff(g, 0.42, [CLOUD, CLOUD_PINK, CLOUD_BLUE, CLOUD_SUN][(i + k) % 4], S.in(0.0) + side * 0.1, 0.32, z - 1.5 + i, { seg: 6, sy: 0.85, sz: 1.35 });
+  for (var i = 0; i < 3; i++) puff(g, 0.42, [CLOUD, CLOUD_PINK, CLOUD_BLUE, CLOUD_SUN][(i + k) % 4], S.in(0.0) + side * 0.1, 0.32, z - 1.2 + i * 1.2, { seg: 5, sy: 0.85, sz: 1.35 });
   if (k % 2 === 0) cloudBlob(g, S.out(1.2), -0.5, z + (k ? 0.5 : -0.5), 1.3, k ? CLOUD_SUN : CLOUD_MINT, 1.4);
-  cloudBlob(g, S.out(5.5 + k), -0.5, z, 2.6, SEA[(k + 1) % 4], 1.2);
+  if (k % 2) cloudBlob(g, S.out(5.5 + k), -0.5, z, 2.6, SEA[(k + 1) % 4], 1.2);
   if (k === 0) moonScene(g, S, z);
   else if (k === 1) hushBubbles(g, S, z);
   else if (k === 2) singingCloud(g, S, z);
@@ -285,7 +285,7 @@ function arch(g, z, i) {
     var y = y0 - Math.sin(t * Math.PI) * 0.5;
     var c = PASTEL[(f + i) % PASTEL.length];
     cyl(g, 0.01, 0.01, 0.5 + (f % 3) * 0.25, 0xb4a4c8, x, y - 0.2, z, { seg: 3 });
-    if (f % 3 === 0) extrude(g, crescent(), 0.06, BUTTER, x, y - 0.8, z, { rz: Math.PI / 2 + 0.2, bulb: true }).scale.setScalar(0.3);
+    if (f % 3 === 0) extrude(g, crescent(), 0.06, BUTTER, x, y - 0.8, z, { rz: Math.PI / 2 + 0.2, bulb: true, curve: 4 }).scale.setScalar(0.3);
     else if (f % 3 === 1) extrude(g, starShape(0.2, 0.09, 5), 0.05, c, x, y - 0.55, z, { bulb: true });
     else ball(g, 0.1, c, x, y - 0.55, z, { seg: 5, bulb: true });
   }
@@ -335,9 +335,9 @@ function makeComet() {
 function extras() {
   // a soft sea of cloud far below on both sides, and bigger banks high up
   [[-45, -9], [9, 45]].forEach(function (xr, i) {
-    cloudBank(14, { seed: 21 + i, area: { x: xr, y: [-1.6, 0.4], z: [-150, 10] }, k: 1, scale: [3.5, 6.5], vx: [0, 0], colors: [0xffffff, 0xffe9f2, 0xe8f2ff] });
+    cloudBank(8, { seed: 21 + i, area: { x: xr, y: [-1.6, 0.4], z: [-150, 10] }, k: 1, scale: [3.5, 6.5], vx: [0, 0], colors: [0xffffff, 0xffe9f2, 0xe8f2ff] });
   });
-  cloudBank(14, { seed: 11, area: { x: [-70, 70], y: [12, 30], z: [-150, 10] }, k: 0.12, scale: [3, 6], colors: [0xffffff, 0xffe9f2, 0xe8f2ff] });
+  cloudBank(9, { seed: 11, area: { x: [-70, 70], y: [12, 30], z: [-150, 10] }, k: 0.12, scale: [3, 6], colors: [0xffffff, 0xffe9f2, 0xe8f2ff] });
   // twinkling stars
   var star = combine([{ geo: new THREE.OctahedronGeometry(0.22, 0), color: 0xffffff }]);
   swarm({ geo: star, material: new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.85, depthWrite: false }), count: 40, seed: 17, colors: [0xfff0a0, 0xffd6ec, 0xc8e4ff], area: { x: [-40, 40], y: [8, 24], z: [-140, 8] }, k: 0.2, wobble: 0.4, turn: 1.2, scale: [0.6, 1.4] });

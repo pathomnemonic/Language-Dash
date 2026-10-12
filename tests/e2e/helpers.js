@@ -12,6 +12,8 @@ export async function openApp(page, path = '/', opts = {}) {
   // (a player picks a language pair on first launch; tests start with one chosen, English speaker learning Spanish, unless asked not to)
   if (!opts.noPair) await page.addInitScript(() => { try { if (!localStorage.getItem('langdash.pair.v1')) localStorage.setItem('langdash.pair.v1', JSON.stringify({ known: 'en', target: 'es' })); if (!localStorage.getItem('ld_levels')) localStorage.setItem('ld_levels', JSON.stringify({ 'en-es': { level: 'beginner', frontier: 80, source: 'beginner', at: 0 } })); } catch (e) { /* ignore */ } });
   if (!opts.lessons) await page.addInitScript(() => { try { localStorage.setItem('ld_lessons_off', '1'); } catch (e) { /* ignore */ } });
+  // (the daily reward only comes on the first load of a day: a second openApp in the same test need not wait long for it)
+  const repeat = page.url() !== 'about:blank';
   await page.goto(path);
   // (the welcome opens a moment after load, once the app has checked the language pair and level: wait for it on a first run)
   // (polled with evaluate, not waitForFunction, which the page's Content-Security-Policy blocks in csp.spec.js)
@@ -28,7 +30,7 @@ export async function openApp(page, path = '/', opts = {}) {
     await closeTutorial(page);
   }
   await page.locator('#tutorialOverlay').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
-  await dismissDailyReward(page);
+  await dismissDailyReward(page, repeat ? 4000 : 15000);
   // (the one-time pointer at the review section on the first results screen would otherwise cover it)
   if (!/noReviewTipSkip/.test(path)) await page.evaluate(() => { try { if (window.__storage) window.__storage.set('reviewTipSeen', true); } catch (e) { /* not a debug page */ } });
 }
@@ -43,10 +45,10 @@ export async function closeTutorial(page) {
  * The daily reward screen shows once a day, a moment after the tutorial. Claim it
  * so it does not sit on top of the page. (Day 7 is a chest, which needs a second tap.)
  */
-export async function dismissDailyReward(page) {
+export async function dismissDailyReward(page, wait = 15000) {
   const overlay = page.locator('#dailyReward');
   try {
-    await overlay.waitFor({ state: 'visible', timeout: 15000 });
+    await overlay.waitFor({ state: 'visible', timeout: wait });
   } catch {
     return;
   }
