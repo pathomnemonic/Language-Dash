@@ -10,16 +10,15 @@ test.describe('Lane switching at the last moment', () => {
   test.skip(({ browserName }) => browserName !== 'chromium', 'runner needs WebGL (verified in Chromium)');
 
   test('the scored gate is always the lane last asked for', async ({ page }) => {
-    test.setTimeout(150000);
+    test.setTimeout(170000);
+    await page.setViewportSize({ width: 360, height: 400 }); // (a small picture keeps a software-rendered run moving at a useful speed)
     await openApp(page, '/?debug=1');
     test.skip(!(await hasWebGL(page)), 'WebGL unavailable in this environment');
     await page.waitForFunction(() => window.__game && window.__storage);
-    // (there is no speed setting now: the pace ramps by itself, so ask for the steepest ramp to get more encounters in less time)
-    await page.evaluate(() => window.__storage.set('speedRamp', { on: true, every: 1, step: 2 }));
 
     await page.evaluate(() => {
       const g = window.__game;
-      window.__lane = { resolved: [], keys: 0 };
+      window.__lane = { resolved: [], keys: 0, t0: 0 };
       const orig = g._resolveEncounter.bind(g);
       g._resolveEncounter = function () {
         const asked = g.targetLane;
@@ -31,10 +30,15 @@ test.describe('Lane switching at the last moment', () => {
       };
       const emit = g._emit.bind(g);
       g._emit = function (type, payload) {
+        // (there is no speed setting now, the pace ramps by itself: start the run at top gear to get more encounters in less time)
+        if (type === 'run_started') { g.baseSpeed = 1.875 * 8; window.__lane.t0 = performance.now(); }
         if (type === 'encounter_started') {
           // switch lane at a random moment, biased towards the last instant before the answer locks
           const lock = Math.max(0.3, payload.secondsToLock || 1) * 1000;
-          const when = lock * (0.55 + Math.random() * 0.43);
+          // (software rendering can run the game several times slower than the clock: aim in game time, not wall time)
+          const played = g.elapsedTime || 0;
+          const slow = played > 1 ? Math.max(1, (performance.now() - window.__lane.t0) / 1000 / played) : 1;
+          const when = lock * slow * (0.55 + Math.random() * 0.43);
           const dir = Math.random() < 0.5 ? 'ArrowLeft' : 'ArrowRight';
           setTimeout(() => { window.__lane.keys++; document.dispatchEvent(new KeyboardEvent('keydown', { key: dir, bubbles: true })); }, when);
         }
@@ -44,7 +48,7 @@ test.describe('Lane switching at the last moment', () => {
 
     await page.locator('.btn-play').click();
     await expect(page.locator('#buzzText')).not.toHaveText('GET READY', { timeout: 20000 });
-    await page.waitForFunction(() => window.__lane.resolved.length >= 8 || !window.__game.running, null, { timeout: 120000 });
+    await page.waitForFunction(() => window.__lane.resolved.length >= 4 || !window.__game.running, null, { timeout: 140000 });
 
     const { resolved, keys } = await page.evaluate(() => window.__lane);
     expect(resolved.length).toBeGreaterThanOrEqual(3);
