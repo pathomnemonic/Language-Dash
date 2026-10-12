@@ -12,7 +12,7 @@ var SHARED_MAX_RANK = 300;
 /** Ids end in the rank, so membership is a number check; this object quacks like a Set for the callers that use .has / .size. */
 export var FREE_CARD_IDS = {
   has: function (id) {
-    var m = /-(\d{3})$/.exec(String(id || ''));
+    var m = /-(\d+)$/.exec(String(id || ''));
     return !!m && parseInt(m[1], 10) <= SHARED_MAX_RANK;
   },
   size: SHARED_MAX_RANK

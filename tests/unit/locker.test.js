@@ -30,27 +30,28 @@ describe('Locker tabs', () => {
     expect(text).not.toMatch(/classic|blocky|3D/i);
     expect(text).not.toMatch(/vehicle/i);
     const groups = [...document.querySelectorAll('#shopItems h3')].map((h) => h.parentElement.textContent);
-    expect(groups[0]).toContain('Tour-Guide Tiago');
-    ['Nurse', 'Surgeon Sage', 'Skeleton', 'Zombie Resident', 'Robot Medic', 'Ambulance', 'Race Car', 'Hearse'].forEach((n) => expect(text).not.toContain(n));
+    expect(groups[0]).toContain('Fika Fox');
+    ['Nurse', 'Surgeon Sage', 'Skeleton', 'Zombie', 'Robot Medic', 'Ambulance', 'Race Car', 'Hearse', 'Tiago', 'Klara'].forEach((n) => expect(text).not.toContain(n));
   });
 
   it('the old monsters are archived too', () => {
     ui.renderShop();
     clickTab('Monsters');
     const text = document.getElementById('shopItems').textContent;
-    ['Pager Wraith', 'Textbook Golem', 'Caffeine Kraken'].forEach((n) => expect(text).not.toContain(n));
+    ['Pager Wraith', 'Textbook Golem', 'Caffeine Kraken', 'The Mumble'].forEach((n) => expect(text).not.toContain(n));
     expect(text).not.toMatch(/Exam Monster(?!s)/);
-    expect(text).toContain('The Mumble');
+    expect(text).toContain('The Blot');
   });
 
   it('a character gets color pickers for its own parts, but no headwear', () => {
-    storage.data.progression.equipped.skin = 'avatar_intern'; // Tour-Guide Tiago
+    storage.data.progression.ownedItems.push('hero_llama');
+    storage.data.progression.equipped.skin = 'hero_llama';
     ui._lockerTab = 'heroes';
     ui._heroColorsOpen = true;
     ui.renderShop();
-    expect(document.getElementById('shopItems').textContent).toMatch(/Tour-Guide Tiago colors/);
+    expect(document.getElementById('shopItems').textContent).toMatch(/Lola Llama colors/);
     const parts = [...document.querySelectorAll('#shopItems .color-part')].map((p) => p.getAttribute('data-part'));
-    expect(parts).toEqual(['top', 'pants', 'skin', 'hair']);
+    expect(parts).toEqual(['wool', 'face', 'hooves']);
     expect(document.querySelectorAll('#shopItems .scrub-swatch').length).toBeGreaterThan(8);
     expect(headings().join('|')).not.toContain('Headwear');
     expect(headings().join('|')).not.toContain('Clothing');
@@ -58,11 +59,12 @@ describe('Locker tabs', () => {
 
   it('every part also has a rainbow swatch that opens a full color wheel and saves any color picked on it', () => {
     HTMLCanvasElement.prototype.getContext = () => null;
-    storage.data.progression.equipped.skin = 'avatar_intern';
+    storage.data.progression.ownedItems.push('hero_llama');
+    storage.data.progression.equipped.skin = 'hero_llama';
     ui._lockerTab = 'heroes';
     ui._heroColorsOpen = true;
     ui.renderShop();
-    const part = document.querySelector('#shopItems .color-part[data-part="top"]');
+    const part = document.querySelector('#shopItems .color-part[data-part="wool"]');
     const rainbow = part.querySelector('.scrub-custom');
     expect(rainbow).not.toBeNull();
     expect(part.querySelector('.color-wheel')).toBeNull();
@@ -71,11 +73,11 @@ describe('Locker tabs', () => {
     const field = part.querySelector('.cw-hex');
     field.value = '#12ab34';
     field.dispatchEvent(new Event('change'));
-    expect(storage.get('modelColors').avatar_intern.top).toBe(0x12ab34);
+    expect(storage.get('modelColors').hero_llama.wool).toBe(0x12ab34);
     expect(rainbow.classList.contains('on')).toBe(true);
     // a palette swatch afterwards takes over again
-    part.querySelector('.scrub-swatch[title="Maroon"]').click();
-    expect(storage.get('modelColors').avatar_intern.top).toBe(0x9a2f45);
+    part.querySelector('.scrub-swatch[title="Chocolate"]').click();
+    expect(storage.get('modelColors').hero_llama.wool).toBe(0x5a3a24);
     expect(rainbow.classList.contains('on')).toBe(false);
     // closing and reopening the wheel keeps one wheel
     rainbow.click();
@@ -85,55 +87,51 @@ describe('Locker tabs', () => {
   });
 
   it('a color that is not in the palette is shown as chosen when the Locker opens', () => {
-    storage.data.progression.equipped.skin = 'avatar_intern';
-    storage.data.settings.modelColors = { avatar_intern: { top: 0x12ab34 } };
+    storage.data.progression.ownedItems.push('hero_llama');
+    storage.data.progression.equipped.skin = 'hero_llama';
+    storage.data.settings.modelColors = { hero_llama: { wool: 0x12ab34 } };
     ui._lockerTab = 'heroes';
     ui._heroColorsOpen = true;
     ui.renderShop();
-    const part = document.querySelector('#shopItems .color-part[data-part="top"]');
+    const part = document.querySelector('#shopItems .color-part[data-part="wool"]');
     expect(part.querySelector('.scrub-custom').classList.contains('on')).toBe(true);
     expect(part.querySelectorAll('.scrub-swatch.on').length).toBe(1);
   });
 
   it('a 🎨 beside the characters that can be recolored takes you to their colors (equipping them first)', () => {
-    storage.data.progression.ownedItems.push('avatar_m_nurse');
+    storage.data.progression.ownedItems.push('hero_zebra');
     storage.data.progression.equipped.skin = 'avatar_intern';
     ui._lockerTab = 'heroes';
     ui._heroColorsOpen = false;
     ui.renderShop();
     const paints = [...document.querySelectorAll('#shopItems [data-paint]')].map((b) => b.getAttribute('data-paint'));
     expect(paints).toContain('avatar_intern');
-    expect(paints).toContain('avatar_m_nurse');
-    ['avatar_m_knight', 'avatar_m_mage', 'avatar_m_barbarian', 'avatar_m_hooded'].forEach((id) => expect(paints).toContain(id)); // the new heroes recolor piece by piece
-    ['avatar_m_skeleton', 'avatar_m_zombie', 'avatar_m_scout', 'avatar_m_explorer'].forEach((id) => expect(paints).not.toContain(id)); // delisted: not sold
+    expect(paints).toContain('hero_zebra');
+    ['hero_llama', 'hero_pug', 'hero_cow', 'hero_sheep', 'hero_pig', 'hero_horse', 'hero_kimono'].forEach((id) => expect(paints).toContain(id));
     expect(document.getElementById('shopItems').textContent).toMatch(/🎨 beside a hero/);
     // one it does not own yet: dimmed, and tapping it only explains
-    storage.data.progression.ownedItems = storage.data.progression.ownedItems.filter((i) => i !== 'avatar_m_nurse');
+    storage.data.progression.ownedItems = storage.data.progression.ownedItems.filter((i) => i !== 'hero_zebra');
     ui.renderShop();
-    document.querySelector('[data-paint="avatar_m_nurse"]').click();
+    document.querySelector('[data-paint="hero_zebra"]').click();
     expect(storage.get('equipped').skin).toBe('avatar_intern');
     expect(ui._heroColorsOpen).toBeFalsy();
     // an owned one: equip it and open its colors, on the same tab
-    storage.data.progression.ownedItems.push('avatar_m_nurse');
+    storage.data.progression.ownedItems.push('hero_zebra');
     ui.renderShop();
-    document.querySelector('[data-paint="avatar_m_nurse"]').click();
-    expect(storage.get('equipped').skin).toBe('avatar_m_nurse');
+    document.querySelector('[data-paint="hero_zebra"]').click();
+    expect(storage.get('equipped').skin).toBe('hero_zebra');
     expect(ui._lockerTab).toBe('heroes');
     expect(ui._heroColorsOpen).toBe(true);
-    expect(document.getElementById('shopItems').textContent).toMatch(/Captain Klara colors/);
+    expect(document.getElementById('shopItems').textContent).toMatch(/Zola Zebra-Crossing colors/);
   });
 
-  it('the heroes that can only be washed are delisted: hidden unless you already own one', () => {
-    const names = () => document.getElementById('shopItems').textContent;
+  it('a delisted hero is hidden unless you already own one (nothing is delisted at the moment)', async () => {
+    const { DELISTED_HEROES } = await import('../../js/game/shopdata.js');
+    expect(DELISTED_HEROES).toEqual([]);
     ui._lockerTab = 'heroes';
     ui._heroColorsOpen = false;
     ui.renderShop();
-    expect(names()).not.toMatch(/Carlota Calavera|Decaffeinated Dana|Stat Sadie|Rural Rex/);
-    expect(names()).toMatch(/Dame Dorotea/);
-    storage.data.progression.ownedItems.push('avatar_m_skeleton');
-    ui.renderShop();
-    expect(names()).toMatch(/Carlota Calavera/); // an owner keeps it
-    expect(names()).not.toMatch(/Decaffeinated Dana/);
+    expect(document.getElementById('shopItems').textContent).toMatch(/Clara Cowbell/);
   });
 
   it('a classic character gets colors, clothing, headwear and gear', () => {
@@ -166,7 +164,7 @@ describe('Locker tabs', () => {
     expect(document.getElementById('heroColorsToggle').textContent).toMatch(/Change colors/);
     expect(document.querySelector('#shopItems .color-part')).toBeNull(); // closed until asked
     document.getElementById('heroColorsToggle').click();
-    expect(document.querySelectorAll('#shopItems .color-part').length).toBe(4);
+    expect(document.querySelectorAll('#shopItems .color-part').length).toBe(1);
     expect(document.getElementById('heroColorsToggle').textContent).toMatch(/Hide colors/);
   });
 
@@ -183,7 +181,7 @@ describe('Locker tabs', () => {
 });
 
 describe('the Locker shows every hero under its own name', () => {
-  it('each row in the Heroes list carries the name from the hero catalog (including Tour-Guide Tiago, the starter)', async () => {
+  it('each row in the Heroes list carries the name from the hero catalog (including Fika Fox, the starter)', async () => {
     localStorage.clear();
     loadPage();
     const { ui } = await import('../../js/ui.js');

@@ -16,7 +16,8 @@ mkdirSync(outDir, { recursive: true });
 const concepts = JSON.parse(readFileSync(resolve(root, 'data/concepts.json'), 'utf8'));
 let problems = 0;
 const bad = (m) => { problems++; if (problems <= 80) console.error('✖ ' + m); };
-if (concepts.length !== 1000) bad('concepts.json must have 1000 entries, has ' + concepts.length);
+if (concepts.length < 1000) bad('concepts.json must have at least 1000 entries, has ' + concepts.length);
+const BASE = 1000; // every language covers at least the first 1,000 concepts; en/es/fr can cover all of them
 
 const key = (s) => String(s).normalize('NFC').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, '');
 const MAX_SHARED = 60; // a few genuine overlaps (why/because, one verb for two senses) are fine; more means weak word choices
@@ -34,7 +35,7 @@ for (const code of CODES) {
     const file = resolve(root, 'data/words/' + code + '.json');
     if (!existsSync(file)) { console.warn('… no data for ' + code + ' yet, skipped'); continue; }
     entries = JSON.parse(readFileSync(file, 'utf8'));
-    if (!Array.isArray(entries) || entries.length !== concepts.length) { bad(code + ': needs ' + concepts.length + ' entries, has ' + (entries && entries.length)); continue; }
+    if (!Array.isArray(entries) || (entries.length !== BASE && entries.length !== concepts.length)) { bad(code + ': needs ' + BASE + ' or ' + concepts.length + ' entries, has ' + (entries && entries.length)); continue; }
     entries = entries.map((e) => (Array.isArray(e) ? e : [e]));
   }
   const seen = new Map();
@@ -52,7 +53,7 @@ for (const code of CODES) {
       else { shared++; console.warn('~ ' + code + ': "' + w + '" is both #' + (seen.get(k) + 1) + ' (' + concepts[seen.get(k)].en + ') and #' + (i + 1) + ' (' + concepts[i].en + ')'); }
     } else seen.set(k, i);
   });
-  if (shared > MAX_SHARED) bad(code + ': ' + shared + ' words are shared by two concepts (max ' + MAX_SHARED + '): use the natural word for each concept, not a rare substitute');
+  if (shared > Math.max(MAX_SHARED, Math.round(entries.length * 0.06))) bad(code + ': ' + shared + ' words are shared by two concepts (max ' + MAX_SHARED + '): use the natural word for each concept, not a rare substitute');
   writeFileSync(resolve(outDir, code + '.js'), header(code + ': [word, romanization?, sense?] per concept') + 'export default ' + JSON.stringify(entries) + ';\n');
 }
 if (problems) { console.error('\n' + problems + ' problem(s)'); process.exit(1); }

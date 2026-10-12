@@ -114,12 +114,10 @@ describe('purchasable monsters', () => {
 describe('animated glTF avatar', () => {
   it('is registered as a purchasable, model-backed avatar', async () => {
     const { AVATARS, SHOP_ITEMS } = await import('../../js/game/shopdata.js');
-    const avatar = AVATARS.find((a) => a.id === 'avatar_m_robot');
+    const avatar = AVATARS.find((a) => a.id === 'hero_beep');
     expect(avatar.isModel).toBe(true);
-    expect(avatar.modelUrl).toBe('models/characters/robot.glb');
-    expect(SHOP_ITEMS.some((i) => i.id === 'avatar_m_robot' && (i.price > 0 || i.premium))).toBe(true);
-    // The second robot was a duplicate and is gone
-    expect(AVATARS.some((a) => a.id === 'avatar_robopro')).toBe(false);
+    expect(avatar.modelUrl).toBe('models/heroes/beep.glb');
+    expect(SHOP_ITEMS.some((i) => i.id === 'hero_beep' && (i.price > 0 || i.premium))).toBe(true);
   });
 });
 

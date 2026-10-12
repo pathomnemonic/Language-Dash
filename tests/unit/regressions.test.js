@@ -67,12 +67,12 @@ describe('navigation tabs', () => {
 });
 
 describe('starting monster and defaults', () => {
-  it('everyone starts with the animated 3D ghost, and the old monster stays available', async () => {
+  it('everyone starts with the animated 3D Blot, and the old monster stays available', async () => {
     localStorage.clear();
     const { storage } = await import('../../js/storage.js');
     storage.load();
-    expect(storage.get('equipped').monster).toBe('monster_m_ghost');
-    expect(storage.get('ownedItems')).toContain('monster_m_ghost');
+    expect(storage.get('equipped').monster).toBe('hush_blot');
+    expect(storage.get('ownedItems')).toContain('hush_blot');
     expect(storage.get('ownedItems')).toContain('monster_classic');
   });
 
@@ -85,12 +85,12 @@ describe('starting monster and defaults', () => {
     delete raw.progression.monsterDefaultSeen;
     localStorage.setItem('langdash_save_v1', JSON.stringify(raw));
     storage.load();
-    expect(storage.get('equipped').monster).toBe('monster_m_ghost');
+    expect(storage.get('equipped').monster).toBe('hush_blot');
     // the old monster is archived: nobody is left wearing it, but they still own it
     storage.data.progression.equipped.monster = 'monster_classic';
     storage.save && storage.save();
     storage.load();
-    expect(storage.get('equipped').monster).toBe('monster_m_ghost');
+    expect(storage.get('equipped').monster).toBe('hush_blot');
     expect(storage.get('ownedItems')).toContain('monster_classic');
   });
 

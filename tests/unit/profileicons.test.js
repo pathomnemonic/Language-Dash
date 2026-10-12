@@ -11,7 +11,7 @@ describe('profile symbols', () => {
   });
   it('round-trips a choice, and old character ids keep their symbol', () => {
     expect(iconFor(iconId('🦊'))).toBe('🦊');
-    expect(iconFor('avatar_intern')).toBe('🧳');
+    expect(iconFor('avatar_intern')).toBe('🦊');
     expect(iconFor('avatar_nobody_knows')).toBe('👤');
     expect(iconFor(undefined)).toBe('👤');
     expect(iconFor('icon:' + 'x'.repeat(40))).toBe('👤');

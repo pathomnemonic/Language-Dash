@@ -13,8 +13,8 @@ globalThis.document = { createElementNS: () => ({ addEventListener(t, f) { if (t
 describe('hats and the animated 3D characters', () => {
   it('3D characters do not wear a hat, even when one is equipped', async () => {
     storage.set('quality', 'high');
-    const buf = readFileSync('public/models/characters/doctor.glb');
-    await parseCharacterModel('/models/characters/doctor.glb', buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength));
+    const buf = readFileSync('public/models/heroes/fox.glb');
+    await parseCharacterModel('/models/heroes/fox.glb', buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength));
 
     const eq = storage.get('equipped');
     eq.skin = 'avatar_intern';

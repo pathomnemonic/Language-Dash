@@ -4,8 +4,8 @@ import { CHARACTER_MODELS as AVATARS, MONSTER_MODELS as MONSTERS } from '../../j
 
 describe('hero and monster stories', () => {
   it('every hero and monster in the Locker has a short and a long story', () => {
-    const ids = AVATARS.map((a) => a.id).concat(MONSTERS.map((m) => m.id)).filter((id) => /^(avatar_(intern|m_)|monster_m_)/.test(id));
-    expect(ids.length).toBeGreaterThanOrEqual(22);
+    const ids = AVATARS.map((a) => a.id).concat(MONSTERS.map((m) => m.id)).filter((id) => /^(avatar_intern|hero_|hush_)/.test(id));
+    expect(ids.length).toBeGreaterThanOrEqual(23);
     ids.forEach((id) => {
       const s = storyFor(id);
       expect(s, id).toBeTruthy();

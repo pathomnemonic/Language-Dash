@@ -24,10 +24,10 @@ describe('a hero as the profile picture', () => {
   });
 
   it('shows the hero\'s own emoji wherever a symbol is wanted, and stays out of the way of symbols and old values', () => {
-    expect(iconFor(heroPictureId('avatar_m_nurse', 'face'))).toBe('⚓');
+    expect(iconFor(heroPictureId('hero_llama', 'face'))).toBe('🦙');
     expect(iconFor(heroPictureId('avatar_nope', 'face'))).toBe('👤'); // unknown: a plain person
     expect(iconFor(iconId('🦊'))).toBe('🦊');
-    expect(iconFor('avatar_intern')).toBe('🧳');
+    expect(iconFor('avatar_intern')).toBe('🦊'); // (the starter hero is the fox)
   });
 
   it('every hero has both portraits, and together they are small', () => {
@@ -50,8 +50,8 @@ describe('a hero as the profile picture', () => {
     beforeEach(() => { document.body.innerHTML = '<div id="a"></div>'; el = document.getElementById('a'); });
 
     it('draws the portrait image for a hero, and the symbol for anything else', () => {
-      fillProfilePicture(el, heroPictureId('avatar_m_orc', 'body'));
-      expect(el.querySelector('img.pp-img.body').getAttribute('src')).toMatch(/avatar_m_orc-body\.webp$/);
+      fillProfilePicture(el, heroPictureId('hero_pig', 'body'));
+      expect(el.querySelector('img.pp-img.body').getAttribute('src')).toMatch(/hero_pig-body\.webp$/);
       expect(el.classList.contains('has-portrait')).toBe(true);
       fillProfilePicture(el, iconId('🦊'));
       expect(el.querySelector('img')).toBeNull();
@@ -60,10 +60,10 @@ describe('a hero as the profile picture', () => {
     });
 
     it('falls back to the hero\'s emoji when the image is missing (an older install, or offline)', () => {
-      fillProfilePicture(el, heroPictureId('avatar_m_orc', 'face'));
+      fillProfilePicture(el, heroPictureId('hero_pig', 'face'));
       el.querySelector('img').dispatchEvent(new Event('error'));
       expect(el.querySelector('img')).toBeNull();
-      expect(el.textContent).toBe('🥨');
+      expect(el.textContent).toBe('🐖');
       expect(el.classList.contains('has-portrait')).toBe(false);
     });
   });
@@ -82,19 +82,19 @@ describe('choosing one on the Profile screen', () => {
   });
 
   it('lists only the heroes the player owns, as face or whole hero, and saves the choice', () => {
-    storage.data.progression.ownedItems.push('avatar_m_nurse');
+    storage.data.progression.ownedItems.push('hero_llama');
     ui.renderProfile();
     const owned = [...document.querySelectorAll('.pp-hero')].map((b) => b.getAttribute('data-hero'));
     expect(owned).toContain('avatar_intern');
-    expect(owned).toContain('avatar_m_nurse');
-    expect(owned).not.toContain('avatar_m_king'); // not owned
-    document.querySelector('[data-hero="avatar_m_nurse"]').click();
-    expect(storage.get('profilePicture')).toBe('hero:avatar_m_nurse:face');
+    expect(owned).toContain('hero_llama');
+    expect(owned).not.toContain('hero_zebra'); // not owned
+    document.querySelector('[data-hero="hero_llama"]').click();
+    expect(storage.get('profilePicture')).toBe('hero:hero_llama:face');
     expect(document.querySelector('.profile-avatar img.pp-img.face')).not.toBeNull();
     expect(document.querySelector('.profile-pic-box').open).toBe(true); // stays open for another try
     [...document.querySelectorAll('.pp-style button')].find((b) => /Whole hero/.test(b.textContent)).click();
-    document.querySelector('[data-hero="avatar_m_nurse"]').click();
-    expect(storage.get('profilePicture')).toBe('hero:avatar_m_nurse:body');
+    document.querySelector('[data-hero="hero_llama"]').click();
+    expect(storage.get('profilePicture')).toBe('hero:hero_llama:body');
   });
 
   it('what the leaderboard service is sent is just that short text', () => {

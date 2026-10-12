@@ -37,7 +37,9 @@ export var LEVELS = Object.freeze([
   { id: 'top100', label: 'First 100', max: 100 },
   { id: 'top300', label: 'First 300', max: 300 },
   { id: 'top600', label: 'First 600', max: 600 },
-  { id: 'all', label: 'All 1,000', max: 1000 }
+  { id: 'top1000', label: 'First 1,000', max: 1000 },
+  { id: 'top3000', label: 'First 3,000', max: 3000 },
+  { id: 'all', label: 'Every word', max: Infinity }
 ]);
 
 /** @param {number} rank 1-based frequency rank @returns {string[]} level ids this rank belongs to */

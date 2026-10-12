@@ -35,13 +35,13 @@ describe('lang/topics.js', () => {
     expect(topicForCategory('no-such-category')).toBe('Basics');
   });
   it('levels are nested frequency bands', () => {
-    expect(LEVELS.map((l) => l.id)).toEqual(['top100', 'top300', 'top600', 'all']);
-    expect(levelsForRank(1)).toEqual(['top100', 'top300', 'top600', 'all']);
-    expect(levelsForRank(100)).toEqual(['top100', 'top300', 'top600', 'all']);
-    expect(levelsForRank(101)).toEqual(['top300', 'top600', 'all']);
-    expect(levelsForRank(301)).toEqual(['top600', 'all']);
-    expect(levelsForRank(601)).toEqual(['all']);
-    expect(levelsForRank(1000)).toEqual(['all']);
+    expect(LEVELS.map((l) => l.id)).toEqual(['top100', 'top300', 'top600', 'top1000', 'top3000', 'all']);
+    expect(levelsForRank(1)).toEqual(['top100', 'top300', 'top600', 'top1000', 'top3000', 'all']);
+    expect(levelsForRank(100)).toEqual(['top100', 'top300', 'top600', 'top1000', 'top3000', 'all']);
+    expect(levelsForRank(101)).toEqual(['top300', 'top600', 'top1000', 'top3000', 'all']);
+    expect(levelsForRank(301)).toEqual(['top600', 'top1000', 'top3000', 'all']);
+    expect(levelsForRank(601)).toEqual(['top1000', 'top3000', 'all']);
+    expect(levelsForRank(1000)).toEqual(['top1000', 'top3000', 'all']);
   });
   it('difficulty is 1 up to rank 300, 2 up to 700, then 3', () => {
     expect([1, 300, 301, 700, 701, 1000].map(difficultyForRank)).toEqual([1, 1, 2, 2, 3, 3]);

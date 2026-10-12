@@ -36,11 +36,11 @@ describe('the 3D roster has no repeats', () => {
     SHOP_ITEMS.forEach((i) => expect(i.name, i.id).not.toMatch(/animated 3D/i));
   });
 
-  it('every character has its own name (the roster is all themed: Tour-Guide Tiago, Captain Klara, Carlota Calavera...)', () => {
+  it('every character has its own name (the roster is all themed: Fika Fox, Lola Llama, Kaede of Kyoto...)', () => {
     const names = CHARACTER_MODELS.map((m) => m.name);
     expect(new Set(names).size).toBe(names.length);
     names.forEach((n) => expect(n.trim().length).toBeGreaterThan(2));
-    ['Tour-Guide Tiago', 'Captain Klara', 'Trekker Tove', 'Rancher Rafa', 'Backpacker Bao', 'Hoodie Hana', 'Mapmaker Mona', 'Nimble Nao', 'Carlota Calavera', 'Jetlag Jo', 'Gruff Gerda', 'Polyglot Pip', 'Abby Abroad', 'Babelbot Mo', 'Guildmaster Gustav'].forEach((n) => expect(names).toContain(n));
+    ['Fika Fox', 'Lola Llama', 'Zola Zebra-Crossing', 'Percy Pug', 'Clara Cowbell', 'Merino Mateo', 'Sagaan the Steppe Horse', 'Truffle Tonio', 'Crash-Test Kuba', 'Nonno Nico', 'Viennese Vera', 'Ranger Ravi', 'Kaede of Kyoto', 'Port-Side Nuno', 'Pico Pocketbot'].forEach((n) => expect(names).toContain(n));
   });
 });
 
@@ -48,10 +48,10 @@ describe('each character is customized in its own way', () => {
   const customizable = CHARACTER_MODELS.filter((m) => m.parts && m.parts.length);
 
   it('most characters can be recolored, with parts that fit them', () => {
-    expect(customizable.length).toBeGreaterThanOrEqual(10);
-    expect(getCharacterParts('avatar_intern').map((p) => p.label)).toEqual(['Jacket', 'Trousers', 'Skin', 'Hair']);
-    expect(getCharacterParts('avatar_m_robot').map((p) => p.label)).toEqual(['Body', 'Trim']);
-    expect(getCharacterParts('avatar_m_wizard').map((p) => p.label)).toEqual(['Robe & hat', 'Trim']);
+    expect(customizable.length).toBeGreaterThanOrEqual(14);
+    expect(getCharacterParts('avatar_intern').map((p) => p.label)).toEqual(['Fur wash']);
+    expect(getCharacterParts('hero_llama').map((p) => p.label)).toEqual(['Wool', 'Face & socks', 'Hooves & ears']);
+    expect(getCharacterParts('hero_zebra').map((p) => p.label)).toEqual(['Coat', 'Stripes']);
     expect(getCharacterParts('nonsense')).toEqual([]);
   });
 

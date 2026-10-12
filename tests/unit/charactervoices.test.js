@@ -67,24 +67,21 @@ describe('character voices', () => {
     });
   });
 
-  it('a person voice is a buzzing source through vowel filters; the robot and alien make their own noises', () => {
+  it('a person voice is a buzzing source through vowel filters; the pocket robot makes its own noise', () => {
     const person = fakeContext();
     playReaction(person.ctx, {}, 'avatar_intern', 'cheer');
     expect(person.made.oscillators.some((o) => o.type === 'sawtooth')).toBe(true);
     expect(person.made.filters.filter((f) => f.type === 'bandpass').length).toBeGreaterThanOrEqual(3);
     const robot = fakeContext();
-    playReaction(robot.ctx, {}, 'avatar_m_robot', 'sad');
+    playReaction(robot.ctx, {}, 'hero_beep', 'sad');
     expect(robot.made.oscillators.some((o) => o.type === 'square')).toBe(true);
-    const alien = fakeContext();
-    playReaction(alien.ctx, {}, 'avatar_m_alien', 'cheer');
-    expect(alien.made.oscillators.some((o) => o.type === 'sine')).toBe(true);
   });
 
   it('does not play over itself when answers come very fast, and does nothing without audio', async () => {
     expect(say(null, 'avatar_intern', 'cheer')).toBeNull();
     await new Promise((r) => setTimeout(r, 650));
     const { ctx } = fakeContext();
-    expect(say({ ctx, dest: {} }, 'avatar_m_king', 'cheer')).toBeTruthy();
-    expect(say({ ctx, dest: {} }, 'avatar_m_king', 'cheer')).toBeNull();
+    expect(say({ ctx, dest: {} }, 'hero_pug', 'cheer')).toBeTruthy();
+    expect(say({ ctx, dest: {} }, 'hero_pug', 'cheer')).toBeNull();
   });
 });

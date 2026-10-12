@@ -556,7 +556,7 @@ export function attachCosmetics(pg, equipped, avatar) {
         var c = new THREE.Vector3();
         torso.box.getSize(size);
         torso.box.getCenter(c);
-        var f = Math.max(0.45, Math.min(1.5, Math.max(size.x, size.z) / 0.62));
+        var f = Math.max(0.45, Math.min(1.5, size.x / 0.62));
         if (typeof window !== 'undefined' && window.__cosmDebug) console.log('COSM', avatar.id, 'torso', size.x.toFixed(2), size.y.toFixed(2), size.z.toFixed(2), 'c', c.y.toFixed(2), 'f', f.toFixed(2));
         var holder = new THREE.Group();
         holder.add(item);

@@ -64,7 +64,7 @@ describe('prices against earnings', () => {
 
   it('a new player always has something within reach: plenty of things cost a run or two, a day of play opens up many more', () => {
     // what is on sale in the Locker (the archived classic heroes, hats and gear, and the shelved study buddies, are not)
-    const shown = paid.filter((i) => ['trail', 'monster', 'map'].includes(i.type) || (i.type === 'skin' && i.id.startsWith('avatar_m_')));
+    const shown = paid.filter((i) => ['trail', 'monster', 'map'].includes(i.type) || (i.type === 'skin' && i.id.startsWith('hero_')));
     const within = (coins) => shown.filter((i) => i.price <= coins).length;
     const run = COINS_PER_MINUTE * 3; // a three-minute run
     expect(within(run)).toBeGreaterThanOrEqual(2);              // after the first run
@@ -80,7 +80,7 @@ describe('prices against earnings', () => {
       const list = shown(type).map((i) => i.price).sort((a, b) => a - b);
       for (let k = 1; k < list.length; k++) expect(list[k] / list[k - 1], type + ' ' + list[k - 1] + ' to ' + list[k]).toBeLessThanOrEqual(2.1);
     });
-    function shown(type) { return paid.filter((i) => i.type === type && (type !== 'skin' || i.id.startsWith('avatar_m_'))); }
+    function shown(type) { return paid.filter((i) => i.type === type && (type !== 'skin' || i.id.startsWith('hero_'))); }
   });
 
   it('trails are the cheapest things in the Locker and heroes the dearest, with maps and monsters between', () => {

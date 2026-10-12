@@ -200,23 +200,15 @@ describe('Storage — backup and restore', () => {
   });
 });
 
-describe('retired duplicate characters', () => {
-  it('moves owners to the character they duplicated and refunds them', () => {
+describe('retired characters', () => {
+  it('nothing is retired in the new roster, so owners keep every hero and no refund is made', () => {
     storage.data.progression.coins = 100;
-    storage.data.progression.ownedItems = ['avatar_intern', 'avatar_m_resident', 'avatar_m_surgeon', 'avatar_robopro'];
-    storage.data.progression.equipped.skin = 'avatar_m_surgeon';
+    storage.data.progression.ownedItems = ['avatar_intern', 'hero_llama'];
+    storage.data.progression.equipped.skin = 'hero_llama';
     storage._ensureInvariants();
-    const owned = storage.data.progression.ownedItems;
-    ['avatar_m_resident', 'avatar_m_surgeon', 'avatar_robopro'].forEach((id) => expect(owned).not.toContain(id));
-    expect(owned).toContain('avatar_m_robot');                       // the robot they paid for, in its other form
-    expect(storage.data.progression.equipped.skin).toBe('avatar_intern');
-    // 400 + 1000 back (they already had Captain Klara), and 9000 less the price of the robot they are given instead
-    const robotItem = SHOP_ITEMS.find((i) => i.id === 'avatar_m_robot');
-    const robot = robotItem.premium ? robotItem.coinValue : robotItem.price; // (MRI Mo is now sold for money; the refund still counts its old coin value)
-    expect(storage.data.progression.coins).toBe(100 + 400 + 1000 + Math.max(0, 9000 - robot));
-    // running it again changes nothing
-    storage._ensureInvariants();
-    expect(storage.data.progression.coins).toBe(100 + 400 + 1000 + Math.max(0, 9000 - robot));
+    expect(storage.data.progression.ownedItems).toContain('hero_llama');
+    expect(storage.data.progression.equipped.skin).toBe('hero_llama');
+    expect(storage.data.progression.coins).toBe(100);
   });
 
   it('turns the old shared scrub color into the doctor\'s pants color', () => {
