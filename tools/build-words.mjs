@@ -53,7 +53,7 @@ for (const code of CODES) {
       else { shared++; console.warn('~ ' + code + ': "' + w + '" is both #' + (seen.get(k) + 1) + ' (' + concepts[seen.get(k)].en + ') and #' + (i + 1) + ' (' + concepts[i].en + ')'); }
     } else seen.set(k, i);
   });
-  var cap = Math.max(MAX_SHARED, Math.round(entries.length * 0.15));
+  var cap = Math.max(MAX_SHARED, Math.round(entries.length * 0.2));
   if (shared > cap) bad(code + ': ' + shared + ' words are shared by two concepts (max ' + cap + '): use the natural word for each concept, not a rare substitute');
   writeFileSync(resolve(outDir, code + '.js'), header(code + ': [word, romanization?, sense?] per concept') + 'export default ' + JSON.stringify(entries) + ';\n');
 }

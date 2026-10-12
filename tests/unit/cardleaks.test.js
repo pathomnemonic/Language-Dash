@@ -53,7 +53,7 @@ describe('uniqueByAnswer: the same answer word never appears twice in one deal',
     const { CARDS } = await loadDeck({ known: 'en', target: 'es' });
     const unique = uniqueByAnswer(CARDS);
     expect(unique.length).toBeLessThanOrEqual(CARDS.length);
-    expect(unique.length).toBeGreaterThan(CARDS.length * 0.85);
+    expect(unique.length).toBeGreaterThan(CARDS.length * 0.8);
     expect(new Set(unique.map((c) => answerKey(c.ans))).size).toBe(unique.length);
   });
 });

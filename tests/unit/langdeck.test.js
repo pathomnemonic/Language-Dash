@@ -119,13 +119,13 @@ describe('lang/deck.js', () => {
 
     it('has most of the 1,000 words, with unique ids of the right shape and a matching rank', () => {
       expect(cards.length).toBeGreaterThanOrEqual(700);
-      expect(cards.length).toBeLessThanOrEqual(1000);
+      expect(cards.length).toBeLessThanOrEqual(10000);
       expect(byId.size).toBe(cards.length);
       cards.forEach((c) => {
-        expect(c.id).toMatch(new RegExp('^' + known + '-' + target + '-\\d{3,4}$'));
+        expect(c.id).toMatch(new RegExp('^' + known + '-' + target + '-\\d{3,5}$'));
         expect(parseInt(c.id.split('-')[2], 10)).toBe(c.rank);
         expect(c.rank).toBeGreaterThanOrEqual(1);
-        expect(c.rank).toBeLessThanOrEqual(1000);
+        expect(c.rank).toBeLessThanOrEqual(10000);
       });
     });
 

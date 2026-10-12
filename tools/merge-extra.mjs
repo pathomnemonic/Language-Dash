@@ -5,7 +5,7 @@
 // Peter Norvig's list as published at github.com/first20hours/google-10000-english): an entry takes the rank of the first form
 // of its lemma (plural, -ed, -ing, -er, -ly ...) found in that list; entries not found keep their written order after the
 // matched ones. Then build-words.mjs turns the result into js/lang/data/*.js.
-import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -40,7 +40,7 @@ let dropped = 0;
 for (const f of files) {
   for (const e of JSON.parse(readFileSync(resolve(root, 'data/extra', f), 'utf8'))) {
     const key = e.en + '|' + (e.sense || '');
-    if (seen.has(key) || !e.es || !e.fr) { dropped++; continue; }
+    if (seen.has(key) || !e.es || !e.fr || /\s/.test(String(e.es).trim()) || /\s/.test(String(e.fr).trim())) { dropped++; continue; }
     seen.add(key);
     cands.push({ ...e, rank: rankOf(e.en), order: order++ });
   }
