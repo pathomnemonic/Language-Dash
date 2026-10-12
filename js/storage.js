@@ -145,7 +145,7 @@ var DEFAULTS = {
     glowDefaultSeen: false,
     perfHint: '',
     disabledPowerups: [],
-    speedRamp: { on: true, every: 20, step: 0.5 }, // the run speeds up by `step` every `every` questions
+    speedRamp: { on: true, every: 3, step: 0.25 }, // the run speeds up by `step` every `every` questions
     hazardsOff: false,
     monsterOff: false,
     preferredMap: '',

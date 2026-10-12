@@ -14,7 +14,7 @@ test('Anki export and an AI reply both end up as cards you can use', async ({ pa
   await page.waitForFunction(() => window.__ui);
   await page.evaluate(() => window.__ui.show('screenMyCards'));
   await page.locator('#bringCardsBtn').click();
-  await expect(page.getByText('Bring in your own cards')).toBeVisible();
+  await expect(page.getByText('Bring in your own words')).toBeVisible();
   // the instructions are on the screen
   await expect(page.getByText(/Notes in Plain Text/)).toBeVisible();
 
@@ -27,12 +27,12 @@ test('Anki export and an AI reply both end up as cards you can use', async ({ pa
   // 2. an AI chat's reply, pasted
   const reply = readFileSync('tests/fixtures/ai-reply-sample.txt', 'utf8');
   await page.locator('#ankiImportContainer textarea').nth(1).fill(reply);
-  await page.getByRole('button', { name: /Import quiz cards/ }).click();
-  await expect(page.locator('.anki-import-status')).toContainText(/Imported 5 quiz cards/);
+  await page.getByRole('button', { name: /Import as runner words/ }).click();
+  await expect(page.locator('.anki-import-status')).toContainText(/Imported 5 runner words/);
 
   // they are in My Cards, 11 in all
   await page.evaluate(() => window.__ui.show('screenMyCards'));
-  await expect(page.locator('#customCardList')).toContainText(/11 custom cards/);
+  await expect(page.locator('#customCardList')).toContainText(/11 words of your own/);
   expect(await page.evaluate(() => window.__storage && true)).toBe(true);
   expect(errors).toEqual([]);
 });

@@ -23,10 +23,11 @@ test('the page has a policy, and the game runs under it without violations', asy
   await page.locator('.btn-play').click();
   await expect(page.locator('#buzzText')).not.toHaveText('GET READY', { timeout: 20000 });
   await page.waitForTimeout(2500); // some seconds of running: 3D scene, audio, generated textures
-  await page.locator('#pauseBtn').click();
+  await page.locator('#pauseBtn').click({ force: true }); // (the score beside it changes width every frame, which moves the button by a hundredth of a pixel and fails the "stable" wait)
   await page.locator('#endRunBtn').click();
   for (const id of ['#settingsBtn', '#leaderboardBtn']) {
     await page.locator('#bottomNav [data-screen="screenHome"]').click().catch(() => {});
+    if (!(await page.locator(id).isVisible())) continue; // (Friends is hidden until Supabase is configured)
     await page.locator(id).click();
     await page.waitForTimeout(500);
   }

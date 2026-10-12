@@ -35,6 +35,33 @@ import { cardiac } from './maps/cardiac.js';
 import { xray } from './maps/xray.js';
 import { defib } from './maps/defib.js';
 
+import { w_library_hall } from './maps/w_library_hall.js';
+import { w_translators_booth } from './maps/w_translators_booth.js';
+import { w_codebreakers_lab } from './maps/w_codebreakers_lab.js';
+import { w_midnight_platform } from './maps/w_midnight_platform.js';
+import { w_kyoto_tea_garden } from './maps/w_kyoto_tea_garden.js';
+import { w_tokyo_night_market } from './maps/w_tokyo_night_market.js';
+import { w_lullaby_clouds } from './maps/w_lullaby_clouds.js';
+import { w_vienna_prater_fair } from './maps/w_vienna_prater_fair.js';
+import { w_stroopwafel_factory } from './maps/w_stroopwafel_factory.js';
+import { w_aquarium_of_tongues } from './maps/w_aquarium_of_tongues.js';
+import { w_paris_rooftop } from './maps/w_paris_rooftop.js';
+import { w_bavarian_farmyard } from './maps/w_bavarian_farmyard.js';
+import { w_festival_of_seasons } from './maps/w_festival_of_seasons.js';
+import { w_alphabet_playroom } from './maps/w_alphabet_playroom.js';
+import { w_shanghai_night_highway } from './maps/w_shanghai_night_highway.js';
+import { w_monsoon_slide_park } from './maps/w_monsoon_slide_park.js';
+import { w_seoul_neon_alley } from './maps/w_seoul_neon_alley.js';
+import { w_milan_opera_house } from './maps/w_milan_opera_house.js';
+import { w_sweet_shop_of_words } from './maps/w_sweet_shop_of_words.js';
+import { w_algarve_sunset } from './maps/w_algarve_sunset.js';
+import { w_calavera_fiesta } from './maps/w_calavera_fiesta.js';
+import { w_taipei_bubble_tea } from './maps/w_taipei_bubble_tea.js';
+import { w_rosetta_hall } from './maps/w_rosetta_hall.js';
+import { w_verona_balcony } from './maps/w_verona_balcony.js';
+import { w_berlin_disco_cellar } from './maps/w_berlin_disco_cellar.js';
+import { w_warsaw_spark_park } from './maps/w_warsaw_spark_park.js';
+
 /** Every world module, by id. Each is { bay, center?, arch?, ground?, extras? } (see the Playland for the shape). */
 export var WORLDS = {
   playland: playland,
@@ -58,7 +85,33 @@ export var WORLDS = {
   dna: dna,
   cardiac: cardiac,
   xray: xray,
-  defib: defib
+  defib: defib,
+  w_library_hall: w_library_hall,
+  w_translators_booth: w_translators_booth,
+  w_codebreakers_lab: w_codebreakers_lab,
+  w_midnight_platform: w_midnight_platform,
+  w_kyoto_tea_garden: w_kyoto_tea_garden,
+  w_tokyo_night_market: w_tokyo_night_market,
+  w_lullaby_clouds: w_lullaby_clouds,
+  w_vienna_prater_fair: w_vienna_prater_fair,
+  w_stroopwafel_factory: w_stroopwafel_factory,
+  w_aquarium_of_tongues: w_aquarium_of_tongues,
+  w_paris_rooftop: w_paris_rooftop,
+  w_bavarian_farmyard: w_bavarian_farmyard,
+  w_festival_of_seasons: w_festival_of_seasons,
+  w_alphabet_playroom: w_alphabet_playroom,
+  w_shanghai_night_highway: w_shanghai_night_highway,
+  w_monsoon_slide_park: w_monsoon_slide_park,
+  w_seoul_neon_alley: w_seoul_neon_alley,
+  w_milan_opera_house: w_milan_opera_house,
+  w_sweet_shop_of_words: w_sweet_shop_of_words,
+  w_algarve_sunset: w_algarve_sunset,
+  w_calavera_fiesta: w_calavera_fiesta,
+  w_taipei_bubble_tea: w_taipei_bubble_tea,
+  w_rosetta_hall: w_rosetta_hall,
+  w_verona_balcony: w_verona_balcony,
+  w_berlin_disco_cellar: w_berlin_disco_cellar,
+  w_warsaw_spark_park: w_warsaw_spark_park
 };
 
 export function worldOf(skin) {

@@ -78,6 +78,9 @@ test.describe('Accessible names', () => {
 
   test('the Friends screen and the profile picker', async ({ page }) => {
     await openApp(page);
+    // (Friends and the account button are hidden until Supabase is configured; check them only when they are there)
+    const hasBackend = await page.locator('#leaderboardBtn').isVisible();
+    test.skip(!hasBackend, 'Friends and the profile corner need a backend');
     await visit(page, 'Friends', [() => page.locator('#leaderboardBtn').click()]);
     await page.locator('#bottomNav [data-screen="screenHome"]').click();
     await visit(page, 'Profile corner', [() => page.locator('#profileCornerBtn').click()]);

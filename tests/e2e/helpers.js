@@ -13,6 +13,13 @@ export async function openApp(page, path = '/', opts = {}) {
   if (!opts.noPair) await page.addInitScript(() => { try { if (!localStorage.getItem('langdash.pair.v1')) localStorage.setItem('langdash.pair.v1', JSON.stringify({ known: 'en', target: 'es' })); if (!localStorage.getItem('ld_levels')) localStorage.setItem('ld_levels', JSON.stringify({ 'en-es': { level: 'beginner', frontier: 80, source: 'beginner', at: 0 } })); } catch (e) { /* ignore */ } });
   if (!opts.lessons) await page.addInitScript(() => { try { localStorage.setItem('ld_lessons_off', '1'); } catch (e) { /* ignore */ } });
   await page.goto(path);
+  // (the welcome opens a moment after load, once the app has checked the language pair and level: wait for it on a first run)
+  // (polled with evaluate, not waitForFunction, which the page's Content-Security-Policy blocks in csp.spec.js)
+  for (let t = 0; t < 40; t++) {
+    const ready = await page.evaluate(() => !!(window.__storage && window.__storage.get('firstRunComplete')) || !!document.querySelector('#tutCloseBtn')).catch(() => false);
+    if (ready) break;
+    await page.waitForTimeout(250);
+  }
   for (let i = 0; i < 10; i++) {
     if (!(await page.locator('#tutCloseBtn').isVisible().catch(() => false))) break;
     await closeTutorial(page);

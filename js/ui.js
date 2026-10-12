@@ -642,6 +642,8 @@ class UI {
     var self = this;
     // The coins are already in the wallet; the screen is the reveal. It waits for the tutorial to finish.
     function show() {
+      // (the very first run: the welcome comes first, and may not have opened yet)
+      if (!storage.get('firstRunComplete')) { setTimeout(show, 1000); return; }
       var tutorial = document.getElementById('tutorialOverlay');
       var coach = document.getElementById('tutorialCoach');
       if ((tutorial && tutorial.classList.contains('active')) || (coach && coach.classList.contains('active')) || isGameTutorialOpen()) { setTimeout(show, 1000); return; }
