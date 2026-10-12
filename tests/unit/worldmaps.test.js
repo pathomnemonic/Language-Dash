@@ -28,9 +28,9 @@ function countCalls(root) {
 describe('the bright maps', () => {
   it('are all there, each with a world module, music, a hazard and a place in the Locker', () => {
     expect(worlds.map((s) => s.name).sort()).toEqual([
-      'Anatomy Amusement Park', 'Aquarium Imaging Center', 'Candy Lab', 'Cafeteria Carnival', 'Cardiac Pulse', 'Cellular Matrix',
-      'DNA Helix Tunnel', 'Defibrillator Shock', 'Holiday Wards', 'Neon ER', 'Neonatal Cloud Nursery', 'Neural Highway',
-      'Pediatric Playland', 'Pharmacy Pop Factory', 'Prescription Sunset', 'Rooftop Helipad Resort', 'Skeletal Corridor',
+      'Ambulance Bay', 'Anatomy Amusement Park', 'Aquarium Imaging Center', 'Candy Lab', 'Cafeteria Carnival', 'Cardiac Pulse', 'Cellular Matrix',
+      'DNA Helix Tunnel', 'Defibrillator Shock', 'Holiday Wards', 'Hospital Hallway', 'Neon ER', 'Neonatal Cloud Nursery', 'Neural Highway',
+      'Operating Room', 'Pediatric Playland', 'Pharmacy Pop Factory', 'Prescription Sunset', 'Research Lab', 'Rooftop Helipad Resort', 'Skeletal Corridor',
       'Sunshine Rehab Garden', 'Surgical Theater', 'Vascular Rush', 'Vet and Farm Clinic', 'X-Ray Vision'
     ].sort());
     worlds.forEach((s) => {
@@ -38,9 +38,9 @@ describe('the bright maps', () => {
       expect(worldOf(s), s.name).toBe(WORLDS[s.world]);
       expect(SKIN_MUSIC[s.name], s.name + ' music').toBeTruthy();
       expect(HAZARD_BY_SKIN[s.name], s.name + ' hazard').toBeTruthy();
-      ['surge', 'flare', 'glitch', 'pulse'].includes(HAZARD_BY_SKIN[s.name]) || expect.fail(s.name + ' has a harsh hazard');
+      isIndoorSkin(s) || ['surge', 'flare', 'glitch', 'pulse'].includes(HAZARD_BY_SKIN[s.name]) || expect.fail(s.name + ' has a harsh hazard');
       expect(s.fog && s.fog.far, s.name + ' fog').toBeGreaterThan(100);
-      expect(LOCKER_ITEMS.some((i) => i.skinId === s.id), s.name + ' for sale').toBe(true);
+      if (!isIndoorSkin(s)) expect(LOCKER_ITEMS.some((i) => i.skinId === s.id), s.name + ' for sale').toBe(true); // (the four free rooms are not sold)
     });
   });
 
@@ -57,7 +57,8 @@ describe('the bright maps', () => {
   });
 
   it('none of them is free from the start: they are rewards, and a new player never rotates into one', () => {
-    expect(worlds.filter(isIndoorSkin)).toEqual([]);
+    // the four Great Library rooms are the free starting maps (they are world maps too); every other map is a reward
+    expect(worlds.filter(isIndoorSkin).map((s) => s.name).sort()).toEqual(['Ambulance Bay', 'Hospital Hallway', 'Operating Room', 'Research Lab']);
     const owns = () => false;
     const seen = new Set();
     for (let i = 0; i < 300; i++) seen.add(getNextSkin(SKINS[0], 3, Math.random, owns).name);
@@ -159,7 +160,8 @@ describe('Holiday Wards follows the calendar', () => {
         refs.dispose();
       } finally { globalThis.Date = RealDate; }
     });
-    expect([...seasons].sort()).toEqual(['autumn', 'party', 'spring', 'summer', 'winter']);
+    // the Festival of Seasons shows all four seasons side by side, so the date no longer picks one
+    expect(seasons.size).toBe(1);
   }, 90000);
 });
 

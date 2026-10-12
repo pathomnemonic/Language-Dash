@@ -1933,7 +1933,7 @@ body:not(.in-game) #noticeDock { bottom: calc(var(--safe-bottom, 0px) + 80px); }
 #questList .quest-item { position: relative; }
 #questList .quest-item.has-claim > .quest-title, #questList .quest-item.has-claim > .quest-bar, #questList .quest-item.has-claim > .quest-claim-row { margin-right: 104px; }
 #questList .quest-item.has-claim .quest-claim-row .btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); min-height: 34px; min-width: 92px; padding: 4px 8px; }
-@media (max-height: 800px) {
+@media (max-height: 700px) {
   #questList .quest-item { padding: 5px 10px; margin: 3px 0; }
   #questList .quest-title { font-size: 11px; line-height: 1.2; }
   #questList .quest-bar { height: 7px; margin: 3px 0 1px; }
@@ -2691,6 +2691,3 @@ body.dyslexia .btn, body.dyslexia .mode-btn, body.dyslexia h3 { font-family: "Op
 .hear-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 .hear-btn[hidden] { display: none; }
 .word-pair { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 8px; }
-/* five Locker tabs share one row: the capital letters must fit the narrowest phone (MONSTERS was cut off) */
-.locker-tabs .locker-tab { letter-spacing: .02em; }
-@media (max-width: 420px) { .locker-tabs.five .locker-tab, .locker-tabs.six .locker-tab { font-size: 9px; letter-spacing: 0; } }

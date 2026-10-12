@@ -162,7 +162,10 @@
 .locker-tabs.five { grid-template-columns: repeat(5, 1fr); }
 .locker-tabs.six { grid-template-columns: repeat(6, 1fr); gap: 5px; }
 .locker-tabs.six .locker-tab { font-size: 9px; letter-spacing: 0; }
-.locker-tabs .locker-tab { width: 100%; white-space: nowrap; padding: 8px 1px; font-size: 10px; letter-spacing: 0.04em; justify-content: center; position: relative; min-width: 0; flex-direction: column; gap: 1px; line-height: 1.1; overflow: hidden; }
+/* five tabs in one row: MONSTERS must fit even on the narrowest (zoomed) Locker */
+.locker-tabs.five { gap: 4px; }
+.locker-tabs.five .locker-tab { font-size: 9px; letter-spacing: 0; padding: 8px 0; }
+.locker-tabs .locker-tab { width: 100%; white-space: nowrap; padding: 8px 1px; font-size: 10px; letter-spacing: 0.02em; justify-content: center; position: relative; min-width: 0; flex-direction: column; gap: 1px; line-height: 1.1; overflow: hidden; }
 .locker-tabs .locker-tab .tab-icon { display: block; font-size: 16px; line-height: 1.1; }
 .locker-tabs .locker-tab[aria-expanded="true"]::after { content: '\25B4'; font-size: 9px; line-height: 1; }
 .locker-tabs .locker-tab[aria-expanded="false"]::after { content: '\25BE'; font-size: 9px; line-height: 1; opacity: 0.7; }

@@ -179,6 +179,33 @@ export var SKINS = [
     }
   },
   {
+    id: 'skin_prescription_sunset',
+    name: 'Prescription Sunset',
+    title: "Algarve Sunset",
+    desc: "Golden hour on a boardwalk: lighthouse, surf shack, ice pops, sailboats",
+    world: 'w_algarve_sunset',
+    wallType: 'world',
+    archType: 'world',
+    groundType: 'world',
+    particleType: 'dust_motes',
+    fog: { near: 60, far: 160 },
+    light: { ambient: 0.8, hemi: 0.8, dir: 0.95 },
+    fixedSky: true,
+    sky: { top: 0x5f9be0, horizon: 0xffa65a, sun: 0xffd27a, sunX: -0.9, sunY: 0.16 },
+    colors: {
+      bg: 0xffb27a, sky: 0xffb27a,
+      ground: 0xf3d49c, groundStripe: 0xff8a3d, groundAccent: 0xe6aa6a,
+      wallA: 0xffd6b8, wallB: 0xff8a3d, wallGlow: 0xffd23f,
+      archMain: 0xffffff, archGlow: 0xffb347,
+      lane: 0xffffff,
+      gateBase: 0x2a62d0, gateGlow: 0xffd23f,
+      particle: 0xfff0c0, particleB: 0xffd0a0,
+      coin: 0xffcc22,
+      ambient: 0xffffff, hemiTop: 0xffe0b8, hemiBot: 0xd9a070,
+      dirLight: 0xffd9a0
+    }
+  },
+  {
     id: 'skin_cardiac_pulse',
     name: 'Cardiac Pulse',
     title: "Verona Balcony Carnival",

@@ -354,7 +354,7 @@ function chandelier(g, x, y, z, s) {
 
 function arch(g, z, i) {
   // a chandelier over the carpet, and a swag of velvet with gold tassels across each side
-  chandelier(g, 0, 4.9, z, 1.0);
+  chandelier(g, 0, 5.45, z, 1.0);
   [-1, 1].forEach(function (s, n) {
     // gold rope swag low over the boxes
     for (var f = 0; f < 5; f++) {
@@ -366,7 +366,8 @@ function arch(g, z, i) {
   });
   // a banner of the house across the top, the colours of Italy at the corners
   var tex = plateTex('arch' + (i % 3), ['Ciao!', 'Grazie', 'Prego'][i % 3], ['Hello', 'Thank you', 'You’re welcome'][i % 3], 0xfff1d6, 0x9a1030, 0xffc83d);
-  decal(g, tex, CREAM, 1.4, 0.56, 0, 5.9, z, 0);
+  decal(g, tex, CREAM, 1.7, 0.68, i % 2 ? 3.6 : -3.6, 5.1, z, 0);
+  cyl(g, 0.02, 0.02, 1.3, 0x7a5a20, i % 2 ? 3.6 : -3.6, 5.75, z, { seg: 3 });
 }
 
 // ---------- the things that move ----------

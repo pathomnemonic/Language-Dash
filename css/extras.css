@@ -88,6 +88,11 @@ body.dyslexia #reviewFullList, body.dyslexia #quickReviewOverlay, body.dyslexia 
   #screenStats .perf-section { margin-bottom: 6px; }
   #screenStats .perf-summary { padding: 3px 12px; min-height: 40px; }
 }
+@media (max-height: 800px) {
+  #questList .quest-item { padding: 5px 10px; margin: 3px 0; }
+  #questList .quest-bar { height: 8px; margin: 2px 0 1px; }
+  #screenQuests .quest-intro { margin: 2px 0 4px; }
+}
 @media (max-height: 700px) {
   #screenShop .screen-scroll > .muted { margin: 2px 0; font-size: 11px; }
   .hero-card { margin: 6px 0 2px; padding: 7px 10px; }

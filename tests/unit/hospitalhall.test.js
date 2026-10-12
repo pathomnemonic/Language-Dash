@@ -9,10 +9,12 @@ const hall = SKINS.find((s) => s.name === 'Hospital Hallway');
 describe('Library Hall map (skin key: Hospital Hallway)', () => {
   it('is a real map with its own corridor builders', () => {
     expect(hall).toBeTruthy();
-    expect(isHospitalHall(hall)).toBe(true);
+    // the Library Hall is a world map now (js/game/maps/w_library_hall.js), not the old hospital corridor
+    expect(isHospitalHall(hall)).toBe(false);
+    expect(hall.world).toBe('w_library_hall');
     expect(buildWallSegment(hall, -1, -40, 3.5).children.length).toBeGreaterThan(8);
     expect(buildArch(hall, -44).children.length).toBeGreaterThan(3);
-    expect(buildGround(hall).children.length).toBeGreaterThanOrEqual(2);
+    expect(buildGround(hall).children.length).toBeGreaterThanOrEqual(1);
   });
 
   it('repeats every four bays so the corridor scrolls without a pop', () => {
@@ -54,10 +56,11 @@ describe('the other walled-in maps', () => {
     it(name + ' builds walls, fixtures and a floor', () => {
       const skin = SKINS.find((s) => s.name === name);
       expect(skin).toBeTruthy();
-      expect(isHospitalHall(skin)).toBe(true);
-      for (let k = 0; k < 4; k++) expect(buildWallSegment(skin, 1, -k * 4, 3.5).children.length).toBeGreaterThan(6);
+      expect(isHospitalHall(skin)).toBe(false);
+      expect(skin.world, name).toMatch(/^w_/);
+      for (let k = 0; k < 4; k++) expect(buildWallSegment(skin, 1, -k * 4, 3.5).children.length).toBeGreaterThan(0);
       expect(buildArch(skin, -44).children.length).toBeGreaterThan(2);
-      expect(buildGround(skin).children.length).toBeGreaterThanOrEqual(2);
+      expect(buildGround(skin).children.length).toBeGreaterThanOrEqual(1);
     });
   });
 });

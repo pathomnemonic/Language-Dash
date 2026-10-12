@@ -404,9 +404,10 @@ function arch(g, z, i) {
   });
   var sg = SIGNS[i % 4];
   var tex = plateTex(sg[0], sg[1], sg[2], sg[3], sg[4], sg[5]);
-  plate(g, tex, 0xfff1d8, 2.3, 0.92, 0, 4.4, z, 0);
-  cyl(g, 0.02, 0.02, 0.9, 0x555a66, -0.9, 5.3, z, { seg: 3 });
-  cyl(g, 0.02, 0.02, 0.9, 0x555a66, 0.9, 5.3, z, { seg: 3 });
+  var sx = i % 2 ? 3.4 : -3.4;
+  plate(g, tex, 0xfff1d8, 2.0, 0.8, sx, 3.3, z, 0);
+  cyl(g, 0.02, 0.02, 0.8, 0x555a66, sx - 0.8, 4.1, z, { seg: 3 });
+  cyl(g, 0.02, 0.02, 0.8, 0x555a66, sx + 0.8, 4.1, z, { seg: 3 });
 }
 
 function ground(g) {

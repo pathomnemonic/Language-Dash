@@ -3,14 +3,15 @@ import * as THREE from 'three';
 import { SKINS } from '../../js/game/skins.js';
 import { buildTrack } from '../../js/game/track.js';
 import { updateAnimators } from '../../js/game/mapfx.js';
+import { worldOf } from '../../js/game/worlds.js';
 import { ATMOSPHERES, allowedAtmospheres, pickAtmosphere, applyAtmosphere } from '../../js/game/atmosphere.js';
 
-const INDOOR_WORLDS = ['playland', 'cafeteria', 'pharmacy', 'aquarium', 'neural', 'vascular', 'neoner', 'theater', 'candylab', 'skeletal', 'cellular', 'dna', 'cardiac', 'xray', 'defib'];
-const open = SKINS.filter((s) => s.world && !INDOOR_WORLDS.includes(s.world) && !s.fixedSky);
+// a map is open-air when its world module is not flagged indoor (an indoor map has a ceiling and no sky)
+const open = SKINS.filter((s) => s.world && !s.indoor && !(worldOf(s) || {}).indoor && !s.fixedSky);
 
 describe('time of day and weather', () => {
   it('only the open-air maps get a sky to change', () => {
-    expect(open.map((s) => s.name).sort()).toEqual(['Anatomy Amusement Park', 'Holiday Wards', 'Neonatal Cloud Nursery', 'Rooftop Helipad Resort', 'Sunshine Rehab Garden', 'Vet and Farm Clinic']);
+    expect(open.map((s) => s.name).sort()).toEqual(['Anatomy Amusement Park', 'Cardiac Pulse', 'Defibrillator Shock', 'Holiday Wards', 'Neonatal Cloud Nursery', 'Rooftop Helipad Resort', 'Sunshine Rehab Garden', 'Vet and Farm Clinic']);
     expect(pickAtmosphere(SKINS.find((s) => s.name === 'Hospital Hallway'))).toBeNull();
   });
 

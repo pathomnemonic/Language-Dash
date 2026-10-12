@@ -10,6 +10,7 @@
 import * as THREE from 'three';
 import { combine } from './mapkit.js';
 import { swarm } from './mapfx.js';
+import { worldOf } from './worlds.js';
 
 /**
  * name -> how far to push the sky/haze toward `tint` (0..1), how bright each light gets, the direct light's colour and
@@ -26,7 +27,8 @@ export var ATMOSPHERES = {
 
 /** Which atmospheres this map may have (snow only falls on the Festival of Seasons (skin 'Holiday Wards') in winter; rain never falls indoors). */
 export function allowedAtmospheres(skin) {
-  if (!skin || !skin.world || skin.indoor || skin.fixedSky) return [];
+  var module = skin && skin.world ? worldOf(skin) : null;
+  if (!skin || !skin.world || skin.indoor || (module && module.indoor) || skin.fixedSky) return [];
   var names = ['day', 'sunrise', 'golden', 'overcast', 'rain'];
   if (skin.season === 'winter') names = ['day', 'overcast', 'snow', 'snow'];
   return names;

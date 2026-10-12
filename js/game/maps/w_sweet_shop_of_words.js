@@ -293,9 +293,9 @@ function arch(g, z, i) {
   cone(g, 0.3, 0.55, ROSE, -0.42, 5.45, z, { seg: 4, rz: Math.PI / 2 });
   cone(g, 0.3, 0.55, ROSE, 0.42, 5.45, z, { seg: 4, rz: -Math.PI / 2 });
   var wd = WORDS[i % 6];
-  decal(g, plateTex('arch' + (i % 6), wd[0], wd[1], 0xfff6e8, 0xd94870, SWEETS[i % 6]), ROSE, 2.1, 0.84, 0, 4.4, z, 0);
-  cyl(g, 0.02, 0.02, 0.7, 0x888888, -0.8, 4.95, z, { seg: 3 });
-  cyl(g, 0.02, 0.02, 0.7, 0x888888, 0.8, 4.95, z, { seg: 3 });
+  decal(g, plateTex('arch' + (i % 6), wd[0], wd[1], 0xfff6e8, 0xd94870, SWEETS[i % 6]), ROSE, 1.9, 0.76, i % 2 ? 3.4 : -3.4, 3.4, z, 0);
+  cyl(g, 0.02, 0.02, 0.6, 0x888888, (i % 2 ? 3.4 : -3.4) - 0.7, 4.1, z, { seg: 3 });
+  cyl(g, 0.02, 0.02, 0.6, 0x888888, (i % 2 ? 3.4 : -3.4) + 0.7, 4.1, z, { seg: 3 });
   // gumdrops strung in the corners
   for (var f = 0; f < 6; f++) {
     var s = f < 3 ? -1 : 1;

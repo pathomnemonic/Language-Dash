@@ -173,21 +173,22 @@ for (const [w, h] of [[360, 640], [390, 780]]) {
       const wrap = document.querySelector('#' + id + ' .fit-zoom');
       const first = document.querySelector('#' + id + ' .screen-scroll h2, #' + id + ' .screen-scroll .perf-hero');
       // (a screen that scrolls, like Stats with its mastery card, moves its top when a section scrolls into view; only a one-page screen must stay put)
-      const sc = document.querySelector('#' + id + ' .screen-scroll');
-      const scrolls = !!sc && sc.scrollHeight > sc.clientHeight + 1;
+      const scrolls = !!window.__scrollsAtRest && window.__scrollsAtRest[id];
       return { zoom: wrap ? wrap.style.zoom : '', top: first && !scrolls ? Math.round(first.getBoundingClientRect().top) : 0, height: first ? Math.round(first.getBoundingClientRect().height) : 0, width: first ? Math.round(first.getBoundingClientRect().width) : 0 };
     }, screen);
     for (const [screen, summary] of [['screenStats', '#screenStats .perf-summary'], ['screenProfile', '#screenProfile .profile-fold-sum']]) {
       await page.evaluate((id) => window.__ui.show(id), screen);
       await page.waitForTimeout(800);
+      await page.evaluate((id) => { const sc = document.querySelector('#' + id + ' .screen-scroll'); window.__scrollsAtRest = Object.assign(window.__scrollsAtRest || {}, { [id]: sc.scrollHeight > sc.clientHeight + 1 }); }, screen);
+      // (sections that are hidden, like the account one without a backend, cannot be opened)
       const before = await snap(screen);
-      const n = await page.locator(summary).count();
+      const n = await page.locator(summary).filter({ visible: true }).count();
       for (let i = 0; i < Math.min(n, 5); i++) {
-        await page.locator(summary).nth(i).click();
+        await page.locator(summary).filter({ visible: true }).nth(i).click();
         await page.waitForTimeout(450);
         const during = await snap(screen);
         expect(during, `${screen}: opening section ${i} must not change the zoom or move the top of the page`).toEqual(before);
-        await page.locator(summary).nth(i).click();
+        await page.locator(summary).filter({ visible: true }).nth(i).click();
         await page.waitForTimeout(450);
         expect(await snap(screen), `${screen}: closing section ${i} must put it back exactly`).toEqual(before);
       }

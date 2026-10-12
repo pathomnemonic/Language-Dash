@@ -45,7 +45,7 @@ function deckPicture() {
       ctx.fillStyle = 'rgba(255,240,200,0.25)'; ctx.fillRect(i2 * 48 + 6, 0, 3, h);
     }
     // calçada portuguesa borders: white stone with ink-blue waves, 1 unit wide at each side
-    [0, w - 48].forEach(function (x0) {
+    [48, w - 96].forEach(function (x0) {
       ctx.fillStyle = '#fff8ee'; ctx.fillRect(x0, 0, 48, h);
       ctx.strokeStyle = '#2b62c9'; ctx.lineWidth = 7; ctx.lineCap = 'round';
       for (var k = 0; k < 3; k++) {
@@ -290,7 +290,7 @@ function townSide(g, S, z, k) {
     cyl(g, 0.4, 0.4, 0.06, 0xffffff, S.in(0.65), 0.78, z, { seg: 8 });
     cyl(g, 0.04, 0.04, 0.78, 0x555a66, S.in(0.65), 0.39, z, { seg: 4 });
     cyl(g, 0.025, 0.025, 2.0, WHITE, S.in(0.65), 1.0, z, { seg: 4 });
-    for (var s = 0; s < 6; s++) cone(g, 1.0, 0.45, s % 2 ? 0xffffff : COBALT, S.in(0.65), 2.1, z, { seg: 6, ry: (s * Math.PI) / 3 });
+    for (var s = 0; s < 6; s++) cone(g, 1.0, 0.45, s % 2 ? 0xffffff : COBALT, S.in(0.65), 2.45, z, { seg: 6, ry: (s * Math.PI) / 3 });
   }
   if (k === 1) {
     // the cafe awning
