@@ -69,7 +69,7 @@ var _ramp = null;
 /** A 4-step gradient map: shadow, mid, light, highlight. Nearest filtering gives hard bands. */
 export function toonRamp() {
   if (_ramp) return _ramp;
-  var data = new Uint8Array([120, 120, 120, 255, 175, 175, 175, 255, 225, 225, 225, 255, 255, 255, 255, 255]);
+  var data = new Uint8Array([165, 165, 165, 255, 205, 205, 205, 255, 240, 240, 240, 255, 255, 255, 255, 255]);
   _ramp = new THREE.DataTexture(data, 4, 1, THREE.RGBAFormat);
   _ramp.minFilter = THREE.NearestFilter;
   _ramp.magFilter = THREE.NearestFilter;

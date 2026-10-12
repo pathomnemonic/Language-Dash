@@ -41,6 +41,13 @@ function toonify(root) {
     var out = list.map(function (m) {
       if (!m || m.isMeshToonMaterial || !(m.isMeshStandardMaterial || m.isMeshPhongMaterial || m.isMeshLambertMaterial)) return m;
       if (cache[m.uuid]) return cache[m.uuid];
+      // Pixel-art skins (the blocky people use a tiny atlas) must not be smoothed, or each face bleeds into its neighbour
+      if (m.map && m.map.image && Math.max(m.map.image.width || 0, m.map.image.height || 0) <= 256) {
+        m.map.magFilter = THREE.NearestFilter;
+        m.map.minFilter = THREE.NearestFilter;
+        m.map.generateMipmaps = false;
+        m.map.needsUpdate = true;
+      }
       var t = new THREE.MeshToonMaterial({
         color: m.color ? m.color.clone() : new THREE.Color(0xffffff),
         map: m.map || null,

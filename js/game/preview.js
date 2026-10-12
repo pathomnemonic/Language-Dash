@@ -138,11 +138,11 @@ export class CharacterPreview {
         this.resize();
 
         // Lighting
-        var keyLight = new THREE.DirectionalLight(0xfff0d8, 1.8);
+        var keyLight = new THREE.DirectionalLight(0xffffff, 1.6);
         keyLight.position.set(3, 4, 5);
         this.scene.add(keyLight);
 
-        var fillLight = new THREE.DirectionalLight(0xffe4cc, 0.5);
+        var fillLight = new THREE.DirectionalLight(0xffffff, 0.45);
         fillLight.position.set(-3, 2, 4);
         this.scene.add(fillLight);
 
@@ -150,7 +150,7 @@ export class CharacterPreview {
         rimLight.position.set(0, 3, -3);
         this.scene.add(rimLight);
 
-        var ambient = new THREE.AmbientLight(0xfff1dc, 1.5);
+        var ambient = new THREE.AmbientLight(0xffffff, 1.4);
         this.scene.add(ambient);
 
         // Ground disc
