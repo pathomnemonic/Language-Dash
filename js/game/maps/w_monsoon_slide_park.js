@@ -406,28 +406,22 @@ function center(g, z) {
 
 // ---------- fixtures across the track ----------
 
-var RINGS = [ORANGE, TEAL, YELLOW, RED];
+var RINGS = [0xff5a3c, TEAL, 0xffc21f, BLUE];
 var SIGNS = [['hello', 'नमस्ते', 'Namaste · Hello', 0xfff1d8, 0xc2321f, 0xe0553a], ['welcome', 'स्वागत', 'Swagat · Welcome', 0xe6faff, 0x0f6a8a, 0x1fb8b4], ['water', 'पानी', 'Pani · Water', 0xfff1d8, 0x0f6fb8, 0x2f86e0], ['maza', 'मज़ा', 'Maza · Fun', 0xfff6d0, 0xe8413a, 0xffb21f]];
 
 function arch(g, z, i) {
   // a splash ring to run through: a big half ring standing on the walls, with a banner and spray nozzles
   var c = RINGS[i % 4];
-  ring(g, 4.95, 0.22, c, 0, 0.05, z, { seg: 20, tube: 5, arc: Math.PI, sy: 1.12, map: stripeTex(c, 0xfff1d8, 14), r: 0.45 });
+  ring(g, 4.95, 0.22, c, 0, 0.05, z, { seg: 20, tube: 5, arc: Math.PI, sy: 1.12, r: 0.4 });
   [-1, 1].forEach(function (s, n) {
     ball(g, 0.34, c, s * 4.95, 0.35, z, { seg: 6, sy: 0.7 });
     cone(g, 0.12, 0.45, 0xffffff, s * 4.95, 5.3, z, { seg: 4, rz: Math.PI });
-    bead(g, 0.2, [MARIGOLD, ORANGE][n], s * 3.2, 5.55 - Math.abs(s * 3.2) * 0.08, z);
   });
   var sg = SIGNS[i % 4];
   var tex = plateTex(sg[0], sg[1], sg[2], sg[3], sg[4], sg[5]);
   plate(g, tex, 0xfff1d8, 2.3, 0.92, 0, 4.4, z, 0);
   cyl(g, 0.02, 0.02, 0.9, 0x555a66, -0.9, 5.3, z, { seg: 3 });
   cyl(g, 0.02, 0.02, 0.9, 0x555a66, 0.9, 5.3, z, { seg: 3 });
-  // marigold garland draped along the ring
-  for (var b = 0; b < 5; b++) {
-    var a = Math.PI * (0.16 + (b / 4) * 0.68);
-    bead(g, 0.16, b % 2 ? MARIGOLD : ORANGE, Math.cos(a) * 4.75, Math.sin(a) * 4.75 * 1.12 - 0.2, z + 0.05);
-  }
 }
 
 function ground(g) {

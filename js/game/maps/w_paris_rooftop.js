@@ -522,9 +522,9 @@ function hotAirBalloon(c1, c2, n) {
 function extras() {
   cloudBank(12, { seed: 9 });
   var eif = eiffel();
-  eif.position.set(-24, 0, -120);
+  eif.position.set(-17, 0, -95);
   animated(eif);
-  mover(eif, { k: 0.1, near: -60, far: -170 });
+  mover(eif, { k: 0.1, near: -55, far: -150 });
   var spec = [[RED, WHITE, 6, -9.5, 13, -60], [BLUE, GOLD, 5, 10, 16, -95], [0x2e9e5b, 0xffb3c6, 7, -11, 18, -130]];
   spec.forEach(function (p, i) {
     var bl = hotAirBalloon(p[0], p[1], p[2]);

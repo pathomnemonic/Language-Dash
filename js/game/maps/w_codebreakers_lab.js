@@ -205,7 +205,7 @@ function floorPicture() {
         ctx.fillStyle = 'rgba(170,110,40,0.2)';
         ctx.fillRect(i * 96 + 3, j * 96 + 89, 90, 4);
         var gl = GLYPHS[Math.floor(r() * GLYPHS.length)];
-        ctx.fillStyle = even ? 'rgba(201,102,58,0.55)' : 'rgba(47,158,140,0.6)';
+        ctx.fillStyle = even ? 'rgba(201,102,58,0.38)' : 'rgba(47,158,140,0.42)';
         ctx.font = '800 54px ' + FONT;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
