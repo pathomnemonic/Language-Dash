@@ -1,0 +1,12002 @@
+[
+ {
+  "en": "attitude",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "actitud",
+  "fr": "attitude"
+ },
+ {
+  "en": "achieve",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "lograr",
+  "fr": "réaliser"
+ },
+ {
+  "en": "active",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "activo",
+  "fr": "actif"
+ },
+ {
+  "en": "among",
+  "pos": "prep",
+  "cat": "small-words",
+  "sense": "",
+  "es": "entre",
+  "fr": "parmi"
+ },
+ {
+  "en": "pasta",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "pasta",
+  "fr": "pâtes"
+ },
+ {
+  "en": "puppy",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "cachorro",
+  "fr": "chiot"
+ },
+ {
+  "en": "geometry",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "geometría",
+  "fr": "géométrie"
+ },
+ {
+  "en": "apply",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "aplicar",
+  "fr": "appliquer"
+ },
+ {
+  "en": "benefit",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "beneficio",
+  "fr": "avantage"
+ },
+ {
+  "en": "act",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "actuar",
+  "fr": "agir"
+ },
+ {
+  "en": "additional",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "adicional",
+  "fr": "supplémentaire"
+ },
+ {
+  "en": "certainly",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "ciertamente",
+  "fr": "certainement"
+ },
+ {
+  "en": "pizza",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "pizza",
+  "fr": "pizza"
+ },
+ {
+  "en": "kitten",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "gatito",
+  "fr": "chaton"
+ },
+ {
+  "en": "grammar",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "gramática",
+  "fr": "grammaire"
+ },
+ {
+  "en": "dissolve",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "disolver",
+  "fr": "dissoudre"
+ },
+ {
+  "en": "border",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "frontera",
+  "fr": "frontière"
+ },
+ {
+  "en": "add",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "añadir",
+  "fr": "ajouter"
+ },
+ {
+  "en": "advanced",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "avanzado",
+  "fr": "avancé"
+ },
+ {
+  "en": "clearly",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "claramente",
+  "fr": "clairement"
+ },
+ {
+  "en": "sandwich",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "sándwich",
+  "fr": "sandwich"
+ },
+ {
+  "en": "calf",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "ternero",
+  "fr": "veau"
+ },
+ {
+  "en": "vocabulary",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "vocabulario",
+  "fr": "vocabulaire"
+ },
+ {
+  "en": "distribute",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "distribuir",
+  "fr": "distribuer"
+ },
+ {
+  "en": "bomb",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "bomba",
+  "fr": "bombe"
+ },
+ {
+  "en": "admit",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "admitir",
+  "fr": "admettre"
+ },
+ {
+  "en": "aware",
+  "pos": "adj",
+  "cat": "thinking",
+  "sense": "",
+  "es": "consciente",
+  "fr": "conscient"
+ },
+ {
+  "en": "completely",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "completamente",
+  "fr": "complètement"
+ },
+ {
+  "en": "sausage",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "salchicha",
+  "fr": "saucisse"
+ },
+ {
+  "en": "goose",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "ganso",
+  "fr": "oie"
+ },
+ {
+  "en": "pronunciation",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "pronunciación",
+  "fr": "prononciation"
+ },
+ {
+  "en": "fry",
+  "pos": "verb",
+  "cat": "food",
+  "sense": "",
+  "es": "freír",
+  "fr": "frire"
+ },
+ {
+  "en": "brand",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "marca",
+  "fr": "marque"
+ },
+ {
+  "en": "advise",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "aconsejar",
+  "fr": "conseiller"
+ },
+ {
+  "en": "basic",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "básico",
+  "fr": "basique"
+ },
+ {
+  "en": "currently",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "actualmente",
+  "fr": "actuellement"
+ },
+ {
+  "en": "ham",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "jamón",
+  "fr": "jambon"
+ },
+ {
+  "en": "pigeon",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "paloma",
+  "fr": "pigeon"
+ },
+ {
+  "en": "alphabet",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "alfabeto",
+  "fr": "alphabet"
+ },
+ {
+  "en": "insult",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "insultar",
+  "fr": "insulter"
+ },
+ {
+  "en": "budget",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "presupuesto",
+  "fr": "budget"
+ },
+ {
+  "en": "announce",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "anunciar",
+  "fr": "annoncer"
+ },
+ {
+  "en": "blind",
+  "pos": "adj",
+  "cat": "health",
+  "sense": "",
+  "es": "ciego",
+  "fr": "aveugle"
+ },
+ {
+  "en": "definitely",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "definitivamente",
+  "fr": "définitivement"
+ },
+ {
+  "en": "steak",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "bistec",
+  "fr": "steak"
+ },
+ {
+  "en": "parrot",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "loro",
+  "fr": "perroquet"
+ },
+ {
+  "en": "essay",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "ensayo",
+  "fr": "essai"
+ },
+ {
+  "en": "peel",
+  "pos": "verb",
+  "cat": "food",
+  "sense": "",
+  "es": "pelar",
+  "fr": "éplucher"
+ },
+ {
+  "en": "cable",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "cable",
+  "fr": "câble"
+ },
+ {
+  "en": "organize",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "organizar",
+  "fr": "organiser"
+ },
+ {
+  "en": "bitter",
+  "pos": "adj",
+  "cat": "food",
+  "sense": "",
+  "es": "amargo",
+  "fr": "amer"
+ },
+ {
+  "en": "directly",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "directamente",
+  "fr": "directement"
+ },
+ {
+  "en": "lamb",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "cordero",
+  "fr": "agneau"
+ },
+ {
+  "en": "crow",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "cuervo",
+  "fr": "corbeau"
+ },
+ {
+  "en": "scholarship",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "beca",
+  "fr": "bourse"
+ },
+ {
+  "en": "pinch",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "pellizcar",
+  "fr": "pincer"
+ },
+ {
+  "en": "campaign",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "campaña",
+  "fr": "campagne"
+ },
+ {
+  "en": "arrest",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "arrestar",
+  "fr": "arrêter"
+ },
+ {
+  "en": "bright",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "brillante",
+  "fr": "brillant"
+ },
+ {
+  "en": "easily",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "fácilmente",
+  "fr": "facilement"
+ },
+ {
+  "en": "salmon",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "salmón",
+  "fr": "saumon"
+ },
+ {
+  "en": "swan",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "cisne",
+  "fr": "cygne"
+ },
+ {
+  "en": "pupil",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "alumno",
+  "fr": "élève"
+ },
+ {
+  "en": "plow",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "arar",
+  "fr": "labourer"
+ },
+ {
+  "en": "cancer",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "cáncer",
+  "fr": "cancer"
+ },
+ {
+  "en": "attach",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "adjuntar",
+  "fr": "attacher"
+ },
+ {
+  "en": "broken",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "roto",
+  "fr": "cassé"
+ },
+ {
+  "en": "especially",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "especialmente",
+  "fr": "spécialement"
+ },
+ {
+  "en": "tuna",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "atún",
+  "fr": "thon"
+ },
+ {
+  "en": "seagull",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "gaviota",
+  "fr": "mouette"
+ },
+ {
+  "en": "engineering",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "ingeniería",
+  "fr": "ingénierie"
+ },
+ {
+  "en": "pretend",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "fingir",
+  "fr": "feindre"
+ },
+ {
+  "en": "capital",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "main city",
+  "es": "capital",
+  "fr": "capitale"
+ },
+ {
+  "en": "attend",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "asistir",
+  "fr": "assister"
+ },
+ {
+  "en": "casual",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "informal",
+  "fr": "décontracté"
+ },
+ {
+  "en": "exactly",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "exactamente",
+  "fr": "exactement"
+ },
+ {
+  "en": "shrimp",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "camarón",
+  "fr": "crevette"
+ },
+ {
+  "en": "penguin",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "pingüino",
+  "fr": "pingouin"
+ },
+ {
+  "en": "psychology",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "psicología",
+  "fr": "psychologie"
+ },
+ {
+  "en": "rinse",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "enjuagar",
+  "fr": "rincer"
+ },
+ {
+  "en": "captain",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "capitán",
+  "fr": "capitaine"
+ },
+ {
+  "en": "avoid",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "evitar",
+  "fr": "éviter"
+ },
+ {
+  "en": "certain",
+  "pos": "adj",
+  "cat": "thinking",
+  "sense": "",
+  "es": "cierto",
+  "fr": "certain"
+ },
+ {
+  "en": "extremely",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "extremadamente",
+  "fr": "extrêmement"
+ },
+ {
+  "en": "lobster",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "langosta",
+  "fr": "homard"
+ },
+ {
+  "en": "dolphin",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "delfín",
+  "fr": "dauphin"
+ },
+ {
+  "en": "astronomy",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "astronomía",
+  "fr": "astronomie"
+ },
+ {
+  "en": "roast",
+  "pos": "verb",
+  "cat": "food",
+  "sense": "",
+  "es": "asar",
+  "fr": "rôtir"
+ },
+ {
+  "en": "card",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "tarjeta",
+  "fr": "carte"
+ },
+ {
+  "en": "bake",
+  "pos": "verb",
+  "cat": "food",
+  "sense": "",
+  "es": "hornear",
+  "fr": "cuire"
+ },
+ {
+  "en": "cheerful",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "alegre",
+  "fr": "joyeux"
+ },
+ {
+  "en": "finally",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "finalmente",
+  "fr": "enfin"
+ },
+ {
+  "en": "crab",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "cangrejo",
+  "fr": "crabe"
+ },
+ {
+  "en": "octopus",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "pulpo",
+  "fr": "poulpe"
+ },
+ {
+  "en": "politics",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "política",
+  "fr": "politique"
+ },
+ {
+  "en": "row",
+  "pos": "verb",
+  "cat": "travel",
+  "sense": "",
+  "es": "remar",
+  "fr": "ramer"
+ },
+ {
+  "en": "career",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "carrera",
+  "fr": "carrière"
+ },
+ {
+  "en": "bet",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "apostar",
+  "fr": "parier"
+ },
+ {
+  "en": "classic",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "clásico",
+  "fr": "classique"
+ },
+ {
+  "en": "frequently",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "frecuentemente",
+  "fr": "fréquemment"
+ },
+ {
+  "en": "oyster",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "ostra",
+  "fr": "huître"
+ },
+ {
+  "en": "crocodile",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "cocodrilo",
+  "fr": "crocodile"
+ },
+ {
+  "en": "speech",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "discurso",
+  "fr": "discours"
+ },
+ {
+  "en": "scatter",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "esparcir",
+  "fr": "éparpiller"
+ },
+ {
+  "en": "cell",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "biology",
+  "es": "célula",
+  "fr": "cellule"
+ },
+ {
+  "en": "blame",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "culpar",
+  "fr": "blâmer"
+ },
+ {
+  "en": "clever",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "astuto",
+  "fr": "astucieux"
+ },
+ {
+  "en": "fully",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "plenamente",
+  "fr": "pleinement"
+ },
+ {
+  "en": "onion",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "cebolla",
+  "fr": "oignon"
+ },
+ {
+  "en": "dinosaur",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "dinosaurio",
+  "fr": "dinosaure"
+ },
+ {
+  "en": "rumor",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "rumor",
+  "fr": "rumeur"
+ },
+ {
+  "en": "shrink",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "encoger",
+  "fr": "rétrécir"
+ },
+ {
+  "en": "chain",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "cadena",
+  "fr": "chaîne"
+ },
+ {
+  "en": "blow",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "soplar",
+  "fr": "souffler"
+ },
+ {
+  "en": "comfortable",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "cómodo",
+  "fr": "confortable"
+ },
+ {
+  "en": "generally",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "generalmente",
+  "fr": "généralement"
+ },
+ {
+  "en": "garlic",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "ajo",
+  "fr": "ail"
+ },
+ {
+  "en": "dragon",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "dragón",
+  "fr": "dragon"
+ },
+ {
+  "en": "signature",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "firma",
+  "fr": "signature"
+ },
+ {
+  "en": "sigh",
+  "pos": "verb",
+  "cat": "feelings",
+  "sense": "",
+  "es": "suspirar",
+  "fr": "soupirer"
+ },
+ {
+  "en": "champion",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "campeón",
+  "fr": "champion"
+ },
+ {
+  "en": "boil",
+  "pos": "verb",
+  "cat": "food",
+  "sense": "",
+  "es": "hervir",
+  "fr": "bouillir"
+ },
+ {
+  "en": "common",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "común",
+  "fr": "commun"
+ },
+ {
+  "en": "gradually",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "gradualmente",
+  "fr": "progressivement"
+ },
+ {
+  "en": "carrot",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "zanahoria",
+  "fr": "carotte"
+ },
+ {
+  "en": "giraffe",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "jirafa",
+  "fr": "girafe"
+ },
+ {
+  "en": "stamp",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "sello",
+  "fr": "timbre"
+ },
+ {
+  "en": "skate",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "patinar",
+  "fr": "patiner"
+ },
+ {
+  "en": "channel",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "television",
+  "es": "canal",
+  "fr": "chaîne"
+ },
+ {
+  "en": "bounce",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "rebotar",
+  "fr": "rebondir"
+ },
+ {
+  "en": "complex",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "complejo",
+  "fr": "complexe"
+ },
+ {
+  "en": "immediately",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "inmediatamente",
+  "fr": "immédiatement"
+ },
+ {
+  "en": "cabbage",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "repollo",
+  "fr": "chou"
+ },
+ {
+  "en": "zebra",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "cebra",
+  "fr": "zèbre"
+ },
+ {
+  "en": "envelope",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "sobre",
+  "fr": "enveloppe"
+ },
+ {
+  "en": "smash",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "romper",
+  "fr": "casser"
+ },
+ {
+  "en": "chapter",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "capítulo",
+  "fr": "chapitre"
+ },
+ {
+  "en": "brush",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "cepillar",
+  "fr": "brosser"
+ },
+ {
+  "en": "complicated",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "complicado",
+  "fr": "compliqué"
+ },
+ {
+  "en": "mainly",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "principalmente",
+  "fr": "principalement"
+ },
+ {
+  "en": "lettuce",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "lechuga",
+  "fr": "laitue"
+ },
+ {
+  "en": "gorilla",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "gorila",
+  "fr": "gorille"
+ },
+ {
+  "en": "mail",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "correo",
+  "fr": "courrier"
+ },
+ {
+  "en": "spit",
+  "pos": "verb",
+  "cat": "body",
+  "sense": "",
+  "es": "escupir",
+  "fr": "cracher"
+ },
+ {
+  "en": "character",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "in a story",
+  "es": "personaje",
+  "fr": "personnage"
+ },
+ {
+  "en": "calculate",
+  "pos": "verb",
+  "cat": "numbers",
+  "sense": "",
+  "es": "calcular",
+  "fr": "calculer"
+ },
+ {
+  "en": "constant",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "constante",
+  "fr": "constant"
+ },
+ {
+  "en": "naturally",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "naturalmente",
+  "fr": "naturellement"
+ },
+ {
+  "en": "cucumber",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "pepino",
+  "fr": "concombre"
+ },
+ {
+  "en": "leopard",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "leopardo",
+  "fr": "léopard"
+ },
+ {
+  "en": "poster",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "cartel",
+  "fr": "affiche"
+ },
+ {
+  "en": "stab",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "apuñalar",
+  "fr": "poignarder"
+ },
+ {
+  "en": "chief",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "jefe",
+  "fr": "chef"
+ },
+ {
+  "en": "cancel",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "cancelar",
+  "fr": "annuler"
+ },
+ {
+  "en": "cruel",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "cruel",
+  "fr": "cruel"
+ },
+ {
+  "en": "normally",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "normalmente",
+  "fr": "normalement"
+ },
+ {
+  "en": "pepper",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "spice",
+  "es": "pimienta",
+  "fr": "poivre"
+ },
+ {
+  "en": "squirrel",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "ardilla",
+  "fr": "écureuil"
+ },
+ {
+  "en": "advertisement",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "anuncio",
+  "fr": "annonce"
+ },
+ {
+  "en": "stain",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "manchar",
+  "fr": "tacher"
+ },
+ {
+  "en": "citizen",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "ciudadano",
+  "fr": "citoyen"
+ },
+ {
+  "en": "capture",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "capturar",
+  "fr": "capturer"
+ },
+ {
+  "en": "curious",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "curioso",
+  "fr": "curieux"
+ },
+ {
+  "en": "obviously",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "obviamente",
+  "fr": "évidemment"
+ },
+ {
+  "en": "mushroom",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "champiñón",
+  "fr": "champignon"
+ },
+ {
+  "en": "bat",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "murciélago",
+  "fr": "chauve-souris"
+ },
+ {
+  "en": "documentary",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "documental",
+  "fr": "documentaire"
+ },
+ {
+  "en": "stitch",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "coser",
+  "fr": "coudre"
+ },
+ {
+  "en": "claim",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "afirmar",
+  "fr": "affirmer"
+ },
+ {
+  "en": "chat",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "charlar",
+  "fr": "bavarder"
+ },
+ {
+  "en": "current",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "actual",
+  "fr": "actuel"
+ },
+ {
+  "en": "probably",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "probablemente",
+  "fr": "probablement"
+ },
+ {
+  "en": "corn",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "maíz",
+  "fr": "maïs"
+ },
+ {
+  "en": "hedgehog",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "erizo",
+  "fr": "hérisson"
+ },
+ {
+  "en": "comedy",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "comedia",
+  "fr": "comédie"
+ },
+ {
+  "en": "stumble",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "tropezar",
+  "fr": "trébucher"
+ },
+ {
+  "en": "client",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "cliente",
+  "fr": "client"
+ },
+ {
+  "en": "cheat",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "engañar",
+  "fr": "tricher"
+ },
+ {
+  "en": "cute",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "lindo",
+  "fr": "mignon"
+ },
+ {
+  "en": "rarely",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "raramente",
+  "fr": "rarement"
+ },
+ {
+  "en": "bean",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "frijol",
+  "fr": "haricot"
+ },
+ {
+  "en": "rat",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "rata",
+  "fr": "rat"
+ },
+ {
+  "en": "plot",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "trama",
+  "fr": "intrigue"
+ },
+ {
+  "en": "vomit",
+  "pos": "verb",
+  "cat": "health",
+  "sense": "",
+  "es": "vomitar",
+  "fr": "vomir"
+ },
+ {
+  "en": "climate",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "clima",
+  "fr": "climat"
+ },
+ {
+  "en": "clap",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "aplaudir",
+  "fr": "applaudir"
+ },
+ {
+  "en": "daily",
+  "pos": "adj",
+  "cat": "time",
+  "sense": "",
+  "es": "diario",
+  "fr": "quotidien"
+ },
+ {
+  "en": "recently",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "recientemente",
+  "fr": "récemment"
+ },
+ {
+  "en": "spinach",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "espinaca",
+  "fr": "épinard"
+ },
+ {
+  "en": "mosquito",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "mosquito",
+  "fr": "moustique"
+ },
+ {
+  "en": "melody",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "melodía",
+  "fr": "mélodie"
+ },
+ {
+  "en": "yawn",
+  "pos": "verb",
+  "cat": "body",
+  "sense": "",
+  "es": "bostezar",
+  "fr": "bâiller"
+ },
+ {
+  "en": "clinic",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "clínica",
+  "fr": "clinique"
+ },
+ {
+  "en": "combine",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "combinar",
+  "fr": "combiner"
+ },
+ {
+  "en": "dear",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "querido",
+  "fr": "cher"
+ },
+ {
+  "en": "seriously",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "seriamente",
+  "fr": "sérieusement"
+ },
+ {
+  "en": "pumpkin",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "calabaza",
+  "fr": "citrouille"
+ },
+ {
+  "en": "fly",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "insect",
+  "es": "mosca",
+  "fr": "mouche"
+ },
+ {
+  "en": "guitar",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "guitarra",
+  "fr": "guitare"
+ },
+ {
+  "en": "anxious",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "ansioso",
+  "fr": "anxieux"
+ },
+ {
+  "en": "club",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "club",
+  "fr": "club"
+ },
+ {
+  "en": "comment",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "comentar",
+  "fr": "commenter"
+ },
+ {
+  "en": "delicate",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "delicado",
+  "fr": "délicat"
+ },
+ {
+  "en": "simply",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "simplemente",
+  "fr": "simplement"
+ },
+ {
+  "en": "lemon",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "limón",
+  "fr": "citron"
+ },
+ {
+  "en": "snail",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "caracol",
+  "fr": "escargot"
+ },
+ {
+  "en": "piano",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "piano",
+  "fr": "piano"
+ },
+ {
+  "en": "clumsy",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "torpe",
+  "fr": "maladroit"
+ },
+ {
+  "en": "coach",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "sports",
+  "es": "entrenador",
+  "fr": "entraîneur"
+ },
+ {
+  "en": "communicate",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "comunicar",
+  "fr": "communiquer"
+ },
+ {
+  "en": "delicious",
+  "pos": "adj",
+  "cat": "food",
+  "sense": "",
+  "es": "delicioso",
+  "fr": "délicieux"
+ },
+ {
+  "en": "unfortunately",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "desafortunadamente",
+  "fr": "malheureusement"
+ },
+ {
+  "en": "strawberry",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "fresa",
+  "fr": "fraise"
+ },
+ {
+  "en": "bull",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "toro",
+  "fr": "taureau"
+ },
+ {
+  "en": "violin",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "violín",
+  "fr": "violon"
+ },
+ {
+  "en": "bold",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "audaz",
+  "fr": "audacieux"
+ },
+ {
+  "en": "collection",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "colección",
+  "fr": "collection"
+ },
+ {
+  "en": "complete",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "completar",
+  "fr": "compléter"
+ },
+ {
+  "en": "desperate",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "desesperado",
+  "fr": "désespéré"
+ },
+ {
+  "en": "usually",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "habitualmente",
+  "fr": "habituellement"
+ },
+ {
+  "en": "cherry",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "cereza",
+  "fr": "cerise"
+ },
+ {
+  "en": "hen",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "gallina",
+  "fr": "poule"
+ },
+ {
+  "en": "drum",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "tambor",
+  "fr": "tambour"
+ },
+ {
+  "en": "cautious",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "cauteloso",
+  "fr": "prudent"
+ },
+ {
+  "en": "column",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "columna",
+  "fr": "colonne"
+ },
+ {
+  "en": "concentrate",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "concentrar",
+  "fr": "concentrer"
+ },
+ {
+  "en": "digital",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "digital",
+  "fr": "numérique"
+ },
+ {
+  "en": "minus",
+  "pos": "prep",
+  "cat": "numbers",
+  "sense": "",
+  "es": "menos",
+  "fr": "moins"
+ },
+ {
+  "en": "peach",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "melocotón",
+  "fr": "pêche"
+ },
+ {
+  "en": "rooster",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "gallo",
+  "fr": "coq"
+ },
+ {
+  "en": "trumpet",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "trompeta",
+  "fr": "trompette"
+ },
+ {
+  "en": "creative",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "creativo",
+  "fr": "créatif"
+ },
+ {
+  "en": "comfort",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "comodidad",
+  "fr": "confort"
+ },
+ {
+  "en": "confirm",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "confirmar",
+  "fr": "confirmer"
+ },
+ {
+  "en": "direct",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "directo",
+  "fr": "direct"
+ },
+ {
+  "en": "plus",
+  "pos": "prep",
+  "cat": "numbers",
+  "sense": "",
+  "es": "más",
+  "fr": "plus"
+ },
+ {
+  "en": "pear",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "pera",
+  "fr": "poire"
+ },
+ {
+  "en": "cage",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "jaula",
+  "fr": "cage"
+ },
+ {
+  "en": "flute",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "flauta",
+  "fr": "flûte"
+ },
+ {
+  "en": "humid",
+  "pos": "adj",
+  "cat": "nature",
+  "sense": "",
+  "es": "húmedo",
+  "fr": "humide"
+ },
+ {
+  "en": "committee",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "comité",
+  "fr": "comité"
+ },
+ {
+  "en": "connect",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "conectar",
+  "fr": "connecter"
+ },
+ {
+  "en": "disappointed",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "decepcionado",
+  "fr": "déçu"
+ },
+ {
+  "en": "except",
+  "pos": "prep",
+  "cat": "small-words",
+  "sense": "",
+  "es": "excepto",
+  "fr": "sauf"
+ },
+ {
+  "en": "grape",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "uva",
+  "fr": "raisin"
+ },
+ {
+  "en": "zoo",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "zoológico",
+  "fr": "zoo"
+ },
+ {
+  "en": "concert",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "concierto",
+  "fr": "concert"
+ },
+ {
+  "en": "dizzy",
+  "pos": "adj",
+  "cat": "health",
+  "sense": "",
+  "es": "mareado",
+  "fr": "étourdi"
+ },
+ {
+  "en": "community",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "comunidad",
+  "fr": "communauté"
+ },
+ {
+  "en": "consume",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "consumir",
+  "fr": "consommer"
+ },
+ {
+  "en": "distant",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "lejano",
+  "fr": "lointain"
+ },
+ {
+  "en": "several",
+  "pos": "det",
+  "cat": "small-words",
+  "sense": "",
+  "es": "varios",
+  "fr": "plusieurs"
+ },
+ {
+  "en": "pineapple",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "piña",
+  "fr": "ananas"
+ },
+ {
+  "en": "species",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "especie",
+  "fr": "espèce"
+ },
+ {
+  "en": "orchestra",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "orquesta",
+  "fr": "orchestre"
+ },
+ {
+  "en": "dusty",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "polvoriento",
+  "fr": "poussiéreux"
+ },
+ {
+  "en": "competition",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "competición",
+  "fr": "compétition"
+ },
+ {
+  "en": "convince",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "convencer",
+  "fr": "convaincre"
+ },
+ {
+  "en": "double",
+  "pos": "adj",
+  "cat": "numbers",
+  "sense": "",
+  "es": "doble",
+  "fr": "double"
+ },
+ {
+  "en": "another",
+  "pos": "det",
+  "cat": "small-words",
+  "sense": "",
+  "es": "otro",
+  "fr": "autre"
+ },
+ {
+  "en": "watermelon",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "sandía",
+  "fr": "pastèque"
+ },
+ {
+  "en": "claw",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "garra",
+  "fr": "griffe"
+ },
+ {
+  "en": "band",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "banda",
+  "fr": "groupe"
+ },
+ {
+  "en": "fierce",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "feroz",
+  "fr": "féroce"
+ },
+ {
+  "en": "concern",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "preocupación",
+  "fr": "inquiétude"
+ },
+ {
+  "en": "crawl",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "gatear",
+  "fr": "ramper"
+ },
+ {
+  "en": "economic",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "económico",
+  "fr": "économique"
+ },
+ {
+  "en": "first",
+  "pos": "num",
+  "cat": "numbers",
+  "sense": "ordinal",
+  "es": "primero",
+  "fr": "premier"
+ },
+ {
+  "en": "melon",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "melón",
+  "fr": "melon"
+ },
+ {
+  "en": "fur",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "piel",
+  "fr": "fourrure"
+ },
+ {
+  "en": "opera",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "ópera",
+  "fr": "opéra"
+ },
+ {
+  "en": "fluent",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "fluido",
+  "fr": "courant"
+ },
+ {
+  "en": "condition",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "condición",
+  "fr": "condition"
+ },
+ {
+  "en": "deliver",
+  "pos": "verb",
+  "cat": "shopping",
+  "sense": "",
+  "es": "entregar",
+  "fr": "livrer"
+ },
+ {
+  "en": "effective",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "eficaz",
+  "fr": "efficace"
+ },
+ {
+  "en": "second",
+  "pos": "num",
+  "cat": "numbers",
+  "sense": "ordinal",
+  "es": "segundo",
+  "fr": "deuxième"
+ },
+ {
+  "en": "almond",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "almendra",
+  "fr": "amande"
+ },
+ {
+  "en": "paw",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "pata",
+  "fr": "patte"
+ },
+ {
+  "en": "ballet",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "ballet",
+  "fr": "ballet"
+ },
+ {
+  "en": "foggy",
+  "pos": "adj",
+  "cat": "nature",
+  "sense": "",
+  "es": "brumoso",
+  "fr": "brumeux"
+ },
+ {
+  "en": "conference",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "conferencia",
+  "fr": "conférence"
+ },
+ {
+  "en": "deny",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "negar",
+  "fr": "nier"
+ },
+ {
+  "en": "electric",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "eléctrico",
+  "fr": "électrique"
+ },
+ {
+  "en": "third",
+  "pos": "num",
+  "cat": "numbers",
+  "sense": "",
+  "es": "tercero",
+  "fr": "troisième"
+ },
+ {
+  "en": "peanut",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "cacahuete",
+  "fr": "cacahuète"
+ },
+ {
+  "en": "beak",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "pico",
+  "fr": "bec"
+ },
+ {
+  "en": "microphone",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "micrófono",
+  "fr": "microphone"
+ },
+ {
+  "en": "greedy",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "codicioso",
+  "fr": "avide"
+ },
+ {
+  "en": "confidence",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "confianza",
+  "fr": "confiance"
+ },
+ {
+  "en": "depend",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "depender",
+  "fr": "dépendre"
+ },
+ {
+  "en": "elegant",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "elegante",
+  "fr": "élégant"
+ },
+ {
+  "en": "fourth",
+  "pos": "num",
+  "cat": "numbers",
+  "sense": "",
+  "es": "cuarto",
+  "fr": "quatrième"
+ },
+ {
+  "en": "nut",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "nuez",
+  "fr": "noix"
+ },
+ {
+  "en": "fin",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "aleta",
+  "fr": "nageoire"
+ },
+ {
+  "en": "album",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "álbum",
+  "fr": "album"
+ },
+ {
+  "en": "hollow",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "hueco",
+  "fr": "creux"
+ },
+ {
+  "en": "conflict",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "conflicto",
+  "fr": "conflit"
+ },
+ {
+  "en": "deserve",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "merecer",
+  "fr": "mériter"
+ },
+ {
+  "en": "embarrassed",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "avergonzado",
+  "fr": "gêné"
+ },
+ {
+  "en": "fifth",
+  "pos": "num",
+  "cat": "numbers",
+  "sense": "",
+  "es": "quinto",
+  "fr": "cinquième"
+ },
+ {
+  "en": "honey",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "miel",
+  "fr": "miel"
+ },
+ {
+  "en": "web",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "telaraña",
+  "fr": "toile"
+ },
+ {
+  "en": "disc",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "disco",
+  "fr": "disque"
+ },
+ {
+  "en": "loose",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "suelto",
+  "fr": "lâche"
+ },
+ {
+  "en": "connection",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "conexión",
+  "fr": "connexion"
+ },
+ {
+  "en": "develop",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "desarrollar",
+  "fr": "développer"
+ },
+ {
+  "en": "emotional",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "emocional",
+  "fr": "émotionnel"
+ },
+ {
+  "en": "thirteen",
+  "pos": "num",
+  "cat": "numbers",
+  "sense": "",
+  "es": "trece",
+  "fr": "treize"
+ },
+ {
+  "en": "jam",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "mermelada",
+  "fr": "confiture"
+ },
+ {
+  "en": "beast",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "bestia",
+  "fr": "bête"
+ },
+ {
+  "en": "receipt",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "recibo",
+  "fr": "reçu"
+ },
+ {
+  "en": "modest",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "modesto",
+  "fr": "modeste"
+ },
+ {
+  "en": "consider",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "considerar",
+  "fr": "considérer"
+ },
+ {
+  "en": "divide",
+  "pos": "verb",
+  "cat": "numbers",
+  "sense": "",
+  "es": "dividir",
+  "fr": "diviser"
+ },
+ {
+  "en": "enormous",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "enorme",
+  "fr": "énorme"
+ },
+ {
+  "en": "fourteen",
+  "pos": "num",
+  "cat": "numbers",
+  "sense": "",
+  "es": "catorce",
+  "fr": "quatorze"
+ },
+ {
+  "en": "flour",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "harina",
+  "fr": "farine"
+ },
+ {
+  "en": "herd",
+  "pos": "noun",
+  "cat": "animals",
+  "sense": "",
+  "es": "manada",
+  "fr": "troupeau"
+ },
+ {
+  "en": "invoice",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "factura",
+  "fr": "facture"
+ },
+ {
+  "en": "obedient",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "obediente",
+  "fr": "obéissant"
+ },
+ {
+  "en": "contact",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "contacto",
+  "fr": "contact"
+ },
+ {
+  "en": "elect",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "elegir",
+  "fr": "élire"
+ },
+ {
+  "en": "equal",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "igual",
+  "fr": "égal"
+ },
+ {
+  "en": "fifteen",
+  "pos": "num",
+  "cat": "numbers",
+  "sense": "",
+  "es": "quince",
+  "fr": "quinze"
+ },
+ {
+  "en": "yogurt",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "yogur",
+  "fr": "yaourt"
+ },
+ {
+  "en": "cliff",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "acantilado",
+  "fr": "falaise"
+ },
+ {
+  "en": "tax",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "impuesto",
+  "fr": "impôt"
+ },
+ {
+  "en": "optimistic",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "optimista",
+  "fr": "optimiste"
+ },
+ {
+  "en": "contract",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "contrato",
+  "fr": "contrat"
+ },
+ {
+  "en": "employ",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "emplear",
+  "fr": "employer"
+ },
+ {
+  "en": "essential",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "esencial",
+  "fr": "essentiel"
+ },
+ {
+  "en": "sixteen",
+  "pos": "num",
+  "cat": "numbers",
+  "sense": "",
+  "es": "dieciséis",
+  "fr": "seize"
+ },
+ {
+  "en": "cream",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "crema",
+  "fr": "crème"
+ },
+ {
+  "en": "canyon",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "cañón",
+  "fr": "canyon"
+ },
+ {
+  "en": "cart",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "carrito",
+  "fr": "chariot"
+ },
+ {
+  "en": "pessimistic",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "pesimista",
+  "fr": "pessimiste"
+ },
+ {
+  "en": "copy",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "copia",
+  "fr": "copie"
+ },
+ {
+  "en": "encourage",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "animar",
+  "fr": "encourager"
+ },
+ {
+  "en": "exact",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "exacto",
+  "fr": "exact"
+ },
+ {
+  "en": "seventeen",
+  "pos": "num",
+  "cat": "numbers",
+  "sense": "",
+  "es": "diecisiete",
+  "fr": "dix-sept"
+ },
+ {
+  "en": "dessert",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "postre",
+  "fr": "dessert"
+ },
+ {
+  "en": "volcano",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "volcán",
+  "fr": "volcan"
+ },
+ {
+  "en": "basket",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "cesta",
+  "fr": "panier"
+ },
+ {
+  "en": "poisonous",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "venenoso",
+  "fr": "vénéneux"
+ },
+ {
+  "en": "council",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "consejo",
+  "fr": "conseil"
+ },
+ {
+  "en": "enter",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "entrar",
+  "fr": "entrer"
+ },
+ {
+  "en": "excellent",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "excelente",
+  "fr": "excellent"
+ },
+ {
+  "en": "eighteen",
+  "pos": "num",
+  "cat": "numbers",
+  "sense": "",
+  "es": "dieciocho",
+  "fr": "dix-huit"
+ },
+ {
+  "en": "candy",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "caramelo",
+  "fr": "bonbon"
+ },
+ {
+  "en": "earthquake",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "terremoto",
+  "fr": "séisme"
+ },
+ {
+  "en": "account",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "cuenta",
+  "fr": "compte"
+ },
+ {
+  "en": "relaxed",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "relajado",
+  "fr": "détendu"
+ },
+ {
+  "en": "crowd",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "multitud",
+  "fr": "foule"
+ },
+ {
+  "en": "estimate",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "estimar",
+  "fr": "estimer"
+ },
+ {
+  "en": "exciting",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "emocionante",
+  "fr": "passionnant"
+ },
+ {
+  "en": "nineteen",
+  "pos": "num",
+  "cat": "numbers",
+  "sense": "",
+  "es": "diecinueve",
+  "fr": "dix-neuf"
+ },
+ {
+  "en": "cookie",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "galleta",
+  "fr": "biscuit"
+ },
+ {
+  "en": "flood",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "inundación",
+  "fr": "inondation"
+ },
+ {
+  "en": "currency",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "moneda",
+  "fr": "monnaie"
+ },
+ {
+  "en": "rotten",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "podrido",
+  "fr": "pourri"
+ },
+ {
+  "en": "cycle",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "ciclo",
+  "fr": "cycle"
+ },
+ {
+  "en": "examine",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "examinar",
+  "fr": "examiner"
+ },
+ {
+  "en": "fair",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "just",
+  "es": "justo",
+  "fr": "juste"
+ },
+ {
+  "en": "dozen",
+  "pos": "noun",
+  "cat": "numbers",
+  "sense": "",
+  "es": "docena",
+  "fr": "douzaine"
+ },
+ {
+  "en": "pie",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "tarta",
+  "fr": "tarte"
+ },
+ {
+  "en": "drought",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "sequía",
+  "fr": "sécheresse"
+ },
+ {
+  "en": "dollar",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "dólar",
+  "fr": "dollar"
+ },
+ {
+  "en": "slippery",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "resbaladizo",
+  "fr": "glissant"
+ },
+ {
+  "en": "damage",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "daño",
+  "fr": "dommage"
+ },
+ {
+  "en": "excuse",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "disculpar",
+  "fr": "excuser"
+ },
+ {
+  "en": "faithful",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "fiel",
+  "fr": "fidèle"
+ },
+ {
+  "en": "second",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "unit of time",
+  "es": "segundo",
+  "fr": "seconde"
+ },
+ {
+  "en": "pancake",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "panqueque",
+  "fr": "crêpe"
+ },
+ {
+  "en": "fog",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "niebla",
+  "fr": "brouillard"
+ },
+ {
+  "en": "euro",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "euro",
+  "fr": "euro"
+ },
+ {
+  "en": "snowy",
+  "pos": "adj",
+  "cat": "nature",
+  "sense": "",
+  "es": "nevado",
+  "fr": "enneigé"
+ },
+ {
+  "en": "data",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "dato",
+  "fr": "donnée"
+ },
+ {
+  "en": "express",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "expresar",
+  "fr": "exprimer"
+ },
+ {
+  "en": "false",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "falso",
+  "fr": "faux"
+ },
+ {
+  "en": "midnight",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "medianoche",
+  "fr": "minuit"
+ },
+ {
+  "en": "toast",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "tostada",
+  "fr": "toast"
+ },
+ {
+  "en": "frost",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "escarcha",
+  "fr": "gel"
+ },
+ {
+  "en": "commerce",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "comercio",
+  "fr": "commerce"
+ },
+ {
+  "en": "stormy",
+  "pos": "adj",
+  "cat": "nature",
+  "sense": "",
+  "es": "tormentoso",
+  "fr": "orageux"
+ },
+ {
+  "en": "debate",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "debate",
+  "fr": "débat"
+ },
+ {
+  "en": "extend",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "extender",
+  "fr": "étendre"
+ },
+ {
+  "en": "familiar",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "familiar",
+  "fr": "familier"
+ },
+ {
+  "en": "noon",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "mediodía",
+  "fr": "midi"
+ },
+ {
+  "en": "sauce",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "salsa",
+  "fr": "sauce"
+ },
+ {
+  "en": "hail",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "granizo",
+  "fr": "grêle"
+ },
+ {
+  "en": "unemployment",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "desempleo",
+  "fr": "chômage"
+ },
+ {
+  "en": "talkative",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "hablador",
+  "fr": "bavard"
+ },
+ {
+  "en": "debt",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "deuda",
+  "fr": "dette"
+ },
+ {
+  "en": "fail",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "fracasar",
+  "fr": "échouer"
+ },
+ {
+  "en": "fantastic",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "fantástico",
+  "fr": "fantastique"
+ },
+ {
+  "en": "dawn",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "amanecer",
+  "fr": "aube"
+ },
+ {
+  "en": "spice",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "especia",
+  "fr": "épice"
+ },
+ {
+  "en": "lightning",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "relámpago",
+  "fr": "éclair"
+ },
+ {
+  "en": "retirement",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "jubilación",
+  "fr": "retraite"
+ },
+ {
+  "en": "timid",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "tímido",
+  "fr": "timide"
+ },
+ {
+  "en": "decade",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "década",
+  "fr": "décennie"
+ },
+ {
+  "en": "feed",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "alimentar",
+  "fr": "nourrir"
+ },
+ {
+  "en": "fine",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "thin",
+  "es": "fino",
+  "fr": "fin"
+ },
+ {
+  "en": "instant",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "instante",
+  "fr": "instant"
+ },
+ {
+  "en": "vinegar",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "vinagre",
+  "fr": "vinaigre"
+ },
+ {
+  "en": "rainbow",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "arcoíris",
+  "fr": "arc-en-ciel"
+ },
+ {
+  "en": "promotion",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "promoción",
+  "fr": "promotion"
+ },
+ {
+  "en": "unhappy",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "infeliz",
+  "fr": "malheureux"
+ },
+ {
+  "en": "decision",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "decisión",
+  "fr": "décision"
+ },
+ {
+  "en": "flow",
+  "pos": "verb",
+  "cat": "nature",
+  "sense": "",
+  "es": "fluir",
+  "fr": "couler"
+ },
+ {
+  "en": "firm",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "firme",
+  "fr": "ferme"
+ },
+ {
+  "en": "hurray",
+  "pos": "interj",
+  "cat": "small-words",
+  "sense": "",
+  "es": "hurra",
+  "fr": "hourra"
+ },
+ {
+  "en": "menu",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "menú",
+  "fr": "menu"
+ },
+ {
+  "en": "breeze",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "brisa",
+  "fr": "brise"
+ },
+ {
+  "en": "agenda",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "agenda",
+  "fr": "agenda"
+ },
+ {
+  "en": "valid",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "válido",
+  "fr": "valide"
+ },
+ {
+  "en": "defense",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "defensa",
+  "fr": "défense"
+ },
+ {
+  "en": "fold",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "doblar",
+  "fr": "plier"
+ },
+ {
+  "en": "flexible",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "flexible",
+  "fr": "flexible"
+ },
+ {
+  "en": "cheers",
+  "pos": "interj",
+  "cat": "small-words",
+  "sense": "",
+  "es": "salud",
+  "fr": "santé"
+ },
+ {
+  "en": "bowl",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "cuenco",
+  "fr": "bol"
+ },
+ {
+  "en": "shore",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "orilla",
+  "fr": "rivage"
+ },
+ {
+  "en": "file",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "archivo",
+  "fr": "dossier"
+ },
+ {
+  "en": "vegetarian",
+  "pos": "adj",
+  "cat": "food",
+  "sense": "",
+  "es": "vegetariano",
+  "fr": "végétarien"
+ },
+ {
+  "en": "degree",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "academic",
+  "es": "título",
+  "fr": "diplôme"
+ },
+ {
+  "en": "frighten",
+  "pos": "verb",
+  "cat": "feelings",
+  "sense": "",
+  "es": "asustar",
+  "fr": "effrayer"
+ },
+ {
+  "en": "foolish",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "tonto",
+  "fr": "bête"
+ },
+ {
+  "en": "congratulations",
+  "pos": "interj",
+  "cat": "small-words",
+  "sense": "",
+  "es": "felicidades",
+  "fr": "félicitations"
+ },
+ {
+  "en": "pot",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "olla",
+  "fr": "casserole"
+ },
+ {
+  "en": "waterfall",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "cascada",
+  "fr": "cascade"
+ },
+ {
+  "en": "printer",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "impresora",
+  "fr": "imprimante"
+ },
+ {
+  "en": "afterward",
+  "pos": "adv",
+  "cat": "small-words",
+  "sense": "",
+  "es": "luego",
+  "fr": "ensuite"
+ },
+ {
+  "en": "delivery",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "entrega",
+  "fr": "livraison"
+ },
+ {
+  "en": "grab",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "agarrar",
+  "fr": "saisir"
+ },
+ {
+  "en": "fragile",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "frágil",
+  "fr": "fragile"
+ },
+ {
+  "en": "pan",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "sartén",
+  "fr": "poêle"
+ },
+ {
+  "en": "pond",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "estanque",
+  "fr": "étang"
+ },
+ {
+  "en": "keyboard",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "teclado",
+  "fr": "clavier"
+ },
+ {
+  "en": "demand",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "demanda",
+  "fr": "demande"
+ },
+ {
+  "en": "guarantee",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "garantizar",
+  "fr": "garantir"
+ },
+ {
+  "en": "frequent",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "frecuente",
+  "fr": "fréquent"
+ },
+ {
+  "en": "jar",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "tarro",
+  "fr": "bocal"
+ },
+ {
+  "en": "swamp",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "pantano",
+  "fr": "marais"
+ },
+ {
+  "en": "code",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "código",
+  "fr": "code"
+ },
+ {
+  "en": "department",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "departamento",
+  "fr": "département"
+ },
+ {
+  "en": "hang",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "colgar",
+  "fr": "accrocher"
+ },
+ {
+  "en": "fresh",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "fresco",
+  "fr": "frais"
+ },
+ {
+  "en": "tray",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "bandeja",
+  "fr": "plateau"
+ },
+ {
+  "en": "meadow",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "prado",
+  "fr": "prairie"
+ },
+ {
+  "en": "robot",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "robot",
+  "fr": "robot"
+ },
+ {
+  "en": "design",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "diseño",
+  "fr": "design"
+ },
+ {
+  "en": "hesitate",
+  "pos": "verb",
+  "cat": "feelings",
+  "sense": "",
+  "es": "vacilar",
+  "fr": "hésiter"
+ },
+ {
+  "en": "friendly",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "amistoso",
+  "fr": "amical"
+ },
+ {
+  "en": "napkin",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "servilleta",
+  "fr": "serviette"
+ },
+ {
+  "en": "bush",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "arbusto",
+  "fr": "buisson"
+ },
+ {
+  "en": "gear",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "engranaje",
+  "fr": "engrenage"
+ },
+ {
+  "en": "detail",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "detalle",
+  "fr": "détail"
+ },
+ {
+  "en": "hire",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "contratar",
+  "fr": "embaucher"
+ },
+ {
+  "en": "frozen",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "congelado",
+  "fr": "congelé"
+ },
+ {
+  "en": "kettle",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "hervidor",
+  "fr": "bouilloire"
+ },
+ {
+  "en": "moss",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "musgo",
+  "fr": "mousse"
+ },
+ {
+  "en": "invention",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "invento",
+  "fr": "invention"
+ },
+ {
+  "en": "development",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "desarrollo",
+  "fr": "développement"
+ },
+ {
+  "en": "identify",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "identificar",
+  "fr": "identifier"
+ },
+ {
+  "en": "furious",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "furioso",
+  "fr": "furieux"
+ },
+ {
+  "en": "stove",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "estufa",
+  "fr": "cuisinière"
+ },
+ {
+  "en": "rose",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "rosa",
+  "fr": "rose"
+ },
+ {
+  "en": "discovery",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "descubrimiento",
+  "fr": "découverte"
+ },
+ {
+  "en": "device",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "dispositivo",
+  "fr": "appareil"
+ },
+ {
+  "en": "ignore",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "ignorar",
+  "fr": "ignorer"
+ },
+ {
+  "en": "general",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "general",
+  "fr": "général"
+ },
+ {
+  "en": "waiter",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "camarero",
+  "fr": "serveur"
+ },
+ {
+  "en": "tulip",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "tulipán",
+  "fr": "tulipe"
+ },
+ {
+  "en": "microscope",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "microscopio",
+  "fr": "microscope"
+ },
+ {
+  "en": "dialogue",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "diálogo",
+  "fr": "dialogue"
+ },
+ {
+  "en": "impress",
+  "pos": "verb",
+  "cat": "feelings",
+  "sense": "",
+  "es": "impresionar",
+  "fr": "impressionner"
+ },
+ {
+  "en": "generous",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "generoso",
+  "fr": "généreux"
+ },
+ {
+  "en": "bar",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "bar",
+  "fr": "bar"
+ },
+ {
+  "en": "petal",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "pétalo",
+  "fr": "pétale"
+ },
+ {
+  "en": "telescope",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "telescopio",
+  "fr": "télescope"
+ },
+ {
+  "en": "diet",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "dieta",
+  "fr": "régime"
+ },
+ {
+  "en": "indicate",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "indicar",
+  "fr": "indiquer"
+ },
+ {
+  "en": "gentle",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "suave",
+  "fr": "doux"
+ },
+ {
+  "en": "bakery",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "panadería",
+  "fr": "boulangerie"
+ },
+ {
+  "en": "bamboo",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "bambú",
+  "fr": "bambou"
+ },
+ {
+  "en": "thermometer",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "termómetro",
+  "fr": "thermomètre"
+ },
+ {
+  "en": "direction",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "dirección",
+  "fr": "direction"
+ },
+ {
+  "en": "inform",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "informar",
+  "fr": "informer"
+ },
+ {
+  "en": "giant",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "gigante",
+  "fr": "géant"
+ },
+ {
+  "en": "butcher",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "carnicero",
+  "fr": "boucher"
+ },
+ {
+  "en": "pine",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "pino",
+  "fr": "pin"
+ },
+ {
+  "en": "scale",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "balanza",
+  "fr": "balance"
+ },
+ {
+  "en": "director",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "director",
+  "fr": "directeur"
+ },
+ {
+  "en": "injure",
+  "pos": "verb",
+  "cat": "health",
+  "sense": "",
+  "es": "herir",
+  "fr": "blesser"
+ },
+ {
+  "en": "global",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "global",
+  "fr": "mondial"
+ },
+ {
+  "en": "appetite",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "apetito",
+  "fr": "appétit"
+ },
+ {
+  "en": "oak",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "roble",
+  "fr": "chêne"
+ },
+ {
+  "en": "ruler",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "regla",
+  "fr": "règle"
+ },
+ {
+  "en": "discount",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "descuento",
+  "fr": "remise"
+ },
+ {
+  "en": "insist",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "insistir",
+  "fr": "insister"
+ },
+ {
+  "en": "golden",
+  "pos": "adj",
+  "cat": "colors",
+  "sense": "",
+  "es": "dorado",
+  "fr": "doré"
+ },
+ {
+  "en": "flavor",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "sabor",
+  "fr": "saveur"
+ },
+ {
+  "en": "trunk",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "tronco",
+  "fr": "tronc"
+ },
+ {
+  "en": "calculator",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "calculadora",
+  "fr": "calculatrice"
+ },
+ {
+  "en": "distance",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "distancia",
+  "fr": "distance"
+ },
+ {
+  "en": "install",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "instalar",
+  "fr": "installer"
+ },
+ {
+  "en": "grateful",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "agradecido",
+  "fr": "reconnaissant"
+ },
+ {
+  "en": "vitamin",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "vitamina",
+  "fr": "vitamine"
+ },
+ {
+  "en": "bark",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "corteza",
+  "fr": "écorce"
+ },
+ {
+  "en": "scissors",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "tijeras",
+  "fr": "ciseaux"
+ },
+ {
+  "en": "district",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "distrito",
+  "fr": "district"
+ },
+ {
+  "en": "interrupt",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "interrumpir",
+  "fr": "interrompre"
+ },
+ {
+  "en": "guilty",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "culpable",
+  "fr": "coupable"
+ },
+ {
+  "en": "alcohol",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "alcohol",
+  "fr": "alcool"
+ },
+ {
+  "en": "thorn",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "espina",
+  "fr": "épine"
+ },
+ {
+  "en": "glue",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "pegamento",
+  "fr": "colle"
+ },
+ {
+  "en": "division",
+  "pos": "noun",
+  "cat": "numbers",
+  "sense": "",
+  "es": "división",
+  "fr": "division"
+ },
+ {
+  "en": "invest",
+  "pos": "verb",
+  "cat": "shopping",
+  "sense": "",
+  "es": "invertir",
+  "fr": "investir"
+ },
+ {
+  "en": "handsome",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "guapo",
+  "fr": "beau"
+ },
+ {
+  "en": "champagne",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "champán",
+  "fr": "champagne"
+ },
+ {
+  "en": "mineral",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "mineral",
+  "fr": "minéral"
+ },
+ {
+  "en": "tape",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "cinta",
+  "fr": "ruban"
+ },
+ {
+  "en": "document",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "documento",
+  "fr": "document"
+ },
+ {
+  "en": "land",
+  "pos": "verb",
+  "cat": "travel",
+  "sense": "",
+  "es": "aterrizar",
+  "fr": "atterrir"
+ },
+ {
+  "en": "harmful",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "dañino",
+  "fr": "nuisible"
+ },
+ {
+  "en": "cocktail",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "cóctel",
+  "fr": "cocktail"
+ },
+ {
+  "en": "coal",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "carbón",
+  "fr": "charbon"
+ },
+ {
+  "en": "needle",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "aguja",
+  "fr": "aiguille"
+ },
+ {
+  "en": "drama",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "drama",
+  "fr": "drame"
+ },
+ {
+  "en": "launch",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "lanzar",
+  "fr": "lancer"
+ },
+ {
+  "en": "hidden",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "oculto",
+  "fr": "caché"
+ },
+ {
+  "en": "lemonade",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "limonada",
+  "fr": "limonade"
+ },
+ {
+  "en": "diamond",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "diamante",
+  "fr": "diamant"
+ },
+ {
+  "en": "magnet",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "imán",
+  "fr": "aimant"
+ },
+ {
+  "en": "economy",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "economía",
+  "fr": "économie"
+ },
+ {
+  "en": "lick",
+  "pos": "verb",
+  "cat": "body",
+  "sense": "",
+  "es": "lamer",
+  "fr": "lécher"
+ },
+ {
+  "en": "holy",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "santo",
+  "fr": "saint"
+ },
+ {
+  "en": "apartment",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "apartamento",
+  "fr": "appartement"
+ },
+ {
+  "en": "crystal",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "cristal",
+  "fr": "cristal"
+ },
+ {
+  "en": "mask",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "máscara",
+  "fr": "masque"
+ },
+ {
+  "en": "edition",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "edición",
+  "fr": "édition"
+ },
+ {
+  "en": "manage",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "dirigir",
+  "fr": "diriger"
+ },
+ {
+  "en": "honest",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "honesto",
+  "fr": "honnête"
+ },
+ {
+  "en": "balcony",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "balcón",
+  "fr": "balcon"
+ },
+ {
+  "en": "metal",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "metal",
+  "fr": "métal"
+ },
+ {
+  "en": "helmet",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "casco",
+  "fr": "casque"
+ },
+ {
+  "en": "editor",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "editor",
+  "fr": "éditeur"
+ },
+ {
+  "en": "mark",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "marcar",
+  "fr": "marquer"
+ },
+ {
+  "en": "terrible",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "terrible",
+  "fr": "terrible"
+ },
+ {
+  "en": "basement",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "sótano",
+  "fr": "sous-sol"
+ },
+ {
+  "en": "copper",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "cobre",
+  "fr": "cuivre"
+ },
+ {
+  "en": "shield",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "escudo",
+  "fr": "bouclier"
+ },
+ {
+  "en": "education",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "educación",
+  "fr": "éducation"
+ },
+ {
+  "en": "mean",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "significar",
+  "fr": "signifier"
+ },
+ {
+  "en": "humble",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "humilde",
+  "fr": "humble"
+ },
+ {
+  "en": "attic",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "desván",
+  "fr": "grenier"
+ },
+ {
+  "en": "rock",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "roca",
+  "fr": "roche"
+ },
+ {
+  "en": "sword",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "espada",
+  "fr": "épée"
+ },
+ {
+  "en": "effect",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "efecto",
+  "fr": "effet"
+ },
+ {
+  "en": "obey",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "obedecer",
+  "fr": "obéir"
+ },
+ {
+  "en": "ideal",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "ideal",
+  "fr": "idéal"
+ },
+ {
+  "en": "ceiling",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "techo",
+  "fr": "plafond"
+ },
+ {
+  "en": "pebble",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "guijarro",
+  "fr": "caillou"
+ },
+ {
+  "en": "gun",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "pistola",
+  "fr": "pistolet"
+ },
+ {
+  "en": "effort",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "esfuerzo",
+  "fr": "effort"
+ },
+ {
+  "en": "obtain",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "obtener",
+  "fr": "obtenir"
+ },
+ {
+  "en": "identical",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "idéntico",
+  "fr": "identique"
+ },
+ {
+  "en": "corridor",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "pasillo",
+  "fr": "couloir"
+ },
+ {
+  "en": "tide",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "marea",
+  "fr": "marée"
+ },
+ {
+  "en": "bullet",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "bala",
+  "fr": "balle"
+ },
+ {
+  "en": "election",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "elección",
+  "fr": "élection"
+ },
+ {
+  "en": "offer",
+  "pos": "verb",
+  "cat": "shopping",
+  "sense": "",
+  "es": "ofrecer",
+  "fr": "offrir"
+ },
+ {
+  "en": "immediate",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "inmediato",
+  "fr": "immédiat"
+ },
+ {
+  "en": "garage",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "garaje",
+  "fr": "garage"
+ },
+ {
+  "en": "reef",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "arrecife",
+  "fr": "récif"
+ },
+ {
+  "en": "arrow",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "flecha",
+  "fr": "flèche"
+ },
+ {
+  "en": "element",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "elemento",
+  "fr": "élément"
+ },
+ {
+  "en": "operate",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "operar",
+  "fr": "opérer"
+ },
+ {
+  "en": "impossible",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "imposible",
+  "fr": "impossible"
+ },
+ {
+  "en": "gate",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "verja",
+  "fr": "portail"
+ },
+ {
+  "en": "peninsula",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "península",
+  "fr": "péninsule"
+ },
+ {
+  "en": "bow",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "arco",
+  "fr": "arc"
+ },
+ {
+  "en": "emergency",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "emergencia",
+  "fr": "urgence"
+ },
+ {
+  "en": "own",
+  "pos": "verb",
+  "cat": "things",
+  "sense": "",
+  "es": "poseer",
+  "fr": "posséder"
+ },
+ {
+  "en": "impressive",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "impresionante",
+  "fr": "impressionnant"
+ },
+ {
+  "en": "lock",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "cerradura",
+  "fr": "serrure"
+ },
+ {
+  "en": "continent",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "continente",
+  "fr": "continent"
+ },
+ {
+  "en": "flag",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "bandera",
+  "fr": "drapeau"
+ },
+ {
+  "en": "emotion",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "emoción",
+  "fr": "émotion"
+ },
+ {
+  "en": "paint",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "pintar",
+  "fr": "peindre"
+ },
+ {
+  "en": "incredible",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "increíble",
+  "fr": "incroyable"
+ },
+ {
+  "en": "mattress",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "colchón",
+  "fr": "matelas"
+ },
+ {
+  "en": "globe",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "globo",
+  "fr": "globe"
+ },
+ {
+  "en": "crown",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "corona",
+  "fr": "couronne"
+ },
+ {
+  "en": "energy",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "energía",
+  "fr": "énergie"
+ },
+ {
+  "en": "park",
+  "pos": "verb",
+  "cat": "travel",
+  "sense": "",
+  "es": "aparcar",
+  "fr": "garer"
+ },
+ {
+  "en": "independent",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "independiente",
+  "fr": "indépendant"
+ },
+ {
+  "en": "closet",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "armario",
+  "fr": "placard"
+ },
+ {
+  "en": "horizon",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "horizonte",
+  "fr": "horizon"
+ },
+ {
+  "en": "throne",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "trono",
+  "fr": "trône"
+ },
+ {
+  "en": "entrance",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "entrada",
+  "fr": "entrée"
+ },
+ {
+  "en": "pass",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "pasar",
+  "fr": "passer"
+ },
+ {
+  "en": "industrial",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "industrial",
+  "fr": "industriel"
+ },
+ {
+  "en": "cushion",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "cojín",
+  "fr": "coussin"
+ },
+ {
+  "en": "ray",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "rayo",
+  "fr": "rayon"
+ },
+ {
+  "en": "treasure",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "tesoro",
+  "fr": "trésor"
+ },
+ {
+  "en": "episode",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "episodio",
+  "fr": "épisode"
+ },
+ {
+  "en": "polish",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "pulir",
+  "fr": "polir"
+ },
+ {
+  "en": "innocent",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "inocente",
+  "fr": "innocent"
+ },
+ {
+  "en": "bucket",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "cubo",
+  "fr": "seau"
+ },
+ {
+  "en": "flame",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "llama",
+  "fr": "flamme"
+ },
+ {
+  "en": "medal",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "medalla",
+  "fr": "médaille"
+ },
+ {
+  "en": "equipment",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "equipo",
+  "fr": "équipement"
+ },
+ {
+  "en": "praise",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "elogiar",
+  "fr": "louer"
+ },
+ {
+  "en": "intelligent",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "inteligente",
+  "fr": "intelligent"
+ },
+ {
+  "en": "ladder",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "escalera",
+  "fr": "échelle"
+ },
+ {
+  "en": "spark",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "chispa",
+  "fr": "étincelle"
+ },
+ {
+  "en": "trophy",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "trofeo",
+  "fr": "trophée"
+ },
+ {
+  "en": "error",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "error",
+  "fr": "erreur"
+ },
+ {
+  "en": "pray",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "rezar",
+  "fr": "prier"
+ },
+ {
+  "en": "intense",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "intenso",
+  "fr": "intense"
+ },
+ {
+  "en": "hammer",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "martillo",
+  "fr": "marteau"
+ },
+ {
+  "en": "ash",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "ceniza",
+  "fr": "cendre"
+ },
+ {
+  "en": "prize",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "premio",
+  "fr": "prix"
+ },
+ {
+  "en": "event",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "evento",
+  "fr": "événement"
+ },
+ {
+  "en": "predict",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "predecir",
+  "fr": "prédire"
+ },
+ {
+  "en": "interesting",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "interesante",
+  "fr": "intéressant"
+ },
+ {
+  "en": "nail",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "metal",
+  "es": "clavo",
+  "fr": "clou"
+ },
+ {
+  "en": "steam",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "vapor",
+  "fr": "vapeur"
+ },
+ {
+  "en": "barrel",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "barril",
+  "fr": "tonneau"
+ },
+ {
+  "en": "evidence",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "prueba",
+  "fr": "preuve"
+ },
+ {
+  "en": "press",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "presionar",
+  "fr": "appuyer"
+ },
+ {
+  "en": "internal",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "interno",
+  "fr": "interne"
+ },
+ {
+  "en": "screw",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "tornillo",
+  "fr": "vis"
+ },
+ {
+  "en": "bubble",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "burbuja",
+  "fr": "bulle"
+ },
+ {
+  "en": "sack",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "saco",
+  "fr": "sac"
+ },
+ {
+  "en": "exchange",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "intercambio",
+  "fr": "échange"
+ },
+ {
+  "en": "prevent",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "impedir",
+  "fr": "empêcher"
+ },
+ {
+  "en": "international",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "internacional",
+  "fr": "international"
+ },
+ {
+  "en": "saw",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "sierra",
+  "fr": "scie"
+ },
+ {
+  "en": "puddle",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "charco",
+  "fr": "flaque"
+ },
+ {
+  "en": "puzzle",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "rompecabezas",
+  "fr": "puzzle"
+ },
+ {
+  "en": "exhibition",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "exposición",
+  "fr": "exposition"
+ },
+ {
+  "en": "print",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "imprimir",
+  "fr": "imprimer"
+ },
+ {
+  "en": "invisible",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "invisible",
+  "fr": "invisible"
+ },
+ {
+  "en": "drill",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "taladro",
+  "fr": "perceuse"
+ },
+ {
+  "en": "galaxy",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "galaxia",
+  "fr": "galaxie"
+ },
+ {
+  "en": "dice",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "dado",
+  "fr": "dé"
+ },
+ {
+  "en": "experience",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "experiencia",
+  "fr": "expérience"
+ },
+ {
+  "en": "produce",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "producir",
+  "fr": "produire"
+ },
+ {
+  "en": "likely",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "probable",
+  "fr": "probable"
+ },
+ {
+  "en": "vacuum",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "aspiradora",
+  "fr": "aspirateur"
+ },
+ {
+  "en": "comet",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "cometa",
+  "fr": "comète"
+ },
+ {
+  "en": "chess",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "ajedrez",
+  "fr": "échecs"
+ },
+ {
+  "en": "expert",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "experto",
+  "fr": "expert"
+ },
+ {
+  "en": "pronounce",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "pronunciar",
+  "fr": "prononcer"
+ },
+ {
+  "en": "lively",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "animado",
+  "fr": "animé"
+ },
+ {
+  "en": "sink",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "fregadero",
+  "fr": "évier"
+ },
+ {
+  "en": "orbit",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "órbita",
+  "fr": "orbite"
+ },
+ {
+  "en": "doll",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "muñeca",
+  "fr": "poupée"
+ },
+ {
+  "en": "fact",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "hecho",
+  "fr": "fait"
+ },
+ {
+  "en": "prove",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "probar",
+  "fr": "prouver"
+ },
+ {
+  "en": "logical",
+  "pos": "adj",
+  "cat": "thinking",
+  "sense": "",
+  "es": "lógico",
+  "fr": "logique"
+ },
+ {
+  "en": "faucet",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "grifo",
+  "fr": "robinet"
+ },
+ {
+  "en": "rocket",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "cohete",
+  "fr": "fusée"
+ },
+ {
+  "en": "tennis",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "tenis",
+  "fr": "tennis"
+ },
+ {
+  "en": "factor",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "factor",
+  "fr": "facteur"
+ },
+ {
+  "en": "provide",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "proporcionar",
+  "fr": "fournir"
+ },
+ {
+  "en": "lovely",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "encantador",
+  "fr": "charmant"
+ },
+ {
+  "en": "bathtub",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "bañera",
+  "fr": "baignoire"
+ },
+ {
+  "en": "astronaut",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "astronauta",
+  "fr": "astronaute"
+ },
+ {
+  "en": "golf",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "golf",
+  "fr": "golf"
+ },
+ {
+  "en": "failure",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "fracaso",
+  "fr": "échec"
+ },
+ {
+  "en": "punish",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "castigar",
+  "fr": "punir"
+ },
+ {
+  "en": "loyal",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "leal",
+  "fr": "loyal"
+ },
+ {
+  "en": "shower",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "ducha",
+  "fr": "douche"
+ },
+ {
+  "en": "garbage",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "basura",
+  "fr": "déchet"
+ },
+ {
+  "en": "basketball",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "baloncesto",
+  "fr": "basket-ball"
+ },
+ {
+  "en": "fashion",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "moda",
+  "fr": "mode"
+ },
+ {
+  "en": "reach",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "alcanzar",
+  "fr": "atteindre"
+ },
+ {
+  "en": "lucky",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "afortunado",
+  "fr": "chanceux"
+ },
+ {
+  "en": "comb",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "peine",
+  "fr": "peigne"
+ },
+ {
+  "en": "lighthouse",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "faro",
+  "fr": "phare"
+ },
+ {
+  "en": "baseball",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "béisbol",
+  "fr": "baseball"
+ },
+ {
+  "en": "fault",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "culpa",
+  "fr": "faute"
+ },
+ {
+  "en": "react",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "reaccionar",
+  "fr": "réagir"
+ },
+ {
+  "en": "magic",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "mágico",
+  "fr": "magique"
+ },
+ {
+  "en": "razor",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "navaja",
+  "fr": "rasoir"
+ },
+ {
+  "en": "runway",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "pista",
+  "fr": "piste"
+ },
+ {
+  "en": "swimming",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "natación",
+  "fr": "natation"
+ },
+ {
+  "en": "feature",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "característica",
+  "fr": "caractéristique"
+ },
+ {
+  "en": "recognize",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "reconocer",
+  "fr": "reconnaître"
+ },
+ {
+  "en": "magnificent",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "magnífico",
+  "fr": "magnifique"
+ },
+ {
+  "en": "shampoo",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "champú",
+  "fr": "shampooing"
+ },
+ {
+  "en": "passenger",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "pasajero",
+  "fr": "passager"
+ },
+ {
+  "en": "boxing",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "boxeo",
+  "fr": "boxe"
+ },
+ {
+  "en": "fee",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "tarifa",
+  "fr": "tarif"
+ },
+ {
+  "en": "recommend",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "recomendar",
+  "fr": "recommander"
+ },
+ {
+  "en": "mature",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "maduro",
+  "fr": "mûr"
+ },
+ {
+  "en": "perfume",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "perfume",
+  "fr": "parfum"
+ },
+ {
+  "en": "crew",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "tripulación",
+  "fr": "équipage"
+ },
+ {
+  "en": "match",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "sports game",
+  "es": "partido",
+  "fr": "match"
+ },
+ {
+  "en": "festival",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "festival",
+  "fr": "festival"
+ },
+ {
+  "en": "record",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "grabar",
+  "fr": "enregistrer"
+ },
+ {
+  "en": "medical",
+  "pos": "adj",
+  "cat": "health",
+  "sense": "",
+  "es": "médico",
+  "fr": "médical"
+ },
+ {
+  "en": "battery",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "batería",
+  "fr": "pile"
+ },
+ {
+  "en": "cabin",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "on a ship",
+  "es": "cabina",
+  "fr": "cabine"
+ },
+ {
+  "en": "tournament",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "torneo",
+  "fr": "tournoi"
+ },
+ {
+  "en": "fiction",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "ficción",
+  "fr": "fiction"
+ },
+ {
+  "en": "recover",
+  "pos": "verb",
+  "cat": "health",
+  "sense": "",
+  "es": "recuperar",
+  "fr": "récupérer"
+ },
+ {
+  "en": "military",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "militar",
+  "fr": "militaire"
+ },
+ {
+  "en": "wire",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "alambre",
+  "fr": "fil"
+ },
+ {
+  "en": "anchor",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "ancla",
+  "fr": "ancre"
+ },
+ {
+  "en": "hobby",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "afición",
+  "fr": "passe-temps"
+ },
+ {
+  "en": "figure",
+  "pos": "noun",
+  "cat": "numbers",
+  "sense": "digit",
+  "es": "cifra",
+  "fr": "chiffre"
+ },
+ {
+  "en": "reflect",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "reflejar",
+  "fr": "refléter"
+ },
+ {
+  "en": "minor",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "menor",
+  "fr": "mineur"
+ },
+ {
+  "en": "bulb",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "bombilla",
+  "fr": "ampoule"
+ },
+ {
+  "en": "sailor",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "marinero",
+  "fr": "marin"
+ },
+ {
+  "en": "adventure",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "aventura",
+  "fr": "aventure"
+ },
+ {
+  "en": "final",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "final",
+  "fr": "final"
+ },
+ {
+  "en": "remind",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "recordar",
+  "fr": "rappeler"
+ },
+ {
+  "en": "mobile",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "móvil",
+  "fr": "mobile"
+ },
+ {
+  "en": "heater",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "calentador",
+  "fr": "chauffage"
+ },
+ {
+  "en": "customs",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "aduana",
+  "fr": "douane"
+ },
+ {
+  "en": "party",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "fiesta",
+  "fr": "fête"
+ },
+ {
+  "en": "flight",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "vuelo",
+  "fr": "vol"
+ },
+ {
+  "en": "remove",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "quitar",
+  "fr": "enlever"
+ },
+ {
+  "en": "moral",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "moral",
+  "fr": "moral"
+ },
+ {
+  "en": "fan",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "ventilador",
+  "fr": "ventilateur"
+ },
+ {
+  "en": "visa",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "visado",
+  "fr": "visa"
+ },
+ {
+  "en": "picnic",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "picnic",
+  "fr": "pique-nique"
+ },
+ {
+  "en": "force",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "fuerza",
+  "fr": "force"
+ },
+ {
+  "en": "replace",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "reemplazar",
+  "fr": "remplacer"
+ },
+ {
+  "en": "mysterious",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "misterioso",
+  "fr": "mystérieux"
+ },
+ {
+  "en": "furniture",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "mueble",
+  "fr": "meuble"
+ },
+ {
+  "en": "reservation",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "reserva",
+  "fr": "réservation"
+ },
+ {
+  "en": "ceremony",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "ceremonia",
+  "fr": "cérémonie"
+ },
+ {
+  "en": "foreign",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "extranjero",
+  "fr": "étranger"
+ },
+ {
+  "en": "represent",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "representar",
+  "fr": "représenter"
+ },
+ {
+  "en": "naked",
+  "pos": "adj",
+  "cat": "body",
+  "sense": "",
+  "es": "desnudo",
+  "fr": "nu"
+ },
+ {
+  "en": "vase",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "jarrón",
+  "fr": "vase"
+ },
+ {
+  "en": "hostel",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "albergue",
+  "fr": "auberge"
+ },
+ {
+  "en": "funeral",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "funeral",
+  "fr": "funérailles"
+ },
+ {
+  "en": "formal",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "formal",
+  "fr": "formel"
+ },
+ {
+  "en": "require",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "requerir",
+  "fr": "exiger"
+ },
+ {
+  "en": "national",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "nacional",
+  "fr": "national"
+ },
+ {
+  "en": "painting",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "cuadro",
+  "fr": "tableau"
+ },
+ {
+  "en": "camping",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "camping",
+  "fr": "camping"
+ },
+ {
+  "en": "celebration",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "celebración",
+  "fr": "célébration"
+ },
+ {
+  "en": "fortune",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "fortuna",
+  "fr": "fortune"
+ },
+ {
+  "en": "rescue",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "rescatar",
+  "fr": "secourir"
+ },
+ {
+  "en": "negative",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "negativo",
+  "fr": "négatif"
+ },
+ {
+  "en": "statue",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "estatua",
+  "fr": "statue"
+ },
+ {
+  "en": "guide",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "person",
+  "es": "guía",
+  "fr": "guide"
+ },
+ {
+  "en": "vacation",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "vacaciones",
+  "fr": "vacances"
+ },
+ {
+  "en": "foundation",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "fundación",
+  "fr": "fondation"
+ },
+ {
+  "en": "resist",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "resistir",
+  "fr": "résister"
+ },
+ {
+  "en": "neutral",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "neutral",
+  "fr": "neutre"
+ },
+ {
+  "en": "chimney",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "",
+  "es": "chimenea",
+  "fr": "cheminée"
+ },
+ {
+  "en": "souvenir",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "recuerdo",
+  "fr": "souvenir"
+ },
+ {
+  "en": "custom",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "costumbre",
+  "fr": "coutume"
+ },
+ {
+  "en": "frame",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "marco",
+  "fr": "cadre"
+ },
+ {
+  "en": "respect",
+  "pos": "verb",
+  "cat": "feelings",
+  "sense": "",
+  "es": "respetar",
+  "fr": "respecter"
+ },
+ {
+  "en": "noble",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "noble",
+  "fr": "noble"
+ },
+ {
+  "en": "tent",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "tienda",
+  "fr": "tente"
+ },
+ {
+  "en": "exit",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "salida",
+  "fr": "sortie"
+ },
+ {
+  "en": "faith",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "fe",
+  "fr": "foi"
+ },
+ {
+  "en": "friendship",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "amistad",
+  "fr": "amitié"
+ },
+ {
+  "en": "reveal",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "revelar",
+  "fr": "révéler"
+ },
+ {
+  "en": "noisy",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "ruidoso",
+  "fr": "bruyant"
+ },
+ {
+  "en": "castle",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "castillo",
+  "fr": "château"
+ },
+ {
+  "en": "subway",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "metro",
+  "fr": "métro"
+ },
+ {
+  "en": "prayer",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "oración",
+  "fr": "prière"
+ },
+ {
+  "en": "fuel",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "combustible",
+  "fr": "carburant"
+ },
+ {
+  "en": "rise",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "subir",
+  "fr": "monter"
+ },
+ {
+  "en": "numerous",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "numeroso",
+  "fr": "nombreux"
+ },
+ {
+  "en": "tower",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "torre",
+  "fr": "tour"
+ },
+ {
+  "en": "tram",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "tranvía",
+  "fr": "tramway"
+ },
+ {
+  "en": "soul",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "alma",
+  "fr": "âme"
+ },
+ {
+  "en": "function",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "función",
+  "fr": "fonction"
+ },
+ {
+  "en": "roll",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "rodar",
+  "fr": "rouler"
+ },
+ {
+  "en": "obvious",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "obvio",
+  "fr": "évident"
+ },
+ {
+  "en": "lawn",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "césped",
+  "fr": "pelouse"
+ },
+ {
+  "en": "truck",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "camión",
+  "fr": "camion"
+ },
+ {
+  "en": "heaven",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "paraíso",
+  "fr": "paradis"
+ },
+ {
+  "en": "gallery",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "galería",
+  "fr": "galerie"
+ },
+ {
+  "en": "rub",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "frotar",
+  "fr": "frotter"
+ },
+ {
+  "en": "ordinary",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "ordinario",
+  "fr": "ordinaire"
+ },
+ {
+  "en": "landlord",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "propietario",
+  "fr": "propriétaire"
+ },
+ {
+  "en": "van",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "furgoneta",
+  "fr": "camionnette"
+ },
+ {
+  "en": "hell",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "infierno",
+  "fr": "enfer"
+ },
+ {
+  "en": "gas",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "gas",
+  "fr": "gaz"
+ },
+ {
+  "en": "satisfy",
+  "pos": "verb",
+  "cat": "feelings",
+  "sense": "",
+  "es": "satisfacer",
+  "fr": "satisfaire"
+ },
+ {
+  "en": "organic",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "orgánico",
+  "fr": "biologique"
+ },
+ {
+  "en": "tenant",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "inquilino",
+  "fr": "locataire"
+ },
+ {
+  "en": "motorcycle",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "moto",
+  "fr": "moto"
+ },
+ {
+  "en": "miracle",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "milagro",
+  "fr": "miracle"
+ },
+ {
+  "en": "generation",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "generación",
+  "fr": "génération"
+ },
+ {
+  "en": "scratch",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "rascar",
+  "fr": "gratter"
+ },
+ {
+  "en": "original",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "original",
+  "fr": "original"
+ },
+ {
+  "en": "address",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "domicilio",
+  "fr": "adresse"
+ },
+ {
+  "en": "helicopter",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "helicóptero",
+  "fr": "hélicoptère"
+ },
+ {
+  "en": "courage",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "coraje",
+  "fr": "courage"
+ },
+ {
+  "en": "gesture",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "gesto",
+  "fr": "geste"
+ },
+ {
+  "en": "select",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "seleccionar",
+  "fr": "sélectionner"
+ },
+ {
+  "en": "pale",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "pálido",
+  "fr": "pâle"
+ },
+ {
+  "en": "uniform",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "uniforme",
+  "fr": "uniforme"
+ },
+ {
+  "en": "wheel",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "rueda",
+  "fr": "roue"
+ },
+ {
+  "en": "patience",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "paciencia",
+  "fr": "patience"
+ },
+ {
+  "en": "goal",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "aim",
+  "es": "objetivo",
+  "fr": "objectif"
+ },
+ {
+  "en": "separate",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "separar",
+  "fr": "séparer"
+ },
+ {
+  "en": "perfect",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "perfecto",
+  "fr": "parfait"
+ },
+ {
+  "en": "suit",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "traje",
+  "fr": "costume"
+ },
+ {
+  "en": "tire",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "neumático",
+  "fr": "pneu"
+ },
+ {
+  "en": "kindness",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "bondad",
+  "fr": "gentillesse"
+ },
+ {
+  "en": "grain",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "grano",
+  "fr": "grain"
+ },
+ {
+  "en": "serve",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "servir",
+  "fr": "servir"
+ },
+ {
+  "en": "permanent",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "permanente",
+  "fr": "permanent"
+ },
+ {
+  "en": "scarf",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "bufanda",
+  "fr": "écharpe"
+ },
+ {
+  "en": "brake",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "freno",
+  "fr": "frein"
+ },
+ {
+  "en": "pride",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "orgullo",
+  "fr": "fierté"
+ },
+ {
+  "en": "guard",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "guardia",
+  "fr": "garde"
+ },
+ {
+  "en": "shine",
+  "pos": "verb",
+  "cat": "nature",
+  "sense": "",
+  "es": "brillar",
+  "fr": "briller"
+ },
+ {
+  "en": "physical",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "físico",
+  "fr": "physique"
+ },
+ {
+  "en": "glove",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "guante",
+  "fr": "gant"
+ },
+ {
+  "en": "gasoline",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "gasolina",
+  "fr": "essence"
+ },
+ {
+  "en": "anxiety",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "ansiedad",
+  "fr": "anxiété"
+ },
+ {
+  "en": "habit",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "hábito",
+  "fr": "habitude"
+ },
+ {
+  "en": "sign",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "firmar",
+  "fr": "signer"
+ },
+ {
+  "en": "pleasant",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "agradable",
+  "fr": "agréable"
+ },
+ {
+  "en": "boot",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "bota",
+  "fr": "botte"
+ },
+ {
+  "en": "pedestrian",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "peatón",
+  "fr": "piéton"
+ },
+ {
+  "en": "depression",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "depresión",
+  "fr": "dépression"
+ },
+ {
+  "en": "headline",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "titular",
+  "fr": "titre"
+ },
+ {
+  "en": "slide",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "deslizar",
+  "fr": "glisser"
+ },
+ {
+  "en": "polite",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "educado",
+  "fr": "poli"
+ },
+ {
+  "en": "sandal",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "sandalia",
+  "fr": "sandale"
+ },
+ {
+  "en": "sidewalk",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "acera",
+  "fr": "trottoir"
+ },
+ {
+  "en": "loneliness",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "soledad",
+  "fr": "solitude"
+ },
+ {
+  "en": "heat",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "calor",
+  "fr": "chaleur"
+ },
+ {
+  "en": "spread",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "difundir",
+  "fr": "répandre"
+ },
+ {
+  "en": "popular",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "popular",
+  "fr": "populaire"
+ },
+ {
+  "en": "skirt",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "falda",
+  "fr": "jupe"
+ },
+ {
+  "en": "intersection",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "cruce",
+  "fr": "carrefour"
+ },
+ {
+  "en": "curiosity",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "curiosidad",
+  "fr": "curiosité"
+ },
+ {
+  "en": "height",
+  "pos": "noun",
+  "cat": "describing",
+  "sense": "",
+  "es": "altura",
+  "fr": "hauteur"
+ },
+ {
+  "en": "squeeze",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "apretar",
+  "fr": "serrer"
+ },
+ {
+  "en": "powerful",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "poderoso",
+  "fr": "puissant"
+ },
+ {
+  "en": "sweater",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "suéter",
+  "fr": "pull"
+ },
+ {
+  "en": "parking",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "aparcamiento",
+  "fr": "parking"
+ },
+ {
+  "en": "happiness",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "felicidad",
+  "fr": "bonheur"
+ },
+ {
+  "en": "hero",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "héroe",
+  "fr": "héros"
+ },
+ {
+  "en": "stir",
+  "pos": "verb",
+  "cat": "food",
+  "sense": "",
+  "es": "remover",
+  "fr": "remuer"
+ },
+ {
+  "en": "practical",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "práctico",
+  "fr": "pratique"
+ },
+ {
+  "en": "jeans",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "vaqueros",
+  "fr": "jean"
+ },
+ {
+  "en": "seat",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "asiento",
+  "fr": "siège"
+ },
+ {
+  "en": "sadness",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "tristeza",
+  "fr": "tristesse"
+ },
+ {
+  "en": "highway",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "autopista",
+  "fr": "autoroute"
+ },
+ {
+  "en": "stretch",
+  "pos": "verb",
+  "cat": "body",
+  "sense": "",
+  "es": "estirar",
+  "fr": "étirer"
+ },
+ {
+  "en": "precious",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "precioso",
+  "fr": "précieux"
+ },
+ {
+  "en": "pajamas",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "pijama",
+  "fr": "pyjama"
+ },
+ {
+  "en": "compass",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "brújula",
+  "fr": "boussole"
+ },
+ {
+  "en": "disappointment",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "decepción",
+  "fr": "déception"
+ },
+ {
+  "en": "hint",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "pista",
+  "fr": "indice"
+ },
+ {
+  "en": "strike",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "golpear",
+  "fr": "frapper"
+ },
+ {
+  "en": "precise",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "preciso",
+  "fr": "précis"
+ },
+ {
+  "en": "belt",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "cinturón",
+  "fr": "ceinture"
+ },
+ {
+  "en": "path",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "camino",
+  "fr": "chemin"
+ },
+ {
+  "en": "relief",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "alivio",
+  "fr": "soulagement"
+ },
+ {
+  "en": "hole",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "agujero",
+  "fr": "trou"
+ },
+ {
+  "en": "struggle",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "luchar",
+  "fr": "lutter"
+ },
+ {
+  "en": "pregnant",
+  "pos": "adj",
+  "cat": "health",
+  "sense": "",
+  "es": "embarazada",
+  "fr": "enceinte"
+ },
+ {
+  "en": "button",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "botón",
+  "fr": "bouton"
+ },
+ {
+  "en": "trail",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "sendero",
+  "fr": "sentier"
+ },
+ {
+  "en": "desire",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "deseo",
+  "fr": "désir"
+ },
+ {
+  "en": "honor",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "honor",
+  "fr": "honneur"
+ },
+ {
+  "en": "succeed",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "triunfar",
+  "fr": "réussir"
+ },
+ {
+  "en": "previous",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "anterior",
+  "fr": "précédent"
+ },
+ {
+  "en": "sleeve",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "manga",
+  "fr": "manche"
+ },
+ {
+  "en": "plaza",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "plaza",
+  "fr": "place"
+ },
+ {
+  "en": "imagination",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "imaginación",
+  "fr": "imagination"
+ },
+ {
+  "en": "host",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "anfitrión",
+  "fr": "hôte"
+ },
+ {
+  "en": "suffer",
+  "pos": "verb",
+  "cat": "feelings",
+  "sense": "",
+  "es": "sufrir",
+  "fr": "souffrir"
+ },
+ {
+  "en": "professional",
+  "pos": "adj",
+  "cat": "work",
+  "sense": "",
+  "es": "profesional",
+  "fr": "professionnel"
+ },
+ {
+  "en": "fabric",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "tela",
+  "fr": "tissu"
+ },
+ {
+  "en": "avenue",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "avenida",
+  "fr": "avenue"
+ },
+ {
+  "en": "intelligence",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "inteligencia",
+  "fr": "intelligence"
+ },
+ {
+  "en": "hunger",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "hambre",
+  "fr": "faim"
+ },
+ {
+  "en": "suggest",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "sugerir",
+  "fr": "suggérer"
+ },
+ {
+  "en": "proper",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "apropiado",
+  "fr": "approprié"
+ },
+ {
+  "en": "cotton",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "algodón",
+  "fr": "coton"
+ },
+ {
+  "en": "alley",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "callejón",
+  "fr": "ruelle"
+ },
+ {
+  "en": "talent",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "talento",
+  "fr": "talent"
+ },
+ {
+  "en": "identity",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "identidad",
+  "fr": "identité"
+ },
+ {
+  "en": "suppose",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "suponer",
+  "fr": "supposer"
+ },
+ {
+  "en": "pure",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "puro",
+  "fr": "pur"
+ },
+ {
+  "en": "silk",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "seda",
+  "fr": "soie"
+ },
+ {
+  "en": "skyscraper",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "rascacielos",
+  "fr": "gratte-ciel"
+ },
+ {
+  "en": "belief",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "creencia",
+  "fr": "croyance"
+ },
+ {
+  "en": "image",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "imagen",
+  "fr": "image"
+ },
+ {
+  "en": "surround",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "rodear",
+  "fr": "entourer"
+ },
+ {
+  "en": "rare",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "raro",
+  "fr": "rare"
+ },
+ {
+  "en": "wool",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "lana",
+  "fr": "laine"
+ },
+ {
+  "en": "suburb",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "suburbio",
+  "fr": "banlieue"
+ },
+ {
+  "en": "conclusion",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "conclusión",
+  "fr": "conclusion"
+ },
+ {
+  "en": "impact",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "impacto",
+  "fr": "impact"
+ },
+ {
+  "en": "survive",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "sobrevivir",
+  "fr": "survivre"
+ },
+ {
+  "en": "reasonable",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "razonable",
+  "fr": "raisonnable"
+ },
+ {
+  "en": "necklace",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "collar",
+  "fr": "collier"
+ },
+ {
+  "en": "cinema",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "cine",
+  "fr": "cinéma"
+ },
+ {
+  "en": "intention",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "intención",
+  "fr": "intention"
+ },
+ {
+  "en": "income",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "ingreso",
+  "fr": "revenu"
+ },
+ {
+  "en": "suspect",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "sospechar",
+  "fr": "soupçonner"
+ },
+ {
+  "en": "recent",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "reciente",
+  "fr": "récent"
+ },
+ {
+  "en": "bracelet",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "pulsera",
+  "fr": "bracelet"
+ },
+ {
+  "en": "theater",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "teatro",
+  "fr": "théâtre"
+ },
+ {
+  "en": "crisis",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "crisis",
+  "fr": "crise"
+ },
+ {
+  "en": "industry",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "industria",
+  "fr": "industrie"
+ },
+ {
+  "en": "swallow",
+  "pos": "verb",
+  "cat": "body",
+  "sense": "",
+  "es": "tragar",
+  "fr": "avaler"
+ },
+ {
+  "en": "reliable",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "confiable",
+  "fr": "fiable"
+ },
+ {
+  "en": "jewelry",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "joya",
+  "fr": "bijou"
+ },
+ {
+  "en": "stadium",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "estadio",
+  "fr": "stade"
+ },
+ {
+  "en": "disaster",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "desastre",
+  "fr": "désastre"
+ },
+ {
+  "en": "influence",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "influencia",
+  "fr": "influence"
+ },
+ {
+  "en": "tear",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "rasgar",
+  "fr": "déchirer"
+ },
+ {
+  "en": "remote",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "remoto",
+  "fr": "éloigné"
+ },
+ {
+  "en": "wallet",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "cartera",
+  "fr": "portefeuille"
+ },
+ {
+  "en": "gym",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "gimnasio",
+  "fr": "gymnase"
+ },
+ {
+  "en": "battle",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "batalla",
+  "fr": "bataille"
+ },
+ {
+  "en": "information",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "información",
+  "fr": "information"
+ },
+ {
+  "en": "threaten",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "amenazar",
+  "fr": "menacer"
+ },
+ {
+  "en": "responsible",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "responsable",
+  "fr": "responsable"
+ },
+ {
+  "en": "suitcase",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "maleta",
+  "fr": "valise"
+ },
+ {
+  "en": "temple",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "templo",
+  "fr": "temple"
+ },
+ {
+  "en": "agreement",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "acuerdo",
+  "fr": "accord"
+ },
+ {
+  "en": "injury",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "lesión",
+  "fr": "blessure"
+ },
+ {
+  "en": "transform",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "transformar",
+  "fr": "transformer"
+ },
+ {
+  "en": "rough",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "áspero",
+  "fr": "rugueux"
+ },
+ {
+  "en": "chin",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "barbilla",
+  "fr": "menton"
+ },
+ {
+  "en": "mosque",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "mezquita",
+  "fr": "mosquée"
+ },
+ {
+  "en": "argument",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "argumento",
+  "fr": "argument"
+ },
+ {
+  "en": "instrument",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "instrumento",
+  "fr": "instrument"
+ },
+ {
+  "en": "trap",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "atrapar",
+  "fr": "piéger"
+ },
+ {
+  "en": "royal",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "real",
+  "fr": "royal"
+ },
+ {
+  "en": "throat",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "garganta",
+  "fr": "gorge"
+ },
+ {
+  "en": "cathedral",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "catedral",
+  "fr": "cathédrale"
+ },
+ {
+  "en": "punishment",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "castigo",
+  "fr": "punition"
+ },
+ {
+  "en": "insurance",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "seguro",
+  "fr": "assurance"
+ },
+ {
+  "en": "treat",
+  "pos": "verb",
+  "cat": "health",
+  "sense": "",
+  "es": "tratar",
+  "fr": "traiter"
+ },
+ {
+  "en": "rude",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "grosero",
+  "fr": "impoli"
+ },
+ {
+  "en": "waist",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "cintura",
+  "fr": "taille"
+ },
+ {
+  "en": "cemetery",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "cementerio",
+  "fr": "cimetière"
+ },
+ {
+  "en": "right",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "legal",
+  "es": "derecho",
+  "fr": "droit"
+ },
+ {
+  "en": "interest",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "interés",
+  "fr": "intérêt"
+ },
+ {
+  "en": "twist",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "torcer",
+  "fr": "tordre"
+ },
+ {
+  "en": "sacred",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "sagrado",
+  "fr": "sacré"
+ },
+ {
+  "en": "hip",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "cadera",
+  "fr": "hanche"
+ },
+ {
+  "en": "grave",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "tumba",
+  "fr": "tombe"
+ },
+ {
+  "en": "democracy",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "democracia",
+  "fr": "démocratie"
+ },
+ {
+  "en": "interview",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "entrevista",
+  "fr": "entretien"
+ },
+ {
+  "en": "unite",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "unir",
+  "fr": "unir"
+ },
+ {
+  "en": "satisfied",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "satisfecho",
+  "fr": "satisfait"
+ },
+ {
+  "en": "ankle",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "tobillo",
+  "fr": "cheville"
+ },
+ {
+  "en": "monument",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "monumento",
+  "fr": "monument"
+ },
+ {
+  "en": "protest",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "protesta",
+  "fr": "manifestation"
+ },
+ {
+  "en": "item",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "artículo",
+  "fr": "article"
+ },
+ {
+  "en": "wander",
+  "pos": "verb",
+  "cat": "travel",
+  "sense": "",
+  "es": "vagar",
+  "fr": "errer"
+ },
+ {
+  "en": "scared",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "asustado",
+  "fr": "effrayé"
+ },
+ {
+  "en": "palm",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "palma",
+  "fr": "paume"
+ },
+ {
+  "en": "ruin",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "ruina",
+  "fr": "ruine"
+ },
+ {
+  "en": "era",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "era",
+  "fr": "ère"
+ },
+ {
+  "en": "jacket",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "chaqueta",
+  "fr": "veste"
+ },
+ {
+  "en": "warm",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "calentar",
+  "fr": "chauffer"
+ },
+ {
+  "en": "scientific",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "científico",
+  "fr": "scientifique"
+ },
+ {
+  "en": "fist",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "puño",
+  "fr": "poing"
+ },
+ {
+  "en": "embassy",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "embajada",
+  "fr": "ambassade"
+ },
+ {
+  "en": "childhood",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "infancia",
+  "fr": "enfance"
+ },
+ {
+  "en": "jungle",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "selva",
+  "fr": "jungle"
+ },
+ {
+  "en": "waste",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "desperdiciar",
+  "fr": "gaspiller"
+ },
+ {
+  "en": "selfish",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "egoísta",
+  "fr": "égoïste"
+ },
+ {
+  "en": "nail",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "finger",
+  "es": "uña",
+  "fr": "ongle"
+ },
+ {
+  "en": "laundry",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "lavandería",
+  "fr": "blanchisserie"
+ },
+ {
+  "en": "millennium",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "milenio",
+  "fr": "millénaire"
+ },
+ {
+  "en": "kingdom",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "reino",
+  "fr": "royaume"
+ },
+ {
+  "en": "weigh",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "pesar",
+  "fr": "peser"
+ },
+ {
+  "en": "sensible",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "sensato",
+  "fr": "sensé"
+ },
+ {
+  "en": "skeleton",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "esqueleto",
+  "fr": "squelette"
+ },
+ {
+  "en": "aquarium",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "acuario",
+  "fr": "aquarium"
+ },
+ {
+  "en": "dusk",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "crepúsculo",
+  "fr": "crépuscule"
+ },
+ {
+  "en": "label",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "etiqueta",
+  "fr": "étiquette"
+ },
+ {
+  "en": "wrap",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "envolver",
+  "fr": "envelopper"
+ },
+ {
+  "en": "sensitive",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "sensible",
+  "fr": "sensible"
+ },
+ {
+  "en": "vein",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "vena",
+  "fr": "veine"
+ },
+ {
+  "en": "circus",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "circo",
+  "fr": "cirque"
+ },
+ {
+  "en": "interval",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "intervalo",
+  "fr": "intervalle"
+ },
+ {
+  "en": "landscape",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "paisaje",
+  "fr": "paysage"
+ },
+ {
+  "en": "approve",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "aprobar",
+  "fr": "approuver"
+ },
+ {
+  "en": "serious",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "serio",
+  "fr": "sérieux"
+ },
+ {
+  "en": "liver",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "hígado",
+  "fr": "foie"
+ },
+ {
+  "en": "carnival",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "carnaval",
+  "fr": "carnaval"
+ },
+ {
+  "en": "disadvantage",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "desventaja",
+  "fr": "désavantage"
+ },
+ {
+  "en": "layer",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "capa",
+  "fr": "couche"
+ },
+ {
+  "en": "bury",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "enterrar",
+  "fr": "enterrer"
+ },
+ {
+  "en": "severe",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "severo",
+  "fr": "sévère"
+ },
+ {
+  "en": "kidney",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "riñón",
+  "fr": "rein"
+ },
+ {
+  "en": "mine",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "mina",
+  "fr": "mine"
+ },
+ {
+  "en": "access",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "acceso",
+  "fr": "accès"
+ },
+ {
+  "en": "leather",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "cuero",
+  "fr": "cuir"
+ },
+ {
+  "en": "celebrate",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "celebrar",
+  "fr": "célébrer"
+ },
+ {
+  "en": "silent",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "silencioso",
+  "fr": "silencieux"
+ },
+ {
+  "en": "pulse",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "pulso",
+  "fr": "pouls"
+ },
+ {
+  "en": "warehouse",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "almacén",
+  "fr": "entrepôt"
+ },
+ {
+  "en": "attempt",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "intento",
+  "fr": "tentative"
+ },
+ {
+  "en": "legal",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "legal",
+  "fr": "légal"
+ },
+ {
+  "en": "chew",
+  "pos": "verb",
+  "cat": "food",
+  "sense": "",
+  "es": "masticar",
+  "fr": "mâcher"
+ },
+ {
+  "en": "sincere",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "sincero",
+  "fr": "sincère"
+ },
+ {
+  "en": "sweat",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "sudor",
+  "fr": "sueur"
+ },
+ {
+  "en": "workshop",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "taller",
+  "fr": "atelier"
+ },
+ {
+  "en": "balance",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "equilibrio",
+  "fr": "équilibre"
+ },
+ {
+  "en": "length",
+  "pos": "noun",
+  "cat": "describing",
+  "sense": "",
+  "es": "longitud",
+  "fr": "longueur"
+ },
+ {
+  "en": "confuse",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "confundir",
+  "fr": "confondre"
+ },
+ {
+  "en": "slim",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "delgado",
+  "fr": "mince"
+ },
+ {
+  "en": "tear",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "from the eye",
+  "es": "lágrima",
+  "fr": "larme"
+ },
+ {
+  "en": "laboratory",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "laboratorio",
+  "fr": "laboratoire"
+ },
+ {
+  "en": "background",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "fondo",
+  "fr": "fond"
+ },
+ {
+  "en": "level",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "nivel",
+  "fr": "niveau"
+ },
+ {
+  "en": "correct",
+  "pos": "verb",
+  "cat": "school",
+  "sense": "",
+  "es": "corregir",
+  "fr": "corriger"
+ },
+ {
+  "en": "smooth",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "liso",
+  "fr": "lisse"
+ },
+ {
+  "en": "infection",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "infección",
+  "fr": "infection"
+ },
+ {
+  "en": "studio",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "estudio",
+  "fr": "studio"
+ },
+ {
+  "en": "burden",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "carga",
+  "fr": "fardeau"
+ },
+ {
+  "en": "license",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "licencia",
+  "fr": "licence"
+ },
+ {
+  "en": "decorate",
+  "pos": "verb",
+  "cat": "home",
+  "sense": "",
+  "es": "decorar",
+  "fr": "décorer"
+ },
+ {
+  "en": "social",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "social",
+  "fr": "social"
+ },
+ {
+  "en": "virus",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "virus",
+  "fr": "virus"
+ },
+ {
+  "en": "camp",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "campamento",
+  "fr": "camp"
+ },
+ {
+  "en": "capacity",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "capacidad",
+  "fr": "capacité"
+ },
+ {
+  "en": "limit",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "límite",
+  "fr": "limite"
+ },
+ {
+  "en": "define",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "definir",
+  "fr": "définir"
+ },
+ {
+  "en": "solid",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "sólido",
+  "fr": "solide"
+ },
+ {
+  "en": "flu",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "gripe",
+  "fr": "grippe"
+ },
+ {
+  "en": "territory",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "territorio",
+  "fr": "territoire"
+ },
+ {
+  "en": "combination",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "combinación",
+  "fr": "combinaison"
+ },
+ {
+  "en": "link",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "enlace",
+  "fr": "lien"
+ },
+ {
+  "en": "delay",
+  "pos": "verb",
+  "cat": "time",
+  "sense": "",
+  "es": "retrasar",
+  "fr": "retarder"
+ },
+ {
+  "en": "sour",
+  "pos": "adj",
+  "cat": "food",
+  "sense": "",
+  "es": "agrio",
+  "fr": "aigre"
+ },
+ {
+  "en": "allergy",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "alergia",
+  "fr": "allergie"
+ },
+ {
+  "en": "province",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "provincia",
+  "fr": "province"
+ },
+ {
+  "en": "comparison",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "comparación",
+  "fr": "comparaison"
+ },
+ {
+  "en": "liquid",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "líquido",
+  "fr": "liquide"
+ },
+ {
+  "en": "dive",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "bucear",
+  "fr": "plonger"
+ },
+ {
+  "en": "stable",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "estable",
+  "fr": "stable"
+ },
+ {
+  "en": "diabetes",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "diabetes",
+  "fr": "diabète"
+ },
+ {
+  "en": "state",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "estado",
+  "fr": "état"
+ },
+ {
+  "en": "complaint",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "queja",
+  "fr": "plainte"
+ },
+ {
+  "en": "literature",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "literatura",
+  "fr": "littérature"
+ },
+ {
+  "en": "download",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "descargar",
+  "fr": "télécharger"
+ },
+ {
+  "en": "steep",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "empinado",
+  "fr": "raide"
+ },
+ {
+  "en": "surgery",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "cirugía",
+  "fr": "chirurgie"
+ },
+ {
+  "en": "empire",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "imperio",
+  "fr": "empire"
+ },
+ {
+  "en": "concept",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "concepto",
+  "fr": "concept"
+ },
+ {
+  "en": "loan",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "préstamo",
+  "fr": "prêt"
+ },
+ {
+  "en": "educate",
+  "pos": "verb",
+  "cat": "school",
+  "sense": "",
+  "es": "educar",
+  "fr": "éduquer"
+ },
+ {
+  "en": "sticky",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "pegajoso",
+  "fr": "collant"
+ },
+ {
+  "en": "surgeon",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "cirujano",
+  "fr": "chirurgien"
+ },
+ {
+  "en": "republic",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "república",
+  "fr": "république"
+ },
+ {
+  "en": "confusion",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "confusión",
+  "fr": "confusion"
+ },
+ {
+  "en": "local",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "local",
+  "fr": "local"
+ },
+ {
+  "en": "entertain",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "entretener",
+  "fr": "divertir"
+ },
+ {
+  "en": "straight",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "recto",
+  "fr": "droit"
+ },
+ {
+  "en": "ambulance",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "ambulancia",
+  "fr": "ambulance"
+ },
+ {
+  "en": "mayor",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "alcalde",
+  "fr": "maire"
+ },
+ {
+  "en": "contrast",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "contraste",
+  "fr": "contraste"
+ },
+ {
+  "en": "location",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "ubicación",
+  "fr": "emplacement"
+ },
+ {
+  "en": "explore",
+  "pos": "verb",
+  "cat": "travel",
+  "sense": "",
+  "es": "explorar",
+  "fr": "explorer"
+ },
+ {
+  "en": "strict",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "estricto",
+  "fr": "strict"
+ },
+ {
+  "en": "bandage",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "venda",
+  "fr": "bandage"
+ },
+ {
+  "en": "minister",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "ministro",
+  "fr": "ministre"
+ },
+ {
+  "en": "curve",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "curva",
+  "fr": "courbe"
+ },
+ {
+  "en": "logic",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "lógica",
+  "fr": "logique"
+ },
+ {
+  "en": "float",
+  "pos": "verb",
+  "cat": "nature",
+  "sense": "",
+  "es": "flotar",
+  "fr": "flotter"
+ },
+ {
+  "en": "stubborn",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "terco",
+  "fr": "têtu"
+ },
+ {
+  "en": "pill",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "pastilla",
+  "fr": "pilule"
+ },
+ {
+  "en": "ambassador",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "embajador",
+  "fr": "ambassadeur"
+ },
+ {
+  "en": "definition",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "definición",
+  "fr": "définition"
+ },
+ {
+  "en": "luxury",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "lujo",
+  "fr": "luxe"
+ },
+ {
+  "en": "forgive",
+  "pos": "verb",
+  "cat": "feelings",
+  "sense": "",
+  "es": "perdonar",
+  "fr": "pardonner"
+ },
+ {
+  "en": "sudden",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "repentino",
+  "fr": "soudain"
+ },
+ {
+  "en": "vaccine",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "vacuna",
+  "fr": "vaccin"
+ },
+ {
+  "en": "politician",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "político",
+  "fr": "politicien"
+ },
+ {
+  "en": "departure",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "partida",
+  "fr": "départ"
+ },
+ {
+  "en": "master",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "maestro",
+  "fr": "maître"
+ },
+ {
+  "en": "inspire",
+  "pos": "verb",
+  "cat": "feelings",
+  "sense": "",
+  "es": "inspirar",
+  "fr": "inspirer"
+ },
+ {
+  "en": "sufficient",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "suficiente",
+  "fr": "suffisant"
+ },
+ {
+  "en": "syringe",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "jeringa",
+  "fr": "seringue"
+ },
+ {
+  "en": "candidate",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "candidato",
+  "fr": "candidat"
+ },
+ {
+  "en": "description",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "descripción",
+  "fr": "description"
+ },
+ {
+  "en": "material",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "material",
+  "fr": "matériau"
+ },
+ {
+  "en": "investigate",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "investigar",
+  "fr": "enquêter"
+ },
+ {
+  "en": "suitable",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "adecuado",
+  "fr": "convenable"
+ },
+ {
+  "en": "therapy",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "terapia",
+  "fr": "thérapie"
+ },
+ {
+  "en": "refugee",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "refugiado",
+  "fr": "réfugié"
+ },
+ {
+  "en": "destination",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "destino",
+  "fr": "destination"
+ },
+ {
+  "en": "meal",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "comida",
+  "fr": "repas"
+ },
+ {
+  "en": "load",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "cargar",
+  "fr": "charger"
+ },
+ {
+  "en": "suspicious",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "sospechoso",
+  "fr": "suspect"
+ },
+ {
+  "en": "symptom",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "síntoma",
+  "fr": "symptôme"
+ },
+ {
+  "en": "immigrant",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "inmigrante",
+  "fr": "immigrant"
+ },
+ {
+  "en": "difference",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "diferencia",
+  "fr": "différence"
+ },
+ {
+  "en": "meaning",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "significado",
+  "fr": "sens"
+ },
+ {
+  "en": "maintain",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "mantener",
+  "fr": "maintenir"
+ },
+ {
+  "en": "tender",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "tierno",
+  "fr": "tendre"
+ },
+ {
+  "en": "scar",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "cicatriz",
+  "fr": "cicatrice"
+ },
+ {
+  "en": "villain",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "villano",
+  "fr": "méchant"
+ },
+ {
+  "en": "difficulty",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "dificultad",
+  "fr": "difficulté"
+ },
+ {
+  "en": "mental",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "mental",
+  "fr": "mental"
+ },
+ {
+  "en": "memorize",
+  "pos": "verb",
+  "cat": "school",
+  "sense": "",
+  "es": "memorizar",
+  "fr": "mémoriser"
+ },
+ {
+  "en": "tight",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "apretado",
+  "fr": "serré"
+ },
+ {
+  "en": "bruise",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "moretón",
+  "fr": "bleu"
+ },
+ {
+  "en": "thief",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "ladrón",
+  "fr": "voleur"
+ },
+ {
+  "en": "discipline",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "disciplina",
+  "fr": "discipline"
+ },
+ {
+  "en": "mission",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "misión",
+  "fr": "mission"
+ },
+ {
+  "en": "negotiate",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "negociar",
+  "fr": "négocier"
+ },
+ {
+  "en": "total",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "total",
+  "fr": "total"
+ },
+ {
+  "en": "sneeze",
+  "pos": "verb",
+  "cat": "health",
+  "sense": "",
+  "es": "estornudar",
+  "fr": "éternuer"
+ },
+ {
+  "en": "criminal",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "criminal",
+  "fr": "criminel"
+ },
+ {
+  "en": "exception",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "excepción",
+  "fr": "exception"
+ },
+ {
+  "en": "model",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "modelo",
+  "fr": "modèle"
+ },
+ {
+  "en": "participate",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "participar",
+  "fr": "participer"
+ },
+ {
+  "en": "traditional",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "tradicional",
+  "fr": "traditionnel"
+ },
+ {
+  "en": "pregnancy",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "embarazo",
+  "fr": "grossesse"
+ },
+ {
+  "en": "murderer",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "asesino",
+  "fr": "meurtrier"
+ },
+ {
+  "en": "existence",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "existencia",
+  "fr": "existence"
+ },
+ {
+  "en": "monster",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "monstruo",
+  "fr": "monstre"
+ },
+ {
+  "en": "propose",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "proponer",
+  "fr": "proposer"
+ },
+ {
+  "en": "tragic",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "trágico",
+  "fr": "tragique"
+ },
+ {
+  "en": "crutch",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "muleta",
+  "fr": "béquille"
+ },
+ {
+  "en": "detective",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "detective",
+  "fr": "détective"
+ },
+ {
+  "en": "explanation",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "explicación",
+  "fr": "explication"
+ },
+ {
+  "en": "mood",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "humor",
+  "fr": "humeur"
+ },
+ {
+  "en": "reject",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "rechazar",
+  "fr": "rejeter"
+ },
+ {
+  "en": "tropical",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "tropical",
+  "fr": "tropical"
+ },
+ {
+  "en": "cigarette",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "cigarrillo",
+  "fr": "cigarette"
+ },
+ {
+  "en": "spy",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "espía",
+  "fr": "espion"
+ },
+ {
+  "en": "expression",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "expresión",
+  "fr": "expression"
+ },
+ {
+  "en": "motion",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "movimiento",
+  "fr": "mouvement"
+ },
+ {
+  "en": "reserve",
+  "pos": "verb",
+  "cat": "travel",
+  "sense": "",
+  "es": "reservar",
+  "fr": "réserver"
+ },
+ {
+  "en": "typical",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "típico",
+  "fr": "typique"
+ },
+ {
+  "en": "drug",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "droga",
+  "fr": "drogue"
+ },
+ {
+  "en": "prisoner",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "prisionero",
+  "fr": "prisonnier"
+ },
+ {
+  "en": "extreme",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "extremo",
+  "fr": "extrême"
+ },
+ {
+  "en": "motor",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "motor",
+  "fr": "moteur"
+ },
+ {
+  "en": "restore",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "restaurar",
+  "fr": "restaurer"
+ },
+ {
+  "en": "unfair",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "injusto",
+  "fr": "injuste"
+ },
+ {
+  "en": "lens",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "lente",
+  "fr": "lentille"
+ },
+ {
+  "en": "slave",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "esclavo",
+  "fr": "esclave"
+ },
+ {
+  "en": "fame",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "fama",
+  "fr": "renommée"
+ },
+ {
+  "en": "mystery",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "misterio",
+  "fr": "mystère"
+ },
+ {
+  "en": "sail",
+  "pos": "verb",
+  "cat": "travel",
+  "sense": "",
+  "es": "navegar",
+  "fr": "naviguer"
+ },
+ {
+  "en": "unique",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "único",
+  "fr": "unique"
+ },
+ {
+  "en": "servant",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "sirviente",
+  "fr": "serviteur"
+ },
+ {
+  "en": "fate",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "destino",
+  "fr": "destin"
+ },
+ {
+  "en": "myth",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "mito",
+  "fr": "mythe"
+ },
+ {
+  "en": "shave",
+  "pos": "verb",
+  "cat": "body",
+  "sense": "",
+  "es": "afeitar",
+  "fr": "raser"
+ },
+ {
+  "en": "universal",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "universal",
+  "fr": "universel"
+ },
+ {
+  "en": "knight",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "caballero",
+  "fr": "chevalier"
+ },
+ {
+  "en": "fraction",
+  "pos": "noun",
+  "cat": "numbers",
+  "sense": "",
+  "es": "fracción",
+  "fr": "fraction"
+ },
+ {
+  "en": "nerve",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "nervio",
+  "fr": "nerf"
+ },
+ {
+  "en": "ski",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "esquiar",
+  "fr": "skier"
+ },
+ {
+  "en": "unknown",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "desconocido",
+  "fr": "inconnu"
+ },
+ {
+  "en": "emperor",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "emperador",
+  "fr": "empereur"
+ },
+ {
+  "en": "glory",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "gloria",
+  "fr": "gloire"
+ },
+ {
+  "en": "network",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "red",
+  "fr": "réseau"
+ },
+ {
+  "en": "sort",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "ordenar",
+  "fr": "trier"
+ },
+ {
+  "en": "unlikely",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "improbable",
+  "fr": "improbable"
+ },
+ {
+  "en": "angel",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "ángel",
+  "fr": "ange"
+ },
+ {
+  "en": "growth",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "crecimiento",
+  "fr": "croissance"
+ },
+ {
+  "en": "normal",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "normal",
+  "fr": "normal"
+ },
+ {
+  "en": "spill",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "derramar",
+  "fr": "renverser"
+ },
+ {
+  "en": "unusual",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "inusual",
+  "fr": "inhabituel"
+ },
+ {
+  "en": "devil",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "diablo",
+  "fr": "diable"
+ },
+ {
+  "en": "harmony",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "armonía",
+  "fr": "harmonie"
+ },
+ {
+  "en": "novel",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "novela",
+  "fr": "roman"
+ },
+ {
+  "en": "spoil",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "estropear",
+  "fr": "gâter"
+ },
+ {
+  "en": "upper",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "superior",
+  "fr": "supérieur"
+ },
+ {
+  "en": "ghost",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "fantasma",
+  "fr": "fantôme"
+ },
+ {
+  "en": "illusion",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "ilusión",
+  "fr": "illusion"
+ },
+ {
+  "en": "nuclear",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "nuclear",
+  "fr": "nucléaire"
+ },
+ {
+  "en": "whistle",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "silbar",
+  "fr": "siffler"
+ },
+ {
+  "en": "urban",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "urbano",
+  "fr": "urbain"
+ },
+ {
+  "en": "witch",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "bruja",
+  "fr": "sorcière"
+ },
+ {
+  "en": "improvement",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "mejora",
+  "fr": "amélioration"
+ },
+ {
+  "en": "object",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "objeto",
+  "fr": "objet"
+ },
+ {
+  "en": "absorb",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "absorber",
+  "fr": "absorber"
+ },
+ {
+  "en": "urgent",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "urgente",
+  "fr": "urgent"
+ },
+ {
+  "en": "wizard",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "mago",
+  "fr": "magicien"
+ },
+ {
+  "en": "independence",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "independencia",
+  "fr": "indépendance"
+ },
+ {
+  "en": "observe",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "observar",
+  "fr": "observer"
+ },
+ {
+  "en": "adapt",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "adaptar",
+  "fr": "adapter"
+ },
+ {
+  "en": "useful",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "útil",
+  "fr": "utile"
+ },
+ {
+  "en": "fairy",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "hada",
+  "fr": "fée"
+ },
+ {
+  "en": "instruction",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "instrucción",
+  "fr": "instruction"
+ },
+ {
+  "en": "occasion",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "ocasión",
+  "fr": "occasion"
+ },
+ {
+  "en": "adjust",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "ajustar",
+  "fr": "ajuster"
+ },
+ {
+  "en": "useless",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "inútil",
+  "fr": "inutile"
+ },
+ {
+  "en": "clown",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "payaso",
+  "fr": "clown"
+ },
+ {
+  "en": "invitation",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "invitación",
+  "fr": "invitation"
+ },
+ {
+  "en": "officer",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "oficial",
+  "fr": "officier"
+ },
+ {
+  "en": "admire",
+  "pos": "verb",
+  "cat": "feelings",
+  "sense": "",
+  "es": "admirar",
+  "fr": "admirer"
+ },
+ {
+  "en": "usual",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "habitual",
+  "fr": "habituel"
+ },
+ {
+  "en": "actor",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "actor",
+  "fr": "acteur"
+ },
+ {
+  "en": "lack",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "falta",
+  "fr": "manque"
+ },
+ {
+  "en": "official",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "oficial",
+  "fr": "officiel"
+ },
+ {
+  "en": "adopt",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "adoptar",
+  "fr": "adopter"
+ },
+ {
+  "en": "various",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "varios",
+  "fr": "divers"
+ },
+ {
+  "en": "actress",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "actriz",
+  "fr": "actrice"
+ },
+ {
+  "en": "majority",
+  "pos": "noun",
+  "cat": "numbers",
+  "sense": "",
+  "es": "mayoría",
+  "fr": "majorité"
+ },
+ {
+  "en": "operation",
+  "pos": "noun",
+  "cat": "health",
+  "sense": "",
+  "es": "operación",
+  "fr": "opération"
+ },
+ {
+  "en": "appreciate",
+  "pos": "verb",
+  "cat": "feelings",
+  "sense": "",
+  "es": "apreciar",
+  "fr": "apprécier"
+ },
+ {
+  "en": "vast",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "vasto",
+  "fr": "vaste"
+ },
+ {
+  "en": "musician",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "músico",
+  "fr": "musicien"
+ },
+ {
+  "en": "minority",
+  "pos": "noun",
+  "cat": "numbers",
+  "sense": "",
+  "es": "minoría",
+  "fr": "minorité"
+ },
+ {
+  "en": "opportunity",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "oportunidad",
+  "fr": "opportunité"
+ },
+ {
+  "en": "bless",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "bendecir",
+  "fr": "bénir"
+ },
+ {
+  "en": "violent",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "violento",
+  "fr": "violent"
+ },
+ {
+  "en": "dancer",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "bailarín",
+  "fr": "danseur"
+ },
+ {
+  "en": "method",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "método",
+  "fr": "méthode"
+ },
+ {
+  "en": "option",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "opción",
+  "fr": "option"
+ },
+ {
+  "en": "bother",
+  "pos": "verb",
+  "cat": "feelings",
+  "sense": "",
+  "es": "molestar",
+  "fr": "déranger"
+ },
+ {
+  "en": "virtual",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "virtual",
+  "fr": "virtuel"
+ },
+ {
+  "en": "painter",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "pintor",
+  "fr": "peintre"
+ },
+ {
+  "en": "mixture",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "mezcla",
+  "fr": "mélange"
+ },
+ {
+  "en": "origin",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "origen",
+  "fr": "origine"
+ },
+ {
+  "en": "broadcast",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "transmitir",
+  "fr": "diffuser"
+ },
+ {
+  "en": "visible",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "visible",
+  "fr": "visible"
+ },
+ {
+  "en": "photographer",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "fotógrafo",
+  "fr": "photographe"
+ },
+ {
+  "en": "nature",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "naturaleza",
+  "fr": "nature"
+ },
+ {
+  "en": "package",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "paquete",
+  "fr": "paquet"
+ },
+ {
+  "en": "burst",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "reventar",
+  "fr": "éclater"
+ },
+ {
+  "en": "visual",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "visual",
+  "fr": "visuel"
+ },
+ {
+  "en": "journalist",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "periodista",
+  "fr": "journaliste"
+ },
+ {
+  "en": "necessity",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "necesidad",
+  "fr": "nécessité"
+ },
+ {
+  "en": "palace",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "palacio",
+  "fr": "palais"
+ },
+ {
+  "en": "challenge",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "desafiar",
+  "fr": "défier"
+ },
+ {
+  "en": "vital",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "vital",
+  "fr": "vital"
+ },
+ {
+  "en": "author",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "autor",
+  "fr": "auteur"
+ },
+ {
+  "en": "obstacle",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "obstáculo",
+  "fr": "obstacle"
+ },
+ {
+  "en": "partner",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "socio",
+  "fr": "partenaire"
+ },
+ {
+  "en": "compose",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "componer",
+  "fr": "composer"
+ },
+ {
+  "en": "weak",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "débil",
+  "fr": "faible"
+ },
+ {
+  "en": "architect",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "arquitecto",
+  "fr": "architecte"
+ },
+ {
+  "en": "opposite",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "opuesto",
+  "fr": "opposé"
+ },
+ {
+  "en": "passion",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "pasión",
+  "fr": "passion"
+ },
+ {
+  "en": "conclude",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "concluir",
+  "fr": "conclure"
+ },
+ {
+  "en": "weekly",
+  "pos": "adj",
+  "cat": "time",
+  "sense": "",
+  "es": "semanal",
+  "fr": "hebdomadaire"
+ },
+ {
+  "en": "mechanic",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "mecánico",
+  "fr": "mécanicien"
+ },
+ {
+  "en": "passage",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "pasaje",
+  "fr": "passage"
+ },
+ {
+  "en": "pattern",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "patrón",
+  "fr": "motif"
+ },
+ {
+  "en": "confess",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "confesar",
+  "fr": "avouer"
+ },
+ {
+  "en": "western",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "occidental",
+  "fr": "occidental"
+ },
+ {
+  "en": "electrician",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "electricista",
+  "fr": "électricien"
+ },
+ {
+  "en": "payment",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "pago",
+  "fr": "paiement"
+ },
+ {
+  "en": "pause",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "pausa",
+  "fr": "pause"
+ },
+ {
+  "en": "contribute",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "contribuir",
+  "fr": "contribuer"
+ },
+ {
+  "en": "wise",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "sabio",
+  "fr": "sage"
+ },
+ {
+  "en": "plumber",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "fontanero",
+  "fr": "plombier"
+ },
+ {
+  "en": "personality",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "personalidad",
+  "fr": "personnalité"
+ },
+ {
+  "en": "period",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "período",
+  "fr": "période"
+ },
+ {
+  "en": "convert",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "convertir",
+  "fr": "convertir"
+ },
+ {
+  "en": "wonderful",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "maravilloso",
+  "fr": "merveilleux"
+ },
+ {
+  "en": "carpenter",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "carpintero",
+  "fr": "menuisier"
+ },
+ {
+  "en": "pleasure",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "placer",
+  "fr": "plaisir"
+ },
+ {
+  "en": "permission",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "permiso",
+  "fr": "permission"
+ },
+ {
+  "en": "crush",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "aplastar",
+  "fr": "écraser"
+ },
+ {
+  "en": "wrong",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "incorrecto",
+  "fr": "incorrect"
+ },
+ {
+  "en": "baker",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "panadero",
+  "fr": "boulanger"
+ },
+ {
+  "en": "possibility",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "posibilidad",
+  "fr": "possibilité"
+ },
+ {
+  "en": "personal",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "personal",
+  "fr": "personnel"
+ },
+ {
+  "en": "declare",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "declarar",
+  "fr": "déclarer"
+ },
+ {
+  "en": "bald",
+  "pos": "adj",
+  "cat": "body",
+  "sense": "",
+  "es": "calvo",
+  "fr": "chauve"
+ },
+ {
+  "en": "fisherman",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "pescador",
+  "fr": "pêcheur"
+ },
+ {
+  "en": "presence",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "presencia",
+  "fr": "présence"
+ },
+ {
+  "en": "phase",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "fase",
+  "fr": "phase"
+ },
+ {
+  "en": "defeat",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "derrotar",
+  "fr": "vaincre"
+ },
+ {
+  "en": "curly",
+  "pos": "adj",
+  "cat": "body",
+  "sense": "",
+  "es": "rizado",
+  "fr": "bouclé"
+ },
+ {
+  "en": "secretary",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "secretario",
+  "fr": "secrétaire"
+ },
+ {
+  "en": "presentation",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "presentación",
+  "fr": "présentation"
+ },
+ {
+  "en": "philosophy",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "filosofía",
+  "fr": "philosophie"
+ },
+ {
+  "en": "defend",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "defender",
+  "fr": "défendre"
+ },
+ {
+  "en": "married",
+  "pos": "adj",
+  "cat": "people",
+  "sense": "",
+  "es": "casado",
+  "fr": "marié"
+ },
+ {
+  "en": "accountant",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "contador",
+  "fr": "comptable"
+ },
+ {
+  "en": "probability",
+  "pos": "noun",
+  "cat": "numbers",
+  "sense": "",
+  "es": "probabilidad",
+  "fr": "probabilité"
+ },
+ {
+  "en": "pipe",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "tubo",
+  "fr": "tuyau"
+ },
+ {
+  "en": "detect",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "detectar",
+  "fr": "détecter"
+ },
+ {
+  "en": "retired",
+  "pos": "adj",
+  "cat": "work",
+  "sense": "",
+  "es": "jubilado",
+  "fr": "retraité"
+ },
+ {
+  "en": "cashier",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "cajero",
+  "fr": "caissier"
+ },
+ {
+  "en": "proportion",
+  "pos": "noun",
+  "cat": "numbers",
+  "sense": "",
+  "es": "proporción",
+  "fr": "proportion"
+ },
+ {
+  "en": "planet",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "planeta",
+  "fr": "planète"
+ },
+ {
+  "en": "drag",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "arrastrar",
+  "fr": "traîner"
+ },
+ {
+  "en": "rainy",
+  "pos": "adj",
+  "cat": "nature",
+  "sense": "",
+  "es": "lluvioso",
+  "fr": "pluvieux"
+ },
+ {
+  "en": "salesman",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "vendedor",
+  "fr": "vendeur"
+ },
+ {
+  "en": "rate",
+  "pos": "noun",
+  "cat": "numbers",
+  "sense": "",
+  "es": "tasa",
+  "fr": "taux"
+ },
+ {
+  "en": "platform",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "plataforma",
+  "fr": "plateforme"
+ },
+ {
+  "en": "emphasize",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "enfatizar",
+  "fr": "souligner"
+ },
+ {
+  "en": "sunny",
+  "pos": "adj",
+  "cat": "nature",
+  "sense": "",
+  "es": "soleado",
+  "fr": "ensoleillé"
+ },
+ {
+  "en": "merchant",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "comerciante",
+  "fr": "commerçant"
+ },
+ {
+  "en": "reflection",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "reflexión",
+  "fr": "réflexion"
+ },
+ {
+  "en": "poet",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "poeta",
+  "fr": "poète"
+ },
+ {
+  "en": "ensure",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "asegurar",
+  "fr": "assurer"
+ },
+ {
+  "en": "cloudy",
+  "pos": "adj",
+  "cat": "nature",
+  "sense": "",
+  "es": "nublado",
+  "fr": "nuageux"
+ },
+ {
+  "en": "tailor",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "sastre",
+  "fr": "tailleur"
+ },
+ {
+  "en": "resistance",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "resistencia",
+  "fr": "résistance"
+ },
+ {
+  "en": "poetry",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "poesía",
+  "fr": "poésie"
+ },
+ {
+  "en": "establish",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "establecer",
+  "fr": "établir"
+ },
+ {
+  "en": "windy",
+  "pos": "adj",
+  "cat": "nature",
+  "sense": "",
+  "es": "ventoso",
+  "fr": "venteux"
+ },
+ {
+  "en": "hairdresser",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "peluquero",
+  "fr": "coiffeur"
+ },
+ {
+  "en": "selection",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "selección",
+  "fr": "sélection"
+ },
+ {
+  "en": "political",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "político",
+  "fr": "politique"
+ },
+ {
+  "en": "evaluate",
+  "pos": "verb",
+  "cat": "thinking",
+  "sense": "",
+  "es": "evaluar",
+  "fr": "évaluer"
+ },
+ {
+  "en": "crowded",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "abarrotado",
+  "fr": "bondé"
+ },
+ {
+  "en": "gardener",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "jardinero",
+  "fr": "jardinier"
+ },
+ {
+  "en": "sequence",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "secuencia",
+  "fr": "séquence"
+ },
+ {
+  "en": "pollution",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "contaminación",
+  "fr": "pollution"
+ },
+ {
+  "en": "expose",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "exponer",
+  "fr": "exposer"
+ },
+ {
+  "en": "salty",
+  "pos": "adj",
+  "cat": "food",
+  "sense": "",
+  "es": "salado",
+  "fr": "salé"
+ },
+ {
+  "en": "shepherd",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "pastor",
+  "fr": "berger"
+ },
+ {
+  "en": "shortage",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "escasez",
+  "fr": "pénurie"
+ },
+ {
+  "en": "pool",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "swimming",
+  "es": "piscina",
+  "fr": "piscine"
+ },
+ {
+  "en": "flee",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "huir",
+  "fr": "fuir"
+ },
+ {
+  "en": "spicy",
+  "pos": "adj",
+  "cat": "food",
+  "sense": "",
+  "es": "picante",
+  "fr": "épicé"
+ },
+ {
+  "en": "cowboy",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "vaquero",
+  "fr": "cow-boy"
+ },
+ {
+  "en": "sight",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "",
+  "es": "vista",
+  "fr": "vue"
+ },
+ {
+  "en": "population",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "población",
+  "fr": "population"
+ },
+ {
+  "en": "generate",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "generar",
+  "fr": "générer"
+ },
+ {
+  "en": "tasty",
+  "pos": "adj",
+  "cat": "food",
+  "sense": "",
+  "es": "sabroso",
+  "fr": "savoureux"
+ },
+ {
+  "en": "veterinarian",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "veterinario",
+  "fr": "vétérinaire"
+ },
+ {
+  "en": "standard",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "norma",
+  "fr": "norme"
+ },
+ {
+  "en": "position",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "posición",
+  "fr": "position"
+ },
+ {
+  "en": "harvest",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "cosechar",
+  "fr": "récolter"
+ },
+ {
+  "en": "neat",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "ordenado",
+  "fr": "ordonné"
+ },
+ {
+  "en": "pharmacist",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "farmacéutico",
+  "fr": "pharmacien"
+ },
+ {
+  "en": "statement",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "declaración",
+  "fr": "déclaration"
+ },
+ {
+  "en": "positive",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "positivo",
+  "fr": "positif"
+ },
+ {
+  "en": "illustrate",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "ilustrar",
+  "fr": "illustrer"
+ },
+ {
+  "en": "messy",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "desordenado",
+  "fr": "désordonné"
+ },
+ {
+  "en": "psychologist",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "psicólogo",
+  "fr": "psychologue"
+ },
+ {
+  "en": "substance",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "sustancia",
+  "fr": "substance"
+ },
+ {
+  "en": "poverty",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "pobreza",
+  "fr": "pauvreté"
+ },
+ {
+  "en": "inherit",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "heredar",
+  "fr": "hériter"
+ },
+ {
+  "en": "wild",
+  "pos": "adj",
+  "cat": "nature",
+  "sense": "",
+  "es": "salvaje",
+  "fr": "sauvage"
+ },
+ {
+  "en": "athlete",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "atleta",
+  "fr": "athlète"
+ },
+ {
+  "en": "sum",
+  "pos": "noun",
+  "cat": "numbers",
+  "sense": "",
+  "es": "suma",
+  "fr": "somme"
+ },
+ {
+  "en": "pressure",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "presión",
+  "fr": "pression"
+ },
+ {
+  "en": "inject",
+  "pos": "verb",
+  "cat": "health",
+  "sense": "",
+  "es": "inyectar",
+  "fr": "injecter"
+ },
+ {
+  "en": "domestic",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "doméstico",
+  "fr": "domestique"
+ },
+ {
+  "en": "player",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "jugador",
+  "fr": "joueur"
+ },
+ {
+  "en": "survey",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "encuesta",
+  "fr": "enquête"
+ },
+ {
+  "en": "priest",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "sacerdote",
+  "fr": "prêtre"
+ },
+ {
+  "en": "inspect",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "inspeccionar",
+  "fr": "inspecter"
+ },
+ {
+  "en": "confident",
+  "pos": "adj",
+  "cat": "feelings",
+  "sense": "",
+  "es": "seguro",
+  "fr": "sûr"
+ },
+ {
+  "en": "referee",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "árbitro",
+  "fr": "arbitre"
+ },
+ {
+  "en": "tension",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "tensión",
+  "fr": "tension"
+ },
+ {
+  "en": "prince",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "príncipe",
+  "fr": "prince"
+ },
+ {
+  "en": "interpret",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "interpretar",
+  "fr": "interpréter"
+ },
+ {
+  "en": "lost",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "perdido",
+  "fr": "perdu"
+ },
+ {
+  "en": "teenager",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "adolescente",
+  "fr": "adolescent"
+ },
+ {
+  "en": "transport",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "transporte",
+  "fr": "transport"
+ },
+ {
+  "en": "princess",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "princesa",
+  "fr": "princesse"
+ },
+ {
+  "en": "isolate",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "aislar",
+  "fr": "isoler"
+ },
+ {
+  "en": "alive",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "vivo",
+  "fr": "vivant"
+ },
+ {
+  "en": "orphan",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "huérfano",
+  "fr": "orphelin"
+ },
+ {
+  "en": "trick",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "truco",
+  "fr": "astuce"
+ },
+ {
+  "en": "principle",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "principio",
+  "fr": "principe"
+ },
+ {
+  "en": "justify",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "justificar",
+  "fr": "justifier"
+ },
+ {
+  "en": "awake",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "despierto",
+  "fr": "éveillé"
+ },
+ {
+  "en": "widow",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "viuda",
+  "fr": "veuve"
+ },
+ {
+  "en": "warning",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "advertencia",
+  "fr": "avertissement"
+ },
+ {
+  "en": "priority",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "prioridad",
+  "fr": "priorité"
+ },
+ {
+  "en": "lower",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "bajar",
+  "fr": "baisser"
+ },
+ {
+  "en": "asleep",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "dormido",
+  "fr": "endormi"
+ },
+ {
+  "en": "bride",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "novia",
+  "fr": "mariée"
+ },
+ {
+  "en": "width",
+  "pos": "noun",
+  "cat": "describing",
+  "sense": "",
+  "es": "anchura",
+  "fr": "largeur"
+ },
+ {
+  "en": "process",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "proceso",
+  "fr": "processus"
+ },
+ {
+  "en": "modify",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "modificar",
+  "fr": "modifier"
+ },
+ {
+  "en": "available",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "disponible",
+  "fr": "disponible"
+ },
+ {
+  "en": "colleague",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "colega",
+  "fr": "collègue"
+ },
+ {
+  "en": "will",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "voluntad",
+  "fr": "volonté"
+ },
+ {
+  "en": "product",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "producto",
+  "fr": "produit"
+ },
+ {
+  "en": "multiply",
+  "pos": "verb",
+  "cat": "numbers",
+  "sense": "",
+  "es": "multiplicar",
+  "fr": "multiplier"
+ },
+ {
+  "en": "companion",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "compañero",
+  "fr": "compagnon"
+ },
+ {
+  "en": "wonder",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "maravilla",
+  "fr": "merveille"
+ },
+ {
+  "en": "production",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "producción",
+  "fr": "production"
+ },
+ {
+  "en": "occupy",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "ocupar",
+  "fr": "occuper"
+ },
+ {
+  "en": "rival",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "rival",
+  "fr": "rival"
+ },
+ {
+  "en": "profession",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "profesión",
+  "fr": "profession"
+ },
+ {
+  "en": "persuade",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "persuadir",
+  "fr": "persuader"
+ },
+ {
+  "en": "genius",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "genio",
+  "fr": "génie"
+ },
+ {
+  "en": "professor",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "profesor",
+  "fr": "professeur"
+ },
+ {
+  "en": "preserve",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "preservar",
+  "fr": "préserver"
+ },
+ {
+  "en": "beginner",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "principiante",
+  "fr": "débutant"
+ },
+ {
+  "en": "profit",
+  "pos": "noun",
+  "cat": "shopping",
+  "sense": "",
+  "es": "ganancia",
+  "fr": "bénéfice"
+ },
+ {
+  "en": "promote",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "promover",
+  "fr": "promouvoir"
+ },
+ {
+  "en": "volunteer",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "voluntario",
+  "fr": "volontaire"
+ },
+ {
+  "en": "program",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "programa",
+  "fr": "programme"
+ },
+ {
+  "en": "resign",
+  "pos": "verb",
+  "cat": "work",
+  "sense": "",
+  "es": "renunciar",
+  "fr": "démissionner"
+ },
+ {
+  "en": "employer",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "empleador",
+  "fr": "employeur"
+ },
+ {
+  "en": "progress",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "progreso",
+  "fr": "progrès"
+ },
+ {
+  "en": "seal",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "sellar",
+  "fr": "sceller"
+ },
+ {
+  "en": "spectator",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "espectador",
+  "fr": "spectateur"
+ },
+ {
+  "en": "project",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "proyecto",
+  "fr": "projet"
+ },
+ {
+  "en": "soak",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "empapar",
+  "fr": "tremper"
+ },
+ {
+  "en": "gang",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "pandilla",
+  "fr": "bande"
+ },
+ {
+  "en": "property",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "propiedad",
+  "fr": "propriété"
+ },
+ {
+  "en": "strengthen",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "fortalecer",
+  "fr": "renforcer"
+ },
+ {
+  "en": "proposal",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "propuesta",
+  "fr": "proposition"
+ },
+ {
+  "en": "subtract",
+  "pos": "verb",
+  "cat": "numbers",
+  "sense": "",
+  "es": "restar",
+  "fr": "soustraire"
+ },
+ {
+  "en": "protection",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "protección",
+  "fr": "protection"
+ },
+ {
+  "en": "tremble",
+  "pos": "verb",
+  "cat": "body",
+  "sense": "",
+  "es": "temblar",
+  "fr": "trembler"
+ },
+ {
+  "en": "public",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "público",
+  "fr": "public"
+ },
+ {
+  "en": "weave",
+  "pos": "verb",
+  "cat": "actions",
+  "sense": "",
+  "es": "tejer",
+  "fr": "tisser"
+ },
+ {
+  "en": "publish",
+  "pos": "verb",
+  "cat": "communication",
+  "sense": "",
+  "es": "publicar",
+  "fr": "publier"
+ },
+ {
+  "en": "quality",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "calidad",
+  "fr": "qualité"
+ },
+ {
+  "en": "quantity",
+  "pos": "noun",
+  "cat": "numbers",
+  "sense": "",
+  "es": "cantidad",
+  "fr": "quantité"
+ },
+ {
+  "en": "quarter",
+  "pos": "noun",
+  "cat": "numbers",
+  "sense": "",
+  "es": "cuarto",
+  "fr": "quart"
+ },
+ {
+  "en": "raw",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "crudo",
+  "fr": "cru"
+ },
+ {
+  "en": "reaction",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "reacción",
+  "fr": "réaction"
+ },
+ {
+  "en": "reality",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "realidad",
+  "fr": "réalité"
+ },
+ {
+  "en": "recipe",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "receta",
+  "fr": "recette"
+ },
+ {
+  "en": "region",
+  "pos": "noun",
+  "cat": "places",
+  "sense": "",
+  "es": "región",
+  "fr": "région"
+ },
+ {
+  "en": "regular",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "regular",
+  "fr": "régulier"
+ },
+ {
+  "en": "relationship",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "relación",
+  "fr": "relation"
+ },
+ {
+  "en": "religious",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "religioso",
+  "fr": "religieux"
+ },
+ {
+  "en": "report",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "informe",
+  "fr": "rapport"
+ },
+ {
+  "en": "reputation",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "reputación",
+  "fr": "réputation"
+ },
+ {
+  "en": "research",
+  "pos": "noun",
+  "cat": "school",
+  "sense": "",
+  "es": "investigación",
+  "fr": "recherche"
+ },
+ {
+  "en": "resource",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "recurso",
+  "fr": "ressource"
+ },
+ {
+  "en": "responsibility",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "responsabilidad",
+  "fr": "responsabilité"
+ },
+ {
+  "en": "result",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "resultado",
+  "fr": "résultat"
+ },
+ {
+  "en": "review",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "reseña",
+  "fr": "critique"
+ },
+ {
+  "en": "revolution",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "revolución",
+  "fr": "révolution"
+ },
+ {
+  "en": "reward",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "recompensa",
+  "fr": "récompense"
+ },
+ {
+  "en": "rhythm",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "ritmo",
+  "fr": "rythme"
+ },
+ {
+  "en": "risk",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "riesgo",
+  "fr": "risque"
+ },
+ {
+  "en": "role",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "papel",
+  "fr": "rôle"
+ },
+ {
+  "en": "route",
+  "pos": "noun",
+  "cat": "travel",
+  "sense": "",
+  "es": "ruta",
+  "fr": "itinéraire"
+ },
+ {
+  "en": "routine",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "rutina",
+  "fr": "routine"
+ },
+ {
+  "en": "salad",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "ensalada",
+  "fr": "salade"
+ },
+ {
+  "en": "sample",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "muestra",
+  "fr": "échantillon"
+ },
+ {
+  "en": "satellite",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "satélite",
+  "fr": "satellite"
+ },
+ {
+  "en": "scene",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "escena",
+  "fr": "scène"
+ },
+ {
+  "en": "scientist",
+  "pos": "noun",
+  "cat": "people",
+  "sense": "",
+  "es": "científico",
+  "fr": "scientifique"
+ },
+ {
+  "en": "screen",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "pantalla",
+  "fr": "écran"
+ },
+ {
+  "en": "season",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "estación",
+  "fr": "saison"
+ },
+ {
+  "en": "section",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "sección",
+  "fr": "section"
+ },
+ {
+  "en": "security",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "seguridad",
+  "fr": "sécurité"
+ },
+ {
+  "en": "sense",
+  "pos": "noun",
+  "cat": "body",
+  "sense": "faculty",
+  "es": "sentido",
+  "fr": "sens"
+ },
+ {
+  "en": "series",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "serie",
+  "fr": "série"
+ },
+ {
+  "en": "service",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "servicio",
+  "fr": "service"
+ },
+ {
+  "en": "session",
+  "pos": "noun",
+  "cat": "time",
+  "sense": "",
+  "es": "sesión",
+  "fr": "séance"
+ },
+ {
+  "en": "shadow",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "sombra",
+  "fr": "ombre"
+ },
+ {
+  "en": "shame",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "vergüenza",
+  "fr": "honte"
+ },
+ {
+  "en": "sheet",
+  "pos": "noun",
+  "cat": "home",
+  "sense": "bed",
+  "es": "sábana",
+  "fr": "drap"
+ },
+ {
+  "en": "shell",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "concha",
+  "fr": "coquille"
+ },
+ {
+  "en": "shock",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "choque",
+  "fr": "choc"
+ },
+ {
+  "en": "signal",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "señal",
+  "fr": "signal"
+ },
+ {
+  "en": "silence",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "silencio",
+  "fr": "silence"
+ },
+ {
+  "en": "similar",
+  "pos": "adj",
+  "cat": "describing",
+  "sense": "",
+  "es": "similar",
+  "fr": "similaire"
+ },
+ {
+  "en": "situation",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "situación",
+  "fr": "situation"
+ },
+ {
+  "en": "skill",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "habilidad",
+  "fr": "compétence"
+ },
+ {
+  "en": "slice",
+  "pos": "noun",
+  "cat": "food",
+  "sense": "",
+  "es": "rebanada",
+  "fr": "tranche"
+ },
+ {
+  "en": "solution",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "solución",
+  "fr": "solution"
+ },
+ {
+  "en": "source",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "fuente",
+  "fr": "source"
+ },
+ {
+  "en": "space",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "espacio",
+  "fr": "espace"
+ },
+ {
+  "en": "spirit",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "espíritu",
+  "fr": "esprit"
+ },
+ {
+  "en": "steel",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "acero",
+  "fr": "acier"
+ },
+ {
+  "en": "step",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "paso",
+  "fr": "pas"
+ },
+ {
+  "en": "stick",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "palo",
+  "fr": "bâton"
+ },
+ {
+  "en": "strategy",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "estrategia",
+  "fr": "stratégie"
+ },
+ {
+  "en": "stream",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "arroyo",
+  "fr": "ruisseau"
+ },
+ {
+  "en": "stress",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "estrés",
+  "fr": "stress"
+ },
+ {
+  "en": "structure",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "estructura",
+  "fr": "structure"
+ },
+ {
+  "en": "style",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "estilo",
+  "fr": "style"
+ },
+ {
+  "en": "success",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "éxito",
+  "fr": "succès"
+ },
+ {
+  "en": "suggestion",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "sugerencia",
+  "fr": "suggestion"
+ },
+ {
+  "en": "support",
+  "pos": "noun",
+  "cat": "actions",
+  "sense": "",
+  "es": "apoyo",
+  "fr": "soutien"
+ },
+ {
+  "en": "surface",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "superficie",
+  "fr": "surface"
+ },
+ {
+  "en": "surprise",
+  "pos": "noun",
+  "cat": "feelings",
+  "sense": "",
+  "es": "sorpresa",
+  "fr": "surprise"
+ },
+ {
+  "en": "symbol",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "símbolo",
+  "fr": "symbole"
+ },
+ {
+  "en": "system",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "sistema",
+  "fr": "système"
+ },
+ {
+  "en": "target",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "blanco",
+  "fr": "cible"
+ },
+ {
+  "en": "task",
+  "pos": "noun",
+  "cat": "work",
+  "sense": "",
+  "es": "tarea",
+  "fr": "tâche"
+ },
+ {
+  "en": "technique",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "técnica",
+  "fr": "technique"
+ },
+ {
+  "en": "technology",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "tecnología",
+  "fr": "technologie"
+ },
+ {
+  "en": "temperature",
+  "pos": "noun",
+  "cat": "nature",
+  "sense": "",
+  "es": "temperatura",
+  "fr": "température"
+ },
+ {
+  "en": "theory",
+  "pos": "noun",
+  "cat": "thinking",
+  "sense": "",
+  "es": "teoría",
+  "fr": "théorie"
+ },
+ {
+  "en": "threat",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "amenaza",
+  "fr": "menace"
+ },
+ {
+  "en": "title",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "título",
+  "fr": "titre"
+ },
+ {
+  "en": "topic",
+  "pos": "noun",
+  "cat": "communication",
+  "sense": "",
+  "es": "tema",
+  "fr": "sujet"
+ },
+ {
+  "en": "tradition",
+  "pos": "noun",
+  "cat": "things",
+  "sense": "",
+  "es": "tradición",
+  "fr": "tradition"
+ }
+]
