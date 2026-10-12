@@ -172,7 +172,10 @@ for (const [w, h] of [[360, 640], [390, 780]]) {
     const snap = (screen) => page.evaluate((id) => {
       const wrap = document.querySelector('#' + id + ' .fit-zoom');
       const first = document.querySelector('#' + id + ' .screen-scroll h2, #' + id + ' .screen-scroll .perf-hero');
-      return { zoom: wrap ? wrap.style.zoom : '', top: first ? Math.round(first.getBoundingClientRect().top) : 0, height: first ? Math.round(first.getBoundingClientRect().height) : 0, width: first ? Math.round(first.getBoundingClientRect().width) : 0 };
+      // (a screen that scrolls, like Stats with its mastery card, moves its top when a section scrolls into view; only a one-page screen must stay put)
+      const sc = document.querySelector('#' + id + ' .screen-scroll');
+      const scrolls = !!sc && sc.scrollHeight > sc.clientHeight + 1;
+      return { zoom: wrap ? wrap.style.zoom : '', top: first && !scrolls ? Math.round(first.getBoundingClientRect().top) : 0, height: first ? Math.round(first.getBoundingClientRect().height) : 0, width: first ? Math.round(first.getBoundingClientRect().width) : 0 };
     }, screen);
     for (const [screen, summary] of [['screenStats', '#screenStats .perf-summary'], ['screenProfile', '#screenProfile .profile-fold-sum']]) {
       await page.evaluate((id) => window.__ui.show(id), screen);

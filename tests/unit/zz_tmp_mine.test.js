@@ -1,13 +1,9 @@
 import { it } from 'vitest';
 import * as THREE from 'three';
 import { SKINS } from '../../js/game/skins.js';
-import { buildWorldBay, buildWorldArch } from '../../js/game/worlds.js';
-function tris(o){let t=0;o.traverse(m=>{if(m.isMesh){const g=m.geometry;t+=(g.index?g.index.count:g.attributes.position.count)/3;}});return t;}
+import { buildWorldBay } from '../../js/game/worlds.js';
 it('x',()=>{
-  ['Neonatal Cloud Nursery','Pharmacy Pop Factory'].forEach(n=>{
-    const s=SKINS.find(k=>k.name===n);
-    const out=[];
-    for(let k=0;k<4;k++){[-1,1].forEach(side=>{out.push(Math.round(tris(buildWorldBay(s,side,-4*k))));});}
-    console.log(n,'bays(-1,1 per k):',out.join(','),'arch',Math.round(tris(buildWorldArch(s,-44))));
-  });
+  const s=SKINS.find(k=>k.name==='Anatomy Amusement Park');
+  const g=buildWorldBay(s,-1,0); g.updateMatrixWorld(true);
+  g.children.forEach((c,i)=>{const b=new THREE.Box3().setFromObject(c); if(-b.max.x<4.3 && b.min.y<=2.6 && b.max.y>=0.12 && !(b.min.x<0&&b.max.x>0)) console.log('OFF',i,c.geometry.type,b.min.toArray().map(v=>v.toFixed(2)),b.max.toArray().map(v=>v.toFixed(2)));});
 });

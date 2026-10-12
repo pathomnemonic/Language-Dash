@@ -2691,3 +2691,6 @@ body.dyslexia .btn, body.dyslexia .mode-btn, body.dyslexia h3 { font-family: "Op
 .hear-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 .hear-btn[hidden] { display: none; }
 .word-pair { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 8px; }
+/* five Locker tabs share one row: the capital letters must fit the narrowest phone (MONSTERS was cut off) */
+.locker-tabs .locker-tab { letter-spacing: .02em; }
+@media (max-width: 420px) { .locker-tabs.five .locker-tab, .locker-tabs.six .locker-tab { font-size: 9px; letter-spacing: 0; } }
