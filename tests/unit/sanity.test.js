@@ -21,7 +21,7 @@ describe('saved data stays the right shape', () => {
     storage.finalizeRun(run({ mode: 'daily', dailyCompleted: true }));
     storage.finalizeFlashcardSession({ sessionId: 's1', total: 10, correct: 7, wrong: 3, durationMs: 5000, cardResults: [{ cardId: 'c001', rating: 'correct' }] });
     storage.set('coins', 5000);
-    storage.buyItem('hat_headlamp', 1200);
+    storage.buyItem('hat_ricehat', 1100);
     storage.checkAchievements(null);
     storage.getDailyQuests();
     expect(checkDataSanity(storage.data, STORAGE_DEFAULTS)).toEqual([]);
@@ -47,7 +47,7 @@ describe('nothing is lost between saving and loading', () => {
     for (let i = 0; i < 6; i++) storage.finalizeRun(run({ mode: i % 2 ? 'daily' : 'endless', dailyCompleted: i % 2 === 1 }));
     storage.finalizeFlashcardSession({ sessionId: 'rt1', total: 12, correct: 9, wrong: 3, durationMs: 1000, cardResults: [{ cardId: 'c001', rating: 'correct' }] });
     storage.set('coins', 9000);
-    storage.buyItem('hat_headlamp', 1200);
+    storage.buyItem('hat_ricehat', 1100);
     storage.afterPurchase();
     storage.set('preferredMap', 'Hospital Hallway');
     storage.set('examDate', '2031-05-01');

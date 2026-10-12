@@ -105,8 +105,8 @@ describe('Language Dash Pro backend', () => {
     expect((await one(H, 'SELECT get_my_pro() AS r')).r.items).toEqual([]);
     await db.query("SELECT pro_grant_item($1, 'trail_glyphs', 'stripe')", [H]);
     await db.query("SELECT pro_grant_item($1, 'trail_glyphs', 'stripe')", [H]); // the same event twice
-    await db.query("SELECT pro_grant_item($1, 'gear_wings', 'stripe')", [H]);
-    expect((await one(H, 'SELECT get_my_pro() AS r')).r.items).toEqual(['trail_glyphs', 'gear_wings']);
+    await db.query("SELECT pro_grant_item($1, 'gear_globe', 'stripe')", [H]);
+    expect((await one(H, 'SELECT get_my_pro() AS r')).r.items).toEqual(['trail_glyphs', 'gear_globe']);
     expect((await one(J, 'SELECT get_my_pro() AS r')).r.items).toEqual([]); // not shared
     // they are reported whether or not Pro is active, and survive a lapse
     await db.query("SELECT pro_grant_until($1, now() + interval '30 days', 'monthly', 'stripe', false)", [H]);
@@ -118,11 +118,11 @@ describe('Language Dash Pro backend', () => {
     // players cannot read the table or grant themselves anything
     expect(await rejects(H, 'SELECT * FROM pro_items')).toBe(true);
     expect(await rejects(H, "SELECT pro_grant_item('" + H + "', 'avatar_m_king', 'x')")).toBe(true);
-    expect(await rejects(H, "SELECT pro_revoke_item('" + H + "', 'gear_wings')")).toBe(true);
+    expect(await rejects(H, "SELECT pro_revoke_item('" + H + "', 'gear_globe')")).toBe(true);
     // a refund takes back that one item
     await db.query("SELECT pro_revoke_item($1, 'trail_glyphs')", [H]);
-    expect((await one(H, 'SELECT get_my_pro() AS r')).r.items).toEqual(['gear_wings']);
-    expect((await db.query("SELECT pro_has_item($1, 'gear_wings') AS h", [H])).rows[0].h).toBe(true);
+    expect((await one(H, 'SELECT get_my_pro() AS r')).r.items).toEqual(['gear_globe']);
+    expect((await db.query("SELECT pro_has_item($1, 'gear_globe') AS h", [H])).rows[0].h).toBe(true);
   });
 
   it('redeems a code once per person, up to its limit', async () => {

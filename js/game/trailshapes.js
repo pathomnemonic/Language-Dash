@@ -82,11 +82,11 @@ function rectGeo(x, y, w, h) {
 function plane() {
   var wing = new THREE.Shape();
   wing.moveTo(0, 1);
-  wing.lineTo(-0.62, -0.78);
+  wing.lineTo(-0.85, -0.78);
   wing.lineTo(-0.16, -0.5);
   wing.lineTo(0, -0.78);
   wing.lineTo(0.16, -0.5);
-  wing.lineTo(0.62, -0.78);
+  wing.lineTo(0.85, -0.78);
   wing.closePath();
   var body = new THREE.Shape(); // the keel: a long thin fold down the middle (a second layer, slightly in front)
   body.moveTo(0, 1); body.lineTo(-0.1, -0.5); body.lineTo(0, -0.78); body.lineTo(0.1, -0.5); body.closePath();
@@ -208,10 +208,10 @@ function snowflake() {
 /** A firefly: a round body, a head and two wings. */
 function firefly() {
   return mergeGeometries([
-    ellipse(0, -0.12, 0.34, 0.5), // the glowing abdomen
-    disc(0, 0.5, 0.2),
-    ellipse(-0.48, 0.2, 0.34, 0.15, 0.7),
-    ellipse(0.48, 0.2, 0.34, 0.15, -0.7)
+    ellipse(0, -0.2, 0.42, 0.56), // the glowing abdomen
+    disc(0, 0.5, 0.22),
+    ellipse(-0.7, 0.28, 0.42, 0.2, 0.3),
+    ellipse(0.7, 0.28, 0.42, 0.2, -0.3)
   ]);
 }
 

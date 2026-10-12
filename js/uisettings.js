@@ -811,7 +811,7 @@ export var settingsMethods = {
         if (type === 'pal' && palSvg(item.id)) {
           // a pal wears its own drawing (palart.js: static markup of ours) on paper
           swatch.textContent = '';
-          swatch.style.background = 'var(--card, #fffbf2)';
+          swatch.style.background = '#fffbf2';
           swatch.style.border = '2px solid var(--ink, #1b2a41)';
           swatch.innerHTML = palSvg(item.id);
           swatch.firstChild.style.cssText = 'width:30px;height:30px';

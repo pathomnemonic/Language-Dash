@@ -30,3 +30,12 @@ and anything from Mixamo (Soldier, Xbot, Michelle).
 ## Other models still in `public/models`
 
 `obstacles/`, `props/` and `kaykit/` are scenery, credited in the README (Quaternius, Kenney, KayKit; CC0 unless noted there).
+
+## Cosmetics
+
+Hats, gear, clothing, trails and pals are all original work for this project; nothing was downloaded.
+
+- Hats, gear and clothing (`js/game/cosmetics.js`): procedural three.js geometry (lathes, cylinders, spheres, boxes), flat-toon material and ink outline, built in code. No model files.
+- Trails (`js/game/trailshapes.js`): procedural flat shapes; the speech-bubble letters (A, あ, Я, ع, 한) are drawn at run time on a canvas with the system fonts. No files.
+- Pals (`js/palart.js`): hand-written inline SVG drawings. No files.
+- Author: this project. License: same as the project (no third-party assets, so no attribution is required).

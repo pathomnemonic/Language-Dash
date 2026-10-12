@@ -39,7 +39,7 @@ var TRAIL_CONFIGS = {
   },
   trail_fireflies: {
     color1: 0xf2d24a, color2: 0xb8d94a, shape: 'firefly', blink: true,
-    size: 0.30, spread: 0.55, type: 'fireflies'
+    size: 0.38, spread: 0.55, type: 'fireflies'
   },
   trail_sakura: {
     color1: 0xf4a6b8, color2: 0xfde3ea, shape: 'blossom',
@@ -71,7 +71,7 @@ var TRAIL_CONFIGS = {
   },
   trail_footprints: {
     color1: 0xb99560, color2: 0xa07f4e, shape: 'footprint', flat: true,
-    size: 0.5, spread: 0.12, type: 'prints'
+    size: 0.8, spread: 0.12, type: 'prints'
   },
   trail_ink: {
     color1: 0x1b2a41, color2: 0x2f5d8c, shape: 'splat',

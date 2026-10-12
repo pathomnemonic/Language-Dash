@@ -44,7 +44,7 @@ describe('badges are actually awarded by real play', () => {
   it('the first purchase earns Shopper', async () => {
     const storage = await fresh();
     storage.set('coins', 5000);
-    expect(storage.buyItem('hat_headlamp', 1200)).toBe(true);
+    expect(storage.buyItem('hat_ricehat', 1100)).toBe(true);
     expect(storage.afterPurchase()).toContain(ACHIEVEMENT_IDS.BUY_FIRST);
   });
   it('creating a custom card earns Card Creator', async () => {

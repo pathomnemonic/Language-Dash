@@ -38,56 +38,56 @@ var WASH = swatches([['Rose', 0xff9fbd], ['Sky', 0x9fd0ff], ['Mint', 0x9fffcf], 
 export var CHARACTER_MODELS = [
   { id: 'avatar_intern', name: 'Fika Fox', desc: 'Stockholm courier who never skips a coffee break and learns one new word per cup. (sv, en)', file: 'heroes/fox.glb', price: 0, icon: '🦊', color: 0xe8742a, scale: 0.78,
     parts: [{ key: 'tint', label: 'Fur wash', materials: ['fox_material'], palette: WASH }] },
-  { id: 'hero_dummy', name: 'Crash-Test Kuba', desc: 'Warsaw safety tester who falls over beautifully and gets back up every single time. (pl, en)', file: 'heroes/dummy.glb', price: 1000, icon: '🦺', color: 0xf2b134,
+  { id: 'hero_dummy', name: 'Crash-Test Kuba', desc: 'Warsaw safety tester who falls over beautifully and gets back up every single time. (pl, en)', file: 'heroes/dummy.glb', price: 800, icon: '🦺', color: 0xf2b134,
     parts: [{ key: 'tint', label: 'Suit wash', materials: ['texture-d'], palette: WASH }] },
-  { id: 'hero_llama', name: 'Lola Llama', desc: 'Cusco pack-llama who carries four languages, six bags and one very small hat. (es, en)', file: 'heroes/llama.glb', price: 1400, icon: '🦙', color: 0xb08a63, scale: 1.15,
+  { id: 'hero_llama', name: 'Lola Llama', desc: 'Cusco pack-llama who carries four languages, six bags and one very small hat. (es, en)', file: 'heroes/llama.glb', price: 1600, icon: '🦙', color: 0xb08a63, scale: 1.15,
     parts: [
       { key: 'wool', label: 'Wool', materials: ['Brown'], palette: FUR },
       { key: 'face', label: 'Face & socks', materials: ['White'], palette: WOOL },
       { key: 'hooves', label: 'Hooves & ears', materials: ['Grey'], palette: HOOF }
     ] },
-  { id: 'hero_pug', name: 'Percy Pug', desc: 'Piccadilly pug who has opinions about queueing and tea, and shares both loudly. (en, fr)', file: 'heroes/pug.glb', price: 1800, icon: '🐶', color: 0xe0c08a, scale: 0.8,
+  { id: 'hero_pug', name: 'Percy Pug', desc: 'Piccadilly pug who has opinions about queueing and tea, and shares both loudly. (en, fr)', file: 'heroes/pug.glb', price: 2300, icon: '🐶', color: 0xe0c08a, scale: 0.8,
     parts: [
       { key: 'coat', label: 'Coat', materials: ['Beige'], palette: FUR },
       { key: 'mask', label: 'Mask & ears', materials: ['Brown'], palette: DARKS }
     ] },
-  { id: 'hero_professor', name: 'Nonno Nico', desc: 'Bologna grandfather who swears pasta is a language and teaches it with both hands. (it, en)', file: 'heroes/professor.glb', price: 2200, icon: '🍝', color: 0x9fc4ea,
+  { id: 'hero_professor', name: 'Nonno Nico', desc: 'Bologna grandfather who swears pasta is a language and teaches it with both hands. (it, en)', file: 'heroes/professor.glb', price: 2900, icon: '🍝', color: 0x9fc4ea,
     parts: [{ key: 'tint', label: 'Shirt wash', materials: ['texture-i'], palette: WASH }] },
-  { id: 'hero_cow', name: 'Clara Cowbell', desc: 'Swiss alpine cow whose bell announces every sentence before she has finished it. (de, fr, it)', file: 'heroes/cow.glb', price: 2600, icon: '🐄', color: 0x3a3a40, scale: 0.85,
+  { id: 'hero_cow', name: 'Clara Cowbell', desc: 'Swiss alpine cow whose bell announces every sentence before she has finished it. (de, fr, it)', file: 'heroes/cow.glb', price: 3500, icon: '🐄', color: 0x3a3a40, scale: 0.85,
     parts: [
       { key: 'patches', label: 'Patches', materials: ['Black'], palette: DARKS },
       { key: 'coat', label: 'Coat', materials: ['White'], palette: WOOL },
       { key: 'nose', label: 'Nose', materials: ['Pink'], palette: PIGS }
     ] },
-  { id: 'hero_vest', name: 'Viennese Vera', desc: 'Vienna cafe waitress in a purple waistcoat who remembers every order in three languages. (de, it)', file: 'heroes/vest.glb', price: 3000, icon: '☕', color: 0x7b3f6e,
+  { id: 'hero_vest', name: 'Viennese Vera', desc: 'Vienna cafe waitress in a purple waistcoat who remembers every order in three languages. (de, it)', file: 'heroes/vest.glb', price: 4100, icon: '☕', color: 0x7b3f6e,
     parts: [{ key: 'tint', label: 'Waistcoat wash', materials: ['texture-e'], palette: WASH }] },
-  { id: 'hero_ranger', name: 'Ranger Ravi', desc: 'Sikkim park ranger who names every bird in Hindi, then again in English for the tourists. (hi, en)', file: 'heroes/ranger.glb', price: 3400, icon: '🌲', color: 0x2e7a4a,
+  { id: 'hero_ranger', name: 'Ranger Ravi', desc: 'Sikkim park ranger who names every bird in Hindi, then again in English for the tourists. (hi, en)', file: 'heroes/ranger.glb', price: 4700, icon: '🌲', color: 0x2e7a4a,
     parts: [{ key: 'tint', label: 'Uniform wash', materials: ['texture-m'], palette: WASH }] },
-  { id: 'hero_sheep', name: 'Merino Mateo', desc: 'Patagonian sheep who counts everything in Spanish and falls asleep at eleven. Tonight it is ten. (es, en)', file: 'heroes/sheep.glb', price: 3800, icon: '🐑', color: 0xe8e8e8, scale: 0.85,
+  { id: 'hero_sheep', name: 'Merino Mateo', desc: 'Patagonian sheep who counts everything in Spanish and falls asleep at eleven. Tonight it is ten. (es, en)', file: 'heroes/sheep.glb', price: 5300, icon: '🐑', color: 0xe8e8e8, scale: 0.85,
     parts: [
       { key: 'wool', label: 'Wool', materials: ['White'], palette: WOOL },
       { key: 'face', label: 'Face & legs', materials: ['Black'], palette: DARKS }
     ] },
-  { id: 'hero_kimono', name: 'Kaede of Kyoto', desc: 'Tea-house host who corrects your politeness one gentle sip at a time. (ja, en)', file: 'heroes/kimono.glb', price: 4200, icon: '🍵', color: 0x1f8a6a,
+  { id: 'hero_kimono', name: 'Kaede of Kyoto', desc: 'Tea-house host who corrects your politeness one gentle sip at a time. (ja, en)', file: 'heroes/kimono.glb', price: 6000, icon: '🍵', color: 0x1f8a6a,
     parts: [{ key: 'tint', label: 'Kimono wash', materials: ['texture-n'], palette: WASH }] },
-  { id: 'hero_pig', name: 'Truffle Tonio', desc: 'Piedmont truffle pig with the best nose in Italy and a growing list of French phrases. (it, fr)', file: 'heroes/pig.glb', price: 4600, icon: '🐖', color: 0xe8a0a8, scale: 0.7,
+  { id: 'hero_pig', name: 'Truffle Tonio', desc: 'Piedmont truffle pig with the best nose in Italy and a growing list of French phrases. (it, fr)', file: 'heroes/pig.glb', price: 6700, icon: '🐖', color: 0xe8a0a8, scale: 0.7,
     parts: [
       { key: 'hide', label: 'Hide', materials: ['Hide'], palette: PIGS },
       { key: 'hooves', label: 'Hooves', materials: ['Hooves'], palette: HOOF }
     ] },
-  { id: 'hero_horse', name: 'Sagaan the Steppe Horse', desc: 'Mongolian steppe horse who has outrun three storms and one very long phrasebook. (zh, ru)', file: 'heroes/horse.glb', price: 5000, icon: '🐎', color: 0x7a4a30, scale: 1.0,
+  { id: 'hero_horse', name: 'Sagaan the Steppe Horse', desc: 'Mongolian steppe horse who has outrun three storms and one very long phrasebook. (zh, ru)', file: 'heroes/horse.glb', price: 7400, icon: '🐎', color: 0x7a4a30, scale: 1.0,
     parts: [
       { key: 'coat', label: 'Coat', materials: ['Coat'], palette: HORSES },
       { key: 'mane', label: 'Mane', materials: ['Mane'], palette: DARKS }
     ] },
-  { id: 'hero_pirate', name: 'Port-Side Nuno', desc: 'Porto harbour pilot with an eye patch (a gull, long story) and a parrot that only speaks Portuguese. (pt, en)', file: 'heroes/pirate.glb', price: 5500, icon: '🦜', color: 0x2f3a7a,
+  { id: 'hero_pirate', name: 'Port-Side Nuno', desc: 'Porto harbour pilot with an eye patch (a gull, long story) and a parrot that only speaks Portuguese. (pt, en)', file: 'heroes/pirate.glb', price: 8200, icon: '🦜', color: 0x2f3a7a,
     parts: [{ key: 'tint', label: 'Coat wash', materials: ['texture-p'], palette: WASH }] },
-  { id: 'hero_zebra', name: 'Zola Zebra-Crossing', desc: 'Serengeti-born crossing guard whose stripes are so crisp that everyone stops and looks both ways. (en, fr)', file: 'heroes/zebra.glb', price: 6000, icon: '🦓', color: 0xeeeeee, scale: 1.0,
+  { id: 'hero_zebra', name: 'Zola Zebra-Crossing', desc: 'Serengeti-born crossing guard whose stripes are so crisp that everyone stops and looks both ways. (en, fr)', file: 'heroes/zebra.glb', price: 9000, icon: '🦓', color: 0xeeeeee, scale: 1.0,
     parts: [
       { key: 'coat', label: 'Coat', materials: ['White'], palette: WOOL },
       { key: 'stripes', label: 'Stripes', materials: ['Black'], palette: BRIGHTS }
     ] },
-  { id: 'hero_beep', name: 'Pico Pocketbot', desc: 'A pocket-size translator gadget with far too much antenna. Beeps in Japanese when it is happy. (ja, ko)', file: 'heroes/beep.glb', price: 7400, icon: '📻', color: 0x7a4fb5, scale: 0.9,
+  { id: 'hero_beep', name: 'Pico Pocketbot', desc: 'A pocket-size translator gadget with far too much antenna. Beeps in Japanese when it is happy. (ja, ko)', file: 'heroes/beep.glb', price: 10400, icon: '📻', color: 0x7a4fb5, scale: 0.9,
     parts: [{ key: 'tint', label: 'Casing wash', materials: ['colormap'], palette: WASH }] }
 ];
 
