@@ -24,7 +24,8 @@ import { SHOP_ITEMS, AVATARS } from './shopdata.js';
 import { loadCharacterModel, buildModelCharacter } from './charactermodel.js';
 import { useCharacterModels } from './quality.js';
 import { paperizeMaterials } from './paper.js';
-import { buildHat, buildGear, buildClothing, gearSlot, HEAD_TOP } from './cosmetics.js';
+import { buildHat, buildGear, buildClothing, gearSlot } from './cosmetics.js';
+import { measureHead, measureTorso, findHips } from './cosmetfit.js';
 
 // ===== HELPERS =====
 
@@ -517,20 +518,10 @@ function buildVehicle(avatar) {
 
 // ===== HATS, GEAR AND CLOTHING (the shapes live in cosmetics.js) =====
 
-/** A bone of a model by name (the first pattern that matches wins; null when it has none). */
-function findBone(root, patterns) {
-    var bones = [];
-    root.traverse(function (o) { if (o.isBone) bones.push(o); });
-    for (var i = 0; i < patterns.length; i++) {
-        for (var j = 0; j < bones.length; j++) if (patterns[i].test(bones[j].name)) return bones[j];
-    }
-    return null;
-}
-
 /**
  * Put a cosmetic on a runner. The classic blocky runner just gets it as a child. An animated hero gets it on the bone
- * it should follow (head, chest or hips), so it crouches, leans and bobs with the runner. `item` is built in runner
- * space; attaching to a bone keeps where it stands now.
+ * it should follow (head, chest or hips), so it crouches, leans and bobs with the runner; `item` is built in runner
+ * space and attaching to a bone keeps where it stands now.
  */
 function wear(pg, item, bone) {
     if (!item) return;
@@ -547,35 +538,60 @@ export function attachCosmetics(pg, equipped, avatar) {
     var s = avatar.scale || 1.0;
     var isModel = !!(pg.userData && pg.userData.isModel);
     var root = isModel ? pg.children[0] : null;
-    var headBone = null, chestBone = null, hipBone = null, top = HEAD_TOP * s, hs = s;
+    var head = null, torso = null, hips = null;
     if (root) {
         pg.updateMatrixWorld(true);
-        headBone = findBone(root, [/^(mixamorig[:_]?)?head$/i, /^head/i, /head$/i]);
-        chestBone = findBone(root, [/^(mixamorig[:_]?)?(upper[ _.]?chest|chest)$/i, /spine[ _.]?(2|3)$/i, /^(mixamorig[:_]?)?spine\d?$/i, /chest|spine/i]);
-        hipBone = findBone(root, [/^(mixamorig[:_]?)?hips?$/i, /pelvis/i, /^root$/i]);
-        var box = new THREE.Box3().setFromObject(root, true);
-        top = box.max.y;
-        if (headBone) {
-            var hp = new THREE.Vector3();
-            headBone.getWorldPosition(hp);
-            // the classic runner's head bone would sit about 0.62 under the crown: scale the hat by how tall this head is
-            hs = Math.max(0.7, Math.min(1.45, (top - hp.y) / 0.62));
-        }
+        head = measureHead(root, pg);
+        torso = measureTorso(root, pg);
+        hips = findHips(root);
     }
     var hatItem = SHOP_ITEMS.filter(function (i) { return i.id === equipped.hat; })[0];
     var gearItem = SHOP_ITEMS.filter(function (i) { return i.id === equipped.gear; })[0];
     var clothItem = SHOP_ITEMS.filter(function (i) { return i.id === equipped.clothing; })[0];
 
-    if (clothItem && clothItem.color) wear(pg, buildClothing(clothItem.id, clothItem.color, s), chestBone);
+    // gear and clothing: scaled to this hero's torso, centred on it (the classic torso is 0.62 wide, centred at y 1.03)
+    function fitted(item) {
+        if (!item || !torso || !torso.box) return item;
+        var size = new THREE.Vector3();
+        var c = new THREE.Vector3();
+        torso.box.getSize(size);
+        torso.box.getCenter(c);
+        var f = Math.max(0.45, Math.min(1.5, Math.max(size.x, size.z) / 0.62));
+        if (typeof window !== 'undefined' && window.__cosmDebug) console.log('COSM', avatar.id, 'torso', size.x.toFixed(2), size.y.toFixed(2), size.z.toFixed(2), 'c', c.y.toFixed(2), 'f', f.toFixed(2));
+        var holder = new THREE.Group();
+        holder.add(item);
+        holder.scale.setScalar(f);
+        holder.position.set(c.x, c.y - 1.03 * f, c.z);
+        return holder;
+    }
+    var follow = torso ? torso.node : null;
+    if (clothItem && clothItem.color) wear(pg, fitted(buildClothing(clothItem.id, clothItem.color, 1)), follow);
     if (gearItem && gearItem.color) {
         var slot = gearSlot(gearItem.id);
-        wear(pg, buildGear(gearItem.id, gearItem.color, s), slot === 'hip' ? (hipBone || chestBone) : chestBone);
+        wear(pg, fitted(buildGear(gearItem.id, gearItem.color, 1)), slot === 'hip' && hips ? hips : follow);
     }
     if (hatItem && hatItem.color && !avatar.hasWizardHat && !avatar.hasAntenna) {
-        var hat = buildHat(hatItem.id, hatItem.color, isModel ? hs : s);
+        var hs = s;
+        var pos = new THREE.Vector3(0, 1.97 * s, 0);
+        if (isModel) {
+            if (head) {
+                var hsz = new THREE.Vector3();
+                var hc = new THREE.Vector3();
+                head.box.getSize(hsz);
+                head.box.getCenter(hc);
+                hs = Math.max(0.5, Math.min(1.6, Math.max(hsz.x, hsz.z) / 0.76));
+                pos.set(hc.x, head.box.max.y - 0.06 * hs, hc.z);
+                if (typeof window !== 'undefined' && window.__cosmDebug) console.log('COSM', avatar.id, 'head', hsz.x.toFixed(2), hsz.y.toFixed(2), hsz.z.toFixed(2), 'top', head.box.max.y.toFixed(2), 'c', hc.x.toFixed(2), hc.z.toFixed(2));
+            } else {
+                var top = new THREE.Box3().setFromObject(root, true).max.y;
+                hs = 1;
+                pos.set(0, top - 0.05, 0);
+            }
+        }
+        var hat = buildHat(hatItem.id, hatItem.color, hs);
         if (hat) {
-            hat.position.set(0, (isModel ? top - 0.05 * hs : 1.97 * s), 0);
-            wear(pg, hat, headBone);
+            hat.position.copy(pos);
+            wear(pg, hat, head ? head.node : null);
         }
     }
 }

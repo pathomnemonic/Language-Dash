@@ -23,7 +23,7 @@ export default defineConfig({
     // The welcome screen itself is covered by tests/e2e/welcome.spec.js, which clears it.
     storageState: {
       cookies: [],
-      origins: [{ origin: new URL(process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4173').origin, localStorage: [{ name: 'langdash.pair.v1', value: JSON.stringify({ known: 'en', target: 'es' }) }] }]
+      origins: [{ origin: new URL(process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4173').origin, localStorage: [{ name: 'langdash.pair.v1', value: JSON.stringify({ known: 'en', target: 'es' }) }, { name: 'ld_levels', value: JSON.stringify({ 'en-es': { level: 'beginner', frontier: 80, source: 'beginner', at: 0 } }) }] }]
     },
     // Set PW_CHROMIUM to use a browser that is already installed instead of the one Playwright downloads
     launchOptions: process.env.PW_CHROMIUM ? { executablePath: process.env.PW_CHROMIUM, args: ['--no-sandbox'] } : undefined,

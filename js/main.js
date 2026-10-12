@@ -44,7 +44,9 @@ import { createDailyOrder } from './game/gates.js';
 import { uniqueByAnswer } from './cardleaks.js';
 import { reportError, showUserError, installGlobalErrorHandlers, setDiagnosticsSink } from './errors.js';
 import { registerServiceWorker } from './swregister.js';
-import { hasPair } from './lang/pair.js';
+import { hasPair, getPairOrDefault } from './lang/pair.js';
+import { hasLevel } from './lang/levels.js';
+import { ensureLevel } from './levelui.js';
 import { showLanguageOnboarding } from './langui.js';
 import { isTutorialOpen, requestCloseTutorial } from './tutorial.js';
 import { startTour } from './tour.js';
@@ -1469,7 +1471,10 @@ function init() {
       if (!hasPair()) { showLanguageOnboarding(); return; }
       // A save that came up empty while an earlier copy with real progress is still on the device: offer it back first
       if (storage.recoverable) { askToRestoreProgress(storage.recoverable); return; }
-      if (!storage.get('firstRunComplete')) ui.showTutorial({ firstRun: true });
+      var carryOn = function () { if (!storage.get('firstRunComplete')) ui.showTutorial({ firstRun: true }); };
+      // The first time a language pair is used: how much of it does the player already know? (sample words, or a placement test)
+      if (!hasLevel(getPairOrDefault())) { ensureLevel(carryOn); return; }
+      carryOn();
     });
   });
 

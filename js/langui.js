@@ -9,6 +9,7 @@ import { createElement, clearElement } from './dom.js';
 import { LANGUAGES, getLanguage } from './lang/languages.js';
 import { getPair, applyPair, getShowRoman, setShowRoman } from './lang/pair.js';
 import { trapFocus, releaseFocusTrap } from './uihelpers.js';
+import { renderLevelRow } from './levelui.js';
 
 function chip(lang, selected, disabled, onPick) {
   var b = createElement('button', {
@@ -100,6 +101,9 @@ export function renderLanguageSheet(container) {
       applyPair(known, target);
     }
   });
+  var levelHost = createElement('div', { attributes: { id: 'levelRowHost' } });
+  container.appendChild(levelHost);
+  if (p.known) renderLevelRow(levelHost);
   var target = getLanguage(p.target);
   var row = createElement('label', { className: 'lang-roman-row' });
   var cb = createElement('input', { attributes: { type: 'checkbox', id: 'langRomanToggle' } });

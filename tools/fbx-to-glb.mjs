@@ -4,7 +4,6 @@
 //
 //   node tools/fbx-to-glb.mjs <in.fbx> <out.glb> [texture.png]
 import fs from 'node:fs';
-import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { NodeIO } from '@gltf-transform/core';

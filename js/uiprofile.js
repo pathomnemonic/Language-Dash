@@ -17,6 +17,7 @@ import { renderStreakCalendar } from './streakcalendar.js';
 import { renderLevelChip } from './rewardsui.js';
 import { levelFromXp, rankForLevel, bonusSubjectFor, BONUS_COINS_PER_CORRECT, BONUS_COINS_CAP } from './progress.js';
 import { SUBJECTS } from './cardmeta.js';
+import { renderMastery } from './levelui.js';
 
 export var profileMethods = {
 
@@ -24,6 +25,7 @@ export var profileMethods = {
     var container = document.getElementById('statsContent');
     if (!container) return;
     clearElement(container);
+    renderMastery(container, storage);
     renderPerformance(container, this);
   },
 

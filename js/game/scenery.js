@@ -42,18 +42,6 @@ export var SCENERY_FILES = {
   skull: 'props/skull.glb',
   bone: 'props/bone.glb',
   tree: 'props/tree.glb',
-  // Leftover models from the original game's hospital rooms (kept so saved files and tests stay valid; the Great
-  // Library rooms in hospitalhall.js no longer use them)
-  med_wheelchair: 'medical/wheelchair.glb',
-  med_ivstand: 'medical/ivstand.glb',
-  med_doctor: 'medical/doctor.glb',
-  med_wetfloor: 'medical/wetfloor.glb',
-  med_microscope: 'medical/microscope.glb',
-  med_tuberack: 'medical/tuberack.glb',
-  med_labdesk: 'medical/labdesk.glb',
-  med_ambulance: 'medical/ambulance.glb',
-  med_ambulance2: 'medical/ambulance2.glb',
-  med_extinguisher: 'medical/extinguisher.glb'
 };
 
 /** Keys used as floating props beside the track. */

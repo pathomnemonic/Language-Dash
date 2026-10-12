@@ -10,6 +10,9 @@ import { getNextSkin } from './skins.js';
 import { planFeedback } from '../lang/pacingplan.js';
 import { adaptPool, frontierRank } from '../lang/pacing.js';
 import { getPairOrDefault } from '../lang/pair.js';
+import { getLevel } from '../lang/levels.js';
+
+function deckSizeFor(cards) { var m = 0; for (var i = 0; i < cards.length; i++) if (cards[i].rank > m) m = cards[i].rank; return m || 1000; }
 import { getCardPool, pickCard, nextSeededIndex, spawnGates, flashGateResult, stampGateCorrect } from './gates.js';
 import { monsterOnAnswer, monsterPolicy } from './monsterbehavior.js';
 import { HAZARDS } from './hazards.js';
@@ -66,7 +69,15 @@ if (poolResult.error || poolResult.cards.length === 0) {
 if (!this.seededCardOrder && !(this._modeConfig && Array.isArray(this._modeConfig.planCardIds)) && !this._tutorial &&
     !(storage.get('selectedExams') || []).length && this.mode !== GAME_MODES.WEAKNESS) {
   var pairNow = getPairOrDefault();
-  poolResult = { cards: adaptPool(poolResult.cards, frontierRank(storage.get('cardStats') || {}, pairNow.known, pairNow.target), Math.random), error: poolResult.error };
+  poolResult = { cards: adaptPool(poolResult.cards, frontierRank(storage.get('cardStats') || {}, pairNow.known, pairNow.target, (getLevel(pairNow) || {}).frontier, deckSizeFor(poolResult.cards)), Math.random), error: poolResult.error };
+}
+
+// A word the player has already answered correctly in this run is not asked again in the same run (it can come back next
+// run). Missed words still return through the retry queue. If nearly everything has been answered, the pool is used as is.
+if (!this.seededCardOrder && !(this._modeConfig && Array.isArray(this._modeConfig.planCardIds)) && this._knownThisRun) {
+  var knownNow = this._knownThisRun;
+  var unseen = poolResult.cards.filter(function (c) { return !knownNow[c.id]; });
+  if (unseen.length >= 3) poolResult = { cards: unseen, error: poolResult.error };
 }
 
 var pickResult;
@@ -207,6 +218,7 @@ card = pickResult ? pickResult.card : null;
     var gate = this.gates[lane];
     var card = this.card;
     var ok = gate.correct;
+    if (ok && card && card.id) (this._knownThisRun || (this._knownThisRun = {}))[card.id] = true; // shown right once: not asked again in this run
 
     // Track decision time
     var decisionMs = resolvedAt - this.encounterStartTime;

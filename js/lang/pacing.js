@@ -51,14 +51,14 @@ export function wordsSeenForPair(cardStats, known, target) {
  * most common words first and the pool widens as words are mastered. A "mastered" word is one answered correctly at least
  * 3 times with 80%+ accuracy. 0 mastered -> the 80 most common words; 100 mastered -> 300; about 420 -> everything.
  */
-export function frontierRank(cardStats, known, target) {
+export function frontierRank(cardStats, known, target, base, maxRank) {
   var prefix = known + '-' + target + '-';
   var mastered = 0;
   for (var id in cardStats) {
     var s = cardStats[id];
     if (id.indexOf(prefix) === 0 && s && s.seen >= 3 && (s.correct | 0) / s.seen >= 0.8) mastered++;
   }
-  return Math.min(1000, Math.round(80 + 2.2 * mastered));
+  return Math.min(maxRank || 1000, Math.round(Math.max(80, base || 0) + 2.2 * mastered));
 }
 
 /** Keep the words up to the frontier, plus the occasional stretch word a little beyond it (chance `stretch`, default 15%). */

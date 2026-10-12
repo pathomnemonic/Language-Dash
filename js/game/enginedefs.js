@@ -69,6 +69,8 @@ export var DISTANCE_POINTS = 10;
 export var SCORE_SCALE = 5;
 /** Where the exam monster starts, as a distance to catch (3 = caught). Far enough to be out of sight. */
 export var MONSTER_START_DIST = 26;
+/** World z past which a passed gate is behind the camera and removed. */
+export var GATE_GONE_Z = 9;
 export var OBSTACLE_GATE_GAP = 14; // units an obstacle trails behind the gate it spawns with
 
 // ─── Utility helpers ───

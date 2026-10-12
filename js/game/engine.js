@@ -59,7 +59,7 @@ import { HazardManager, HAZARDS } from './hazards.js';
 export { SHOP_ITEMS, QUESTS, AVATARS, ACHIEVEMENTS, CONTINUE_COST } from './shopdata.js';
 import { CONTINUE_COST } from './shopdata.js';
 import { chooseCommittedLane } from './lanelock.js';
-import { GAME_STATES, GAME_MODES, RUN_END_REASONS, LANE_X, ANSWER_LOCK_Z, VISUAL_SPEED, DISTANCE_POINTS, OBSTACLE_GATE_GAP, MONSTER_START_DIST, generateId, removeAndDispose, ALLOWED_TRANSITIONS, buildHeartMesh } from './enginedefs.js';
+import { GAME_STATES, GAME_MODES, RUN_END_REASONS, LANE_X, ANSWER_LOCK_Z, VISUAL_SPEED, DISTANCE_POINTS, OBSTACLE_GATE_GAP, GATE_GONE_Z, MONSTER_START_DIST, generateId, removeAndDispose, ALLOWED_TRANSITIONS, buildHeartMesh } from './enginedefs.js';
 export { GAME_STATES, GAME_MODES, RUN_END_REASONS } from './enginedefs.js';
 import { visualMethods } from './enginevisuals.js';
 import { examMonsterMethods } from './engineexam.js';
@@ -162,7 +162,7 @@ class Game {
     this.gatesActive = false;
     this.answerLocked = false;
     this.committedLane = 1;
-    this.recentIds = []; this._retryQueue = []; this._retriedIds = {};
+    this.recentIds = []; this._retryQueue = []; this._retriedIds = {}; this._knownThisRun = {};
     this.runCards = [];
 
     // Seeded card order support
@@ -872,7 +872,7 @@ class Game {
     this.envPropSpawnTimer = 0.5; this.speedLineTimer = 0;
     this.shakeTimer = 0;
 
-    this.runCards = []; this.recentIds = []; this._retryQueue = []; this._retriedIds = {};
+    this.runCards = []; this.recentIds = []; this._retryQueue = []; this._retriedIds = {}; this._knownThisRun = {};
     this._hazards.reset();
     this._setHazardClass(null);
     this.feedbackTimer = 0; this.teachTimer = 0;
@@ -1494,6 +1494,12 @@ class Game {
       }
       updateGateHighlights(this.gateMeshes, this.currentLane);
       if (this.gateZ >= 0) this._resolveEncounter();
+    } else if (this.gateMeshes.length) {
+      // The gates have been passed: they carry on past the runner and are gone once they are behind the camera,
+      // however long the right word stays up (they used to wait where they were until the next question).
+      this.gateZ += move * VISUAL_SPEED;
+      for (var gj = 0; gj < this.gateMeshes.length; gj++) this.gateMeshes[gj].position.z = this.gateZ;
+      if (this.gateZ > GATE_GONE_Z) this._clearGates();
     }
 
     // Next encounter timer
@@ -1629,8 +1635,8 @@ class Game {
         c.position.x = magnetX(c.position.x, this.playerGroup.position.x, c.position.z, dt);
       }
 
-      // A dash pulls in every coin between the runner and the gate, from any lane, so dashing never costs coins
-      var dashPull = this.rushPropelTimer > 0 && c.userData.type === 'coin' && !c.userData.collected && c.position.z > this.gateZ - 2 && c.position.z < 2 * VISUAL_SPEED;
+      // A dash pulls in every coin, power-up and heart between the runner and the gate, from any lane, so dashing never costs pickups
+      var dashPull = this.rushPropelTimer > 0 && (c.userData.type === 'coin' || c.userData.type === 'powerup' || c.userData.type === 'heart') && !c.userData.collected && c.position.z > this.gateZ - 2 && c.position.z < 2 * VISUAL_SPEED;
       if (dashPull) {
         c.position.x += (this.playerGroup.position.x - c.position.x) * Math.min(1, dt * 14);
         c.userData.dashPulled = true;
@@ -1651,7 +1657,7 @@ class Game {
             this.coinMeshes.splice(ci, 1);
           }
         }
-      } else if (c.position.z > -3 * VISUAL_SPEED && c.position.z < 2 * VISUAL_SPEED && !c.userData.collected) {
+      } else if (c.position.z > -3 * VISUAL_SPEED && c.position.z < 2 * VISUAL_SPEED + (c.userData.dashPulled ? 8 : 0) && !c.userData.collected) {
         var inLane = c.userData.lane === this.currentLane;
         var closeEnough = Math.abs(LANE_X[this.currentLane] - c.position.x) < 1.8;
 

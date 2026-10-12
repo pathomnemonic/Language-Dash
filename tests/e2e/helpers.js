@@ -10,7 +10,7 @@
 export async function openApp(page, path = '/', opts = {}) {
   // (the lessons behind the red dots would cover the screen whenever a test taps a menu for the first time: off unless asked for)
   // (a player picks a language pair on first launch; tests start with one chosen, English speaker learning Spanish, unless asked not to)
-  if (!opts.noPair) await page.addInitScript(() => { try { if (!localStorage.getItem('langdash.pair.v1')) localStorage.setItem('langdash.pair.v1', JSON.stringify({ known: 'en', target: 'es' })); } catch (e) { /* ignore */ } });
+  if (!opts.noPair) await page.addInitScript(() => { try { if (!localStorage.getItem('langdash.pair.v1')) localStorage.setItem('langdash.pair.v1', JSON.stringify({ known: 'en', target: 'es' })); if (!localStorage.getItem('ld_levels')) localStorage.setItem('ld_levels', JSON.stringify({ 'en-es': { level: 'beginner', frontier: 80, source: 'beginner', at: 0 } })); } catch (e) { /* ignore */ } });
   if (!opts.lessons) await page.addInitScript(() => { try { localStorage.setItem('ld_lessons_off', '1'); } catch (e) { /* ignore */ } });
   await page.goto(path);
   for (let i = 0; i < 10; i++) {
