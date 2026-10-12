@@ -267,7 +267,7 @@ function farmhouse(g, S, side, z) {
   var px = S.in(0.62);
   var pz = z + 1.5;
     for (var s = 0; s < 6; s++) cyl(g, 0.095, 0.1, 1.06, s % 2 ? WHITE : BLUE, px, 0.53 + s * 1.05, pz, { seg: 8 });
-  ring(g, 0.6, 0.06, 0x3fa24f, px, 6.3, pz, { rx: Math.PI / 2, seg: 14, tube: 4 });
+  ring(g, 0.6, 0.06, 0x3fa24f, px, 6.3, pz, { rx: Math.PI / 2, seg: 10, tube: 3 });
   for (var f = 0; f < 6; f++) {
     var a = f * Math.PI / 3;
     box(g, 0.1, 3.6, 0.025, f % 2 ? WHITE : BLUE, px + Math.cos(a) * 0.5, 4.5, pz + Math.sin(a) * 0.5, { rx: Math.sin(a) * 0.22, rz: -Math.cos(a) * 0.22 });
@@ -283,7 +283,7 @@ function farmhouse(g, S, side, z) {
 }
 
 function pretzel(g, x, y, z, ry, s) {
-  var o = { ry: ry, seg: 12, tube: 5 };
+  var o = { ry: ry, seg: 10, tube: 4 };
   ring(g, 0.34 * s, 0.075 * s, 0xc8803a, x, y, z, o);
   ring(g, 0.16 * s, 0.065 * s, 0xc8803a, x, y + 0.36 * s, z, o);
   box(g, 0.07 * s, 0.7 * s, 0.08 * s, 0xc8803a, x, y + 0.1 * s, z, { ry: ry, rz: 0.6 });
@@ -301,9 +301,9 @@ function stall(g, S, side, z) {
   sign(g, 'BREZN', 0xfff0d0, 0x6a4228, 1.3, 0.42, S.in(0.02) + side * 0.0, 2.25, z - 0.2, { ry: S.turn, border: 0x8a4a22 });
   pretzel(g, x, 3.15, z - 0.2, S.turn, 1.2);
   // pretzels on the counter and a basket
-  for (var p = 0; p < 4; p++) ring(g, 0.1, 0.035, 0xc8803a, x + (p % 2) * 0.14 - 0.07, 1.1 + 0.04 * (p > 1 ? 1 : 0), z - 0.9 + p * 0.28, { rx: Math.PI / 2, seg: 8, tube: 4 });
+  for (var p = 0; p < 4; p++) ring(g, 0.1, 0.035, 0xc8803a, x + (p % 2) * 0.14 - 0.07, 1.1 + 0.04 * (p > 1 ? 1 : 0), z - 0.9 + p * 0.28, { rx: Math.PI / 2, seg: 6, tube: 3 });
   cyl(g, 0.26, 0.2, 0.3, 0xc58b4a, x, 1.2, z + 0.5, { seg: 8 });
-  for (var q = 0; q < 3; q++) ring(g, 0.1, 0.035, 0xc8803a, x + (q - 1) * 0.1, 1.38, z + 0.5, { ry: S.turn, seg: 8, tube: 4 });
+  for (var q = 0; q < 3; q++) ring(g, 0.1, 0.035, 0xc8803a, x + (q - 1) * 0.1, 1.38, z + 0.5, { ry: S.turn, seg: 6, tube: 3 });
   // beer-garden table with a lozenge cloth and two mugs, a milk churn
   var tz = z + 1.9;
   box(g, 0.7, 0.05, 0.9, WHITE, S.in(0.5), 0.74, tz, { mat: lozengeMat(THREE.FrontSide) });
@@ -317,9 +317,9 @@ function trees(g, S, z, k) {
   // an apple tree or a fir behind the buildings, tall enough to be seen over the roofs
   var x = S.out(4.6 + (k % 2) * 1.6);
   cyl(g, 0.2, 0.28, 2.2, 0x7a4a2a, x, 1.1, z + 0.4, { seg: 6 });
-  ball(g, 1.5, 0x3fb25a, x, 3.4, z + 0.4, { seg: 7 });
-  ball(g, 1.1, 0x4fc86a, x + 0.9, 3.0, z + 0.9, { seg: 6 });
-  if (k % 2 === 0) for (var i = 0; i < 6; i++) ball(g, 0.12, RED, x + Math.cos(i * 1.05) * 1.3, 3.1 + (i % 3) * 0.4, z + 0.4 + Math.sin(i * 1.05) * 1.3 * 0.9, { seg: 4 });
+  ball(g, 1.5, 0x3fb25a, x, 3.4, z + 0.4, { seg: 6 });
+  ball(g, 1.1, 0x4fc86a, x + 0.9, 3.0, z + 0.9, { seg: 5 });
+  if (k % 2 === 0) for (var i = 0; i < 6; i++) box(g, 0.2, 0.2, 0.2, RED, x + Math.cos(i * 1.05) * 1.3, 3.1 + (i % 3) * 0.4, z + 0.4 + Math.sin(i * 1.05) * 1.3 * 0.9, { ry: i });
 }
 
 function bay(g, side, z, k) {
@@ -330,7 +330,7 @@ function bay(g, side, z, k) {
   else if (k === 2) farmhouse(g, S, side, z);
   else stall(g, S, side, z);
   // blue-and-white lozenge pennants along the front of the eaves are on the arch; here, a flower strip
-  if (k !== 1) for (var f = 0; f < 5; f++) ball(g, 0.09, [RED, 0xffffff, 0xffd23f, 0xff8fb0][f % 4], S.in(0.05), 0.12 + (f % 2) * 0.04, z - 1.6 + f * 0.8, { seg: 4 });
+  if (k !== 1) for (var f = 0; f < 5; f++) box(g, 0.16, 0.14, 0.16, [RED, 0xffffff, 0xffd23f, 0xff8fb0][f % 4], S.in(0.05), 0.12 + (f % 2) * 0.04, z - 1.6 + f * 0.8, { ry: f });
 }
 
 function center(g, z) { floorPanel(g, pathPicture(), z, 12); }

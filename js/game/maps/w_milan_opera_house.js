@@ -18,7 +18,6 @@ import { sparkleGeo, glowMat } from './cartoon.js';
 
 var H = 6.4;
 var VELVET = 0xc4163a;
-var DEEP = 0x9a1030;
 var GOLD = 0xffc83d;
 var CREAM = 0xfff1d6;
 var SERIF = '"Georgia","Times New Roman",serif';
@@ -367,7 +366,7 @@ function arch(g, z, i) {
   });
   // a banner of the house across the top, the colours of Italy at the corners
   var tex = plateTex('arch' + (i % 3), ['Ciao!', 'Grazie', 'Prego'][i % 3], ['Hello', 'Thank you', 'You’re welcome'][i % 3], 0xfff1d6, 0x9a1030, 0xffc83d);
-  decal(g, tex, CREAM, 1.9, 0.76, 0, 5.75, z, 0);
+  decal(g, tex, CREAM, 1.4, 0.56, 0, 5.9, z, 0);
 }
 
 // ---------- the things that move ----------

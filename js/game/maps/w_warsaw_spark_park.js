@@ -273,8 +273,8 @@ function teslaScene(g, S, z, k) {
     box(g, 0.9, 0.3, 0.9, COPPER, x, 0.15, cz);
     cyl(g, 0.34, 0.4, 0.5, NAVY, x, 0.55, cz, { seg: 8 });
     cyl(g, 0.18, 0.28, 2.5, CREAM, x, 2.05, cz, { seg: 10 });
-    for (var r = 0; r < 7; r++) ring(g, 0.27 - r * 0.012, 0.035, COPPER, x, 0.95 + r * 0.32, cz, { rx: Math.PI / 2, seg: 10, tube: 3 });
-    ring(g, 0.55, 0.19, 0xdcecff, x, 3.4, cz, { rx: Math.PI / 2, seg: 14, tube: 5 });
+    for (var r = 0; r < 4; r++) ring(g, 0.26 - r * 0.02, 0.04, COPPER, x, 1.05 + r * 0.55, cz, { rx: Math.PI / 2, seg: 8, tube: 3 });
+    ring(g, 0.55, 0.19, 0xdcecff, x, 3.4, cz, { rx: Math.PI / 2, seg: 12, tube: 4 });
     ball(g, 0.2, 0x9fe6ff, x, 3.55, cz, { seg: 7, bulb: true });
     tops.push(cz);
   });

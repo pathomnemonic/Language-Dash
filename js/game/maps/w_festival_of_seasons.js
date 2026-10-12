@@ -205,7 +205,7 @@ function winter(g, S, z) {
   extrude(g, starShape(0.38, 0.17, 5), 0.1, 0xffd23f, tx, 4.95, z, { ry: S.turn, bulb: true });
   for (var i = 0; i < 16; i++) {
     var a = i * 2.4; var h = 0.9 + (i / 16) * 3.2; var r = 1.35 - (i / 16) * 1.0;
-    ball(g, 0.09, BULBS[i % 5], tx + Math.cos(a) * r - S.side * 0.1, h, z + Math.sin(a) * r, { seg: 4, bulb: true });
+    box(g, 0.14, 0.14, 0.14, BULBS[i % 5], tx + Math.cos(a) * r - S.side * 0.1, h, z + Math.sin(a) * r, { bulb: true });
   }
   gift(g, S.in(0.55), z + 1.3, 0xd9382f, 1.1);
   gift(g, S.in(0.6), z - 1.5, 0x3d8bff, 0.9);
@@ -236,7 +236,7 @@ function spring(g, S, z) {
   cyl(g, 0.1, 0.14, 1.4, 0x6a4228, tx + 0.5, 2.5, z + 0.3, { seg: 5, rz: -S.side * 0.7 });
   cyl(g, 0.1, 0.14, 1.4, 0x6a4228, tx - 0.4, 2.6, z - 0.3, { seg: 5, rz: S.side * 0.6 });
   [[0, 3.6, 0, 1.5], [1.1, 3.2, 0.5, 1.1], [-1.0, 3.3, -0.6, 1.1], [0.4, 4.3, -0.2, 1.0], [-0.5, 2.9, 0.9, 0.9], [1.5, 2.7, -0.7, 0.8]].forEach(function (b, i) {
-    ball(g, b[3], i % 2 ? 0xffb8d0 : 0xffd0e0, tx + b[0], b[1], z + b[2], { seg: 7 });
+    ball(g, b[3], i % 2 ? 0xffb8d0 : 0xffd0e0, tx + b[0], b[1], z + b[2], { seg: 6 });
   });
   for (var p = 0; p < 7; p++) cyl(g, 0.1, 0.1, 0.02, 0xffb8d0, S.in(0.3 + (p % 3) * 0.2), 0.03, z - 1.6 + p * 0.5, { seg: 5 });
   // tulip bed
@@ -269,7 +269,7 @@ function summer(g, S, z) {
   var uz = z - 0.3;
   cyl(g, 0.035, 0.04, 2.5, 0xffffff, ux, 1.25, uz, { seg: 5 });
   var st = ballTex();
-  cone(g, 1.45, 0.62, 0xff5a4a, ux, 2.65, uz, { seg: 12, mat: st ? mat(0xffffff, { map: st, r: 0.85, side: THREE.DoubleSide }) : mat(0xff5a4a, { side: THREE.DoubleSide }) });
+  cone(g, 1.38, 0.62, 0xff5a4a, ux, 2.65, uz, { seg: 12, mat: st ? mat(0xffffff, { map: st, r: 0.85, side: THREE.DoubleSide }) : mat(0xff5a4a, { side: THREE.DoubleSide }) });
   ball(g, 0.07, 0xffd23f, ux, 3.0, uz, { seg: 5 });
   // lounger
   box(g, 0.6, 0.1, 1.5, 0xffffff, S.in(0.55), 0.35, z + 1.15);
@@ -316,7 +316,7 @@ function autumn(g, S, z) {
   var tx = S.out(1.9);
   cyl(g, 0.22, 0.3, 2.4, 0x6a4228, tx, 1.2, z + 0.2, { seg: 6 });
   [[0, 3.8, 0, 1.5, 0xe8802a], [1.1, 3.3, 0.6, 1.1, 0xd9382f], [-1.0, 3.4, -0.5, 1.1, 0xf0b840], [0.3, 4.6, -0.2, 1.0, 0xf0903a], [-0.4, 3.0, 1.0, 0.9, 0xd9382f], [1.6, 2.9, -0.6, 0.8, 0xe8802a]].forEach(function (b) {
-    ball(g, b[3], b[4], tx + b[0], b[1], z + 0.2 + b[2], { seg: 7 });
+    ball(g, b[3], b[4], tx + b[0], b[1], z + 0.2 + b[2], { seg: 6 });
   });
   [0.2, 1.1, 1.8].forEach(function (d, i) { ball(g, 0.25 + (i % 2) * 0.1, [0xe8802a, 0xd9382f, 0xf0b840][i], S.in(0.1) + S.side * 0.4, 0.06, z - 1.0 + d * 2 - 1.2, { seg: 5, sy: 0.25, sx: 1.4 }); });
 }
@@ -341,7 +341,7 @@ function arch(g, z, i) {
     var t = f / (n - 1);
     var x = -5.4 + t * 10.8;
     var y = 6.4 - Math.sin(t * Math.PI) * 0.55;
-    ball(g, 0.12, BULBS[(f + i) % 5], x, y, z, { seg: 4, bulb: true });
+    box(g, 0.2, 0.2, 0.2, BULBS[(f + i) % 5], x, y, z, { bulb: true });
     if (f % 2) cone(g, 0.17, 0.36, BULBS[(f + i + 2) % 5], x, y - 0.28, z + 0.15, { seg: 3, rz: Math.PI, sz: 0.2, bulb: true });
   }
   cyl(g, 0.01, 0.01, 10.8, 0xfff0d0, 0, 6.35, z, { rz: Math.PI / 2, seg: 3 });

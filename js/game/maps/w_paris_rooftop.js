@@ -267,7 +267,7 @@ function mansard(g, side, xf, z, h, k, zinc, withDormers) {
   var cx = xf + side * 1.7;
   box(g, 0.7, 1.9, 0.7, 0xe9c9a4, cx, h + rise + 1.0, cz);
   box(g, 0.82, 0.14, 0.82, 0xf4e8d0, cx, h + rise + 1.98, cz);
-  [-0.22, 0, 0.22].forEach(function (d, n) { cyl(g, 0.1, 0.12, 0.5 + (n % 2) * 0.12, TERRA, cx, h + rise + 2.3 + (n % 2) * 0.05, cz + d, { seg: 6 }); });
+  [-0.2, 0.2].forEach(function (d, n) { cyl(g, 0.12, 0.14, 0.55 + n * 0.12, TERRA, cx, h + rise + 2.3, cz + d, { seg: 5 }); });
 }
 
 function skyline(g, side, z, k) {
@@ -285,7 +285,7 @@ function balustrade(g, S, z) {
   var x = S.side * (WALL_X + 0.05);
   box(g, 0.34, 0.22, 4.0, STONE, x, 0.11, z);
   box(g, 0.28, 0.12, 4.0, 0xfffaf0, x, 1.0, z);
-  for (var i = 0; i < 8; i++) cyl(g, 0.06, 0.07, 0.72, 0xfffaf0, x, 0.58, z - 1.75 + i * 0.5, { seg: 5 });
+  for (var i = 0; i < 7; i++) box(g, 0.1, 0.72, 0.1, 0xfffaf0, x, 0.58, z - 1.65 + i * 0.55);
   [-2, 2].forEach(function (dz) {
     box(g, 0.34, 1.05, 0.34, STONE, x, 0.55, z + dz);
     ball(g, 0.17, 0xfffaf0, x, 1.18, z + dz, { seg: 6 });
@@ -293,11 +293,8 @@ function balustrade(g, S, z) {
   // a long window box of geraniums along the top
   box(g, 0.3, 0.2, 3.5, TERRA, x, 1.17, z);
   var cols = [0xe8334a, 0xffffff, 0xff8fb0, 0xe8334a];
-  for (var f = 0; f < 11; f++) {
-    var fz = z - 1.6 + f * 0.32;
-    ball(g, 0.15, 0x3fa24f, x, 1.34, fz, { seg: 5, sy: 0.8 });
-    ball(g, 0.1, cols[f % 4], x + (f % 2 ? 0.06 : -0.06), 1.46, fz, { seg: 4 });
-  }
+  box(g, 0.26, 0.18, 3.4, 0x3fa24f, x, 1.36, z);
+  for (var f = 0; f < 9; f++) box(g, 0.14, 0.12, 0.14, cols[f % 4], x + (f % 2 ? 0.05 : -0.05), 1.5, z - 1.5 + f * 0.375, { ry: f });
 }
 
 // ---------- props ----------
@@ -308,9 +305,8 @@ function chair(g, x, z, ry) {
   var s = Math.sin(ry);
   box(g, 0.36, 0.05, 0.36, 0xf2b134, x, 0.46, z, o);
   box(g, 0.36, 0.4, 0.05, 0xf2b134, x + s * -0.17, 0.68, z + c * -0.17, o);
-  [[-0.14, -0.14], [0.14, -0.14], [-0.14, 0.14], [0.14, 0.14]].forEach(function (p) {
-    box(g, 0.04, 0.44, 0.04, IRON, x + p[0] * c + p[1] * s, 0.22, z - p[0] * s + p[1] * c, o);
-  });
+  box(g, 0.32, 0.44, 0.04, IRON, x + s * 0.14, 0.22, z + c * 0.14, o);
+  box(g, 0.32, 0.44, 0.04, IRON, x - s * 0.14, 0.22, z - c * 0.14, o);
 }
 
 function bistroTable(g, x, z, S, tray) {
@@ -324,10 +320,10 @@ function bistroTable(g, x, z, S, tray) {
 
 function umbrella(g, x, z, c1, c2, r) {
   cyl(g, 0.04, 0.05, 2.6, 0xf4efe4, x, 1.3, z, { seg: 5 });
-  cone(g, r, 0.6, WHITE, x, 2.8, z, { seg: 12, mat: stripedMat(c1, c2, 6) });
+  cone(g, r, 0.6, WHITE, x, 2.8, z, { seg: 10, mat: stripedMat(c1, c2, 6) });
   ball(g, 0.07, GOLD, x, 3.14, z, { seg: 5 });
   // scalloped valance
-  ring(g, r * 0.93, 0.045, c1, x, 2.5, z, { rx: Math.PI / 2, seg: 14, tube: 3 });
+  ring(g, r * 0.93, 0.045, c1, x, 2.5, z, { rx: Math.PI / 2, seg: 10, tube: 3 });
 }
 
 function cafe(g, S, z) {
@@ -390,8 +386,8 @@ function lamp(g, x, z) {
 function topiary(g, x, z) {
   cyl(g, 0.3, 0.24, 0.4, TERRA, x, 0.2, z, { seg: 8 });
   cyl(g, 0.03, 0.03, 0.5, 0x7a5a3a, x, 0.65, z, { seg: 4 });
-  ball(g, 0.4, 0x3fb25a, x, 1.2, z, { seg: 7 });
-  ball(g, 0.26, 0x4fc86a, x, 1.7, z, { seg: 6 });
+  ball(g, 0.4, 0x3fb25a, x, 1.2, z, { seg: 6 });
+  ball(g, 0.26, 0x4fc86a, x, 1.7, z, { seg: 5 });
 }
 
 function square(g, S, z) {
@@ -455,7 +451,7 @@ function arch(g, z, i) {
   // string lights lower down at the edges only (the middle stays open for the gates)
   for (var l = 0; l < 6; l++) {
     var lt = l / 5;
-    [-1, 1].forEach(function (s) { ball(g, 0.09, [0xffe27a, 0xfff6c0][l % 2], s * (3.4 + lt * 1.8), 5.7 - Math.sin(lt * Math.PI) * 0.3, z + 0.3, { seg: 4, bulb: true }); });
+    [-1, 1].forEach(function (s) { box(g, 0.14, 0.14, 0.14, [0xffe27a, 0xfff6c0][l % 2], s * (3.4 + lt * 1.8), 5.7 - Math.sin(lt * Math.PI) * 0.3, z + 0.3, { bulb: true }); });
   }
   [-1, 1].forEach(function (s, n) {
     var word = WORDS[(i + n * 3) % 6];

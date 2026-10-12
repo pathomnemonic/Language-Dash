@@ -13,7 +13,7 @@
 
 import * as THREE from 'three';
 import {
-  box, cyl, ball, cone, ring, quad, sign, extrude, heartShape, combine, xform, canvasTex, bulb,
+  box, cyl, ball, cone, ring, quad, sign, extrude, heartShape, combine, xform, canvasTex, bulb, mat,
   floorPanel, wallPanel, sideCtx
 } from '../mapkit.js';
 import { animated, features, swarm, cloudBank, shimmer, bob } from '../mapfx.js';
@@ -253,14 +253,24 @@ function floorPicture() {
 
 // ---------- small shared pieces ----------
 
+/** A cheap 20-triangle blob for roses, leaves and bulbs (a sphere of the same size is 32 to 80). */
+function gem(g, r, color, x, y, z, o) {
+  var m = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 0), o && o.bulb ? bulb(color) : mat(color));
+  m.position.set(x, y, z);
+  if (o && (o.sx !== undefined || o.sy !== undefined || o.sz !== undefined)) m.scale.set(o.sx === undefined ? 1 : o.sx, o.sy === undefined ? 1 : o.sy, o.sz === undefined ? 1 : o.sz);
+  g.add(m);
+  return m;
+}
+
 function heartAt(g, S, x, y, z, k, c, o) {
-  return extrude(g, heartShape(k), 0.28 * k, c, x, y, z, Object.assign({ ry: S.turn * 0.45, bevel: true, curve: 5 }, o || {}));
+  return extrude(g, heartShape(k), 0.28 * k, c, x, y, z, Object.assign({ ry: S.turn * 0.45, curve: 3 }, o || {}));
 }
 
 function roseBlobs(g, x, y, z, n, spread, colors, r) {
+  n = Math.ceil(n * 0.55);
   for (var i = 0; i < n; i++) {
     var a = i * 2.4;
-    ball(g, r || 0.08, colors[i % colors.length], x + Math.cos(a) * spread * 0.8, y + Math.sin(a * 1.3) * spread * 0.45 + 0.12, z + Math.sin(a) * spread * 1.2, { seg: 5 });
+    gem(g, (r || 0.08) * 1.2, colors[i % colors.length], x + Math.cos(a) * spread * 0.8, y + Math.sin(a * 1.3) * spread * 0.45 + 0.12, z + Math.sin(a) * spread * 1.2, { seg: 4 });
   }
 }
 
@@ -270,7 +280,7 @@ function lamp(g, S, z) {
   box(g, 0.34, 0.06, 0.34, 0x3a5a46, x, 3.35, z);
   box(g, 0.24, 0.34, 0.24, 0xfff2b0, x, 3.55, z, { bulb: true });
   cone(g, 0.26, 0.22, 0x3a5a46, x, 3.82, z, { seg: 4, ry: Math.PI / 4 });
-  ball(g, 0.06, GOLD, x, 4.0, z, { seg: 5 });
+  gem(g, 0.06, GOLD, x, 4.0, z, { seg: 5 });
 }
 
 function flagLine(g, S, z, y, i) {
@@ -294,22 +304,22 @@ function balconyScene(g, S, z) {
   box(g, 0.98, 0.07, 3.16, 0xffffff, x, 2.69, z);
   [-1.2, 0, 1.2].forEach(function (dz) { box(g, 0.5, 0.36, 0.28, STONE, S.in(0.28), 2.3, z + dz, { rz: S.side * 0.0 }); cone(g, 0.2, 0.36, STONE, S.in(0.44), 2.24, z + dz, { seg: 4, rx: Math.PI }); });
   // balustrade: posts, rails
-  for (var i = 0; i < 11; i++) cyl(g, 0.05, 0.05, 0.72, CREAM, outer, 3.08, z - 1.5 + i * 0.3, { seg: 6 });
+  for (var i = 0; i < 8; i++) cyl(g, 0.055, 0.055, 0.72, CREAM, outer, 3.08, z - 1.5 + i * 0.43, { seg: 4 });
   box(g, 0.14, 0.1, 3.1, 0xffffff, outer, 3.5, z);
   box(g, 0.12, 0.08, 3.1, 0xffffff, outer, 2.78, z);
   [-1.52, 1.52].forEach(function (dz) {
     box(g, 0.92, 0.1, 0.1, 0xffffff, x, 3.5, z + dz);
-    for (var j = 0; j < 3; j++) cyl(g, 0.04, 0.04, 0.72, CREAM, S.in(0.2 + j * 0.3), 3.08, z + dz, { seg: 5 });
+    for (var j = 0; j < 2; j++) cyl(g, 0.05, 0.05, 0.72, CREAM, S.in(0.2 + j * 0.4), 3.08, z + dz, { seg: 4 });
   });
   // pots of roses along the rail
   [-1.0, 0, 1.0].forEach(function (dz, n) {
     box(g, 0.3, 0.26, 0.55, 0xe06a3a, outer, 3.68, z + dz * 1.0);
-    ball(g, 0.3, LEAF, outer, 3.98, z + dz, { seg: 6, sy: 0.7 });
+    gem(g, 0.3, LEAF, outer, 3.98, z + dz, { seg: 5, sy: 0.7 });
     roseBlobs(g, outer, 4.0, z + dz, 7, 0.22, [ROSE, PINK, RED, 0xffffff], 0.085);
   });
   // ivy and roses spilling over the front
-  for (var v = 0; v < 8; v++) {
-    ball(g, 0.16 + (v % 3) * 0.04, v % 2 ? LEAF : LEAF2, outer, 2.2 - (v % 4) * 0.22, z - 1.35 + v * 0.38, { seg: 5, sy: 1.3 });
+  for (var v = 0; v < 5; v++) {
+    gem(g, 0.2 + (v % 3) * 0.04, v % 2 ? LEAF : LEAF2, outer, 2.2 - (v % 4) * 0.22, z - 1.3 + v * 0.65, { seg: 4, sy: 1.3 });
   }
   roseBlobs(g, outer, 2.25, z, 6, 0.6, [ROSE, PINK], 0.09);
   // heart balloons tied to the rail, bobbing in a bunch
@@ -320,7 +330,7 @@ function balconyScene(g, S, z) {
   // rose bushes in stone troughs on the ground
   [-1.7, 1.7].forEach(function (dz) {
     box(g, 0.5, 0.34, 0.9, STONE, S.in(0.5), 0.17, z + dz);
-    ball(g, 0.46, LEAF, S.in(0.5), 0.62, z + dz, { seg: 7, sy: 0.75, sz: 1.3 });
+    gem(g, 0.46, LEAF, S.in(0.5), 0.62, z + dz, { seg: 5, sy: 0.75, sz: 1.3 });
     roseBlobs(g, S.in(0.5), 0.7, z + dz, 10, 0.3, [ROSE, PINK, RED, 0xffffff], 0.09);
   });
   // blade sign: a heart plate facing the runner
@@ -368,7 +378,7 @@ function shopScene(g, S, z) {
   [-1.75, 1.75].forEach(function (dz, n) {
     cyl(g, 0.3, 0.26, 0.55, 0xb8662a, S.in(0.5), 0.28, z + dz, { seg: 8 });
     cyl(g, 0.31, 0.31, 0.05, 0x3a3a46, S.in(0.5), 0.4, z + dz, { seg: 8 });
-    ball(g, 0.32, LEAF, S.in(0.5), 0.72, z + dz, { seg: 6, sy: 0.7 });
+    gem(g, 0.32, LEAF, S.in(0.5), 0.72, z + dz, { seg: 6, sy: 0.7 });
     roseBlobs(g, S.in(0.5), 0.8, z + dz, 9, 0.25, n ? [GOLD, RED, 0xffffff] : [PINK, ROSE, 0xffffff], 0.09);
   });
   // hanging heart plate sign, facing the runner, on an iron arm
@@ -391,7 +401,7 @@ function julietScene(g, S, z) {
   cone(g, 0.36, 1.0, 0xe8a63a, x, 1.3, sz, { seg: 10 });
   cyl(g, 0.12, 0.18, 0.45, 0xe8a63a, x, 1.95, sz, { seg: 8 });
   ball(g, 0.14, 0xf0b550, x, 2.3, sz, { seg: 8 });
-  ball(g, 0.16, 0xc98a2a, x + S.side * 0.05, 2.34, sz, { seg: 6, sy: 0.9 });
+  gem(g, 0.16, 0xc98a2a, x + S.side * 0.05, 2.34, sz, { seg: 6, sy: 0.9 });
   cyl(g, 0.035, 0.035, 0.45, 0xe8a63a, x + S.side * -0.22, 2.05, sz + 0.1, { rz: S.side * 0.8, seg: 5 });
   // a rose arbour beside her
   var az = z - 1.1;
@@ -401,10 +411,10 @@ function julietScene(g, S, z) {
     var a = Math.PI * (i / 8);
     var ay = 2.2 + Math.sin(a) * 0.78;
     var azz = az - Math.cos(a) * 0.78;
-    ball(g, 0.14, i % 2 ? LEAF : LEAF2, x, ay, azz, { seg: 5, sy: 0.8 });
-    ball(g, 0.1, [ROSE, PINK, RED, 0xffffff][i % 4], x + S.side * -0.1, ay + 0.06, azz, { seg: 5 });
+    gem(g, 0.14, i % 2 ? LEAF : LEAF2, x, ay, azz, { seg: 5, sy: 0.8 });
+    gem(g, 0.1, [ROSE, PINK, RED, 0xffffff][i % 4], x + S.side * -0.1, ay + 0.06, azz, { seg: 5 });
   }
-  for (var j = 0; j < 7; j++) { ball(g, 0.13, LEAF, x, 0.4 + j * 0.28, az + (j % 2 ? 0.75 : -0.75), { seg: 5, sy: 1.2 }); ball(g, 0.08, [ROSE, PINK][j % 2], x + S.side * -0.1, 0.45 + j * 0.28, az + (j % 2 ? 0.75 : -0.75), { seg: 5 }); }
+  for (var j = 0; j < 7; j++) { gem(g, 0.13, LEAF, x, 0.4 + j * 0.28, az + (j % 2 ? 0.75 : -0.75), { seg: 5, sy: 1.2 }); ball(g, 0.08, [ROSE, PINK][j % 2], x + S.side * -0.1, 0.45 + j * 0.28, az + (j % 2 ? 0.75 : -0.75), { seg: 5 }); }
   sign(g, 'TE QUIERO', ROSE, 0xffffff, 1.1, 0.42, x, 2.7, az, { border: GOLD });
   // rose hedges front and back
   [z + 2.0, z - 2.05].forEach(function (hz, n) {
@@ -434,7 +444,7 @@ function letterScene(g, S, z) {
   cyl(g, 0.03, 0.03, 1.9, 0xffffff, x, 1.9, cz, { seg: 5 });
   cone(g, 0.7, 0.45, RED, x, 3.05, cz, { seg: 8 });
   cone(g, 0.4, 0.3, CREAM, x, 3.12, cz, { seg: 8, sx: 1.02, sz: 1.02 });
-  ball(g, 0.06, GOLD, x, 3.32, cz, { seg: 5 });
+  gem(g, 0.06, GOLD, x, 3.32, cz, { seg: 5 });
   var cols = [RED, PINK, GOLD, ROSE, 0xffffff, 0x5ac8fa, 0x6fdc8c];
   for (var h = 0; h < 7; h++) {
     var a = h * 0.9;
@@ -498,7 +508,7 @@ function arch(g, z, i) {
     var t = f / (n - 1);
     var x = -half + t * half * 2;
     var dip = Math.sin(t * Math.PI) * 0.6;
-    ball(g, 0.1, BULBS[(f + i) % BULBS.length], x, y - dip - 0.1, z, { seg: 5, bulb: true });
+    gem(g, 0.1, BULBS[(f + i) % BULBS.length], x, y - dip - 0.1, z, { seg: 5, bulb: true });
   }
   // the cord, as segments following the sag
   for (var s = 0; s < 10; s++) {

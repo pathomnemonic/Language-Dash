@@ -5,11 +5,12 @@
 // quietly break one of them.
 
 import { test, expect } from '@playwright/test';
-import { openApp, hasWebGL } from './helpers.js';
+import { openApp, hasWebGL, hasBackend } from './helpers.js';
 
 // width x height of real phones' browser windows, smallest first
 const PHONES = [[320, 568], [360, 600], [360, 640], [375, 667], [390, 780], [412, 915]];
-const TAB_SCREENS = ['screenStats', 'screenQuests', 'screenShop', 'screenProfile'];
+// (Stats is left out: it opens with the long mastery card for the language pair, so it is meant to scroll; its layout is still checked below)
+const TAB_SCREENS = ['screenQuests', 'screenShop', 'screenProfile'];
 
 async function open(page, w, h) {
   await page.setViewportSize({ width: w, height: h });
@@ -47,10 +48,12 @@ for (const [w, h] of PHONES) {
       const box = (s) => { const e = document.querySelector(s); if (!e) return null; const b = e.getBoundingClientRect(); return { top: b.top, bottom: b.bottom, shown: b.height > 0 && getComputedStyle(e).display !== 'none' }; };
       return { nav: document.getElementById('bottomNav').getBoundingClientRect().top, banner: box('#homeProBanner'), play: box('.btn-play'), modes: box('.mode-row'), howTo: box('#howToPlayBtn'), topbar: box('.home-topbar') };
     });
-    expect(r.banner && r.banner.shown, 'the Go Pro button must show').toBe(true);
+    // (the Go Pro button only exists in a build with a backend)
+    const backend = await hasBackend(page);
+    if (backend) expect(r.banner && r.banner.shown, 'the Go Pro button must show').toBe(true);
     for (const k of ['play', 'modes', 'howTo']) expect(r[k].bottom, k + ' must end clear of the tab bar (not touching it)').toBeLessThanOrEqual(r.nav - 10);
     // the pieces are in order and do not overlap
-    expect(r.banner.bottom).toBeLessThanOrEqual(r.play.top + 2);
+    if (backend) expect(r.banner.bottom).toBeLessThanOrEqual(r.play.top + 2);
     expect(r.topbar.top).toBeGreaterThanOrEqual(0);
     expect(await layoutProblems(page)).toEqual([]);
   });
@@ -64,6 +67,9 @@ for (const [w, h] of PHONES) {
       expect(over, s + ' must not need scrolling').toBeLessThanOrEqual(1);
       expect(await layoutProblems(page), s).toEqual([]);
     }
+    await page.evaluate(() => window.__ui.show('screenStats'));
+    await page.waitForTimeout(700);
+    expect(await layoutProblems(page), 'screenStats').toEqual([]);
   });
 
   test(`every Home pop-up fits the window at ${w}x${h}`, async ({ page }) => {
