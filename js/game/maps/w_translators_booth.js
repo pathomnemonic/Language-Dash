@@ -442,7 +442,7 @@ function extras() {
     { geo: new THREE.SphereGeometry(0.035, 5, 4), color: 0x1b2a41, matrix: xform(0.15, 0, 0.1) }
   ]);
   [-1, 1].forEach(function (side, i) {
-    swarm({ geo: bubble, count: 8, seed: 33 + i * 13, area: { x: [side * 3.9, side * 5.0], y: [3.4, 5.4], z: [-120, 8] }, k: 1, vy: [0.02, 0.12], wobble: 0.3, flap: 0.12, scale: [1.2, 1.8], colors: [0xffffff, 0xffe08a, 0xffb9a3, 0xa8ece0] });
+    swarm({ geo: bubble, count: 7, seed: 33 + i * 13, area: { x: [side * 4.5, side * 5.1], y: [3.6, 5.2], z: [-120, 8] }, k: 1, vy: [0.02, 0.12], wobble: 0.25, flap: 0.12, scale: [0.8, 1.2], colors: [0xffffff, 0xffe08a, 0xffb9a3, 0xa8ece0] });
   });
   if (_lit) shimmer(_lit, 0.8, 0.15, 1.5, 0);
 }
