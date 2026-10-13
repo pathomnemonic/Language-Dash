@@ -16,7 +16,6 @@ import { markShared, mergeStatic } from './materials.js';
 import { paperizeMaterials, toonRamp } from './paper.js';
 
 /** The KayKit pack the bright maps use: one file, one shared material, one node per model ('rest__food_burger'). */
-export var KIT_FILE = 'kaykit/kaykit.glb';
 
 export var SCENERY_FILES = {
   // Obstacles
@@ -32,20 +31,14 @@ export var SCENERY_FILES = {
   hangsign: 'obstacles/sign.glb',
   // Floating scenery
   streetlight: 'props/streetlight.glb',
-  monitor: 'props/monitor.glb',
   aircon: 'props/aircon.glb',
   sign: 'props/sign.glb',
   telescope: 'props/telescope.glb',
-  heart: 'props/heart.glb',
-  firstaid: 'props/firstaid.glb',
-  potion: 'props/potion.glb',
-  skull: 'props/skull.glb',
-  bone: 'props/bone.glb',
   tree: 'props/tree.glb',
 };
 
 /** Keys used as floating props beside the track. */
-export var PROP_KEYS = ['streetlight', 'monitor', 'aircon', 'sign', 'telescope', 'potion', 'tree'];
+export var PROP_KEYS = ['streetlight', 'aircon', 'sign', 'telescope', 'tree'];
 
 var _cache = {}; // key -> { scene, box: Box3 }
 var _preload = null;
@@ -59,9 +52,7 @@ export function preloadScenery() {
   if (!useSceneryModels()) return Promise.resolve();
   if (_preload) return _preload;
   var loader = createGLTFLoader();
-  var kitLoaded = new Promise(function (resolve) {
-    loader.load(baseUrl() + 'models/' + KIT_FILE, function (gltf) { registerKit(gltf); resolve(); }, undefined, function () { resolve(); });
-  });
+  var kitLoaded = Promise.resolve(); // the KayKit pack is no longer used by any map
   _preload = Promise.all([kitLoaded].concat(Object.keys(SCENERY_FILES).map(function (key) {
     return new Promise(function (resolve) {
       loader.load(baseUrl() + 'models/' + SCENERY_FILES[key], function (gltf) {
@@ -204,10 +195,7 @@ var SIDE_PERIOD = 28;
  * spotlights and chandeliers); every other map uses the classic themed floating props instead.
  * Each entry: [model key, height]. (Map names here are the stable keys from skins.js, not the display titles.)
  */
-export var SIDE_THEMES = {
-  'Skeletal Corridor': [['bone', 7], ['skull', 5.5]],
-  'X-Ray Vision': [['spotlight', 5.5], ['chandelier', 5], ['spotlight', 6.5]]
-};
+export var SIDE_THEMES = {}; // each map builds its own scenery (js/game/maps/w_*.js); no map adds giant side props
 
 
 /** The scenery models a map uses (for tests and preloading decisions). */

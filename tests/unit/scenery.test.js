@@ -86,22 +86,11 @@ describe('3D scenery models', () => {
     expect(getObstacleVariant('xray_arm').id).toBe('hanging_spotlight');
   });
 
-  it('only the skeleton maps get giant side models; the rest keep the classic floating props', () => {
-    expect(Object.keys(SIDE_THEMES).sort()).toEqual(['Skeletal Corridor', 'X-Ray Vision']);
-    expect(getSideTheme('Skeletal Corridor').map((t) => t[0])).toEqual(expect.arrayContaining(['bone', 'skull']));
-    expect(getSideTheme('Cardiac Pulse')).toBeNull();
-    // No random trees anywhere
-    Object.values(SIDE_THEMES).forEach((theme) => theme.forEach((t) => expect(t[0]).not.toBe('tree')));
-    // Every model a theme names exists
-    Object.values(SIDE_THEMES).flat().forEach((t) => expect(SCENERY_FILES[t[0]], t[0]).toBeTruthy());
-  });
-
-  it('builds themed objects along both sides that repeat seamlessly', () => {
-    const side = buildSideScenery('Skeletal Corridor');
-    expect(side).toBeTruthy();
-    expect(side.spacing).toBeGreaterThan(0);
-    const xs = side.group.children.map((c) => Math.sign(c.position.x));
-    expect(xs).toContain(-1);
-    expect(xs).toContain(1);
+  it('no map adds giant side props: every map builds its own scenery (js/game/maps/w_*.js)', () => {
+    expect(Object.keys(SIDE_THEMES)).toEqual([]);
+    expect(getSideTheme('Skeletal Corridor')).toBeNull();
+    expect(buildSideScenery('Skeletal Corridor')).toBeNull();
+    // the medical prop models of the old game are gone
+    ['bone', 'skull', 'firstaid', 'heart', 'potion', 'monitor'].forEach((k) => expect(SCENERY_FILES[k], k).toBeUndefined());
   });
 });

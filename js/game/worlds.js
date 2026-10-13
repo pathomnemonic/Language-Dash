@@ -12,28 +12,6 @@
 import * as THREE from 'three';
 import { WORLD_BAY, LANE_EDGE, slab } from './mapkit.js';
 import { PALETTE } from './paper.js';
-import { playland } from './maps/playland.js';
-import { garden } from './maps/garden.js';
-import { cafeteria } from './maps/cafeteria.js';
-import { nursery } from './maps/nursery.js';
-import { amusement } from './maps/amusement.js';
-import { pharmacy } from './maps/pharmacy.js';
-import { aquarium } from './maps/aquarium.js';
-import { rooftop } from './maps/rooftop.js';
-import { farm } from './maps/farm.js';
-import { holiday } from './maps/holiday.js';
-import { neural } from './maps/neural.js';
-import { vascular } from './maps/vascular.js';
-import { neoner } from './maps/neoner.js';
-import { theater } from './maps/theater.js';
-import { candylab } from './maps/candylab.js';
-import { sunset } from './maps/sunset.js';
-import { skeletal } from './maps/skeletal.js';
-import { cellular } from './maps/cellular.js';
-import { dna } from './maps/dna.js';
-import { cardiac } from './maps/cardiac.js';
-import { xray } from './maps/xray.js';
-import { defib } from './maps/defib.js';
 
 import { w_library_hall } from './maps/w_library_hall.js';
 import { w_translators_booth } from './maps/w_translators_booth.js';
@@ -64,28 +42,6 @@ import { w_warsaw_spark_park } from './maps/w_warsaw_spark_park.js';
 
 /** Every world module, by id. Each is { bay, center?, arch?, ground?, extras? } (see the Playland for the shape). */
 export var WORLDS = {
-  playland: playland,
-  garden: garden,
-  cafeteria: cafeteria,
-  nursery: nursery,
-  amusement: amusement,
-  pharmacy: pharmacy,
-  aquarium: aquarium,
-  rooftop: rooftop,
-  farm: farm,
-  holiday: holiday,
-  neural: neural,
-  vascular: vascular,
-  neoner: neoner,
-  theater: theater,
-  candylab: candylab,
-  sunset: sunset,
-  skeletal: skeletal,
-  cellular: cellular,
-  dna: dna,
-  cardiac: cardiac,
-  xray: xray,
-  defib: defib,
   w_library_hall: w_library_hall,
   w_translators_booth: w_translators_booth,
   w_codebreakers_lab: w_codebreakers_lab,

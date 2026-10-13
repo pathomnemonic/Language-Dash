@@ -1,11 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
 import * as THREE from 'three';
 import { SKINS, isIndoorSkin, getNextSkin } from '../../js/game/skins.js';
 import { WORLDS, worldOf, isWorld, worldBay, buildWorldBay, buildWorldArch, buildWorldGround } from '../../js/game/worlds.js';
 import { buildTrack } from '../../js/game/track.js';
 import { updateAnimators } from '../../js/game/mapfx.js';
-import { holidaySeason } from '../../js/game/maps/holiday.js';
 import { LOCKER_ITEMS } from '../../js/game/shopdata.js';
 import { SKIN_MUSIC } from '../../js/audio.js';
 import { HAZARD_BY_SKIN } from '../../js/game/hazards.js';
@@ -129,20 +127,7 @@ describe('the bright maps', () => {
   });
 });
 
-describe('Holiday Wards follows the calendar', () => {
-  const d = (m, day) => new Date(2026, m - 1, day, 12);
-  it('picks winter, spring, summer, autumn or the everyday party', () => {
-    expect(holidaySeason(d(12, 25))).toBe('winter');
-    expect(holidaySeason(d(1, 3))).toBe('winter');
-    expect(holidaySeason(d(1, 7))).toBe('party');
-    expect(holidaySeason(d(4, 5))).toBe('spring');
-    expect(holidaySeason(d(7, 4))).toBe('summer');
-    expect(holidaySeason(d(10, 31))).toBe('autumn');
-    expect(holidaySeason(d(11, 6))).toBe('party');
-    expect(holidaySeason(d(2, 14))).toBe('party');
-    expect(holidaySeason(d(9, 15))).toBe('party');
-  });
-
+describe('the Festival of Seasons (skin key: Holiday Wards)', () => {
   it('builds every season without a seam or a crash', () => {
     const skin = SKINS.find((s) => s.name === 'Holiday Wards');
     const seasons = new Set();
@@ -162,30 +147,5 @@ describe('Holiday Wards follows the calendar', () => {
     });
     // the Festival of Seasons shows all four seasons side by side, so the date no longer picks one
     expect(seasons.size).toBe(1);
-  }, 90000);
-});
-
-describe('the KayKit models the maps ask for', () => {
-  it('are all in the packed file, and none is packed without being used', () => {
-    const dir = 'js/game/maps';
-    const used = new Set();
-    readdirSync(dir).filter((f) => f.endsWith('.js')).forEach((f) => {
-      for (const m of readFileSync(dir + '/' + f, 'utf8').matchAll(/['"`](rest|hall|city|furn)\/([A-Za-z0-9_]+)['"`]/g)) used.add(m[1] + '/' + m[2]);
-    });
-    const packed = JSON.parse(readFileSync('public/models/kaykit/models.json', 'utf8'));
-    expect([...used].sort()).toEqual(packed);
-  });
-});
-
-describe('every map has something moving at its sides', () => {
-  it('the original sixteen drift something gentle, cheaply, on every tier', () => {
-    SKINS.filter((s) => !s.world).forEach((skin) => {
-      const root = new THREE.Scene();
-      const refs = buildTrack(root, skin, { quality: 'medium' });
-      expect(refs.animators.length, skin.name).toBeGreaterThanOrEqual(2);
-      for (let f = 0; f < 60; f++) updateAnimators(refs.animators, f / 60, 1 / 60, 0.3);
-      root.traverse((o) => { if (o.isInstancedMesh) o.instanceMatrix.array.forEach((v) => expect(Number.isFinite(v), skin.name).toBe(true)); });
-      refs.dispose();
-    });
   }, 90000);
 });
