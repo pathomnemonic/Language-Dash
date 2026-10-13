@@ -390,6 +390,12 @@ export var customCards = {
       }
 
       var raw = parsed[i];
+      // an entry that is not an object (null, a number, a list) cannot be a card; skip it instead of throwing
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+        result.rejected.push({ index: i, errors: [{ code: 'NOT_OBJECT', path: '', message: 'Expected a card object', severity: 'error' }] });
+        result.rejectedCount++;
+        continue;
+      }
 
       // Ensure it has a unique ID
       if (!raw.id || typeof raw.id !== 'string') {

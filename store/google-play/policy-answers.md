@@ -65,5 +65,5 @@ Provide: in-app path (Friends → Account → Delete my account) and the web lin
 ## Subscriptions and in-app products (Play Console > Monetize)
 Create these in Play Console with exactly these product IDs, then activate them:
 - Subscription `languagedash_pro_yearly` (base plan yearly, no store trial offer: the free trial is given to every account by our own server), `languagedash_pro_monthly` (monthly), `languagedash_pro_pass3m` (auto-renewing 3-month base plan).
-- One-time products `languagedash_pro_lifetime` and the tip consumables `languagedash_tip_small`, `languagedash_tip_medium`, `languagedash_tip_large`.
+- One-time products `languagedash_pro_lifetime` and the tip consumables `languagedash_tip_small`, `languagedash_tip_medium`, `languagedash_tip_large`. Cosmetic Locker items (`languagedash_item_<id>` for each id in `supabase/functions/_shared/premium.js`) only if the build is made with VITE_FEATURE_LOCKER_ITEMS=1.
 Subscription disclosure requirements: the paywall shows price, billing period, trial length and "cancel anytime in Google Play". Link the Privacy Policy and Terms. The in-app list of what free vs Pro includes is in docs/PRO.md.

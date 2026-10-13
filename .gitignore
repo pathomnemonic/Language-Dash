@@ -6,6 +6,10 @@ playwright-report/
 e2e.log
 .env
 .env.local
+.env.*
+*.pem
+*.p8
+*.p12
 *.log
 
 # scratch scripts for local experiments

@@ -128,7 +128,7 @@ export var postRunMethods = {
       var b = createElement('button', { className: 'post-review-tab post-review-open ' + tone, attributes: { type: 'button', 'data-tab': key, 'aria-haspopup': 'dialog', 'aria-label': label + ': ' + count + '. Open to review in full screen.' } });
       b.appendChild(createElement('span', { className: 'post-review-count', text: String(count) }));
       b.appendChild(createElement('span', { className: 'post-review-label', text: icon + ' ' + label }));
-      b.appendChild(createElement('span', { className: 'post-review-cta', text: count ? 'Tap to review ›' : (key === 'missed' ? 'Perfect!' : 'None yet') }));
+      b.appendChild(createElement('span', { className: 'post-review-cta', text: count ? 'Tap to review ›' : (key === 'missed' && total > 0 ? 'Perfect!' : 'None yet') }));
       b.addEventListener('click', function () { self.openReviewPopup(key, missed, correctAll, total); });
       tabs.appendChild(b);
     }

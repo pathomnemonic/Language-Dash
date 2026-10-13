@@ -198,7 +198,7 @@ export function renderMastery(container, storage) {
   m.bands.forEach(function (b) {
     var line = createElement('div', { className: 'mastery-band' });
     line.appendChild(createElement('span', { className: 'mastery-band-label', text: 'Words ' + b.from + '–' + b.to }));
-    var bar = createElement('div', { className: 'mastery-bar', attributes: { role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(b.total), 'aria-valuenow': String(b.mastered) } });
+    var bar = createElement('div', { className: 'mastery-bar', attributes: { role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(b.total), 'aria-valuenow': String(b.mastered), 'aria-label': 'Words ' + b.from + '–' + b.to + ' mastered' } });
     var fill = createElement('div', { className: 'mastery-fill' });
     fill.style.width = Math.min(100, Math.round(100 * b.mastered / Math.max(1, b.total))) + '%';
     var seen = createElement('div', { className: 'mastery-seen' });
