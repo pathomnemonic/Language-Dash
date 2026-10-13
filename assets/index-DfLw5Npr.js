@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/web-JAKI4QLH.js","assets/index-la0xL7v2.js","assets/three-Dbr5sAaQ.js","assets/index-DQ1-DBK6.css"])))=>i.map(i=>d[i]);
+import{k as t,_ as i}from"./index-la0xL7v2.js";import"./three-Dbr5sAaQ.js";var o;(function(e){e[e.Flush=0]="Flush",e[e.Add=1]="Add"})(o||(o={}));const p=t("TextToSpeech",{web:()=>i(()=>import("./web-JAKI4QLH.js"),__vite__mapDeps([0,1,2,3])).then(e=>new e.TextToSpeechWeb)});export{o as QueueStrategy,p as TextToSpeech};

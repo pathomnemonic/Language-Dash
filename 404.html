@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-rNneGa5kJjqPwpJhWajLwzRDLtWPaPrjW35Tb1Uidjo='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob: data: https://0.peerjs.com wss://0.peerjs.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Language Dash — An endless-runner game for learning words in 15 languages. A word flashes, three gates rush at you: run through the one that means the same thing, and build your streak.">
+  <title>Language Dash — Run the lexicon. A Word Runner for 15 Languages</title>
+  <meta property="og:title" content="Language Dash — Run the lexicon.">
+  <meta property="og:description" content="An endless runner for learning words in 15 languages.">
+  <meta property="og:image" content="https://pathomnemonic.github.io/Language-Dash/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#F6EEDC">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <style>
+    /* boot splash: the rubber stamp on paper, a dotted route with a plane crossing it. Inline so it shows before any file loads. */
+    #bootSplash { position: fixed; inset: 0; z-index: 9999; background: #F6EEDC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; pointer-events: none; transition: opacity .35s ease; }
+    #bootSplash.done { opacity: 0; }
+    #bootSplash svg.boot-stamp { width: 132px; height: 132px; transform: rotate(-8deg); animation: bootStamp .6s cubic-bezier(.2,1.5,.4,1) both; }
+    #bootSplash .boot-title { font: 900 20px/1 "Fraunces", Georgia, "Times New Roman", serif; letter-spacing: .16em; text-transform: uppercase; color: #1B2A41; }
+    #bootSplash .boot-sub { font: 500 italic 13px/1 "DM Sans", system-ui, sans-serif; color: #4B5870; margin-top: -4px; }
+    #bootSplash .boot-route { position: relative; width: 170px; height: 18px; border-bottom: 3px dotted #8A93A3; margin-top: 6px; }
+    #bootSplash .boot-route span { position: absolute; bottom: -9px; left: 0; width: 22px; height: 22px; animation: bootFly 1.5s ease-in-out infinite; }
+    @keyframes bootStamp { from { transform: rotate(-16deg) scale(1.4); opacity: 0; } to { transform: rotate(-8deg) scale(1); opacity: 1; } }
+    @keyframes bootFly { from { transform: translateX(0) rotate(8deg); } to { transform: translateX(150px) rotate(8deg); } }
+    @media (prefers-color-scheme: dark) { #bootSplash { background: #101B2D; } #bootSplash .boot-title { color: #F6EEDC; } #bootSplash .boot-sub { color: #B7C0D1; } #bootSplash .boot-route { border-bottom-color: #6F7E96; } }
+    @media (prefers-reduced-motion: reduce) { #bootSplash svg.boot-stamp, #bootSplash .boot-route span { animation: none; } }
+  </style>
+
+  <script type="module" crossorigin src="/Language-Dash/assets/index-la0xL7v2.js"></script>
+  <link rel="modulepreload" crossorigin href="/Language-Dash/assets/three-Dbr5sAaQ.js">
+  <link rel="stylesheet" crossorigin href="/Language-Dash/assets/index-DQ1-DBK6.css">
+</head>
+<body data-screen="screenHome">
+  <!-- Icons: flat, outlined, ink. Used with <svg class="i"><use href="#i-name"/></svg> -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <filter id="stampRough" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter>
+      <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2.4"/><path d="M12 2.5v3.2M12 18.3v3.2M2.5 12h3.2M18.3 12h3.2M5.3 5.3l2.2 2.2M16.5 16.5l2.2 2.2M18.7 5.3l-2.2 2.2M7.5 16.5l-2.2 2.2"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.2c3 .2 5 2.3 5 5.3"/></symbol>
+      <symbol id="i-plane" viewBox="0 0 24 24"><path d="M21.5 3 3 10.5l6.5 2.5L12 20z" style="fill:var(--card)"/><path d="M9.5 13 21.5 3"/></symbol>
+      <symbol id="i-versus" viewBox="0 0 24 24"><path d="M4 8h14M14 4l4 4-4 4M20 16H6M10 12l-4 4 4 4"/></symbol>
+      <symbol id="i-cards" viewBox="0 0 24 24"><rect x="3.5" y="7" width="13" height="14" rx="2" style="fill:var(--card)"/><path d="M7.5 3.5H19a1.5 1.5 0 0 1 1.5 1.5v11.5"/></symbol>
+      <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21.5V3.5"/><path d="M5 4h13l-3 4.5L18 13H5" style="fill:var(--card)"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><rect x="5" y="11" width="3.6" height="9.5"/><rect x="10.2" y="5.5" width="3.6" height="15"/><rect x="15.4" y="13" width="3.6" height="7.5"/></symbol>
+      <symbol id="i-bag" viewBox="0 0 24 24"><rect x="3.5" y="7.5" width="17" height="13" rx="2"/><path d="M9 7.5V5.2c0-.9.7-1.7 1.7-1.7h2.6c1 0 1.7.8 1.7 1.7v2.3M8.5 7.5v13M15.5 7.5v13"/></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M6 10v10.5h12V10"/><path d="M10 20.5v-5.5h4v5.5"/></symbol>
+      <symbol id="i-list" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M8.5 11.5l1.8 1.8 3.2-3.6M8.5 17.5h7"/></symbol>
+      <symbol id="i-passport" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8.5 17h7"/></symbol>
+      <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" style="fill:#D8A233;stroke:var(--line)"/><path d="M12 6.2l1.5 4.3 4.3 1.5-4.3 1.5-1.5 4.3-1.5-4.3L6.2 12l4.3-1.5z" style="fill:var(--card);stroke:var(--line);stroke-width:1.3"/></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.2l2.7 5.5 6 .9-4.4 4.2 1 6L12 17l-5.3 2.8 1-6L3.3 9.6l6-.9z" style="fill:#F2B134;stroke:var(--line)"/></symbol>
+      <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2.8c1 3.6 5.2 5.6 5.2 10.2a5.2 5.2 0 0 1-10.4 0c0-2.1 1-3.3 2.1-4.3.2 1.6 1 2.4 1.9 2.7C10.4 8.4 10.8 5.6 12 2.8z" style="fill:#D9432C;stroke:var(--line)"/></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5S3.3 15 3.3 9A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8.7 2c0 6-8.7 11.5-8.7 11.5z" style="fill:#D9432C;stroke:var(--line)"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1" style="fill:currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" style="fill:currentColor"/></symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.5 2.5 5 13.5h6l-1 8 8.5-11h-6z" style="fill:#FFFBF2"/></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.4 9.6a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1 .9-1 1.7M12 17.3v.1"/></symbol>
+    </defs>
+  </svg>
+  <!-- Paper backdrop behind every menu: a faint world map with a dotted flight route; a few stamps drift across Home (colors come from the theme) -->
+  <div id="bgDecor" aria-hidden="true">
+    <svg class="bg-map" viewBox="0 0 360 180" aria-hidden="true"><path class="grid" d="M0 150 H360"/><path class="grid" d="M0 120 H360"/><path class="grid" d="M0 90 H360"/><path class="grid" d="M0 60 H360"/><path class="grid" d="M0 30 H360"/><path class="grid" d="M30 0 V180"/><path class="grid" d="M60 0 V180"/><path class="grid" d="M90 0 V180"/><path class="grid" d="M120 0 V180"/><path class="grid" d="M150 0 V180"/><path class="grid" d="M180 0 V180"/><path class="grid" d="M210 0 V180"/><path class="grid" d="M240 0 V180"/><path class="grid" d="M270 0 V180"/><path class="grid" d="M300 0 V180"/><path class="grid" d="M330 0 V180"/><path class="grid" d="M360 0 V180"/><polygon class="land" points="12,24 25,19 55,20 85,18 100,22 118,32 125,40 113,46 104,52 99,59 100,65 90,61 83,64 75,68 70,66 65,59 56,50 55,41 45,32 30,30 15,30"/><polygon points="12,24 25,19 55,20 85,18 100,22 118,32 125,40 113,46 104,52 99,59 100,65 90,61 83,64 75,68 70,66 65,59 56,50 55,41 45,32 30,30 15,30"/><polygon class="land" points="107,12 140,7 160,10 158,20 137,30 125,22"/><polygon points="107,12 140,7 160,10 158,20 137,30 125,22"/><polygon class="land" points="100,81 108,78 120,80 130,90 145,96 141,110 132,117 122,128 114,136 110,144 105,138 107,125 109,108 99,96 100,90"/><polygon points="100,81 108,78 120,80 130,90 145,96 141,110 132,117 122,128 114,136 110,144 105,138 107,125 109,108 99,96 100,90"/><polygon class="land" points="170,54 171,47 178,42 182,39 188,35 190,31 185,28 195,21 208,19 220,22 220,34 210,45 204,52 195,52 186,47 175,54"/><polygon points="170,54 171,47 178,42 182,39 188,35 190,31 185,28 195,21 208,19 220,22 220,34 210,45 204,52 195,52 186,47 175,54"/><polygon class="land" points="163,69 170,60 174,54 190,53 212,59 215,62 223,78 231,78 220,94 220,105 213,116 200,125 192,108 189,91 172,86 163,76"/><polygon points="163,69 170,60 174,54 190,53 212,59 215,62 223,78 231,78 220,94 220,105 213,116 200,125 192,108 189,91 172,86 163,76"/><polygon class="land" points="220,45 230,45 240,35 250,17 280,13 320,18 350,24 360,25 340,35 323,38 315,47 302,50 302,59 290,69 285,80 280,88 278,74 272,68 260,82 252,70 248,66 238,65 232,60 228,60 223,52 216,54 208,49 215,44"/><polygon points="220,45 230,45 240,35 250,17 280,13 320,18 350,24 360,25 340,35 323,38 315,47 302,50 302,59 290,69 285,80 280,88 278,74 272,68 260,82 252,70 248,66 238,65 232,60 228,60 223,52 216,54 208,49 215,44"/><polygon class="land" points="294,112 302,108 311,102 322,101 326,109 333,116 330,127 320,128 311,121 295,124"/><polygon points="294,112 302,108 311,102 322,101 326,109 333,116 330,127 320,128 311,121 295,124"/><polygon class="land" points="310,58 315,56 320,54 322,49 320,50 316,54 311,56"/><polygon points="310,58 315,56 320,54 322,49 320,50 316,54 311,56"/><polygon class="land" points="174,40 181,39 178,33 175,32 174,35"/><polygon points="174,40 181,39 178,33 175,32 174,35"/><path class="route" d="M180 39 Q250 -8 319 55"/><path class="route" d="M319 55 Q250 120 140 110"/></svg>
+    <div id="bgFlyers"></div>
+  </div>
+  <!-- Boot splash: shown instantly, removed once the app is ready (and after 8 s regardless) -->
+  <div id="bootSplash" aria-hidden="true">
+    <svg class="boot-stamp" viewBox="0 0 200 200" fill="none" stroke="#D9432C"><circle cx="100" cy="100" r="92" stroke-width="7"/><circle cx="100" cy="100" r="82" stroke-width="2.5"/><circle cx="100" cy="100" r="66" stroke-width="2.5" stroke-dasharray="6 6"/><text x="100" y="92" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-weight="900" font-size="30" fill="#B5341F" stroke="none">Language</text><text x="100" y="124" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-weight="900" font-size="30" fill="#B5341F" stroke="none">Dash</text><path d="M72 142h56a7 7 0 0 1 7 7v8a7 7 0 0 1-7 7h-26l-10 8v-8H72a7 7 0 0 1-7-7v-8a7 7 0 0 1 7-7z" transform="translate(0 -26) scale(1 .9)" fill="#F6EEDC" stroke-width="2.5"/><text x="100" y="146" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-weight="900" font-size="15" fill="#B5341F" stroke="none">A &#12354;</text></svg>
+    <div class="boot-title">Language Dash</div>
+    <div class="boot-sub">Run the lexicon.</div>
+    <div class="boot-route"><span><svg viewBox="0 0 24 24" width="22" height="22" fill="#FFFBF2" stroke="#1B2A41" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M21.5 3 3 10.5l6.5 2.5L12 20z"/><path d="M9.5 13 21.5 3"/></svg></span></div>
+  </div>
+  <script>setTimeout(function () { var s = document.getElementById('bootSplash'); if (s) s.remove(); }, 8000);</script>
+
+  <!-- ==================== 3D CANVAS (fullscreen, always behind UI) ==================== -->
+  <div id="gameContainer" role="presentation" aria-hidden="true"></div>
+
+  <!-- ==================== RUSH VIGNETTE ==================== -->
+  <div id="rushVignette" class="rush-vignette" aria-hidden="true"></div>
+  <div id="mapFlash" class="map-flash" aria-hidden="true"></div>
+
+  <!-- ==================== REVENGE BANNER ==================== -->
+  <div id="revengeCardBanner" role="status" aria-live="polite">🔥 REVENGE WORD!</div>
+
+  <!-- ==================== HUD (gameplay only) ==================== -->
+  <div id="hud" class="off" role="region" aria-label="Game heads-up display">
+    <div class="hud-row">
+      <div class="hud-pill" aria-label="Coins"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg> <span id="hudCoins">0</span></div>
+      <div class="hud-pill" aria-label="Score"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg> <span id="hudScore">0</span></div>
+      <div class="hud-pill" aria-label="Streak"><svg class="i" aria-hidden="true"><use href="#i-flame"/></svg> <span id="hudStreak">0</span></div>
+      <div class="hud-pill" aria-label="Multiplier"><span aria-hidden="true">×</span> <span id="hudMulti">1</span></div>
+      <div class="hud-pill" aria-label="Lives"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg> <span id="hudLives">3</span></div>
+      <div class="hud-pill" id="hudSpeedTimer" aria-label="Speed timer" style="display:none">⏱ 0 ms</div>
+      <button class="hud-pill clickable" id="pauseBtn" type="button" aria-label="Pause game"><svg class="i" aria-hidden="true"><use href="#i-pause"/></svg></button>
+    </div>
+
+    <!-- OPPONENT HUD (multiplayer only, hidden by default) -->
+    <div id="opponentHud" class="opponent-hud" aria-label="Opponent stats" hidden>
+      <span>🎮 Rival</span>
+      <span><span aria-hidden="true">⭐</span> <b id="opponentScore">0</b></span>
+      <span><span aria-hidden="true">🔥</span> <b id="opponentStreak">0</b></span>
+      <span><span aria-hidden="true">✅</span> <b id="opponentCorrect">0</b></span>
+      <span><span aria-hidden="true">❌</span> <b id="opponentWrong">0</b></span>
+    </div>
+
+    <div id="buzzBox" role="status" aria-live="assertive" aria-atomic="true">
+      <div id="buzzText">GET READY</div>
+    </div>
+
+    <div id="answerRow" role="group" aria-label="Word gates">
+      <div class="answer-choice" id="ans0">
+        <span class="lane-label">← LEFT</span>
+        <span id="ansText0"></span>
+      </div>
+      <div class="answer-choice" id="ans1">
+        <span class="lane-label">CENTER</span>
+        <span id="ansText1"></span>
+      </div>
+      <div class="answer-choice" id="ans2">
+        <span class="lane-label">RIGHT →</span>
+        <span id="ansText2"></span>
+      </div>
+    </div>
+
+    <!-- Wide landscape screens only (see css/arcade.css): the space beside the track shows how the run is going and the keys -->
+    <aside class="side-card side-left" id="sideRun" aria-hidden="true">
+      <div class="side-title">This run</div>
+      <div class="side-map" id="sideMap"></div>
+      <div class="side-stat"><b id="sideAcc">–</b><span>correct</span></div>
+      <div class="side-stat"><b id="sideAns">0</b><span>answered</span></div>
+      <div class="side-stat"><b id="sideBest">0</b><span>best streak</span></div>
+    </aside>
+    <aside class="side-card side-right" id="sideKeys" aria-hidden="true">
+      <div class="side-title">Controls</div>
+      <ul class="side-keys" id="sideKeyList"></ul>
+    </aside>
+
+    <div id="feedbackEl" role="status" aria-live="polite"></div>
+    <div id="rushEl" aria-hidden="true">⚡ RUSH ×1 ⚡</div>
+    <div id="teachEl" role="status" aria-live="polite"></div>
+    <div class="powerup-row" id="powerupRow" role="group" aria-label="Active power-ups"></div>
+    <button class="dash-btn" id="dashBtn" type="button" aria-label="Dash" hidden><svg class="dash-ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M18.5 2 6 18h8l-2.5 12L26 12h-8.5z"/></svg><span>DASH</span></button>
+    <button class="auto-btn" id="autoBtn" type="button" aria-label="Use Auto-Pilot on this question" hidden><span class="auto-ic" aria-hidden="true">🤖</span><span class="auto-lbl">AUTO</span></button>
+  </div>
+
+  <!-- ==================== COUNTDOWN ==================== -->
+  <div id="countdownOverlay" role="alert" aria-live="assertive">
+    <div id="countdownNum">3</div>
+    <div id="countdownTip"></div>
+  </div>
+
+  <!-- ==================== PAUSE ==================== -->
+  <div id="pauseOverlay" role="dialog" aria-label="Game paused" aria-modal="true">
+    <div class="pause-card">
+      <h2>⏸ PAUSED</h2>
+      <button class="btn btn-primary btn-block" id="resumeBtn" type="button">▶ Resume</button>
+      <button class="btn btn-outline btn-block" id="endRunBtn" type="button">🏠 End Run</button>
+    </div>
+  </div>
+
+  <!-- ==================== CONTINUE ==================== -->
+  <div id="continueOverlay" role="dialog" aria-label="Continue prompt" aria-modal="true">
+    <div class="continue-box">
+      <h2>💀 Out of Lives!</h2>
+      <p class="continue-desc">Continue your run?</p>
+      <div class="continue-cost-row">
+        <span class="continue-cost-label">Cost:</span>
+        <span class="continue-cost-amount">🪙 <span id="continueCost">50</span></span>
+      </div>
+      <div class="continue-cost-row">
+        <span class="continue-cost-label">Your coins:</span>
+        <span class="continue-coins-amount">🪙 <span id="continueCoins">0</span></span>
+      </div>
+      <button class="btn btn-green btn-block" id="continueYesBtn" type="button">💚 Continue!</button>
+      <button class="btn btn-outline btn-block" id="continueNoBtn" type="button">End Run</button>
+    </div>
+  </div>
+
+  <!-- ==================== TUTORIAL ON THE REAL TRACK (the coach card; the run itself is the game) ==================== -->
+  <div class="tutorial-coach" id="tutorialCoach"></div>
+
+  <!-- ==================== TUTORIAL (practice track: only where the runner cannot start) ==================== -->
+  <div class="tutorial-overlay" id="tutorialOverlay" role="dialog" aria-label="How to play" aria-modal="true"></div>
+
+  <!-- ==================== REVIEW YOUR ANSWERS (full screen, from the results page) ==================== -->
+  <div id="reviewOverlay" role="dialog" aria-label="Review your answers" aria-modal="true">
+    <div class="review-full">
+      <div class="review-full-head">
+        <h2 id="reviewFullTitle">Review</h2>
+        <button class="review-full-close" id="reviewFullClose" type="button" aria-label="Close review">✕</button>
+      </div>
+      <div class="post-review-tabs review-full-tabs" id="reviewFullTabs" role="tablist" aria-label="Review your answers"></div>
+      <div class="review-full-list" id="reviewFullList" role="tabpanel"></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUICK REVIEW ==================== -->
+  <div id="quickReviewOverlay" role="dialog" aria-label="Quick review" aria-modal="true">
+    <div class="quick-review-card">
+      <div class="qr-counter" id="qrCounter">1 / 5</div>
+      <div class="qr-buzzwords" id="qrBuzzwords"></div>
+      <div class="qr-divider" id="qrDivider" hidden>
+        <div class="qr-answer" id="qrAnswer"></div>
+        <div class="qr-teaching" id="qrTeaching"></div>
+      </div>
+      <div class="qr-buttons">
+        <button class="btn btn-primary" id="qrRevealBtn" type="button">Reveal Word</button>
+        <button class="btn btn-outline" id="qrNextBtn" type="button" hidden>Next Word →</button>
+      </div>
+      <button class="btn btn-outline btn-block" id="qrCloseBtn" type="button">✕ Close Review</button>
+    </div>
+  </div>
+
+  <!-- ==================== MULTIPLAYER ==================== -->
+  <div id="multiplayerOverlay" role="dialog" aria-label="Multiplayer lobby" aria-modal="true">
+    <div class="mp-panel">
+      <h3 id="mpTitle">🎮 Multiplayer</h3>
+      <div id="mpContent"></div>
+      <button class="btn btn-outline btn-block" id="mpCloseBtn" type="button">✕ Close</button>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       SCREENS — All transparent, floating over the 3D canvas.
+       Bottom nav is OUTSIDE all screens so it persists everywhere.
+  ==================================================================== -->
+
+  <!-- ==================== HOME (one screen, no scrolling) ==================== -->
+  <div class="screen active" id="screenHome" role="region" aria-label="Home">
+    <div class="home-layout">
+
+      <!-- Top bar: settings (left), coins, friends, account (right) -->
+      <div class="home-topbar">
+        <button class="top-btn" id="settingsBtn" type="button" aria-label="Settings"><span class="ico ico-gear" aria-hidden="true"><svg class="i"><use href="#i-gear"/></svg></span></button>
+        <div class="home-coins" id="homeCoinsDisplay" aria-label="Your coins and best score">
+          <span class="ico ico-coin" aria-hidden="true"><svg class="i"><use href="#i-coin"/></svg></span> <span id="homeCoins">300</span>
+          <span class="home-coins-sep" aria-hidden="true">|</span>
+          <span class="ico ico-star" aria-hidden="true"><svg class="i"><use href="#i-star"/></svg></span> <span id="homeBest">0</span>
+        </div>
+        <button class="top-btn top-btn-label" id="leaderboardBtn" type="button" aria-label="Friends, feed and groups">
+          <span class="ico ico-friends" aria-hidden="true"><svg class="i"><use href="#i-users"/></svg></span><span class="top-btn-text">Friends</span>
+        </button>
+        <button class="home-profile-btn" id="profileCornerBtn" type="button" aria-label="Profile and account">
+          <span class="hp-avatar" id="profileCornerAvatar" aria-hidden="true">👤</span>
+          <span class="hp-label" id="profileCornerLabel">Sign in</span>
+        </button>
+      </div>
+
+      <!-- The logo: a rubber stamp. It takes whatever room is left between the top bar and the boarding pass. -->
+      <div class="home-header">
+        <h1>Language Dash</h1>
+      </div>
+
+      <!-- The boarding pass: your route and word filters on top; today's goal and the streak on the tear-off half -->
+      <section class="pass" aria-label="Your route and today's goal">
+        <div class="pass-main">
+          <button class="side-btn" id="langBtn" type="button" aria-haspopup="dialog" aria-controls="langSheet">
+            <span class="side-icon" aria-hidden="true"><span class="ico ico-globe">🌍</span></span>
+            <span class="side-label">Languages</span>
+            <span class="filters-summary" id="langBtnValue">🇬🇧→🇪🇸</span>
+          </button>
+          <button class="side-btn" id="filtersBtn" type="button" aria-haspopup="dialog" aria-controls="filtersSheet">
+            <span class="side-icon" aria-hidden="true"><span class="ico ico-knobs">🎛</span></span>
+            <span class="side-label">Filters</span>
+            <span class="filters-summary" id="filtersSummary">All topics</span>
+          </button>
+        </div>
+        <!-- Today's goal (and the league, when there is one): level and rank live on the Profile. -->
+        <div class="home-progress">
+          <button class="streak-chip" id="streakChip" type="button" aria-haspopup="dialog" aria-controls="streakSheet"></button>
+          <button class="study-goal" id="studyGoal" type="button" aria-haspopup="dialog" aria-controls="todaySheet"></button>
+        </div>
+      </section>
+
+      <!-- Go Pro: a slim ticket, shown while Pro can be bought (or a trial is running) -->
+      <button class="home-pro-banner" id="homeProBanner" type="button" aria-haspopup="dialog" hidden>
+        <span class="hpb-icon" aria-hidden="true">⚡</span>
+        <span class="hpb-text"><strong id="homeProTitle">GO PRO</strong><span id="homeProSub">The full word list and every study tool</span></span>
+        <span class="hpb-go" aria-hidden="true">▸</span>
+      </button>
+
+      <!-- PRIMARY ACTION: one big ticket -->
+      <div class="play-row">
+        <div class="play-section">
+          <button class="btn-play" data-mode="endless" type="button" aria-label="Play">
+            <span class="play-icon" aria-hidden="true">▶</span>
+            <span class="play-label">PLAY</span>
+          </button>
+        </div>
+      </div>
+      <div class="play-sub">
+        <button class="pal-buddy" id="palBuddy" type="button" aria-label="Your study buddy" hidden></button>
+        <div class="pal-bubble" id="palBubble" role="status" aria-live="polite"></div>
+        <button class="link-btn" id="howToPlayBtn" type="button"><span class="ico ico-q" aria-hidden="true"><svg class="i"><use href="#i-help"/></svg></span> How to play</button>
+      </div>
+
+      <!-- Three ways to play, each with its own popup or screen: ticket stubs -->
+      <div class="mode-row" role="group" aria-label="Ways to play">
+        <button class="mode-btn" id="multiplayerBtn" type="button">
+          <span class="mode-btn-icon" aria-hidden="true"><span class="ico ico-pad"><svg class="i"><use href="#i-versus"/></svg></span></span>
+          <span class="mode-btn-label">Versus</span>
+        </button>
+        <button class="mode-btn" id="homeFlashcardsBtn" type="button" aria-haspopup="dialog" aria-controls="flashcardsSheet">
+          <span class="mode-btn-icon" aria-hidden="true"><span class="ico ico-cards"><svg class="i"><use href="#i-cards"/></svg></span></span>
+          <span class="mode-btn-label">Flashcards</span>
+        </button>
+        <button class="mode-btn" id="homeChallengeBtn" type="button" aria-haspopup="dialog" aria-controls="challengeSheet">
+          <span class="mode-btn-icon" aria-hidden="true"><span class="ico ico-flag"><svg class="i"><use href="#i-flag"/></svg></span></span>
+          <span class="mode-btn-label">Challenge</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== POPUPS (sheets) ==================== -->
+
+  <!-- Challenge: every way to play a set of questions, and how they differ -->
+  <div class="tutorial-overlay sheet-overlay" id="challengeSheet" role="dialog" aria-label="Challenge modes" aria-modal="true">
+    <div class="sheet-card">
+      <h2>🏁 Challenge</h2>
+      <p class="sheet-intro">Pick how you want to play. PLAY on Home is a regular run.</p>
+      <div class="sheet-list">
+        <button class="sheet-entry" data-mode="daily" type="button">
+          <span class="se-icon" aria-hidden="true">📅</span>
+          <span class="se-body"><strong>Daily 15</strong><span>A quick habit: today's 15 words, one try a day. Counts toward your study streak.</span><em>Everyone gets the same 15 · resets daily · no leaderboard</em></span>
+        </button>
+        <button class="sheet-entry" id="tournamentBtn" type="button">
+          <span class="se-icon" aria-hidden="true">🛡️</span>
+          <span class="se-body"><strong>Weekly Gauntlet</strong><span>A real test: 30 words and just one life. Clear it for a weekly badge and bonus coins. Retry all week.</span><em>Same 30 all week · 1 life · clear it, don't rank it</em></span>
+        </button>
+        <button class="sheet-entry" id="challengeBtn" type="button">
+          <span class="se-icon" aria-hidden="true">🤝</span>
+          <span class="se-body"><strong>Friend challenge</strong><span>Play 15 fresh words, then send a link. Friends play the same words and compare scores.</span><em>You and friends · any time · no sign-up needed</em></span>
+        </button>
+        <button class="sheet-entry" id="cohortsBtn" type="button" hidden>
+          <span class="se-icon" aria-hidden="true">🛡️</span>
+          <span class="se-body"><strong>Cohorts</strong><span>Team up with fellow learners and compete against other cohorts each week.</span><em>Teams · weekly war</em></span>
+        </button>
+        <button class="sheet-entry" data-mode="study" type="button">
+          <span class="se-icon" aria-hidden="true">📖</span>
+          <span class="se-body"><strong>Study</strong><span>Relaxed practice with a word card after every answer.</span><em>Solo · no lives lost · no pressure</em></span>
+        </button>
+        <button class="sheet-entry" data-mode="weakness" type="button">
+          <span class="se-icon" aria-hidden="true">🎯</span>
+          <span class="se-body"><strong>Weakness</strong><span>Drill the words you miss most, until they stick.</span><em>Solo · your missed words · extra room from the Hush</em></span>
+        </button>
+        <button class="sheet-entry" id="examBtn" type="button">
+          <span class="se-icon" aria-hidden="true">📝</span>
+          <span class="se-body"><strong>Word Quiz</strong><span>A timed block of words, no running. Just pick the right meaning.</span><em>Solo · timed · full review at the end</em></span>
+        </button>
+      </div>
+      <button class="btn btn-outline btn-block sheet-close" type="button">✕ Close</button>
+    </div>
+  </div>
+
+  <!-- Flashcards: choose which words, then flip them or listen hands-free -->
+  <div class="tutorial-overlay sheet-overlay" id="flashcardsSheet" role="dialog" aria-label="Flashcards" aria-modal="true">
+    <div class="sheet-card">
+      <h2>🃏 Flashcards</h2>
+      <p class="sheet-intro">No runner, no lives. Choose your words, then flip them yourself or listen hands-free.</p>
+      <div class="sheet-list" id="flashcardsList">
+        <button class="sheet-entry" id="flashcardBtn" data-source="mine" type="button">
+          <span class="se-icon" aria-hidden="true">📖</span>
+          <span class="se-body"><strong>Study my topics</strong><span>A random mix from the topics you picked in Word filters.</span><em>Flip cards or hands-free</em></span>
+        </button>
+        <button class="sheet-entry" data-source="due" type="button">
+          <span class="se-icon" aria-hidden="true">⏰</span>
+          <span class="se-body"><strong>Review due words</strong><span id="fcDueText">Words that are ready to see again, most overdue first.</span><em>Spaced repetition</em></span>
+        </button>
+        <button class="sheet-entry" data-source="fresh" type="button">
+          <span class="se-icon" aria-hidden="true">🆕</span>
+          <span class="se-body"><strong>New words</strong><span id="fcFreshText">Words you have not seen yet.</span><em>Discover something new</em></span>
+        </button>
+        <button class="sheet-entry" data-source="missed" type="button">
+          <span class="se-icon" aria-hidden="true">🩹</span>
+          <span class="se-body"><strong>Words I miss</strong><span id="fcMissedText">The words you get wrong the most.</span><em>Targeted practice</em></span>
+        </button>
+        <button class="sheet-entry" id="cardBrowserBtn" type="button">
+          <span class="se-icon" aria-hidden="true">🔎</span>
+          <span class="se-body"><strong>Phrasebook</strong><span>Search every word by topic or text, flag mistakes and see your stats per word.</span><em>The library</em></span>
+        </button>
+        <button class="sheet-entry" id="myCardsBtn" type="button">
+          <span class="se-icon" aria-hidden="true">📝</span>
+          <span class="se-body"><strong>My words</strong><span>Write your own words, import Anki decks and manage saved decks.</span><em>Make it yours</em></span>
+        </button>
+      </div>
+      <button class="btn btn-outline btn-block sheet-close" type="button">✕ Close</button>
+    </div>
+  </div>
+
+  <!-- Languages -->
+  <div class="tutorial-overlay sheet-overlay" id="langSheet" role="dialog" aria-label="Languages" aria-modal="true">
+    <div class="sheet-card">
+      <h2>🌍 Languages</h2>
+      <div id="langSheetBody"></div>
+      <button class="btn btn-outline btn-block sheet-close" type="button">✕ Close</button>
+    </div>
+  </div>
+
+  <!-- Today: goal, streak, reviews and the weekly reward -->
+  <div class="tutorial-overlay sheet-overlay" id="todaySheet" role="dialog" aria-label="Today" aria-modal="true">
+    <div class="sheet-card">
+      <h2>🎯 Today</h2>
+      <div id="todayContent"></div>
+      <button class="btn btn-outline btn-block sheet-close" type="button">✕ Close</button>
+    </div>
+  </div>
+
+  <!-- Study streak calendar: opened from the flame on Home -->
+  <div class="tutorial-overlay sheet-overlay" id="streakSheet" role="dialog" aria-label="Study streak" aria-modal="true">
+    <div class="sheet-card sheet-tall">
+      <h2>🔥 Study streak</h2>
+      <div id="streakSheetBody" class="streak-calendar"></div>
+      <button class="btn btn-outline btn-block sheet-close" type="button">✕ Close</button>
+    </div>
+  </div>
+
+  <!-- ==================== WORD FILTERS (topics and word level) ==================== -->
+  <div class="tutorial-overlay sheet-overlay" id="filtersSheet" role="dialog" aria-label="Word filters" aria-modal="true">
+    <div class="sheet-card sheet-tall">
+      <h2>🎛 Word filters</h2>
+      <p class="muted" id="filtersIntro">Choose which words you get. Your choices are saved.</p>
+
+      <!-- Topics -->
+      <div class="collapsible-section">
+        <button class="collapsible-toggle" id="subjectToggle" type="button" aria-expanded="false" aria-controls="subjectBody">
+          📚 Topics <span class="collapse-arrow" id="subjectArrow" aria-hidden="true">▸</span>
+        </button>
+        <div class="collapsible-body" id="subjectBody" hidden>
+          <div class="subject-controls">
+            <button class="btn btn-outline btn-sm" id="selectAllSubjects" type="button">Select All</button>
+            <button class="btn btn-outline btn-sm" id="deselectAllSubjects" type="button">Deselect All</button>
+          </div>
+          <div class="subject-scroll" id="subjectScroll" role="group" aria-label="Topic selection"></div>
+          <div id="subjectNote" hidden></div>
+        </div>
+      </div>
+
+      <!-- Word level -->
+      <div id="examFilterContainer"></div>
+      <!-- Advanced filters (question type, year, high-yield) do not exist in Language Dash: nothing renders here -->
+      <div id="advancedFilterContainer" hidden></div>
+      <button class="btn btn-primary btn-block sheet-close" type="button">Done</button>
+    </div>
+  </div>
+
+  <!-- ==================== STATS ==================== -->
+  <div class="screen" id="screenStats" role="region" aria-label="Your progress">
+    <div class="screen-scroll">
+      <div id="statsContent"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SHOP ==================== -->
+  <div class="screen" id="screenShop" role="region" aria-label="Locker">
+    <div class="screen-scroll">
+      <h2>🧥 The Locker</h2>
+      <p class="muted">Coins: <span id="shopCoins" class="gold bold">0</span></p>
+      <div class="shop-gift" id="shopGiftBar" hidden></div>
+      <div id="characterPreviewContainer" role="img" aria-label="Character preview"></div>
+      <p class="muted">Drag to rotate • Tap 👁 (or a trail or monster) to preview it here</p>
+      <div id="shopItems"></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUESTS ==================== -->
+  <div class="screen" id="screenQuests" role="region" aria-label="Daily Quests">
+    <div class="screen-scroll">
+      <h2>📋 Daily Quests</h2>
+      <div id="questList"></div>
+    </div>
+  </div>
+
+  <!-- ==================== COHORTS (not released: hidden unless the build enables it) ==================== -->
+  <div class="screen" id="screenCohorts" role="region" aria-label="Cohorts">
+    <div class="screen-scroll" id="cohortsRoot"></div>
+  </div>
+
+  <!-- ==================== SETTINGS ==================== -->
+  <div class="screen" id="screenSettings" role="region" aria-label="Settings">
+    <div class="screen-scroll">
+      <h2>⚙ Settings</h2>
+      <div id="settingsContent"></div>
+    </div>
+  </div>
+
+  <!-- ==================== MY CARDS ==================== -->
+  <div class="screen" id="screenMyCards" role="region" aria-label="My Words">
+    <div class="screen-scroll">
+      <h2>📝 My Words</h2>
+      <p class="muted">Create your own words to add to the game.</p>
+      <button class="btn btn-green btn-block" id="addCardBtn" type="button">+ Create New Word</button>
+      <div id="customCardList"></div>
+      <div id="savedDecks"></div>
+      <button class="btn btn-primary btn-block" id="bringCardsBtn" type="button">📥 Bring in Anki, spreadsheet or AI words</button>
+      <div class="btn-row">
+        <button class="btn btn-outline btn-sm" id="exportCardsBtn" type="button">📤 Export</button>
+        <button class="btn btn-outline btn-sm" id="shareDeckBtn" type="button">🌐 Share Deck</button>
+        <button class="btn btn-outline btn-sm" id="importDeckBtn" type="button">🔑 Get Deck</button>
+        <button class="btn btn-outline btn-sm" id="importCardsBtn" type="button">📥 Paste JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CARD EDITOR ==================== -->
+  <div class="screen" id="screenCardEditor" role="region" aria-label="Word Editor">
+    <div class="screen-scroll">
+      <h2 id="cardEditorTitle">📝 Create Word</h2>
+      <div class="card-form">
+        <label for="cardSubject">Topic</label>
+        <select id="cardSubject"></select>
+
+        <label for="cardBuzzwords">Hint word (in your language)</label>
+        <textarea id="cardBuzzwords" rows="2" placeholder="e.g. bread"></textarea>
+
+        <label for="cardAnswer">The word you are learning</label>
+        <input id="cardAnswer" type="text" placeholder="e.g. pan">
+
+        <label for="cardDistractor1">Wrong gate 1</label>
+        <input id="cardDistractor1" type="text" placeholder="e.g. agua">
+        <input id="cardWhy1" type="text" placeholder="What this gate means (optional)" class="why-input">
+
+        <label for="cardDistractor2">Wrong gate 2</label>
+        <input id="cardDistractor2" type="text" placeholder="e.g. leche">
+        <input id="cardWhy2" type="text" placeholder="What this gate means (optional)" class="why-input">
+
+        <label for="cardTeaching">Word card note</label>
+        <textarea id="cardTeaching" rows="3" placeholder="An example, a memory trick, a note about the word (optional)"></textarea>
+
+        <div id="cardErrors" role="alert" aria-live="polite"></div>
+
+        <input type="hidden" id="cardEditId" value="">
+        <button class="btn btn-green btn-block" id="saveCardBtn" type="button">💾 Save Word</button>
+        <button class="btn btn-outline btn-block" id="cancelCardBtn" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== IMPORT/EXPORT ==================== -->
+  <div class="screen" id="screenImportExport" role="region" aria-label="Import or Export Words">
+    <div class="screen-scroll">
+      <h2 id="importExportTitle">📤 Export Words</h2>
+      <label for="importExportArea" class="sr-only">Word data</label>
+      <textarea id="importExportArea" rows="12" class="import-export-area"></textarea>
+      <div id="importExportMsg" role="status" aria-live="polite"></div>
+      <button class="btn btn-primary btn-block" id="importExportAction" type="button">Copy</button>
+    </div>
+  </div>
+
+  <!-- ==================== POST-RUN ==================== -->
+  <div class="screen" id="screenPostRun" role="region" aria-label="Run results">
+    <div class="screen-scroll">
+      <div id="postRunContent"></div>
+    </div>
+  </div>
+
+  <!-- ==================== PROFILE ==================== -->
+  <div class="screen" id="screenProfile" role="region" aria-label="Profile">
+    <div class="screen-scroll">
+      <h2>👤 Profile</h2>
+
+      <div id="profileContent"></div>
+    </div>
+  </div>
+
+  <!-- ==================== CARD BROWSER ==================== -->
+  <div class="screen" id="screenCardBrowser" role="region" aria-label="Phrasebook">
+    <div class="screen-scroll">
+      <h2>📚 Phrasebook</h2>
+      <p class="muted">Browse, search, and manage all your words.</p>
+      <div id="cardBrowserContent"></div>
+    </div>
+  </div>
+
+  <!-- ==================== LEADERBOARD ==================== -->
+  <div class="screen" id="screenLeaderboard" role="region" aria-label="Friends">
+    <div class="screen-scroll">
+      <h2>👥 Friends</h2>
+      <div id="leaderboardContent"></div>
+    </div>
+  </div>
+
+  <!-- ==================== EXAM SIMULATION ==================== -->
+  <div class="screen" id="screenExam" role="region" aria-label="Word Quiz">
+    <div class="screen-scroll">
+      <h2>📝 Word Quiz</h2>
+      <div id="examContent"></div>
+    </div>
+  </div>
+
+  <!-- ==================== FLASHCARD MODE ==================== -->
+  <div class="screen" id="screenFlashcard" role="region" aria-label="Flashcards">
+    <div class="screen-scroll">
+      <h2>📖 Flashcards</h2>
+      <div id="flashcardContent"></div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       PERSISTENT BOTTOM NAV
+  ==================================================================== -->
+  <nav class="bottom-nav" id="bottomNav" aria-label="Main navigation">
+    <div class="tab-indicator" id="tabIndicator" aria-hidden="true"><span></span><span></span><span class="on"></span><span></span><span></span></div>
+    <button class="nav-item" data-screen="screenStats" type="button">
+      <span class="nav-icon" aria-hidden="true"><svg class="i"><use href="#i-chart"/></svg></span>Stats
+    </button>
+    <button class="nav-item" data-screen="screenShop" type="button">
+      <span class="nav-icon" aria-hidden="true"><svg class="i"><use href="#i-bag"/></svg></span>Locker
+    </button>
+    <button class="nav-item nav-home active" data-screen="screenHome" type="button" aria-current="true">
+      <span class="nav-icon" aria-hidden="true"><svg class="i"><use href="#i-home"/></svg></span>Home
+    </button>
+    <button class="nav-item" data-screen="screenQuests" type="button">
+      <span class="nav-icon" aria-hidden="true"><svg class="i"><use href="#i-list"/></svg></span>Quests
+    </button>
+    <button class="nav-item" data-screen="screenProfile" type="button">
+      <span class="nav-icon" aria-hidden="true"><svg class="i"><use href="#i-passport"/></svg></span>Profile
+    </button>
+  </nav>
+
+  <!-- ==================== LOAD GAME ==================== -->
+
+</body>
+</html>

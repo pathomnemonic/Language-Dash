@@ -1,0 +1,1 @@
+import{W as n}from"./index-la0xL7v2.js";import"./three-Dbr5sAaQ.js";class t extends n{async canOpenUrl(e){return{value:!0}}async openUrl(e){return window.open(e.url,"_blank"),{completed:!0}}}export{t as AppLauncherWeb};
