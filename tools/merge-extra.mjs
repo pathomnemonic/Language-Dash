@@ -1,7 +1,7 @@
 // Merges the extra vocabulary blocks (data/extra/block-N.json: ranks 1001..10000 for en/es/fr) into the master tables.
 //   node tools/merge-extra.mjs
 // The first 1,000 concepts are never touched (read back from concepts.json, ids <= 1000). The extra entries are ordered by
-// real word frequency using data/extra/freq-20k.txt (the 20,000 most common English words, Google Trillion Word Corpus, from
+// real word frequency using data/extra/freq-subtitles.txt (the 40,000 most common English words in film and TV subtitles (OpenSubtitles via hermitdave/FrequencyWords, CC BY-SA 4.0), from
 // Peter Norvig's list as published at github.com/first20hours/google-10000-english): an entry takes the rank of the first form
 // of its lemma (plural, -ed, -ing, -er, -ly ...) found in that list; entries not found keep their written order after the
 // matched ones. Then build-words.mjs turns the result into js/lang/data/*.js.
@@ -18,7 +18,7 @@ const fr = JSON.parse(readFileSync(resolve(root, 'data/words/fr.json'), 'utf8'))
 if (concepts.length !== BASE || es.length !== BASE || fr.length !== BASE) throw new Error('base tables must have 1000 entries');
 
 const freq = new Map();
-readFileSync(resolve(root, 'data/extra/freq-20k.txt'), 'utf8').split('\n').forEach((w, i) => { w = w.trim(); if (w && !freq.has(w)) freq.set(w, i + 1); });
+readFileSync(resolve(root, 'data/extra/freq-subtitles.txt'), 'utf8').split('\n').forEach((w, i) => { w = w.trim(); if (w && !freq.has(w)) freq.set(w, i + 1); });
 function formsOf(w) {
   const f = [w, w + 's', w + 'es', w + 'ed', w + 'd', w + 'ing', w + 'er', w + 'ly', w + 'ness'];
   if (w.endsWith('e')) f.push(w.slice(0, -1) + 'ing');
