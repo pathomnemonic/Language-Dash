@@ -45,6 +45,30 @@ for (const f of files) {
     cands.push({ ...e, rank: rankOf(e.en), order: order++ });
   }
 }
+// Drop inflected forms whose base word is already a concept: plurals of nouns, and -ed / -ing forms tagged as verbs
+// (a learner meets 'traveler' and 'alternative' once, not again as 'travelers' and 'alternatives').
+const allEn = new Set(concepts.map((c) => c.en).concat(cands.map((c) => c.en)));
+function inflectedBases(e) {
+  const w = e.en;
+  if (/\s/.test(w)) return [];
+  const out = [];
+  if (e.pos === 'noun') {
+    if (/ies$/.test(w)) out.push(w.slice(0, -3) + 'y');
+    if (/(ses|xes|zes|ches|shes)$/.test(w)) out.push(w.slice(0, -2));
+    if (/[^s]s$/.test(w)) out.push(w.slice(0, -1));
+  }
+  if (e.pos === 'verb') {
+    if (/ied$/.test(w)) out.push(w.slice(0, -3) + 'y');
+    if (/ed$/.test(w)) out.push(w.slice(0, -2), w.slice(0, -1), w.slice(0, -3));
+    if (/ing$/.test(w)) out.push(w.slice(0, -3), w.slice(0, -3) + 'e', w.slice(0, -4));
+    if (/[^s]s$/.test(w)) out.push(w.slice(0, -1));
+  }
+  return out;
+}
+let inflected = 0;
+for (let i = cands.length - 1; i >= 0; i--) {
+  if (inflectedBases(cands[i]).some((b) => b !== cands[i].en && allEn.has(b))) { cands.splice(i, 1); inflected++; }
+}
 cands.sort((a, b) => (a.rank === b.rank ? a.order - b.order : a.rank - b.rank));
 const extras = cands.slice(0, TOTAL - BASE);
 const matched = extras.filter((e) => e.rank !== Infinity).length;
@@ -53,4 +77,4 @@ const outConcepts = concepts.concat(extras.map((e, i) => ({ id: BASE + 1 + i, en
 writeFileSync(resolve(root, 'data/concepts.json'), '[\n' + outConcepts.map((c) => JSON.stringify(c)).join(',\n') + '\n]\n');
 writeFileSync(resolve(root, 'data/words/es.json'), '[\n' + es.concat(extras.map((e) => [e.es])).map((x) => JSON.stringify(x)).join(',\n') + '\n]\n');
 writeFileSync(resolve(root, 'data/words/fr.json'), '[\n' + fr.concat(extras.map((e) => [e.fr])).map((x) => JSON.stringify(x)).join(',\n') + '\n]\n');
-console.log(`merged ${extras.length} extra concepts (${matched} placed by real frequency, ${extras.length - matched} unmatched kept in written order, ${dropped} duplicates/empty dropped, ${cands.length - extras.length} over the cap) -> ${outConcepts.length} concepts`);
+console.log(`merged ${extras.length} extra concepts (${matched} placed by real frequency, ${extras.length - matched} unmatched kept in written order, ${dropped} duplicates/empty and ${inflected} inflected forms dropped, ${cands.length - extras.length} over the cap) -> ${outConcepts.length} concepts`);

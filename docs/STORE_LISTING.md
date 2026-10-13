@@ -21,7 +21,7 @@ Run the words. Learn a language by playing.
 Language Dash flashes a word in the language you speak and rushes three gates at you, each showing a word in the language you are learning. Run through the gate that means the same thing. Dodge the obstacles, keep your streak alive, and pick up a few words every run.
 
 WORDS THAT STICK
-• The most common words of 15 languages (1,000 each; 6,800 in English, Spanish and French), in any pair: English, Spanish, French, German, Italian, Portuguese, Dutch, Swedish, Polish, Russian, Japanese, Korean, Mandarin, Arabic and Hindi
+• The most common words of 15 languages (1,000 each; 8,000 in English, Spanish and French), in any pair: English, Spanish, French, German, Italian, Portuguese, Dutch, Swedish, Polish, Russian, Japanese, Korean, Mandarin, Arabic and Hindi
 • Hear every word, with a pronunciation line for Japanese, Korean, Mandarin, Russian, Arabic and Hindi
 • Smart reviews: each word comes back just before you would forget it, scheduled with FSRS, the same algorithm Anki uses
 • Pick topics (food, travel, feelings and more) and a word level: the first 100, 300, 600 or the whole deck

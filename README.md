@@ -1,6 +1,6 @@
 # Language Dash
 
-A 3D endless runner that teaches you the most common words of a language (1,000 in each of 15 languages, and 6,800 in English, Spanish and French). A word in the language you speak flashes at
+A 3D endless runner that teaches you the most common words of a language (1,000 in each of 15 languages, and 8,000 in English, Spanish and French). A word in the language you speak flashes at
 the top of the screen. Three gates rush toward you, each showing a word in the language you are learning. Run through the
 gate that means the same thing. One word in, one word out. Coins, power-ups, 25+ maps, a cast of Wordrunners and a creeping
 silence called the Hush make the practice feel like a game.
@@ -328,3 +328,7 @@ First-party, anonymous, opt-in usage analytics (no third-party SDK). Events go t
 See [docs/ANALYTICS-GUIDE.md](docs/ANALYTICS-GUIDE.md) (setup, what to look at, launch checklist) and [docs/ANALYTICS.md](docs/ANALYTICS.md) (every event, generated from the code).
 - Tip jar (in-app purchases for tips): [docs/TIP-JAR.md](docs/TIP-JAR.md)
 - Language Dash Pro (subscription, Library and Lifetime; ships on, with 300 free cards): [docs/PRO.md](docs/PRO.md), pricing rationale in [docs/MONETIZATION-STRATEGY.md](docs/MONETIZATION-STRATEGY.md)
+
+## Word-frequency credit
+
+The order of the extended English, Spanish and French word lists (words 1,001 and up) comes from OpenSubtitles word frequencies as published by hermitdave/FrequencyWords (CC BY-SA 4.0): https://github.com/hermitdave/FrequencyWords . Only the ranking of words is used, not any subtitle text. Translations were written and cross-checked by AI and have not been reviewed by native speakers.
