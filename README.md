@@ -1,6 +1,6 @@
 # Language Dash
 
-A 3D endless runner that teaches you the 1,000 most common words of a language. A word in the language you speak flashes at
+A 3D endless runner that teaches you the most common words of a language (1,000 in each of 15 languages, and 6,800 in English, Spanish and French). A word in the language you speak flashes at
 the top of the screen. Three gates rush toward you, each showing a word in the language you are learning. Run through the
 gate that means the same thing. One word in, one word out. Coins, power-ups, 25+ maps, a cast of Wordrunners and a creeping
 silence called the Hush make the practice feel like a game.

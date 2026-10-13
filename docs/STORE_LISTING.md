@@ -12,7 +12,7 @@ Edit freely. Keep claims honest: the game is a practice aid and does not guarant
 
 **App Store subtitle (30 chars):** Learn words at a sprint
 
-**Short description (80 chars):** Run through the right word. Learn 1,000 words in 15 languages by playing.
+**Short description (80 chars):** Run through the right word. Learn common words in 15 languages by playing.
 
 ## Full description
 
@@ -21,10 +21,10 @@ Run the words. Learn a language by playing.
 Language Dash flashes a word in the language you speak and rushes three gates at you, each showing a word in the language you are learning. Run through the gate that means the same thing. Dodge the obstacles, keep your streak alive, and pick up a few words every run.
 
 WORDS THAT STICK
-• The 1,000 most common words of 15 languages, in any pair: English, Spanish, French, German, Italian, Portuguese, Dutch, Swedish, Polish, Russian, Japanese, Korean, Mandarin, Arabic and Hindi
+• The most common words of 15 languages (1,000 each; 6,800 in English, Spanish and French), in any pair: English, Spanish, French, German, Italian, Portuguese, Dutch, Swedish, Polish, Russian, Japanese, Korean, Mandarin, Arabic and Hindi
 • Hear every word, with a pronunciation line for Japanese, Korean, Mandarin, Russian, Arabic and Hindi
 • Smart reviews: each word comes back just before you would forget it, scheduled with FSRS, the same algorithm Anki uses
-• Pick topics (food, travel, feelings and more) and a word level: the first 100, 300, 600 or all 1,000 words
+• Pick topics (food, travel, feelings and more) and a word level: the first 100, 300, 600 or the whole deck
 • Flashcards, a timed Word Quiz, a weekly Gauntlet and a Daily 15 for when you want to slow down and test yourself
 • Make your own word lists or import vocabulary decks
 
