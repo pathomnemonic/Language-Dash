@@ -142,15 +142,16 @@ SKIN_MUSIC['Cellular Matrix'] = {
   filterFreq: 3600, filterQ: 0.5
 };
 SKIN_MUSIC['Neon ER'] = {
-  // 1950s diner rock and roll: a boogie-woogie bass and a jumping piano-ish lead
-  bpm: 152, key: 45, scale: 'cMixolydian',
-  bassPattern: [0, -1, 2, -1, 4, -1, 5, -1, 4, -1, 2, -1, 0, -1, 2, -1],
-  melodyPattern: [12, 14, 12, 11, 12, -1, 9, -1, 12, 14, 16, 14, 12, -1, 11, -1],
-  chordIntervals: [[0, 4, 7], [0, 4, 7], [-2, 2, 5], [-5, -1, 2]],
-  bassType: 'triangle', melodyType: 'square', padType: 'sine',
-  drumPattern: { kick: [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], hat: [1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1] },
-  filterFreq: 3400, filterQ: 1
+  // Seoul Neon Alley (key kept from the original game): glossy K-pop-style synth pop, a bouncing bass, bright stabs and a catchy hook over a four-on-the-floor kick
+  bpm: 128, key: 53, scale: 'cMajorPentatonic',
+  bassPattern: [0, -1, 0, 2, -1, 0, 3, -1, 0, -1, 0, 2, -1, 4, 3, -1],
+  melodyPattern: [12, -1, 14, 16, -1, 14, 12, -1, 9, -1, 12, 14, -1, 16, 14, -1],
+  chordIntervals: [[0, 4, 7], [-3, 0, 4], [-5, -1, 2], [-2, 2, 5]],
+  bassType: 'sawtooth', melodyType: 'square', padType: 'triangle',
+  drumPattern: { kick: [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1], hat: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0] },
+  filterFreq: 3600, filterQ: 1
 };
+
 SKIN_MUSIC['DNA Helix Tunnel'] = {
   // carnival disco: rising and falling arpeggios that spiral like the helix
   bpm: 126, key: 55, scale: 'cMajor',
@@ -251,33 +252,35 @@ function getNoiseBuffer(ctx, duration) {
 
 // Music for the walled-in maps: each has its own tempo, key, scale, bassline, melody and drums
 SKIN_MUSIC['Hospital Hallway'] = {
-  // calm and steady, like a quiet ward at night: soft pads, a walking bass, sparse brushed drums
-  bpm: 112, key: 50, scale: 'cDorian',
-  bassPattern: [0, -1, 0, -1, 3, -1, 3, -1, 5, -1, 5, -1, 3, -1, 2, -1],
-  melodyPattern: [7, -1, 9, -1, 10, -1, 9, 7, -1, 5, -1, 7, -1, -1, 9, -1],
+  // the Library Hall (key kept from the original game): unhurried reading-room music, a soft harpsichord-like pluck over warm pads, a slow walking bass and the faintest brushed beat
+  bpm: 96, key: 50, scale: 'cDorian',
+  bassPattern: [0, -1, -1, -1, 3, -1, -1, -1, 5, -1, -1, -1, 3, -1, 2, -1],
+  melodyPattern: [7, -1, 9, 10, -1, 9, 7, -1, 5, -1, 7, 9, -1, 7, -1, -1],
   chordIntervals: [[0, 3, 7], [3, 7, 10], [5, 9, 12], [3, 7, 10]],
-  bassType: 'triangle', melodyType: 'sine', padType: 'sine',
+  bassType: 'triangle', melodyType: 'triangle', padType: 'sine',
   drumPattern: {
-    kick:  [1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0],
-    snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+    kick:  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    snare: [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
     hat:   [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0]
   },
-  filterFreq: 1800, filterQ: 1
+  filterFreq: 2400, filterQ: 1
 };
+
 SKIN_MUSIC['Operating Room'] = {
-  // tense and clinical: a slow heartbeat kick, ticking hats and a thin, nervous melody
-  bpm: 100, key: 43, scale: 'cMinor',
-  bassPattern: [0, -1, -1, -1, 0, -1, -1, 1, 0, -1, -1, -1, 0, -1, 1, -1],
-  melodyPattern: [-1, -1, 10, -1, -1, -1, 9, -1, -1, 7, -1, -1, 9, -1, -1, 10],
-  chordIntervals: [[0, 3, 7], [0, 3, 6], [0, 3, 7], [-2, 2, 5]],
-  bassType: 'sine', melodyType: 'triangle', padType: 'sawtooth',
+  // the Translators Booth (key kept from the original game): brisk and bright, a clockwork two-voice tune that trades phrases back and forth like interpreters, with a ticking hat
+  bpm: 118, key: 50, scale: 'cMajor',
+  bassPattern: [0, -1, 4, -1, 0, -1, 4, -1, 3, -1, 5, -1, 4, -1, 2, -1],
+  melodyPattern: [9, -1, 11, 12, -1, 11, 9, -1, 7, -1, 9, 11, -1, 12, 14, -1],
+  chordIntervals: [[0, 2, 4], [0, 2, 4], [3, 5, 7], [4, 6, 8]],
+  bassType: 'triangle', melodyType: 'square', padType: 'sine',
   drumPattern: {
-    kick:  [1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
-    snare: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    kick:  [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+    snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
     hat:   [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0]
   },
-  filterFreq: 1500, filterQ: 4
+  filterFreq: 3000, filterQ: 1
 };
+
 SKIN_MUSIC['Research Lab'] = {
   // curious and bouncy: a hopping bass and a plinky square-wave arpeggio, like a lab-bench jingle
   bpm: 132, key: 52, scale: 'cMixolydian',
@@ -293,19 +296,20 @@ SKIN_MUSIC['Research Lab'] = {
   filterFreq: 3200, filterQ: 3
 };
 SKIN_MUSIC['Ambulance Bay'] = {
-  // urgent: a blues-scale riff that alternates like a siren, a driving four-on-the-floor kick
-  bpm: 156, key: 46, scale: 'cBlues',
-  bassPattern: [0, 0, -1, 0, 0, 3, -1, 0, 0, 0, -1, 0, 4, 3, -1, 0],
-  melodyPattern: [9, 12, 9, 12, 9, 12, 9, 12, 8, 11, 8, 11, 8, 11, 8, 11],
-  chordIntervals: [[0, 3, 7], [0, 3, 7], [5, 8, 12], [5, 8, 12]],
-  bassType: 'sawtooth', melodyType: 'sawtooth', padType: 'square',
+  // the Midnight Platform (key kept from the original game): a night train, a rolling 'chugga-chugga' shuffle under a lonesome blues-scale tune, easy and steady rather than urgent
+  bpm: 108, key: 46, scale: 'cBlues',
+  bassPattern: [0, -1, 0, -1, 0, -1, 3, -1, 0, -1, 0, -1, 4, -1, 3, -1],
+  melodyPattern: [9, -1, -1, 8, -1, 7, -1, -1, 9, -1, 10, -1, 9, -1, 7, -1],
+  chordIntervals: [[0, 3, 7], [0, 3, 7], [5, 8, 12], [0, 3, 7]],
+  bassType: 'triangle', melodyType: 'sine', padType: 'triangle',
   drumPattern: {
-    kick:  [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
-    snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,1,0],
-    hat:   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    kick:  [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+    snare: [0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0],
+    hat:   [1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1]
   },
-  filterFreq: 2800, filterQ: 3
+  filterFreq: 2200, filterQ: 1.5
 };
+
 
 // Music for the bright maps: sunny, bouncy major-key tunes, each with its own tempo, key, bassline and melody
 SKIN_MUSIC['Pediatric Playland'] = {
