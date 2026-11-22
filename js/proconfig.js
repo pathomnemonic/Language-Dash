@@ -3,7 +3,7 @@
  * to change any of it without a release.
  *
  * Pro ships ON. Free players get a taste of everything: the 300 most common words, the game, the
- * leaderboards and friends, the basic stats. Pro adds the whole 1,000-word library and the study tools. (If the build
+ * leaderboards and friends, the basic stats. Pro adds the whole word library and the study tools. (If the build
  * has no way to take payment, nothing is limited: see pro.js proLive.)
  *
  * A gate is "open" (no limit), "locked" (Pro only) or { limit, per } where per is "day", "week" or "total" (for

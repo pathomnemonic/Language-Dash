@@ -52,7 +52,7 @@ export var PRO_PLAN_INFO = {
 
 /** What Pro gives (shown on the paywall). Keep in step with the gates in proconfig.js. */
 export var PRO_BENEFITS = [
-  'All 1,000 words (free is the 300 most common)',
+  'Every word in the library (free is the 300 most common)',
   'Detailed stats: topics, weak words, export',
   'Anki import and unlimited My words',
   'Every example and "why" note, unlimited Word Quiz rounds',
@@ -65,7 +65,7 @@ export var PRO_BENEFITS = [
  * `free` says what a free player has, so the difference is clear.
  */
 export var PRO_FEATURES = [
-  { id: 'card_library', icon: '🗂', title: 'All 1,000 words', detail: 'Every one of the 1,000 most common words in every topic, not just the first 300.', free: 'Free: 300 words' },
+  { id: 'card_library', icon: '🗂', title: 'Every word in the library', detail: 'The whole word library for your language pair, in every topic, not just the 300 most common words.', free: 'Free: 300 words' },
   { id: 'monthly_gift', icon: '🎁', title: 'A free Locker item', detail: 'Pick any one hero, trail, monster or map in the shop, on the house.', free: 'Free: buy with coins' },
   { id: 'mode_study', icon: '📖', title: 'Study mode', detail: 'Relaxed runs with a word card after every answer and no lives lost.', free: 'Free: not included' },
   { id: 'mode_weakness', icon: '🎯', title: 'Weakness mode', detail: 'Runs built from the words you miss most, until they stick.', free: 'Free: not included' },

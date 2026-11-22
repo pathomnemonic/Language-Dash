@@ -12,7 +12,7 @@ Learn words at a sprint
 ```
 ## Promotional text (max 170, can be changed any time without a new version)
 ```
-Pick a lane, dodge the obstacles and run through the right word. 1,000 common words in 15 languages, live head-to-head and smart reviews.
+Pick a lane, dodge the obstacles and run through the right word. thousands of common words in 15 languages, live head-to-head and smart reviews.
 ```
 ## Keywords (max 100, comma-separated, no spaces after commas)
 ```
@@ -25,7 +25,7 @@ Use the same text as `store/google-play/listing.md` → Full description, but re
 
 ## What's new in this version
 ```
-First release of Language Dash: run through the right word and learn 1,000 common words.
+First release of Language Dash: run through the right word and learn thousands of common words.
 ```
 ## URLs
 - Support URL: `https://pathomnemonic.github.io/Language-Dash/` (contact email `patho.mnemonic1@gmail.com`)

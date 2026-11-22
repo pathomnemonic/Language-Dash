@@ -24,7 +24,7 @@ export var CARD_SCHEMA_VERSION = '3.0.0';
 /** The 15 topics (see lang/topics.js). */
 export var SUBJECTS = TOPICS;
 
-/** The word levels a card can belong to: first 100, 300, 600 or all 1,000 words. */
+/** The word levels a card can belong to: first 100, 300, 600, 1,000 or more words (up to the whole library). */
 export var EXAM_FILTERS = Object.freeze(LEVELS.map(function (l) { return l.id; }));
 
 /** Every card is a single word to translate. */
