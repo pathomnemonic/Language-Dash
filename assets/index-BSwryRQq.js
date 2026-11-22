@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/web-DCR_9ERC.js","assets/index-dUyJRFPB.js","assets/three-Dbr5sAaQ.js","assets/index-DQ1-DBK6.css"])))=>i.map(i=>d[i]);
+import{k as r,_ as p}from"./index-dUyJRFPB.js";import"./three-Dbr5sAaQ.js";const _=r("AppLauncher",{web:()=>p(()=>import("./web-DCR_9ERC.js"),__vite__mapDeps([0,1,2,3])).then(e=>new e.AppLauncherWeb)});export{_ as AppLauncher};

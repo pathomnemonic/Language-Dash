@@ -1,0 +1,14 @@
+{
+  "name": "Language Dash",
+  "short_name": "Language Dash",
+  "description": "Run the lexicon. An endless runner for learning words in 15 languages",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6EEDC",
+  "theme_color": "#F6EEDC",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
