@@ -34,7 +34,7 @@ describe('see-through scenery', () => {
       refs.dispose();
       expect(offenders, skin.id).toEqual([]);
     }
-  });
+  }, 90000);   // (builds every map's scenery: about 5s here, but over 15s on a loaded CI runner)
 });
 
 describe('floating glow particles', () => {
