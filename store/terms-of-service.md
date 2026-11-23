@@ -78,9 +78,9 @@ These are the US dollar prices at the time of writing. The price you will pay, i
 
 - If you subscribed through Google Play or the App Store, cancel in your store account's subscription settings. Deleting the app does not cancel a subscription.
 - If you subscribed on the website, cancel in the app at Settings, then Language Dash Pro, then Manage subscription, which opens Stripe's billing portal.
-- If you cancel, you keep Pro until the end of the period you have paid for. We do not refund the unused part of a period except as stated below or as the law requires.
+- If you cancel, you keep Pro until the end of the period you have paid for. The unused part of a period is not refunded (see Refunds below).
 
-**Refunds.** Refunds are handled under the rules of the store you bought from. For purchases through Google Play or the Apple App Store, the store, not us, decides and pays refunds, and you ask them (for Apple, through reportaproblem.apple.com; for Google, through Google Play's order history). For website purchases, write to the support address in section 12 and we will look at every request fairly. If a payment is refunded or charged back, the product it bought is taken back, including a Locker item or Lifetime Pro. Nothing here limits any refund or cancellation right you have by law that cannot be waived.
+**No refunds.** All purchases are final. We do not give refunds or credits for subscriptions (including the unused part of a period or a renewal you forgot to cancel), for Lifetime, for Locker items, for tips or for Pro codes, and we do not decide refund requests for purchases made through Google Play or the Apple App Store; those stores handle them under their own rules, and you ask them (for Apple, at reportaproblem.apple.com; for Google, through your Google Play order history). To avoid a charge you do not want, cancel before the renewal date (see "How to cancel"). If a payment is refunded or charged back by the store, your bank or the payment provider, the product it bought is taken back, including a Locker item or Lifetime Pro. Nothing in this section limits any right you have by law that cannot be waived.
 
 **Digital content and withdrawal.** Paid products are delivered to your account immediately. Where the law gives you a right to withdraw from a digital purchase within a set time, you agree that delivery starts straight away and, where the law allows, you acknowledge that your right to withdraw ends once delivery has started. This does not affect any right you have that cannot be waived.
 
@@ -128,7 +128,7 @@ You agree to be responsible for losses we suffer because you broke these terms o
 
 ## 10. Changes to the service, and discontinuation
 
-We keep improving Language Dash, and we may add, change or remove features, content, languages, prices or products. If we decide to end the service as a whole, we will give notice in the app and on our website at least 30 days before, we will stop selling products first, and we will try to offer you a reasonable way to keep your progress (for example, export). Where you have an unexpired paid subscription period when we end the service, we will refund the unused part of it directly if you paid us on the website, or ask the store to, as the store's rules allow. A Lifetime purchase is covered by the paragraph on Lifetime in section 5.
+We keep improving Language Dash, and we may add, change or remove features, content, languages, prices or products. If we decide to end the service as a whole, we will give notice in the app and on our website at least 30 days before, we will stop selling products first, and we will try to offer you a reasonable way to keep your progress (for example, export). A Lifetime purchase is covered by the paragraph on Lifetime in section 5.
 
 ## 11. Changes to these terms
 
@@ -136,7 +136,7 @@ We may update these terms, for example when we add features or when the law chan
 
 ## 12. Contact
 
-Questions, refund requests for website purchases, or deletion requests: patho.mnemonic1@gmail.com. For data requests, see the Privacy Policy: https://pathomnemonic.github.io/StudyBible/privacy.html
+Questions, billing problems (a charge you do not recognise, or a purchase that did not unlock), or deletion requests: patho.mnemonic1@gmail.com. For data requests, see the Privacy Policy: https://pathomnemonic.github.io/StudyBible/privacy.html
 
 ## 13. General
 
@@ -152,7 +152,7 @@ Questions, refund requests for website purchases, or deletion requests: patho.mn
 2. **Minimum age** (section 1): drafted as 13, the usual floor for a consumer app that is not directed at children; the Privacy Policy does not state an age, so confirm both say the same, and that matches the store age ratings.
 3. **Liability cap** (section 9): drafted as the greater of 12 months' payments or US$50. Change if wanted.
 4. **Notice periods** (sections 10 and 11): 30 days to end the service and 14 days for a material change are my choices, not requirements.
-5. **Refund promise on shutdown** (section 10): a promise to refund unused prepaid periods on the website if the service closes. Drop it if you do not want to commit.
+5. **Refunds** (sections 5 and 10): reworded on 23 November to a plain no-refunds policy, as Mathews decided (matching the Dx Dash terms). The earlier case-by-case promise and the shutdown refund promise were removed. Mandatory consumer rights are kept in one sentence because they cannot be waived; a lawyer should confirm the wording for the EU and UK.
 6. **"Lifetime" definition** (section 5): defined as the life of the service and account, not the user's life.
 7. **Prices in the text**: US$ list prices match Dx Dash (3.49 / 7.49 / 19.99 / 39.99) and the Locker range ($0.99 to $2.99 from `docs/PRO.md`). If prices will change often, replace them with "shown in the app before you buy" so the terms need not change.
 8. **Privacy Policy link**: points at the shared policy, https://pathomnemonic.github.io/StudyBible/privacy.html, as asked. The app's own `public/privacy.html` is a Language Dash-specific policy with more detail; confirm the shared one covers Language Dash's data (Supabase tables, analytics, Apple/Google sign-in, tips). If it does not, link both.
