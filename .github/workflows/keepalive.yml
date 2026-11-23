@@ -34,7 +34,7 @@ jobs:
             sb_*) ;;
             *) auth=(-H "Authorization: Bearer $SUPABASE_ANON_KEY") ;;
           esac
-          status=$(curl -s -o response.txt -w "%{http_code}"             -H "apikey: $SUPABASE_ANON_KEY" "${auth[@]}"             "$SUPABASE_URL/rest/v1/leaderboard_best?select=*&limit=1")
+          status=$(curl -s -o response.txt -w "%{http_code}"             -H "apikey: $SUPABASE_ANON_KEY" -H "Accept-Profile: language_dash" "${auth[@]}"             "$SUPABASE_URL/rest/v1/leaderboard_best?select=*&limit=1")
           echo "Supabase responded with HTTP $status"
           head -c 300 response.txt; echo
           if [ "$status" -ge 400 ]; then

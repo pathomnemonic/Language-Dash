@@ -2,7 +2,7 @@
 /**
  * smoke-webhook.mjs — "is my deployed payment webhook really wired up?" in a few seconds, with no real payment.
  *
- *   WEBHOOK_URL=https://xxxx.supabase.co/functions/v1/stripe-webhook STRIPE_WEBHOOK_SECRET=whsec_... \
+ *   WEBHOOK_URL=https://xxxx.supabase.co/functions/v1/ld-stripe-webhook LD_STRIPE_WEBHOOK_SECRET=whsec_... \
  *     node tools/smoke-webhook.mjs
  *
  * It checks that the webhook refuses what it should (no signature, a wrong signature, an old one) and accepts a correctly
@@ -18,8 +18,8 @@
 import { createHmac } from 'node:crypto';
 
 var URL_ = process.env.WEBHOOK_URL;
-var SECRET = process.env.STRIPE_WEBHOOK_SECRET;
-if (!URL_ || !SECRET) { console.error('Set WEBHOOK_URL and STRIPE_WEBHOOK_SECRET (see the top of this file).'); process.exit(2); }
+var SECRET = process.env.LD_STRIPE_WEBHOOK_SECRET;
+if (!URL_ || !SECRET) { console.error('Set WEBHOOK_URL and LD_STRIPE_WEBHOOK_SECRET (see the top of this file).'); process.exit(2); }
 
 function sign(body, secret, t) { return createHmac('sha256', secret).update(t + '.' + body).digest('hex'); }
 async function send(body, headers) { var r = await fetch(URL_, { method: 'POST', headers: Object.assign({ 'content-type': 'application/json' }, headers || {}), body: body }); return r.status; }
@@ -42,9 +42,9 @@ if (at > 0) {
   var DB = (process.env.SUPABASE_URL || '').replace(/\/+$/, '');
   var KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!user || !DB || !KEY) { console.error('--grant-test needs a user id, SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.'); process.exit(2); }
-  var purchase = JSON.stringify({ id: 'evt_smoke_buy_' + now, type: 'checkout.session.completed', data: { object: { id: 'cs_smoke_' + now, mode: 'payment', client_reference_id: user, payment_status: 'paid', metadata: { kind: 'item', item_id: item, user_id: user } } } });
+  var purchase = JSON.stringify({ id: 'evt_smoke_buy_' + now, type: 'checkout.session.completed', data: { object: { id: 'cs_smoke_' + now, mode: 'payment', client_reference_id: user, payment_status: 'paid', metadata: { app: 'language_dash', kind: 'item', item_id: item, user_id: user } } } });
   check('a signed purchase is accepted', await send(purchase, { 'stripe-signature': 't=' + now + ',v1=' + sign(purchase, SECRET, now) }), 200);
-  var res = await fetch(DB + '/rest/v1/pro_items?select=item_id&user_id=eq.' + encodeURIComponent(user) + '&item_id=eq.' + encodeURIComponent(item), { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } });
+  var res = await fetch(DB + '/rest/v1/pro_items?select=item_id&user_id=eq.' + encodeURIComponent(user) + '&item_id=eq.' + encodeURIComponent(item), { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Accept-Profile': 'language_dash' } });
   var rows = res.ok ? await res.json() : [];
   check('the item reached the database', rows.length, 1);
   console.log("\nTo remove the test item:  SELECT pro_revoke_item('" + user + "', '" + item + "');");

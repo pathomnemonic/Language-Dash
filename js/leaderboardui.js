@@ -70,6 +70,11 @@ function render() {
     _root.appendChild(btn('Try again', function () { render(); return null; }, 'btn-primary'));
     return;
   }
+  if (status.signedIn && !status.member && status.email && !status.anonymous) {
+    _root.appendChild(note('Friends and leaderboards need a Language Dash account. Open the Account tab to create yours with ' + status.email + '. Your Language Dash data stays separate from any other app that uses this login.'));
+    _root.appendChild(btn('Open Account', function () { openAccountTab(); return null; }, 'btn-primary'));
+    return;
+  }
   if (!status.authenticated) {
     var msg = status.ready
       ? 'Could not sign in to the leaderboard.' + (status.error ? ' (' + status.error + ')' : '')
@@ -77,8 +82,7 @@ function render() {
     _root.appendChild(note(msg, status.ready ? 'var(--accent-red)' : null));
     _root.appendChild(note('You can still create an account or sign in with the profile button at the top right of Home.'));
     _root.appendChild(btn('Retry', function () {
-      return lb().init().then(function () { return lb().isAuthenticated() ? null : lb().signInAnonymously(); })
-        .then(render);
+      return lb().init().then(render);
     }, 'btn-primary'));
     return;
   }

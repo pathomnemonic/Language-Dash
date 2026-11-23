@@ -72,14 +72,14 @@ Match these to `public/privacy.html`.
 - Data collected only if the player uses online features: *Email address* (optional account), *User IDs* (account identifier), *Name* (display name), *App activity* (scores, streaks, game progress, shared run summaries and kudos).
 - *Crash logs* and *Diagnostics* only if the player switches on "Help fix problems" in Settings (off by default): anonymous, not linked to the user.
 - Purpose: app functionality and account management. Not used for advertising or analytics. Not sold.
-- Encrypted in transit: yes. Users can request deletion: yes (in-app **Delete my account**).
-- Data shared with third parties: no (Supabase acts as a processor hosting the data).
+- Encrypted in transit: yes. Users can request deletion: yes (in-app, two separate actions: **Delete my Language Dash account** and **Remove my sign-in (all apps)**).
+- Data shared with third parties: no (Supabase acts as a processor hosting the data). The Supabase project is shared with the developer's other apps; Language Dash's data sits in its own schema and its own membership, and nothing is shared between apps.
 
 **Apple → App Privacy ("nutrition label")**
 - Data linked to the user (only with online features): Contact Info (email address), Identifiers (user ID), User Content (display name), Usage Data (scores, progress and the run summaries and kudos shared with friends).
 - Data not linked to the user, only if the player switches it on: Diagnostics (crash and performance reports).
 - Used for: App Functionality. Not used for tracking.
-- Account deletion: available in the app.
+- Account deletion: available in the app (Friends > Account: Delete my Language Dash account, and Remove my sign-in for all apps) and on the web page `delete-account.html`.
 
 ## Assets you need to make
 

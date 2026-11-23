@@ -157,6 +157,18 @@ describe('analytics core: sending', function () {
     expect(JSON.stringify(body)).not.toMatch(/Bearer/);
   });
 
+  it('sends to the language_dash schema of the shared project (PostgREST picks the schema from these headers)', async function () {
+    var t = granted();
+    t.a.track('app_open', { launch: 'cold' });
+    await t.a.flush({ force: true });
+    var h = t.ingests()[0].opts.headers;
+    expect(h['Content-Profile']).toBe('language_dash');
+    expect(h['Accept-Profile']).toBe('language_dash');
+    await t.a.deleteMyData();
+    var del = t.calls.filter(function (c) { return /delete_analytics/.test(c.url); })[0];
+    expect(del.opts.headers['Content-Profile']).toBe('language_dash');
+  });
+
   it('sends session context once per session only', async function () {
     var t = granted();
     t.a.track('app_open', { launch: 'cold' });

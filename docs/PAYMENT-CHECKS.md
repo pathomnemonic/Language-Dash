@@ -5,8 +5,8 @@ Do this once in Stripe **test mode** before taking real money, and the first thr
 ## 1. Is the webhook wired up? (30 seconds, no payment)
 
 ```
-WEBHOOK_URL=https://<project>.supabase.co/functions/v1/stripe-webhook \
-STRIPE_WEBHOOK_SECRET=whsec_... \
+WEBHOOK_URL=https://<project>.supabase.co/functions/v1/ld-stripe-webhook \
+LD_STRIPE_WEBHOOK_SECRET=whsec_... \
 node tools/smoke-webhook.mjs
 ```
 Four PASS lines means the webhook refuses unsigned, wrongly signed and old requests and accepts a correctly signed one. To prove the whole chain into the database too, add `--grant-test <your user id>` with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` set; it prints the one statement that removes the test item afterwards.
@@ -27,7 +27,7 @@ In the website (signed in with an email account, not a guest):
 ## 3. Does the database agree with Stripe?
 
 ```
-STRIPE_SECRET_KEY=sk_... SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... node tools/reconcile-stripe.mjs --days 7
+LD_STRIPE_SECRET_KEY=sk_... SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... node tools/reconcile-stripe.mjs --days 7
 ```
 It prints "Everything matches" or one line per mismatch (paid and not delivered, or given back and still held). It changes nothing. Once you have customers, run it daily. The database also has owner views to look at in the SQL editor: `pro_v_active` (who has Pro), `pro_v_items` (what sells), `pro_v_store` (phone purchases) and `pro_v_recent_events` (webhook activity: if it is empty on a day with sales, the webhook is not arriving).
 

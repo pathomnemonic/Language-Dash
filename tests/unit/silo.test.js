@@ -1,6 +1,8 @@
 // Language Dash shares a host (github.io) with other games, so it must never read, write or delete anything that belongs to
 // them: browser storage keys, cache names, backup files, room codes, auth sessions, store products. This test fails if an
 // identifier from the sibling game (Dx Dash) comes back, or a storage key loses its own prefix.
+// (The BACKEND is shared on purpose: one Supabase project and one login for all the owner's apps, with Language Dash living
+// only in its own schema and its own membership. That is guarded in membership.test.js and edgefunctions.test.js, not here.)
 import { describe, it, expect, vi } from 'vitest';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { resolve, join } from 'node:path';
@@ -41,7 +43,7 @@ describe('siloed from Dx Dash', () => {
     expect(sw).toMatch(/indexOf\('language-dash-'\) === 0/);
   });
 
-  it('the Supabase client keeps its session under its own key', () => {
+  it('the Supabase client keeps its browser session under its own key (the login itself is shared, the stored copy is not)', () => {
     expect(text(join(root, 'js/leaderboard.js'))).toMatch(/storageKey: 'langdash-auth'/);
   });
 

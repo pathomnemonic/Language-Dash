@@ -2,6 +2,8 @@
 
 Everything the code can do is done and tested. This page is the click-by-click list of what needs **your** accounts, money, devices or decisions. Do it top to bottom: each part says what you need first and how you know it worked.
 
+> **Backend model changed: one shared Supabase project.** Language Dash no longer has a Supabase project of its own: it lives in the `language_dash` schema of the project shared with your other apps, with its own membership, `ld-*` edge functions and `LD_`-prefixed secrets. Part 1 below (running the `database/*.sql` files one by one in a project of its own) is replaced by the migration: follow **[BACKEND_AND_PAYMENTS.md](BACKEND_AND_PAYMENTS.md)** ("Deployment order": scratch project first, review the migration diff, then the shared project) and `SHARED-PROJECT-MIGRATION.md`. The Stripe, Google, Apple and store steps below still apply with the renamed functions and secrets. Two launch gates: **do not ship password sign-up or the emailed sign-in link until your SMTP provider is verified** (the project's built-in sender is limited to 2 emails per hour for all apps), and **keep Google sign-in out of the iOS build until Sign in with Apple is also offered** (App Store guideline 4.8).
+
 **Read this once before you start**
 
 - **Websites change.** Supabase, Stripe, Google, Apple and the stores rename buttons and move menus. Where a name here does not match your screen, look for the closest one. If you are stuck, tell me exactly what you see on screen (no passwords or keys) and I will tell you where to click.
@@ -166,37 +168,37 @@ Supabase → **Edge Functions** (left sidebar) → **Secrets** tab (or run `npx 
 
 | Secret name | Value |
 | --- | --- |
-| `SITE_URL` | `https://pathomnemonic.github.io/Language-Dash` (no slash at the end) |
-| `STRIPE_PRICE_YEARLY` | the yearly price id |
-| `STRIPE_PRICE_PASS3M` | the 3-month price id |
-| `STRIPE_PRICE_MONTHLY` | the monthly price id |
-| `STRIPE_PRICE_LIFETIME` | the lifetime price id |
-| `STRIPE_SECRET_KEY` | a **restricted** key, made in 4.3 |
-| `STRIPE_WEBHOOK_SECRET` | from 4.5 |
+| `LD_SITE_URL` | `https://pathomnemonic.github.io/Language-Dash` (no slash at the end) |
+| `LD_STRIPE_PRICE_YEARLY` | the yearly price id |
+| `LD_STRIPE_PRICE_PASS3M` | the 3-month price id |
+| `LD_STRIPE_PRICE_MONTHLY` | the monthly price id |
+| `LD_STRIPE_PRICE_LIFETIME` | the lifetime price id |
+| `LD_STRIPE_SECRET_KEY` | a **restricted** key, made in 4.3 |
+| `LD_STRIPE_WEBHOOK_SECRET` | from 4.5 |
 
 (Supabase already provides `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to functions; you do not add them.)
-For Apple account deletion (iPhone rule), also add: `APPLE_TEAM_ID` (Team ID), `APPLE_KEY_ID` (Key ID), `APPLE_PRIVATE_KEY` (open the `.p8` in a text editor, copy **all** of it including the BEGIN and END lines), `APPLE_CLIENT_ID` (`com.pathomnemonic.languagedash.web`).
+For Apple account deletion (iPhone rule), also add: `LD_APPLE_TEAM_ID` (Team ID), `LD_APPLE_KEY_ID` (Key ID), `LD_APPLE_PRIVATE_KEY` (open the `.p8` in a text editor, copy **all** of it including the BEGIN and END lines), `LD_APPLE_CLIENT_ID` (`com.pathomnemonic.languagedash.web`).
 
 ### 4.3 The restricted Stripe key
 Stripe → **Developers → API keys** → **+ Create restricted key**. Name "Language Dash functions". Set permissions:
 - **Write**: Checkout Sessions, Customer portal (Billing portal), Refunds, Subscriptions.
 - **Read**: Charges, Invoices, PaymentIntents, Prices, Customers.
 - Everything else: **None**.
-Create → copy the key (`rk_test_…`) once → paste into the `STRIPE_SECRET_KEY` secret. A restricted key limits the damage if it ever leaks.
+Create → copy the key (`rk_test_…`) once → paste into the `LD_STRIPE_SECRET_KEY` secret. A restricted key limits the damage if it ever leaks.
 
 ### 4.4 Deploy the functions
 In a terminal in the repo folder:
 ```
-npx supabase@latest functions deploy pro-checkout --use-api
-npx supabase@latest functions deploy stripe-webhook --use-api
+npx supabase@latest functions deploy ld-pro-checkout --use-api
+npx supabase@latest functions deploy ld-stripe-webhook --use-api
 ```
-Each prints "Deployed". (Deploy `iap-verify` too only if you do 6.5.) Repeat this whenever I tell you a file under `supabase/functions/` changed.
+Each prints "Deployed". (Deploy `ld-iap-verify` too only if you do 6.5.) Repeat this whenever I tell you a file under `supabase/functions/` changed.
 
 ### 4.5 The webhook (how Stripe tells your server a payment happened)
 1. Stripe → **Developers → Webhooks → + Add endpoint** (newer: **Add destination → Webhook endpoint**).
-2. Endpoint URL: `https://<your Reference ID>.supabase.co/functions/v1/stripe-webhook`
+2. Endpoint URL: `https://<your Reference ID>.supabase.co/functions/v1/ld-stripe-webhook`
 3. Select these events (search for each): `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `invoice.paid`, `charge.refunded`, `charge.dispute.created`, `charge.dispute.updated`, `charge.dispute.closed`.
-4. **Add endpoint**. On the endpoint page click **Reveal** under **Signing secret** (`whsec_…`) → copy → paste into the `STRIPE_WEBHOOK_SECRET` secret (4.2).
+4. **Add endpoint**. On the endpoint page click **Reveal** under **Signing secret** (`whsec_…`) → copy → paste into the `LD_STRIPE_WEBHOOK_SECRET` secret (4.2).
 5. After changing any secret, redeploy both functions (4.4) so they pick it up.
 
 ### 4.6 Switch web payments on
@@ -204,7 +206,7 @@ GitHub → **Settings → Secrets and variables → Actions → Variables** → 
 
 ### 4.7 Test mode walk-through (do all of this before real money)
 Follow `docs/PAYMENT-CHECKS.md`. In short:
-1. **Webhook wiring** (no payment): in a terminal, `WEBHOOK_URL=https://<ref>.supabase.co/functions/v1/stripe-webhook STRIPE_WEBHOOK_SECRET=whsec_… node tools/smoke-webhook.mjs` → four PASS lines. (On Windows PowerShell, set the two variables first with `$env:NAME="value"`.)
+1. **Webhook wiring** (no payment): in a terminal, `WEBHOOK_URL=https://<ref>.supabase.co/functions/v1/ld-stripe-webhook LD_STRIPE_WEBHOOK_SECRET=whsec_… node tools/smoke-webhook.mjs` → four PASS lines. (On Windows PowerShell, set the two variables first with `$env:NAME="value"`.)
 2. **A real test purchase**: on the site, signed in with an email account (not a guest), tap a locked Pro section → choose monthly → pay with card `4242 4242 4242 4242`, any future date, any CVC, any postcode. You return to the game with "Welcome to Language Dash Pro!".
 3. **Manage / cancel**: Settings → Language Dash Pro → Manage → cancel. Pro stays until the period ends.
 4. **A Locker item** (💎 button, tap twice): it appears. Buy the same one again from a second tab: the second payment is refunded automatically.
@@ -218,9 +220,9 @@ Tell me which step fails and what the screen says.
 1. Finish Stripe's account activation (4.1 step 1).
 2. Turn **Test mode off**. Re-create the four products and prices in live mode (the toggle keeps separate data), copy the new price ids.
 3. Create a new **live** restricted key (4.3), a new **live** webhook (4.5, same URL and events; it has its own `whsec_…`).
-4. Replace `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` and the four `STRIPE_PRICE_*` secrets with the live values, then redeploy both functions (4.4).
+4. Replace `LD_STRIPE_SECRET_KEY`, `LD_STRIPE_WEBHOOK_SECRET` and the four `LD_STRIPE_PRICE_*` secrets with the live values, then redeploy both functions (4.4).
 5. Repeat test steps 1–3 of 4.7 with a real card for the cheapest plan, then refund yourself in the Stripe dashboard.
-6. From now on, run daily: `STRIPE_SECRET_KEY=… SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=… node tools/reconcile-stripe.mjs --days 7`. It prints "Everything matches" or one line per mismatch. (This one needs the `service_role` key: keep it only in your terminal, never in a file in the repo.)
+6. From now on, run daily: `LD_STRIPE_SECRET_KEY=… SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=… node tools/reconcile-stripe.mjs --days 7`. It prints "Everything matches" or one line per mismatch. (This one needs the `service_role` key: keep it only in your terminal, never in a file in the repo.)
 
 ---
 
@@ -269,13 +271,13 @@ Use `docs/RELEASE_GUIDE.md` Part 2 for the full list; the click paths are:
 9. **Add for Review → Submit.** Review takes 1–3 days.
 
 ### 6.3 Optional: check phone-store purchases on the server
-Only if you want purchases made on a phone to show on the website and on a new phone. Details and the Google/Apple service keys are in `docs/PRO.md` ("Checking phone-store purchases"). In short: add the secrets listed there, `npx supabase@latest functions deploy iap-verify --use-api`, re-run `database/pro.sql` and `database/lockdown.sql`, then set the GitHub variable `VITE_IAP_VERIFY` = `1` and rebuild the apps. Test with sandbox purchases first. Skip it for the first release if you are short of time: purchases still work.
+Only if you want purchases made on a phone to show on the website and on a new phone. Details and the Google/Apple service keys are in `docs/PRO.md` ("Checking phone-store purchases"). In short: add the secrets listed there, `npx supabase@latest functions deploy ld-iap-verify --use-api`, re-run `database/pro.sql` and `database/lockdown.sql`, then set the GitHub variable `VITE_IAP_VERIFY` = `1` and rebuild the apps. Test with sandbox purchases first. Skip it for the first release if you are short of time: purchases still work.
 
 ### 6.4 Real-device test (do not skip)
 Run `docs/DEVICE-TESTING.md` on at least one Android phone and one iPhone, writing down model and OS version. The ones that matter most (section 5b of that file):
 1. First launch: tutorial plays; offline run works in airplane mode.
 2. Sign in with each provider, once as a guest ("I am new") and once as a returning player. You must come back to the app signed in, with the same coins.
-3. iPhone: Sign in with Apple, then **Delete my account**. Within a minute the app must vanish from iPhone **Settings → [your name] → Sign-In & Security → Sign in with Apple**.
+3. iPhone: Sign in with Apple, then **Remove my sign-in (all apps)** (type the phrase). Within a minute the app must vanish from iPhone **Settings → [your name] → Sign-In & Security → Sign in with Apple**.
 4. Buy a subscription and an item with a test account; restore after reinstalling; refund in the store console and open the app twice.
 5. Clear the app's storage and relaunch: it offers "Restore your progress?". iPhone: Settings → Language Dash → remove website data, or offload and reinstall.
 6. Airplane mode during a purchase and during sign-in: nothing charged twice.

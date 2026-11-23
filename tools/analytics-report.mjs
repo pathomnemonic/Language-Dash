@@ -76,7 +76,7 @@ async function main() {
     if (v.section !== lastSection) { console.log('## ' + v.sectionTitle + '\n'); lastSection = v.section; }
     console.log('### ' + v.name.replace(/^analytics_v_/, '') + (v.about ? '\n\n' + v.about : '') + '\n');
     try {
-      var res = await fetch(url + '/rest/v1/' + v.name + '?limit=' + limit, { headers: { apikey: key, Authorization: 'Bearer ' + key } });
+      var res = await fetch(url + '/rest/v1/' + v.name + '?limit=' + limit, { headers: { apikey: key, Authorization: 'Bearer ' + key, 'Accept-Profile': 'language_dash' } });
       if (!res.ok) { console.log('_error ' + res.status + ': ' + (await res.text()).slice(0, 200) + '_\n'); continue; }
       console.log(toMarkdownTable(await res.json()));
     } catch (e) { console.log('_could not fetch: ' + e.message + '_\n'); }

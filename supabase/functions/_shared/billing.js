@@ -1,7 +1,7 @@
 /**
  * billing.js — the rules for web payments, with no network and no framework in it so they can be tested.
  *
- * The two Supabase Edge Functions (pro-checkout, stripe-webhook) are thin: they fetch from Stripe and call the database,
+ * The two Supabase Edge Functions (ld-pro-checkout, ld-stripe-webhook) are thin: they fetch from Stripe and call the database,
  * and hand everything else to this file. It runs in Deno (the functions) and in Node (the unit tests).
  */
 
@@ -13,12 +13,18 @@
 import { premiumCents } from './premium.js';
 
 export var PRODUCTS = {
-  languagedash_pro_yearly: { plan: 'yearly', kind: 'subscription', env: 'STRIPE_PRICE_YEARLY' },
-  languagedash_pro_pass3m: { plan: 'pass3m', kind: 'subscription', env: 'STRIPE_PRICE_PASS3M' },
-  languagedash_pro_monthly: { plan: 'monthly', kind: 'subscription', env: 'STRIPE_PRICE_MONTHLY' },
-  languagedash_pro_lifetime: { plan: 'lifetime', kind: 'payment', env: 'STRIPE_PRICE_LIFETIME' }
+  languagedash_pro_yearly: { plan: 'yearly', kind: 'subscription', env: 'LD_STRIPE_PRICE_YEARLY' },
+  languagedash_pro_pass3m: { plan: 'pass3m', kind: 'subscription', env: 'LD_STRIPE_PRICE_PASS3M' },
+  languagedash_pro_monthly: { plan: 'monthly', kind: 'subscription', env: 'LD_STRIPE_PRICE_MONTHLY' },
+  languagedash_pro_lifetime: { plan: 'lifetime', kind: 'payment', env: 'LD_STRIPE_PRICE_LIFETIME' }
 };
-var LEGACY = { languagedash_library: { plan: 'library', kind: 'payment', env: 'STRIPE_PRICE_LIBRARY' } };
+var LEGACY = { languagedash_library: { plan: 'library', kind: 'payment', env: 'LD_STRIPE_PRICE_LIBRARY' } };
+
+/**
+ * Every Checkout Session, subscription and payment this app creates is stamped with this, and the webhook ignores any event
+ * that is not. (The Stripe account may be shared with another app whose webhook endpoint receives the same kind of events.)
+ */
+export var APP_ID = 'language_dash';
 
 /** A subscription stays on this long past its paid period, so a late renewal does not lock anyone out for a day. */
 export var GRACE_SECONDS = 2 * 24 * 60 * 60;
@@ -161,13 +167,16 @@ export function checkoutParams(planOrId, userId, env, opts) {
   f['cancel_url'] = site + '/?pro=cancelled';
   f['allow_promotion_codes'] = 'true';
   f['custom_text[submit][message]'] = payNotice(site);
+  f['metadata[app]'] = APP_ID;
   f['metadata[user_id]'] = userId;
   f['metadata[plan]'] = p.def.plan;
   if (p.def.kind === 'subscription') {
+    f['subscription_data[metadata][app]'] = APP_ID;
     f['subscription_data[metadata][user_id]'] = userId;
     f['subscription_data[metadata][plan]'] = p.def.plan;
   } else {
     // (carried onto the charge, so a refund can be matched back to the purchase)
+    f['payment_intent_data[metadata][app]'] = APP_ID;
     f['payment_intent_data[metadata][user_id]'] = userId;
     f['payment_intent_data[metadata][plan]'] = p.def.plan;
     // a one-time purchase also gets a Stripe customer (when there is none yet), so it can be found again if an event is lost
@@ -197,9 +206,11 @@ export function itemCheckoutParams(itemId, userId, env, opts) {
   f['success_url'] = site + '/?pro=success&item=' + encodeURIComponent(itemId);
   f['cancel_url'] = site + '/?pro=cancelled';
   f['custom_text[submit][message]'] = payNotice(site);
+  f['metadata[app]'] = APP_ID;
   f['metadata[kind]'] = 'item';
   f['metadata[item_id]'] = itemId;
   f['metadata[user_id]'] = userId;
+  f['payment_intent_data[metadata][app]'] = APP_ID;
   f['payment_intent_data[metadata][kind]'] = 'item';
   f['payment_intent_data[metadata][item_id]'] = itemId;
   f['payment_intent_data[metadata][user_id]'] = userId;
@@ -287,6 +298,7 @@ export async function handleEvent(event, deps) {
     if (!subId) return { handled: false };
     var sub2 = await deps.getSubscription(subId);
     // (a renewal that cost nothing, because of a coupon, still renews: the subscription itself says how long)
+    if (!isOurs(sub2)) return { handled: false, action: 'other_app' };
     var plan = productFor(sub2 && sub2.metadata && sub2.metadata.plan);
     var user2 = (sub2 && sub2.metadata && sub2.metadata.user_id) || (obj.customer ? await rpc('pro_customer_user', { p_customer: obj.customer }) : null);
     var until2 = subscriptionUntil(sub2, deps.now);
@@ -311,6 +323,11 @@ export async function handleEvent(event, deps) {
   return { handled: false };
 }
 
+/** Is this Stripe object (a session, a subscription) one this app created? Anything without our stamp is another app's. */
+function isOurs(obj) {
+  return !!(obj && obj.metadata && obj.metadata.app === APP_ID);
+}
+
 /** The charge a dispute is about. */
 async function chargeOf(dispute, deps) {
   var id = typeof dispute.charge === 'string' ? dispute.charge : dispute.charge && dispute.charge.id;
@@ -321,6 +338,7 @@ async function chargeOf(dispute, deps) {
 /** Who bought what, from a charge: its own notes (a one-time purchase), or those of the subscription it paid for. */
 async function purchaseOfCharge(ch, deps) {
   var m = ch.metadata || {};
+  if (m.user_id && (m.kind === 'item' || m.plan) && m.app !== APP_ID) return null; // (another app's purchase)
   var ref = typeof ch.payment_intent === 'string' ? ch.payment_intent : (ch.payment_intent && ch.payment_intent.id) || null;
   if (m.user_id && (m.kind === 'item' || m.plan)) return { user: m.user_id, kind: m.kind === 'item' ? 'item' : 'plan', item: m.item_id, plan: m.plan, ref: ref };
   var invId = typeof ch.invoice === 'string' ? ch.invoice : ch.invoice && ch.invoice.id;
@@ -330,7 +348,7 @@ async function purchaseOfCharge(ch, deps) {
   if (!subId) return null;
   var sub = await deps.getSubscription(subId);
   var sm = (sub && sub.metadata) || {};
-  if (!sm.user_id || !sm.plan) return null;
+  if (!sm.user_id || !sm.plan || sm.app !== APP_ID) return null;
   // only the invoice that paid for the period they hold now ends it; an old invoice being refunded must not
   if (sub.latest_invoice && String(sub.latest_invoice.id || sub.latest_invoice) !== invId) return null;
   return { user: sm.user_id, kind: 'plan', plan: sm.plan, subscription: sub };
@@ -381,6 +399,7 @@ async function giveBack(ch, deps) {
 
 /** A finished Checkout: give what was bought. */
 async function handleSession(obj, deps) {
+  if (!isOurs(obj)) return { handled: false, action: 'other_app' };
   var rpc = deps.rpc;
   var isItem = !!(obj.metadata && obj.metadata.kind === 'item');
   var userId = obj.client_reference_id || (obj.metadata && obj.metadata.user_id);

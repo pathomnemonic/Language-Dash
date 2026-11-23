@@ -2339,6 +2339,7 @@ function startCloudSync(lbService) {
       } else if (event === 'USER_UPDATED') {
         ui._showToast('Account updated.');
       }
+      if (event === 'MEMBERSHIP_REQUIRED' || event === 'SIGNED_IN') { try { fillProfileAccount(); } catch (e) { /* the profile tab is not open */ } }
     });
   }).catch(function (e) {
     reportError(e, { system: 'cloudsync', operation: 'start', recoverable: true });

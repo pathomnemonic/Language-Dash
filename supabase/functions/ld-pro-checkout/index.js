@@ -1,26 +1,31 @@
-// pro-checkout — the website's way to buy Language Dash Pro.
+// ld-pro-checkout — the website's way to buy Language Dash Pro (the shared Supabase project's Language Dash function).
 //
 // The page calls this with the player's sign-in (a Supabase session) and one of:
 //   { action: 'prices' }                 -> the plans for sale, with real prices from Stripe
 //   { action: 'checkout', plan: 'yearly' } -> { url } of a Stripe Checkout page to send the player to
 //   { action: 'portal' }                 -> { url } of the Stripe page where they cancel or change a subscription
+//   { action: 'cancel_subscription' }    -> cancels a subscription that is still billing (used before deleting the Language Dash account)
 //
-// Deploy:  supabase functions deploy pro-checkout
-// Secrets: STRIPE_SECRET_KEY, SITE_URL (https://yourname.github.io/Language-Dash), and one Price id per product:
-//   STRIPE_PRICE_YEARLY, STRIPE_PRICE_PASS3M, STRIPE_PRICE_MONTHLY, STRIPE_PRICE_LIFETIME (any you do not sell can be left out)
+// Deleting the sign-in itself is a different function: ld-remove-signin.
+//
+// Deploy:  supabase functions deploy ld-pro-checkout
+// Secrets (ONLY the LD_ names are read; there is no fallback to an unprefixed name, which would be another app's value):
+//   LD_STRIPE_SECRET_KEY, LD_SITE_URL (https://pathomnemonic.github.io/Language-Dash), and one Price id per product:
+//   LD_STRIPE_PRICE_YEARLY, LD_STRIPE_PRICE_PASS3M, LD_STRIPE_PRICE_MONTHLY, LD_STRIPE_PRICE_LIFETIME (any you do not sell can be left out)
+//   LD_APPLE_TEAM_ID, LD_APPLE_KEY_ID, LD_APPLE_PRIVATE_KEY, LD_APPLE_CLIENT_ID (only for Sign in with Apple token revocation; used by ld-remove-signin)
+// Every database call goes to the language_dash schema, and only a Language Dash member may buy.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.117.3';
 import { PRODUCTS, LIFETIME_DAYS, chargeReturned, configuredProducts, describePrice, checkoutParams, itemCheckoutParams, portalConfig, productFor, grantsFromSubscriptions, periodEnd } from '../_shared/billing.js';
 import { isPremiumItem } from '../_shared/premium.js';
-import { appleConfigured, appleRevokeForm, revokeSucceeded, hasAppleLogin } from '../_shared/applesignin.js';
+import { hasAppleLogin } from '../_shared/applesignin.js';
+import { cancelBillingSubscriptions } from '../_shared/stripecancel.js';
 
-var STRIPE_KEY = Deno.env.get('STRIPE_SECRET_KEY') || '';
+var STRIPE_KEY = Deno.env.get('LD_STRIPE_SECRET_KEY') || '';
 var env = {};
 Object.keys(PRODUCTS).forEach(function (id) { env[PRODUCTS[id].env] = Deno.env.get(PRODUCTS[id].env) || ''; });
-env.SITE_URL = Deno.env.get('SITE_URL') || '';
-var appleEnv = {};
-['APPLE_TEAM_ID', 'APPLE_KEY_ID', 'APPLE_PRIVATE_KEY', 'APPLE_CLIENT_ID'].forEach(function (k) { appleEnv[k] = Deno.env.get(k) || ''; });
-var admin = createClient(Deno.env.get('SUPABASE_URL') || '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '', { auth: { persistSession: false } });
+env.SITE_URL = Deno.env.get('LD_SITE_URL') || '';
+var admin = createClient(Deno.env.get('SUPABASE_URL') || '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '', { db: { schema: 'language_dash' }, auth: { persistSession: false } });
 
 var CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -47,7 +52,7 @@ async function prices() {
   for (var id of configuredProducts(env)) {
     try { list.push(describePrice(id, await stripe('prices/' + encodeURIComponent(env[PRODUCTS[id].env])))); } catch (e) { console.error('price for ' + id + ' failed', e && e.message); } // (one bad Price id must not hide the others)
   }
-  if (!list.length) throw new Error('No plan could be loaded. Check the STRIPE_PRICE_* secrets are Price ids (price_...) from the same Stripe mode as the secret key.');
+  if (!list.length) throw new Error('No plan could be loaded. Check the LD_STRIPE_PRICE_* secrets are Price ids (price_...) from the same Stripe mode as the secret key.');
   _prices = { at: Date.now(), list: list };
   return list;
 }
@@ -68,6 +73,10 @@ Deno.serve(async function (req) {
     if (!user) return json({ error: 'Sign in first.' }, 401);
 
     if (user.is_anonymous || !user.email) return json({ error: 'Create an account first (Friends → Account), so Pro stays with you.' }, 403);
+
+    // One login is shared with other apps: only someone who created a Language Dash account may buy or sync here.
+    var member = await admin.from('members').select('user_id').eq('user_id', user.id).maybeSingle();
+    if (!member || !member.data) return json({ error: 'Create your Language Dash account first (Friends → Account).', code: 'not_a_member' }, 403);
 
     var customer = await admin.rpc('pro_user_customer', { p_user: user.id });
     var customerId = customer && customer.data ? customer.data : '';
@@ -102,51 +111,16 @@ Deno.serve(async function (req) {
       var tok = String(body.refresh_token || '');
       if (!hasAppleLogin(user) || tok.length < 10 || tok.length > 4000) return json({ error: 'Nothing to keep.' }, 400);
       var saved = await admin.rpc('apple_token_save', { p_user: user.id, p_token: tok });
-      if (saved && saved.error) { console.error('pro-checkout apple_token failed', saved.error.message); return json({ error: 'Could not save.' }, 500); }
+      if (saved && saved.error) { console.error('ld-pro-checkout apple_token failed', saved.error.message); return json({ error: 'Could not save.' }, 500); }
       return json({ ok: true });
     }
 
-    // Delete the account for good. A subscription that is still billing is cancelled first (immediately, no further
-    // charge), and if that cannot be done the account is NOT deleted, so nobody keeps paying for an account that is gone.
-    if (body.action === 'delete_account') {
-      if (customerId) {
-        var mine;
-        try { mine = await stripe('subscriptions?customer=' + encodeURIComponent(customerId) + '&status=all&limit=20'); } catch (e) {
-          if (!/no such customer/i.test((e && e.message) || '')) { console.error('pro-checkout delete: could not list subscriptions', e && e.message); return json({ error: 'Could not check your subscription just now, so nothing was deleted. Please try again.' }, 502); }
-          mine = { data: [] };
-        }
-        var billing = ((mine && mine.data) || []).filter(function (x) { return ['active', 'trialing', 'past_due', 'unpaid', 'incomplete'].indexOf(x.status) >= 0; });
-        for (var sb of billing) {
-          try { await stripe('subscriptions/' + encodeURIComponent(sb.id), null, 'DELETE'); } catch (e) {
-            console.error('pro-checkout delete: could not cancel', sb.id, e && e.message);
-            return json({ error: 'Could not cancel your subscription, so nothing was deleted. Please try again, or cancel it under Manage subscription first.' }, 502);
-          }
-        }
-      }
-      // Apple requires that deleting an account also revokes its Sign in with Apple login. If Apple cannot be reached, nothing is deleted.
-      if (hasAppleLogin(user)) {
-        var appleTok = await admin.rpc('apple_token_get', { p_user: user.id });
-        if (appleTok && appleTok.data && appleConfigured(appleEnv)) {
-          try {
-            var ares = await fetch('https://appleid.apple.com/auth/revoke', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: new URLSearchParams(await appleRevokeForm(appleEnv, appleTok.data, Math.floor(Date.now() / 1000))).toString()
-            });
-            if (!revokeSucceeded({ status: ares.status, body: await ares.text().catch(function () { return ''; }) })) throw new Error('Apple said ' + ares.status);
-          } catch (e) {
-            console.error('pro-checkout delete: could not revoke Apple login', e && e.message);
-            return json({ error: 'Could not sign you out of Apple just now, so nothing was deleted. Please try again.' }, 502);
-          }
-        } else {
-          console.warn('pro-checkout delete: Apple login has no stored token or the APPLE_* secrets are not set; deleting without revoking');
-        }
-      }
-      var forgot = await admin.rpc('pro_forget_user', { p_user: user.id });
-      if (forgot && forgot.error) { console.error('pro-checkout delete: could not clear payment records', forgot.error.message); return json({ error: 'Could not delete the account. Please try again.' }, 500); }
-      var gone = await admin.auth.admin.deleteUser(user.id);
-      if (gone && gone.error) { console.error('pro-checkout delete: could not delete user', gone.error.message); return json({ error: 'Could not delete the account. Please try again.' }, 500); }
-      return json({ ok: true, cancelled: customerId ? true : false });
+    // Cancel a subscription that is still billing (immediately, no further charge). The app calls this before it deletes the
+    // Language Dash account, so nobody keeps paying for an account that is gone. If it cannot be done, the app deletes nothing.
+    if (body.action === 'cancel_subscription') {
+      var cancelled = await cancelBillingSubscriptions(stripe, customerId);
+      if (!cancelled.ok) { console.error('ld-pro-checkout cancel failed'); return json({ error: cancelled.error }, 502); }
+      return json({ ok: true, cancelled: cancelled.cancelled });
     }
 
     // What Stripe says about this member's subscription right now: is it renewing, or set to end? (The app never assumes
@@ -154,7 +128,7 @@ Deno.serve(async function (req) {
     if (body.action === 'subscription') {
       if (!customerId) return json({ ok: true, status: 'none' });
       var found;
-      try { found = await stripe('subscriptions?customer=' + encodeURIComponent(customerId) + '&status=all&limit=10'); } catch (e) { console.error('pro-checkout subscription failed', e && e.message); return json({ ok: false, error: 'Could not check with Stripe just now.' }, 502); }
+      try { found = await stripe('subscriptions?customer=' + encodeURIComponent(customerId) + '&status=all&limit=10'); } catch (e) { console.error('ld-pro-checkout subscription failed', e && e.message); return json({ ok: false, error: 'Could not check with Stripe just now.' }, 502); }
       var liveSub = ((found && found.data) || []).filter(function (x) { return ['active', 'trialing', 'past_due'].indexOf(x.status) >= 0; })[0];
       if (!liveSub) return json({ ok: true, status: 'none' });
       var endSec = periodEnd(liveSub);
@@ -197,7 +171,7 @@ Deno.serve(async function (req) {
           granted.push('lifetime');
         }
       } catch (e) {
-        console.error('pro-checkout sync failed', e && e.message);
+        console.error('ld-pro-checkout sync failed', e && e.message);
         return json({ ok: false, error: 'Could not check with Stripe just now.' }, 502);
       }
       return json({ ok: true, granted: granted });
@@ -215,7 +189,7 @@ Deno.serve(async function (req) {
       if (!isPremiumItem(itemId)) return json({ error: 'That item is not for sale.' }, 400);
       // Never take money the backend cannot turn into the item: if its database is not ready, stop before Stripe is touched.
       var owns = await admin.rpc('pro_has_item', { p_user: user.id, p_item: itemId });
-      if (owns.error) { console.error('pro-checkout item: database not ready', owns.error.message); return json({ error: 'Locker items are not switched on just yet. You have not been charged.' }, 503); }
+      if (owns.error) { console.error('ld-pro-checkout item: database not ready', owns.error.message); return json({ error: 'Locker items are not switched on just yet. You have not been charged.' }, 503); }
       if (owns.data === true) return json({ error: 'You already own this item.' }, 409);
       var staleCust = function (e) { return /no such customer/i.test((e && e.message) || ''); };
       var buildItem = function (cust) {
@@ -260,7 +234,7 @@ Deno.serve(async function (req) {
     }
     return json({ error: 'Unknown request.' }, 400);
   } catch (e) {
-    console.error('pro-checkout failed', e && e.message);
+    console.error('ld-pro-checkout failed', e && e.message);
     return json({ error: (e && e.message) || 'Something went wrong.' }, 400);
   }
 });

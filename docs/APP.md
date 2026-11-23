@@ -66,7 +66,7 @@ Install the APK on a phone with USB debugging (`adb install -r android/app/build
 2. Play a run: character and monster, sound, haptics on answers, no stutter. Try Settings → Graphics → Auto/Medium/Low, and Battery saver.
 3. Back button: in a run it pauses; on other screens it goes Home; on Home it leaves the app.
 4. Switch away mid-run: the run pauses.
-5. Create an account, confirm the email from the phone's mail app (the link should reopen the game signed in), sign out, sign in, reset a password, then use **Delete my account**.
+5. Create an account, confirm the email from the phone's mail app (the link should reopen the game signed in), sign out, sign in, reset a password, create your Language Dash account when asked, then try **Delete my Language Dash account** and **Remove my sign-in (all apps)**.
 6. Airplane mode: the game and flashcards still work; online features say they cannot connect.
 7. Rotate: the game stays portrait.
 

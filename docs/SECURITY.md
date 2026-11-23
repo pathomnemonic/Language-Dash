@@ -15,14 +15,15 @@ Why: Supabase gives every new function and table to the signed-in and signed-out
 - **Authentication → URL Configuration → Redirect URLs**: only your own site and the app link (`docs/SIGNIN.md`). A wildcard here lets another site receive your players' sign-in.
 - **Authentication → Providers → Email → Confirm email: ON.** Without it, anyone can make unlimited accounts with made-up addresses, each with its own free 7-day trial.
 - **Authentication → Sign In / Providers → Allow anonymous sign-ins: ON** (guests use it). Guests cannot buy, redeem codes or get a trial.
+- **Shared project.** Language Dash runs in the `language_dash` schema of a project shared with other apps (see `docs/BACKEND_AND_PAYMENTS.md`). Only a login that created its Language Dash account (a row in `language_dash.members`) can use any Language Dash feature; the gated functions raise `not_a_member` otherwise. Anonymous sign-in, Confirm email and the redirect list are project-wide settings that every app inherits, so change them with all the apps in mind. The Edge Functions read only `LD_`-prefixed secrets and create every service client for the `language_dash` schema.
 - **Backups.** The free plan has **no backups**. Everything players have earned and bought lives in this one database, so use a plan with daily backups, and point-in-time recovery if you can. This is the only protection against the database itself being lost or damaged.
 - Keep the **service role key** out of the website, the repository and chat. It is only for the two Edge Functions (Supabase provides it to them itself).
-- Edge Functions: neither relies on the gateway's login check (`verify_jwt = false` in `supabase/config.toml`). `stripe-webhook` refuses anything without a valid Stripe signature; `pro-checkout` looks up the signed-in account itself on every request except the public price list, and refuses guests for anything involving money.
+- Edge Functions: neither relies on the gateway's login check (`verify_jwt = false` in `supabase/config.toml`). `ld-stripe-webhook` refuses anything without a valid Stripe signature; `ld-pro-checkout` looks up the signed-in account itself on every request except the public price list, and refuses guests for anything involving money.
 
 ## 3. Stripe settings
 
-- Webhook events to send to `stripe-webhook`: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `invoice.paid`, `charge.refunded`, `charge.dispute.created`, `charge.dispute.updated`, `charge.dispute.closed`.
-- Use a **restricted API key** for `STRIPE_SECRET_KEY` (write: Checkout Sessions, Billing Portal, Refunds; read: Subscriptions, Charges, Invoices, Payment Intents, Prices) rather than the full secret key.
+- Webhook events to send to `ld-stripe-webhook`: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `invoice.paid`, `charge.refunded`, `charge.dispute.created`, `charge.dispute.updated`, `charge.dispute.closed`.
+- Use a **restricted API key** for `LD_STRIPE_SECRET_KEY` (write: Checkout Sessions, Billing Portal, Refunds; read: Subscriptions, Charges, Invoices, Payment Intents, Prices) rather than the full secret key.
 - Keep Radar on. Offer cards (and wallets built on cards); bank debits finish days later, and a purchase that finishes later is still delivered, but cards are simpler for players.
 - If a payment ever shows in Stripe but not in the app: the app asks Stripe directly (every ten minutes while a purchase is pending, otherwise twice a day), and **Settings → Language Dash Pro → Check again** does it at once.
 

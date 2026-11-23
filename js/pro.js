@@ -345,7 +345,7 @@ export function refreshPro(deps) {
 }
 
 /**
- * Is purchase checking on? It needs a build made with VITE_IAP_VERIFY=1 (once the iap-verify function and its store
+ * Is purchase checking on? It needs a build made with VITE_IAP_VERIFY=1 (once the ld-iap-verify function and its store
  * secrets are live) and a real account on the phone.
  */
 export function iapVerifyEnabled() {
@@ -564,7 +564,7 @@ export function hasAccount(lb) {
 /** Send the player to Stripe to pay for a plan (or the library). Resolves {ok: false, error} if it could not start; on success the page leaves. */
 export function webBuy(productId, lb, nav) {
   if (!lb || !lb.proFunction) return Promise.resolve({ ok: false, error: 'Web payments are not available right now.' });
-  if (!lb.isAuthenticated || !lb.isAuthenticated()) return Promise.resolve({ ok: false, needsAccount: true, error: 'Signing in is needed first. Open Friends → Account, then try again.' });
+  if (!lb.isAuthenticated || !lb.isAuthenticated()) return Promise.resolve({ ok: false, needsAccount: true, error: lb.isSignedIn && lb.isSignedIn() && !(lb.isGuest && lb.isGuest()) ? 'Create your Language Dash account first (Friends → Account), then try again.' : 'Signing in is needed first. Open Friends → Account, then try again.' });
   if (!hasAccount(lb)) return Promise.resolve({ ok: false, needsAccount: true, error: 'Create a free account first (Friends → Account), so Pro stays with you.' });
   return lb.proFunction('checkout', { plan: productId }).then(function (r) {
     if (r && r.url && /^https:\/\//.test(r.url)) { markPaymentPending(); (nav || function (u) { window.location.assign(u); })(r.url); return { ok: true, redirected: true }; }

@@ -44,7 +44,7 @@ Do these now while testers run; none of them wait for the 14 days.
    - Ads: **No, my app does not contain ads**
    - App access: **All functionality is available without special access** (the app works without signing in)
    - **Data safety**: use the answers in `store/google-play/policy-answers.md`. Include email address (sign-in with Google, Apple, Microsoft or email), purchase history, and app activity if you keep analytics on. Say data is encrypted in transit and that users can request deletion.
-   - **Account deletion**: web link `https://pathomnemonic.github.io/Language-Dash/delete-account.html`, and say the app also has Delete my account in Settings
+   - **Account deletion**: web link `https://pathomnemonic.github.io/Language-Dash/delete-account.html`, and say the app also has Delete my Language Dash account and Remove my sign-in (all apps) in Friends → Account
    - Content rating: complete the questionnaire (no violence beyond cartoon, no user-generated content shared publicly beyond display names and scores; reporting and blocking exist)
    - Target audience: **18 and over** (not for children)
    - Health apps declaration: not a health app; it is a vocabulary game

@@ -3,7 +3,7 @@
  * reconcile-stripe.mjs — "did everyone who paid get what they paid for, and did everyone who got a refund lose it?"
  * Read-only: it changes nothing. Run it now and then (daily is plenty once you have customers).
  *
- *   STRIPE_SECRET_KEY=sk_live_... SUPABASE_URL=https://xxxx.supabase.co SUPABASE_SERVICE_ROLE_KEY=... \
+ *   LD_STRIPE_SECRET_KEY=sk_live_... SUPABASE_URL=https://xxxx.supabase.co SUPABASE_SERVICE_ROLE_KEY=... \
  *     node tools/reconcile-stripe.mjs [--days 30]
  *
  * (A restricted Stripe key with read access to Checkout Sessions, Payment Intents, Charges and Subscriptions is enough.)
@@ -13,13 +13,13 @@
  */
 import { reconcile } from './reconcile-lib.mjs';
 
-var STRIPE = process.env.STRIPE_SECRET_KEY;
+var STRIPE = process.env.LD_STRIPE_SECRET_KEY;
 var DB = (process.env.SUPABASE_URL || '').replace(/\/+$/, '');
 var KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 var days = Number((process.argv.indexOf('--days') > 0 && process.argv[process.argv.indexOf('--days') + 1]) || 30);
 
 if (!STRIPE || !DB || !KEY) {
-  console.error('Set STRIPE_SECRET_KEY, SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (see the top of this file).');
+  console.error('Set LD_STRIPE_SECRET_KEY, SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (see the top of this file).');
   process.exit(2);
 }
 
@@ -30,7 +30,7 @@ async function stripe(path) {
 }
 
 async function table(name, select) {
-  var res = await fetch(DB + '/rest/v1/' + name + '?select=' + select + '&limit=100000', { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } });
+  var res = await fetch(DB + '/rest/v1/' + name + '?select=' + select + '&limit=100000', { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Accept-Profile': 'language_dash' } });
   if (!res.ok) throw new Error('Database said ' + res.status + ' for ' + name + ': ' + (await res.text()).slice(0, 200));
   return res.json();
 }

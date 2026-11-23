@@ -31,10 +31,10 @@ const mine = async (user) => (await asUser(user, 'SELECT get_my_pro() AS r')).r;
 function deps(over) {
   return Object.assign({
     rpc, now: now(),
-    getSubscription: async (id) => ({ id, status: 'active', current_period_end: now() + 30 * DAY, metadata: { user_id: U, plan: 'monthly' } })
+    getSubscription: async (id) => ({ id, status: 'active', current_period_end: now() + 30 * DAY, metadata: { app: 'language_dash', user_id: U, plan: 'monthly' } })
   }, over || {});
 }
-const session = (over, meta) => ({ id: 'evt_' + Math.random(), type: 'checkout.session.completed', data: { object: Object.assign({ client_reference_id: U, payment_status: 'paid', customer: 'cus_1', metadata: Object.assign({ user_id: U }, meta || {}) }, over || {}) } });
+const session = (over, meta) => ({ id: 'evt_' + Math.random(), type: 'checkout.session.completed', data: { object: Object.assign({ client_reference_id: U, payment_status: 'paid', customer: 'cus_1', metadata: Object.assign({ app: 'language_dash', user_id: U }, meta || {}) }, over || {}) } });
 
 beforeAll(async () => {
   db = new PGlite();
@@ -65,7 +65,7 @@ describe('a purchase, start to finish, through the real database', () => {
     const first = new Date(r.until).getTime();
     expect(first).toBeGreaterThan(Date.now() + 29 * DAY * 1000);
 
-    const later = deps({ now: now() + 30 * DAY, getSubscription: async () => ({ id: 'sub_1', status: 'active', current_period_end: now() + 60 * DAY, metadata: { user_id: U, plan: 'monthly' } }) });
+    const later = deps({ now: now() + 30 * DAY, getSubscription: async () => ({ id: 'sub_1', status: 'active', current_period_end: now() + 60 * DAY, metadata: { app: 'language_dash', user_id: U, plan: 'monthly' } }) });
     const inv = { type: 'invoice.paid', data: { object: { customer: 'cus_1', subscription: 'sub_1' } } };
     expect((await handleEvent(inv, later)).action).toBe('renewal');
     expect(new Date((await mine(U)).until).getTime()).toBeGreaterThan(first + 25 * DAY * 1000);
@@ -90,29 +90,29 @@ describe('a purchase, start to finish, through the real database', () => {
     expect(r.items).toEqual(['trail_lanterns']);
     expect(new Date(r.until).getTime()).toBeGreaterThan(Date.now() + 3000 * DAY * 1000);
 
-    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { user_id: U, kind: 'item', item_id: 'trail_lanterns' } } } }, deps());
+    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { app: 'language_dash', user_id: U, kind: 'item', item_id: 'trail_lanterns' } } } }, deps());
     r = await mine(U);
     expect(r.items).toEqual([]);
     expect(r.active).toBe(true);
-    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { user_id: U, plan: 'lifetime' } } } }, deps());
+    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { app: 'language_dash', user_id: U, plan: 'lifetime' } } } }, deps());
     r = await mine(U);
     expect(r.active).toBe(false);
     expect(r.library).toBe(true);
   });
 
   it('a refunded lifetime does not end a subscription the same person still pays for', async () => {
-    const sub = { id: 'sub_1', status: 'active', current_period_end: now() + 20 * DAY, metadata: { user_id: U, plan: 'monthly' } };
+    const sub = { id: 'sub_1', status: 'active', current_period_end: now() + 20 * DAY, metadata: { app: 'language_dash', user_id: U, plan: 'monthly' } };
     const d = deps({ getSubscription: async () => sub, listSubscriptions: async () => [sub] });
     await handleEvent(session({ subscription: 'sub_1' }, { plan: 'monthly' }), d);
     await handleEvent(session({ payment_intent: 'pi_l', subscription: null }, { plan: 'lifetime' }), d);
     expect((await mine(U)).plan).toBe('lifetime');
-    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { user_id: U, plan: 'lifetime' } } } }, d);
+    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { app: 'language_dash', user_id: U, plan: 'lifetime' } } } }, d);
     const r = await mine(U);
     expect(r).toMatchObject({ active: true, plan: 'monthly' });
     // and with nothing else held, the refund ends Pro
     await db.exec('TRUNCATE pro_entitlements');
     await handleEvent(session({ payment_intent: 'pi_l2', subscription: null }, { plan: 'lifetime' }), deps({ listSubscriptions: async () => [] }));
-    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { user_id: U, plan: 'lifetime' } } } }, deps({ listSubscriptions: async () => [] }));
+    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { app: 'language_dash', user_id: U, plan: 'lifetime' } } } }, deps({ listSubscriptions: async () => [] }));
     expect((await mine(U)).active).toBe(false);
   });
 
@@ -124,7 +124,7 @@ describe('a purchase, start to finish, through the real database', () => {
 
   it('a chargeback takes the item away, and winning it gives it back', async () => {
     await handleEvent(session({ payment_intent: 'pi_i', subscription: null }, { kind: 'item', item_id: 'map_dna_helix_tunnel' }), deps());
-    const meta = { user_id: U, kind: 'item', item_id: 'map_dna_helix_tunnel' };
+    const meta = { app: 'language_dash', user_id: U, kind: 'item', item_id: 'map_dna_helix_tunnel' };
     let charge = { id: 'ch_1', disputed: true, dispute: { status: 'needs_response' }, metadata: meta };
     const d = deps({ getCharge: async () => charge });
     await handleEvent({ type: 'charge.dispute.created', data: { object: { charge: 'ch_1' } } }, d);
@@ -143,10 +143,10 @@ describe('a purchase, start to finish, through the real database', () => {
     expect(refunds).toEqual([]);
     expect((await handleEvent(pay('pi_b'), d)).action).toBe('item_duplicate_refunded');
     expect(refunds).toEqual(['pi_b']);
-    const second = { id: 'ch_b', refunded: true, payment_intent: 'pi_b', metadata: { user_id: U, kind: 'item', item_id: 'trail_lanterns' } };
+    const second = { id: 'ch_b', refunded: true, payment_intent: 'pi_b', metadata: { app: 'language_dash', user_id: U, kind: 'item', item_id: 'trail_lanterns' } };
     await handleEvent({ type: 'charge.refunded', data: { object: second } }, deps({ getCharge: async () => second }));
     expect((await mine(U)).items).toEqual(['trail_lanterns']);                            // the first payment still owns it
-    const first = { id: 'ch_a', refunded: true, payment_intent: 'pi_a', metadata: { user_id: U, kind: 'item', item_id: 'trail_lanterns' } };
+    const first = { id: 'ch_a', refunded: true, payment_intent: 'pi_a', metadata: { app: 'language_dash', user_id: U, kind: 'item', item_id: 'trail_lanterns' } };
     await handleEvent({ type: 'charge.refunded', data: { object: first } }, deps({ getCharge: async () => first }));
     expect((await mine(U)).items).toEqual([]);                                        // refunding the first one does take it
   });
@@ -226,13 +226,13 @@ describe('payment events in any order', () => {
       const stripeCharge = (b) => ({
         id: b.ch, refunded: b.outcome === 'refunded', disputed: ['lost', 'won', 'open'].includes(b.outcome),
         dispute: b.outcome === 'lost' ? { status: 'lost' } : b.outcome === 'won' ? { status: 'won' } : b.outcome === 'open' ? { status: 'under_review' } : null,
-        metadata: Object.assign({ user_id: U }, b.meta)
+        metadata: Object.assign({ app: 'language_dash', user_id: U }, b.meta)
       });
       const byCharge = Object.fromEntries(buys.map((b) => [b.ch, b]));
       const events = [];
       buys.forEach((b) => {
         events.push(session({ payment_intent: b.pi, subscription: null }, b.meta));
-        if (b.outcome === 'refunded') events.push({ id: 'e', type: 'charge.refunded', data: { object: { id: b.ch, refunded: true, metadata: { user_id: U, ...b.meta } } } });
+        if (b.outcome === 'refunded') events.push({ id: 'e', type: 'charge.refunded', data: { object: { id: b.ch, refunded: true, metadata: { app: 'language_dash', user_id: U, ...b.meta } } } });
         if (['lost', 'won', 'open'].includes(b.outcome)) events.push({ id: 'e', type: 'charge.dispute.created', data: { object: { charge: b.ch } } });
         if (b.outcome === 'lost' || b.outcome === 'won') events.push({ id: 'e', type: 'charge.dispute.closed', data: { object: { charge: b.ch, status: b.outcome } } });
       });

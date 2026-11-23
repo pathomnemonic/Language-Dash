@@ -232,35 +232,52 @@ VITE_TIP_URL=https://ko-fi.com/yourname
 
 (In GitHub, add it as a repository variable named `VITE_TIP_URL`.) With no URL set, no tip UI is shown. When set, a "Support the developer" button appears in Settings, and a rare note appears after a good run: never during a run or quiz, only after five or more runs, at most once a week, and players can turn it off for good. Only `https` links are accepted.
 
-## Leaderboard, Friends and Invites Setup (Optional)
+## Backend: leaderboards, friends, accounts and Pro (optional, shared Supabase project)
 
-The leaderboard, friend requests and match invites use [Supabase](https://supabase.com/) (free tier).
+The leaderboard, friend requests, match invites, cloud saves and Pro use [Supabase](https://supabase.com/). Language Dash does **not**
+have a project of its own: **all the owner's apps share one Supabase project and one pool of sign-ins.** Dx Dash lives in its `public`
+schema; Language Dash lives **only** in its own Postgres schema, `language_dash`. Full reference: [docs/BACKEND_AND_PAYMENTS.md](docs/BACKEND_AND_PAYMENTS.md)
+(browser-side separation: [docs/SILO.md](docs/SILO.md); Pro and Stripe: [docs/PRO.md](docs/PRO.md)).
 
-1. Create a Supabase project.
-2. In the SQL editor run `database/schema.sql`, then `database/policies.sql`, then any of `cohorts.sql`, `discovery.sql`, `pro.sql`, `analytics.sql`, `analytics_views.sql` you use, and **always `database/lockdown.sql` last, then `database/audit.sql` (it must return no rows; see `docs/SECURITY.md`)** (all are safe to re-run). `lockdown.sql` closes every function and table to the app roles except the short lists the app needs; without it a project's default grants leave payment-only functions callable by any player.
-3. In **Authentication -> Providers**, enable **Allow anonymous sign-ins**. Players are signed in as guests automatically; they can link an email later from the Account tab.
-4. Provide your project URL and anon key, either by setting `SUPABASE_URL` / `SUPABASE_ANON_KEY` in `js/leaderboard.js`, or (preferred) with environment variables at build time:
+How it works:
+
+- **One sign-in per email or Google identity**, shared by every app. Each app has its **own membership** row, created deliberately inside
+  that app: after signing in, Language Dash shows **Create your Language Dash account with <email>** (nothing is created silently), and
+  **Not now, keep playing as a guest** leaves every backend feature off. Signing in through another app creates nothing in Language Dash.
+- Data, Pro subscriptions and deletion are **per app**. Two separate in-app actions (Friends -> Account): **Delete my Language Dash account**
+  (removes only Language Dash data, keeps the login) and **Remove my sign-in (all apps)** (typed confirmation; removes the login every app uses).
+- Edge functions: `ld-pro-checkout`, `ld-stripe-webhook`, `ld-iap-verify`, `ld-remove-signin` (`supabase/functions/`). They read only
+  `LD_`-prefixed secrets: `LD_SITE_URL`, `LD_STRIPE_SECRET_KEY`, `LD_STRIPE_WEBHOOK_SECRET`, `LD_STRIPE_PRICE_YEARLY|PASS3M|MONTHLY|LIFETIME`,
+  `LD_APPLE_*` and `LD_GOOGLE_*` (see the full list and what each is for in `docs/BACKEND_AND_PAYMENTS.md`).
+
+Setup (the owner does this once, in this order):
+
+1. **Scratch Supabase project first.** Apply the `language_dash` migration (`supabase/migrations/`), deploy the `ld-*` functions with test
+   secrets and try every flow. Review the migration diff, **then** apply it to the shared project (and add `language_dash` under Settings ->
+   API -> Exposed schemas).
+2. In **Authentication**, anonymous sign-ins stay on (guests use them), and **Confirm email** is recommended.
+3. Provide the shared project's URL and anon key at build time (the anon key is safe to expose; Row Level Security and membership protect the data):
 
    ```
    VITE_SUPABASE_URL=https://xxxx.supabase.co
    VITE_SUPABASE_ANON_KEY=your-anon-key
    ```
 
-   The anon key is safe to expose; Row Level Security protects the data.
-5. Optional: Database -> Replication, confirm `match_invites` is enabled for realtime invite pop-ups (schema.sql does this).
+   (or set `SUPABASE_URL` / `SUPABASE_ANON_KEY` in `js/leaderboard.js`). The client is created with `db: { schema: 'language_dash' }` and its
+   own session key `langdash-auth`.
+4. **Authentication -> URL Configuration**: allow the redirect URLs `https://pathomnemonic.github.io/Language-Dash/`, `https://pathomnemonic.github.io/Language-Dash/**`
+   and `com.pathomnemonic.languagedash://auth` (plus `http://localhost:5173` for development).
+5. **Google sign-in** is switched on at the project level by the owner; the client shows the button only when `VITE_AUTH_PROVIDERS`
+   includes `google`. **Apple rule (guideline 4.8):** if Google sign-in is offered on iOS, Sign in with Apple must be offered too, so until
+   Apple is configured keep Google out of the iOS build's `VITE_AUTH_PROVIDERS`.
+6. **Email launch gate.** The project's built-in email sender is limited to **2 emails per hour for the whole project**, and the owner's SMTP is
+   pending. **Do not ship password sign-up or the emailed sign-in link until SMTP is verified** (Authentication -> SMTP Settings).
+7. Stripe (per app: its own Products/Prices and its own webhook endpoint, events stamped `metadata.app = language_dash`): `docs/PRO.md`.
 
-Group boards and deck sharing use the same setup (`schema.sql` creates the tables and functions).
-
-### Accounts and cloud saves
-
-Players start as guests. From **Leaderboard -> Account** they can create a free account with an email and password (a guest keeps their scores, friends and groups when they upgrade), sign in on another device, and reset a forgotten password. Signed-in players get their progress saved to the cloud automatically (table `player_saves`, private to each account). If a device and the account both hold progress, the player is asked which to keep, and one device can never silently overwrite a newer save from another.
-
-Supabase setup for accounts:
-
-1. Re-run `database/schema.sql` and `database/policies.sql` (adds the `player_saves` table and save functions).
-2. **Authentication -> Providers -> Email**: enabled by default. Decide whether to require **Confirm email** (recommended).
-3. **Authentication -> URL Configuration**: set **Site URL** to your live game URL (for example `https://<user>.github.io/Language-Dash/`) and add it, plus `http://localhost:5173`, under **Redirect URLs**. Confirmation and reset links send players back here.
-4. Supabase's built-in email sender is limited to a few messages per hour. For real use, add your own SMTP provider under **Authentication -> SMTP Settings** (Resend, Postmark, SendGrid, Brevo and similar all work).
+Group boards and deck sharing use the same backend. Players start as guests; from **Leaderboard -> Account** they sign in or create a login,
+then choose to create their Language Dash account, after which their progress is saved to the cloud automatically (table `player_saves`, private
+to each account). If a device and the account both hold progress, the player is asked which to keep, and one device can never silently overwrite a
+newer save from another.
 
 In the app: set a display name on the Leaderboard screen, then use **Find** or **＋ Add** to send friend requests, **Requests** to accept them, and **Invite** on a friend (after hosting a multiplayer room) to send a match invite.
 
@@ -282,7 +299,7 @@ In the app: set a display name on the Leaderboard screen, then use **Find** or *
 
 ## Mobile app (Android and iOS)
 
-**Publishing: start with [docs/RELEASE_GUIDE.md](docs/RELEASE_GUIDE.md)** (Google Play first, then the App Store; ready-to-paste listings are in `store/`, moderation in [docs/MODERATION.md](docs/MODERATION.md)). The game is wrapped with Capacitor, so the same code runs as a phone app. The Android project is in `android/` (build it with `npm run app:android`, or run the **Android app** workflow on GitHub for a downloadable APK). iOS is finished on a Mac; see **[docs/APP.md](docs/APP.md)** for the full guide, what only you can do (developer accounts, signing key, screenshots), the testing checklist and store steps, and [docs/STORE_LISTING.md](docs/STORE_LISTING.md) for draft store text and the privacy answers. Privacy Policy and Terms of Use pages are in `public/` and linked from Settings; players can delete their account in-app.
+**Publishing: start with [docs/RELEASE_GUIDE.md](docs/RELEASE_GUIDE.md)** (Google Play first, then the App Store; ready-to-paste listings are in `store/`, moderation in [docs/MODERATION.md](docs/MODERATION.md)). The game is wrapped with Capacitor, so the same code runs as a phone app. The Android project is in `android/` (build it with `npm run app:android`, or run the **Android app** workflow on GitHub for a downloadable APK). iOS is finished on a Mac; see **[docs/APP.md](docs/APP.md)** for the full guide, what only you can do (developer accounts, signing key, screenshots), the testing checklist and store steps, and [docs/STORE_LISTING.md](docs/STORE_LISTING.md) for draft store text and the privacy answers. Privacy Policy and Terms of Use pages are in `public/` and linked from Settings; players can delete their Language Dash account, or remove their sign-in for every app, in-app (Friends -> Account).
 
 ## Rating and feedback
 

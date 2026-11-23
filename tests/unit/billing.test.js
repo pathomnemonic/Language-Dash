@@ -6,7 +6,7 @@ import {
 } from '../../supabase/functions/_shared/billing.js';
 
 const NOW = 1_800_000_000;
-const ENV = { STRIPE_PRICE_YEARLY: 'price_y', STRIPE_PRICE_LIFETIME: 'price_l', STRIPE_PRICE_LIBRARY: 'price_b', SITE_URL: 'https://me.github.io/dx/' };
+const ENV = { LD_STRIPE_PRICE_YEARLY: 'price_y', LD_STRIPE_PRICE_LIFETIME: 'price_l', LD_STRIPE_PRICE_LIBRARY: 'price_b', SITE_URL: 'https://me.github.io/dx/' };
 
 function fake(over) {
   const calls = [];
@@ -15,7 +15,7 @@ function fake(over) {
     deps: Object.assign({
       now: NOW,
       rpc: async (name, args) => { calls.push([name, args]); return name === 'pro_customer_user' ? 'user-from-customer' : null; },
-      getSubscription: async (id) => ({ id, status: 'active', current_period_end: NOW + 30 * 86400, metadata: { user_id: 'u1', plan: 'yearly' } })
+      getSubscription: async (id) => ({ id, status: 'active', current_period_end: NOW + 30 * 86400, metadata: { app: 'language_dash', user_id: 'u1', plan: 'yearly' } })
     }, over || {})
   };
 }
@@ -55,7 +55,7 @@ describe('checkout', () => {
     expect(() => checkoutParams('monthly', 'u1', ENV)).toThrow(/not for sale/);
     expect(() => checkoutParams('wat', 'u1', ENV)).toThrow(/Unknown/);
     expect(() => checkoutParams('yearly', '', ENV)).toThrow(/Sign in/);
-    expect(() => checkoutParams('yearly', 'u1', { STRIPE_PRICE_YEARLY: 'p', SITE_URL: 'http://x' })).toThrow(/site address/);
+    expect(() => checkoutParams('yearly', 'u1', { LD_STRIPE_PRICE_YEARLY: 'p', SITE_URL: 'http://x' })).toThrow(/site address/);
   });
 });
 
@@ -68,7 +68,7 @@ describe('invoices on newer Stripe API versions', () => {
   });
   it('a renewal still grants Pro when the invoice has no top-level subscription', async () => {
     const calls = [];
-    const sub = { id: 'sub_9', status: 'active', metadata: { user_id: 'u1', plan: 'monthly' }, items: { data: [{ current_period_end: NOW + 30 * 86400 }] } };
+    const sub = { id: 'sub_9', status: 'active', metadata: { app: 'language_dash', user_id: 'u1', plan: 'monthly' }, items: { data: [{ current_period_end: NOW + 30 * 86400 }] } };
     const out = await handleEvent({ type: 'invoice.paid', data: { object: { amount_paid: 349, customer: 'cus_1', parent: { subscription_details: { subscription: 'sub_9' } } } } },
       { rpc: async (n, a) => { calls.push([n, a]); return null; }, getSubscription: async () => sub, now: NOW });
     expect(out).toEqual({ handled: true, action: 'renewal' });
@@ -101,7 +101,7 @@ describe('webhook signatures', () => {
 });
 
 describe('what a payment does', () => {
-  const session = (plan, extra) => ({ id: 'evt', type: 'checkout.session.completed', data: { object: Object.assign({ client_reference_id: 'u1', customer: 'cus_1', payment_status: 'paid', metadata: { plan }, subscription: 'sub_1' }, extra || {}) } });
+  const session = (plan, extra) => ({ id: 'evt', type: 'checkout.session.completed', data: { object: Object.assign({ client_reference_id: 'u1', customer: 'cus_1', payment_status: 'paid', metadata: { app: 'language_dash', plan }, subscription: 'sub_1' }, extra || {}) } });
 
   it('a subscription gives Pro until the end of the paid period, plus a short grace', async () => {
     const { deps, calls } = fake();
@@ -143,13 +143,13 @@ describe('what a payment does', () => {
   });
 
   it('finds the player from the customer when the subscription has no note of it', async () => {
-    const t = fake({ getSubscription: async () => ({ status: 'active', current_period_end: NOW + 86400, metadata: { plan: 'monthly' } }) });
+    const t = fake({ getSubscription: async () => ({ status: 'active', current_period_end: NOW + 86400, metadata: { app: 'language_dash', plan: 'monthly' } }) });
     await handleEvent({ id: 'e3', type: 'invoice.paid', data: { object: { subscription: 's', customer: 'cus_9', amount_paid: 699 } } }, t.deps);
     expect(t.calls[1][1].p_user).toBe('user-from-customer');
   });
 
   it('a full refund takes a library or lifetime purchase back; a partial refund or anything else does not', async () => {
-    const refund = (plan, refunded) => ({ id: 'e4', type: 'charge.refunded', data: { object: { refunded, metadata: { user_id: 'u1', plan } } } });
+    const refund = (plan, refunded) => ({ id: 'e4', type: 'charge.refunded', data: { object: { refunded, metadata: { app: 'language_dash', user_id: 'u1', plan } } } });
     let t = fake();
     expect((await handleEvent(refund('library', true), t.deps)).action).toBe('library_refunded');
     expect(t.calls[0]).toEqual(['pro_revoke_library', { p_user: 'u1' }]);
@@ -173,10 +173,10 @@ describe('what a payment does', () => {
 
 // ───────────────────────── trying to break it: a paying member must never be left without Pro ─────────────────────────
 describe('a payment is never lost to a missing field, a free renewal or an odd order of events', () => {
-  const session = (over) => ({ type: 'checkout.session.completed', data: { object: Object.assign({ client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', subscription: 'sub_1', metadata: { user_id: 'u1', plan: 'monthly' } }, over || {}) } });
+  const session = (over) => ({ type: 'checkout.session.completed', data: { object: Object.assign({ client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', subscription: 'sub_1', metadata: { app: 'language_dash', user_id: 'u1', plan: 'monthly' } }, over || {}) } });
 
   it('a new subscription with no period end in the answer still gets one paid period', async () => {
-    const { calls, deps } = fake({ getSubscription: async () => ({ id: 'sub_1', status: 'active', metadata: { user_id: 'u1', plan: 'monthly' } }) });
+    const { calls, deps } = fake({ getSubscription: async () => ({ id: 'sub_1', status: 'active', metadata: { app: 'language_dash', user_id: 'u1', plan: 'monthly' } }) });
     expect(await handleEvent(session(), deps)).toEqual({ handled: true, action: 'subscription' });
     const grant = calls.find((c) => c[0] === 'pro_grant_until')[1];
     const days = (new Date(grant.p_until).getTime() / 1000 - NOW) / 86400;
@@ -185,23 +185,23 @@ describe('a payment is never lost to a missing field, a free renewal or an odd o
   });
 
   it('but a subscription that is not live gives nothing', () => {
-    ['canceled', 'incomplete', 'incomplete_expired', 'unpaid'].forEach((status) => expect(subscriptionUntil({ status, metadata: { plan: 'monthly' } }, NOW)).toBe(''));
+    ['canceled', 'incomplete', 'incomplete_expired', 'unpaid'].forEach((status) => expect(subscriptionUntil({ status, metadata: { app: 'language_dash', plan: 'monthly' } }, NOW)).toBe(''));
   });
 
   it('a renewal that cost nothing (a 100% coupon) still renews', async () => {
-    const { calls, deps } = fake({ getSubscription: async () => ({ id: 'sub_1', status: 'active', current_period_end: NOW + 30 * 86400, metadata: { user_id: 'u1', plan: 'monthly' } }) });
+    const { calls, deps } = fake({ getSubscription: async () => ({ id: 'sub_1', status: 'active', current_period_end: NOW + 30 * 86400, metadata: { app: 'language_dash', user_id: 'u1', plan: 'monthly' } }) });
     const out = await handleEvent({ type: 'invoice.paid', data: { object: { amount_paid: 0, subscription: 'sub_1', customer: 'cus_1' } } }, deps);
     expect(out).toEqual({ handled: true, action: 'renewal' });
     expect(calls[0][0]).toBe('pro_grant_until');
   });
 
   it('an invoice for a subscription that has ended grants nothing', async () => {
-    const { deps } = fake({ getSubscription: async () => ({ id: 'sub_1', status: 'canceled', current_period_end: NOW + 30 * 86400, metadata: { user_id: 'u1', plan: 'monthly' } }) });
+    const { deps } = fake({ getSubscription: async () => ({ id: 'sub_1', status: 'canceled', current_period_end: NOW + 30 * 86400, metadata: { app: 'language_dash', user_id: 'u1', plan: 'monthly' } }) });
     expect((await handleEvent({ type: 'invoice.paid', data: { object: { amount_paid: 349, subscription: 'sub_1' } } }, deps)).handled).toBe(false);
   });
 
   it('a late payment still counts: past due is paid for until its period ends', () => {
-    expect(subscriptionUntil({ status: 'past_due', current_period_end: NOW + 5 * 86400, metadata: { plan: 'monthly' } }, NOW)).toBeTruthy();
+    expect(subscriptionUntil({ status: 'past_due', current_period_end: NOW + 5 * 86400, metadata: { app: 'language_dash', plan: 'monthly' } }, NOW)).toBeTruthy();
   });
 
   it('the same event twice, or two events in either order, give the same result', async () => {
@@ -213,18 +213,18 @@ describe('a payment is never lost to a missing field, a free renewal or an odd o
 
   it('a refund of a lifetime takes back only the lifetime, never a subscription held as well', async () => {
     const { calls, deps } = fake();
-    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { user_id: 'u1', plan: 'lifetime' } } } }, deps);
+    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { app: 'language_dash', user_id: 'u1', plan: 'lifetime' } } } }, deps);
     expect(calls).toEqual([['pro_revoke_plan', { p_user: 'u1', p_plan: 'lifetime' }]]);
   });
 
   it('a partial refund takes nothing back', async () => {
     const { calls, deps } = fake();
-    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: false, metadata: { user_id: 'u1', plan: 'lifetime' } } } }, deps);
+    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: false, metadata: { app: 'language_dash', user_id: 'u1', plan: 'lifetime' } } } }, deps);
     expect(calls).toEqual([]);
   });
 
   it('a full refund of the invoice that paid for the current period ends that subscription; an older invoice does not', async () => {
-    const sub = { id: 'sub_1', status: 'active', current_period_end: NOW + 30 * 86400, latest_invoice: 'in_new', metadata: { user_id: 'u1', plan: 'monthly' } };
+    const sub = { id: 'sub_1', status: 'active', current_period_end: NOW + 30 * 86400, latest_invoice: 'in_new', metadata: { app: 'language_dash', user_id: 'u1', plan: 'monthly' } };
     const mk = (invoice) => fake({ getInvoice: async () => ({ id: invoice, parent: { subscription_details: { subscription: 'sub_1' } } }), getSubscription: async () => sub });
     let t = mk('in_new');
     const out = await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, invoice: 'in_new', metadata: {} } } }, t.deps);
@@ -237,7 +237,7 @@ describe('a payment is never lost to a missing field, a free renewal or an odd o
 
   it('a payment that finishes later (a bank debit) gives the purchase, exactly like one that finished at once', async () => {
     const t = fake();
-    const ev = { type: 'checkout.session.async_payment_succeeded', data: { object: { client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } };
+    const ev = { type: 'checkout.session.async_payment_succeeded', data: { object: { client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { app: 'language_dash', kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } };
     expect((await handleEvent(ev, t.deps)).action).toBe('item');
     expect(t.calls.map((c) => c[0])).toEqual(['pro_link_customer', 'pro_grant_item']);
     const unpaid = fake();
@@ -248,17 +248,17 @@ describe('a payment is never lost to a missing field, a free renewal or an odd o
 
   it('a purchase that was already refunded is not handed back by a late "completed" event', async () => {
     const t = fake({ isPaymentReturned: async () => true });
-    const ev = { type: 'checkout.session.completed', data: { object: { client_reference_id: 'u1', payment_status: 'paid', payment_intent: 'pi_1', metadata: { plan: 'lifetime', user_id: 'u1' } } } };
+    const ev = { type: 'checkout.session.completed', data: { object: { client_reference_id: 'u1', payment_status: 'paid', payment_intent: 'pi_1', metadata: { app: 'language_dash', plan: 'lifetime', user_id: 'u1' } } } };
     expect(await handleEvent(ev, t.deps)).toEqual({ handled: false, action: 'already_returned' });
     expect(t.calls).toEqual([]);
-    const item = { type: 'checkout.session.completed', data: { object: { client_reference_id: 'u1', payment_status: 'paid', payment_intent: 'pi_2', metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } };
+    const item = { type: 'checkout.session.completed', data: { object: { client_reference_id: 'u1', payment_status: 'paid', payment_intent: 'pi_2', metadata: { app: 'language_dash', kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } };
     expect((await handleEvent(item, t.deps)).handled).toBe(false);
     expect(t.calls).toEqual([]);
   });
 
   it('a chargeback takes the purchase back, a lost one keeps it taken, and a won one gives it again', async () => {
     // (the charge as Stripe describes it at each stage; the handler reads it fresh whatever event woke it)
-    const open = { id: 'ch_1', disputed: true, dispute: { status: 'needs_response' }, metadata: { user_id: 'u1', plan: 'lifetime' } };
+    const open = { id: 'ch_1', disputed: true, dispute: { status: 'needs_response' }, metadata: { app: 'language_dash', user_id: 'u1', plan: 'lifetime' } };
     const lostC = { ...open, dispute: { status: 'lost' } };
     const wonC = { ...open, dispute: { status: 'won' } };
     const dispute = (type, status) => ({ type, data: { object: { charge: 'ch_1', status } } });
@@ -271,7 +271,7 @@ describe('a payment is never lost to a missing field, a free renewal or an odd o
     expect((await handleEvent(dispute('charge.dispute.closed', 'won'), t.deps)).action).toBe('lifetime_restored');
     expect(t.calls[0][0]).toBe('pro_grant_until');
     // an item, too
-    const itemMeta = { user_id: 'u1', kind: 'item', item_id: 'trail_lanterns' };
+    const itemMeta = { app: 'language_dash', user_id: 'u1', kind: 'item', item_id: 'trail_lanterns' };
     let stage = { id: 'ch_2', disputed: true, dispute: { status: 'needs_response' }, metadata: itemMeta };
     t = fake({ getCharge: async () => stage });
     await handleEvent(dispute('charge.dispute.created'), t.deps);
@@ -292,14 +292,14 @@ describe('a payment is never lost to a missing field, a free renewal or an odd o
 
   it('what Stripe says someone holds becomes grants (for putting right a lost event)', () => {
     const subs = [
-      { status: 'active', current_period_end: NOW + 20 * 86400, metadata: { plan: 'yearly', user_id: 'u1' } },
-      { status: 'canceled', current_period_end: NOW + 20 * 86400, metadata: { plan: 'monthly', user_id: 'u1' } },
-      { status: 'trialing', current_period_end: NOW + 3 * 86400, metadata: { plan: 'monthly', user_id: 'u1' } }
+      { status: 'active', current_period_end: NOW + 20 * 86400, metadata: { app: 'language_dash', plan: 'yearly', user_id: 'u1' } },
+      { status: 'canceled', current_period_end: NOW + 20 * 86400, metadata: { app: 'language_dash', plan: 'monthly', user_id: 'u1' } },
+      { status: 'trialing', current_period_end: NOW + 3 * 86400, metadata: { app: 'language_dash', plan: 'monthly', user_id: 'u1' } }
     ];
     const g = grantsFromSubscriptions(subs, NOW);
     expect(g.map((x) => x.plan)).toEqual(['yearly', 'monthly']);
     expect(g[1].trial).toBe(true);
-    expect(grantsFromSubscriptions([{ status: 'active', current_period_end: NOW - 10 * 86400, metadata: { plan: 'yearly' } }], NOW)).toEqual([]); // long over
+    expect(grantsFromSubscriptions([{ status: 'active', current_period_end: NOW - 10 * 86400, metadata: { app: 'language_dash', plan: 'yearly' } }], NOW)).toEqual([]); // long over
   });
 
   it('a signed event is accepted, an altered or stale one is not', async () => {
@@ -316,7 +316,7 @@ describe('a payment is never lost to a missing field, a free renewal or an odd o
 
 
 describe('premium Locker items (real money)', () => {
-  const itemSession = (over) => ({ type: 'checkout.session.completed', data: { object: Object.assign({ client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } }, over || {}) } });
+  const itemSession = (over) => ({ type: 'checkout.session.completed', data: { object: Object.assign({ client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { app: 'language_dash', kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } }, over || {}) } });
 
   it('a checkout charges the catalog price, once, in dollars, and creates a customer so it can be found again', () => {
     const f = itemCheckoutParams('trail_lanterns', 'u1', ENV, { name: 'Sky Lanterns' });
@@ -353,7 +353,7 @@ describe('premium Locker items (real money)', () => {
     expect(out.action).toBe('item_duplicate_refunded');
     expect(refunded).toEqual(['pi_second']);
     // the refund event for that second payment names its own payment, so the database leaves the first one's item alone
-    const u = fake({ getCharge: async () => ({ id: 'ch_2', refunded: true, payment_intent: 'pi_second', metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } }) });
+    const u = fake({ getCharge: async () => ({ id: 'ch_2', refunded: true, payment_intent: 'pi_second', metadata: { app: 'language_dash', kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } }) });
     await handleEvent({ type: 'charge.refunded', data: { object: { id: 'ch_2', refunded: true } } }, u.deps);
     expect(u.calls).toEqual([['pro_revoke_item', { p_user: 'u1', p_item: 'trail_lanterns', p_ref: 'pi_second' }]]);
     // a normal repeat of the same event (same payment) is not a duplicate and refunds nothing
@@ -366,22 +366,22 @@ describe('premium Locker items (real money)', () => {
   it('an unpaid session, or one with no member, grants nothing', async () => {
     const { calls, deps } = fake();
     expect((await handleEvent(itemSession({ payment_status: 'unpaid' }), deps)).handled).toBe(false);
-    expect((await handleEvent(itemSession({ client_reference_id: '', metadata: { kind: 'item', item_id: 'trail_lanterns' } }), deps)).handled).toBe(false);
+    expect((await handleEvent(itemSession({ client_reference_id: '', metadata: { app: 'language_dash', kind: 'item', item_id: 'trail_lanterns' } }), deps)).handled).toBe(false);
     expect(calls).toEqual([]);
   });
 
   it('someone who paid always gets the item, even if the catalog changed since', async () => {
     const { calls, deps } = fake();
-    await handleEvent(itemSession({ metadata: { kind: 'item', item_id: 'trail_retired', user_id: 'u1' } }), deps);
+    await handleEvent(itemSession({ metadata: { app: 'language_dash', kind: 'item', item_id: 'trail_retired', user_id: 'u1' } }), deps);
     expect(calls.some((c) => c[0] === 'pro_grant_item' && c[1].p_item === 'trail_retired')).toBe(true);
   });
 
   it('a full refund takes back that item only; a partial one takes nothing; a subscription is untouched', async () => {
     const { calls, deps } = fake();
-    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } }, deps);
+    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { app: 'language_dash', kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } }, deps);
     expect(calls).toEqual([['pro_revoke_item', { p_user: 'u1', p_item: 'trail_lanterns', p_ref: null }]]);
     const t = fake();
-    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: false, metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } }, t.deps);
+    await handleEvent({ type: 'charge.refunded', data: { object: { refunded: false, metadata: { app: 'language_dash', kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } }, t.deps);
     expect(t.calls).toEqual([]);
   });
 });
@@ -410,5 +410,35 @@ describe('what the payer is told before paying', () => {
       expect(f['custom_text[submit][message]']).toMatch(/delivered to your account immediately/);
       expect(f['custom_text[submit][message]'].length).toBeLessThan(1200);
     }
+  });
+});
+
+describe('one Stripe account, several apps: only language_dash events count', () => {
+  it('every checkout this app creates is stamped metadata.app = language_dash (session, subscription and payment)', () => {
+    const sub = checkoutParams('yearly', 'u1', ENV);
+    expect(sub['metadata[app]']).toBe('language_dash');
+    expect(sub['subscription_data[metadata][app]']).toBe('language_dash');
+    const once = checkoutParams('lifetime', 'u1', ENV);
+    expect(once['metadata[app]']).toBe('language_dash');
+    expect(once['payment_intent_data[metadata][app]']).toBe('language_dash');
+    const item = itemCheckoutParams('trail_lanterns', 'u1', ENV);
+    expect(item['metadata[app]']).toBe('language_dash');
+    expect(item['payment_intent_data[metadata][app]']).toBe('language_dash');
+  });
+
+  it('reads the Price ids only from LD_ names', () => {
+    expect(Object.values(PRODUCTS).map((p) => p.env)).toEqual(['LD_STRIPE_PRICE_YEARLY', 'LD_STRIPE_PRICE_PASS3M', 'LD_STRIPE_PRICE_MONTHLY', 'LD_STRIPE_PRICE_LIFETIME']);
+    expect(configuredProducts({ STRIPE_PRICE_YEARLY: 'price_other_app' })).toEqual([]);
+  });
+
+  it('ignores a checkout, a renewal and a refund that belong to another app (or to nothing)', async () => {
+    const t = fake({ getSubscription: async () => ({ id: 'sub_x', status: 'active', current_period_end: NOW + 86400, metadata: { app: 'dx_dash', user_id: 'u1', plan: 'monthly' } }) });
+    const other = { client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { app: 'dx_dash', plan: 'lifetime', user_id: 'u1' } };
+    expect((await handleEvent({ type: 'checkout.session.completed', data: { object: other } }, t.deps)).handled).toBe(false);
+    const unstamped = { ...other, metadata: { plan: 'lifetime', user_id: 'u1' } };
+    expect((await handleEvent({ type: 'checkout.session.completed', data: { object: unstamped } }, t.deps)).handled).toBe(false);
+    expect((await handleEvent({ type: 'invoice.paid', data: { object: { subscription: 'sub_x', customer: 'cus_1' } } }, t.deps)).handled).toBe(false);
+    expect((await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { app: 'dx_dash', user_id: 'u1', plan: 'lifetime' } } } }, t.deps)).handled).toBe(false);
+    expect(t.calls).toEqual([]);
   });
 });

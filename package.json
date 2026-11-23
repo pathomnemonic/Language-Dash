@@ -23,7 +23,9 @@
     "app:android": "node tools/build-app.mjs android",
     "preflight": "node tools/preflight.mjs",
     "analytics:docs": "node tools/analytics-docs.mjs",
-    "analytics:report": "node tools/analytics-report.mjs"
+    "analytics:report": "node tools/analytics-report.mjs",
+    "migration:generate": "node tools/ld-migrate/generate.mjs",
+    "test:migration": "node tools/ld-migrate/test-local.mjs"
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.3",

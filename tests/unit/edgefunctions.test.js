@@ -1,6 +1,6 @@
 // @vitest-environment node
 //
-// The two payment functions, run as the servers would run them (a stand-in for Deno, for Stripe and for the database),
+// The Language Dash functions (payments, store checks and removing the sign-in), run as the servers would run them (a stand-in for Deno, for Stripe and for the database),
 // to check the wiring that the rule tests in billing.test.js cannot see: who is let in, what is charged, what is granted.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -12,11 +12,13 @@ const APPLE_KEY = generateKeyPairSync('ec', { namedCurve: 'P-256' }).privateKey.
 const GOOGLE_KEY = generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' });
 const SECRET = 'whsec_test';
 const ENVV = {
-  STRIPE_SECRET_KEY: 'sk_test_x', STRIPE_WEBHOOK_SECRET: SECRET, SITE_URL: 'https://me.github.io/dx',
-  APPLE_TEAM_ID: 'TEAM123456', APPLE_KEY_ID: 'KEY1234567', APPLE_PRIVATE_KEY: APPLE_KEY, APPLE_CLIENT_ID: 'com.example.web',
-  GOOGLE_PLAY_PACKAGE: 'com.example.app', GOOGLE_SA_EMAIL: 'sa@p.iam.gserviceaccount.com', GOOGLE_SA_PRIVATE_KEY: GOOGLE_KEY,
-  APPLE_BUNDLE_ID: 'com.example.app', APPLE_IAP_ISSUER_ID: 'issuer', APPLE_IAP_KEY_ID: 'KEYID12345', APPLE_IAP_PRIVATE_KEY: APPLE_KEY,
-  STRIPE_PRICE_YEARLY: 'price_y', STRIPE_PRICE_LIFETIME: 'price_l', SUPABASE_URL: 'http://db', SUPABASE_SERVICE_ROLE_KEY: 'svc'
+  LD_STRIPE_SECRET_KEY: 'sk_test_x', LD_STRIPE_WEBHOOK_SECRET: SECRET, LD_SITE_URL: 'https://me.github.io/dx',
+  LD_APPLE_TEAM_ID: 'TEAM123456', LD_APPLE_KEY_ID: 'KEY1234567', LD_APPLE_PRIVATE_KEY: APPLE_KEY, LD_APPLE_CLIENT_ID: 'com.example.web',
+  LD_GOOGLE_PLAY_PACKAGE: 'com.example.app', LD_GOOGLE_SA_EMAIL: 'sa@p.iam.gserviceaccount.com', LD_GOOGLE_SA_PRIVATE_KEY: GOOGLE_KEY,
+  LD_APPLE_BUNDLE_ID: 'com.example.app', LD_APPLE_IAP_ISSUER_ID: 'issuer', LD_APPLE_IAP_KEY_ID: 'KEYID12345', LD_APPLE_IAP_PRIVATE_KEY: APPLE_KEY,
+  LD_STRIPE_PRICE_YEARLY: 'price_y', LD_STRIPE_PRICE_LIFETIME: 'price_l', SUPABASE_URL: 'http://db', SUPABASE_ANON_KEY: 'anon', SUPABASE_SERVICE_ROLE_KEY: 'svc',
+  // another app's values in the same project: they must never be picked up
+  STRIPE_SECRET_KEY: 'sk_OTHER_APP', STRIPE_WEBHOOK_SECRET: 'whsec_OTHER_APP', SITE_URL: 'https://other.example', STRIPE_PRICE_MONTHLY: 'price_OTHER_APP', APPLE_CLIENT_ID: 'com.other.app'
 };
 
 let db;          // what the fake database was asked to do
@@ -32,10 +34,12 @@ let cancelFails;
 let appleToken;    // the stored Apple token for the member ('' for none)
 let appleStatus;   // what Apple answers to a revoke
 let storeReply;    // what Google / Apple say about a purchase: { status, body }
+let isMember;      // does the signed-in login have a Language Dash membership row
+let clients;       // every client the functions created: [url, key, options]
 let claimResult;   // what the database says about claiming a purchase
 
 vi.mock('https://esm.sh/@supabase/supabase-js@2.117.3', () => ({
-  createClient: () => ({
+  createClient: (url, key, opts) => { clients.push([url, key, opts]); return {
     auth: { getUser: async (jwt) => ({ data: { user: users[jwt] || null } }), admin: { deleteUser: async (id) => { deleted.push(id); return { error: null }; } } },
     rpc: async (name, args) => {
       db.push([name, args]);
@@ -45,8 +49,8 @@ vi.mock('https://esm.sh/@supabase/supabase-js@2.117.3', () => ({
       if (name === 'pro_store_claim') return { data: claimResult, error: null };
       return { data: null, error: null };
     },
-    from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: held }) }) }) })
-  })
+    from: (table) => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: table === 'members' ? (isMember ? { user_id: 'x' } : null) : held }) }) }) })
+  }; }
 }));
 
 let handlers;
@@ -59,7 +63,7 @@ async function boot(file) {
 }
 
 beforeEach(() => {
-  db = []; stripeCalls = []; owned = []; held = null; dbReady = true; customerId = ''; deleted = []; cancelFails = false; appleToken = ''; appleStatus = 200; storeReply = { status: 200, body: {} }; claimResult = 'ok';
+  db = []; clients = []; isMember = true; stripeCalls = []; owned = []; held = null; dbReady = true; customerId = ''; deleted = []; cancelFails = false; appleToken = ''; appleStatus = 200; storeReply = { status: 200, body: {} }; claimResult = 'ok';
   users = { apple: { id: 'ua', email: 'p@example.com', is_anonymous: false, identities: [{ provider: 'apple' }] }, good: { id: 'u1', email: 'a@example.com', is_anonymous: false }, guest: { id: 'g1', email: '', is_anonymous: true } };
   stripeReply = (path) => ({ id: 'cs_1', url: 'https://checkout.stripe.com/pay/cs_1', data: [] });
   globalThis.fetch = vi.fn(async (url, init) => {
@@ -82,17 +86,17 @@ beforeEach(() => {
 
 const post = (body, headers) => new Request('https://fn/', { method: 'POST', headers: Object.assign({ 'content-type': 'application/json' }, headers || {}), body: typeof body === 'string' ? body : JSON.stringify(body) });
 
-describe('stripe-webhook', () => {
+describe('ld-stripe-webhook', () => {
   const signed = async (event, over) => {
     const raw = JSON.stringify(event);
     const t = (over && over.t) || Math.floor(Date.now() / 1000);
     const sig = await signPayload(raw, (over && over.secret) || SECRET, t);
     return post(raw, { 'stripe-signature': 't=' + t + ',v1=' + sig });
   };
-  const itemEvent = { id: 'evt_1', type: 'checkout.session.completed', data: { object: { client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } };
+  const itemEvent = { id: 'evt_1', type: 'checkout.session.completed', data: { object: { client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { app: 'language_dash', kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } };
 
   it('refuses anything that is not a signed POST', async () => {
-    const h = await boot('../../supabase/functions/stripe-webhook/index.js');
+    const h = await boot('../../supabase/functions/ld-stripe-webhook/index.js');
     expect((await h(new Request('https://fn/', { method: 'GET' }))).status).toBe(405);
     expect((await h(post(itemEvent))).status).toBe(400);                                    // no signature
     expect((await h(await signed(itemEvent, { secret: 'whsec_other' }))).status).toBe(400); // wrong secret
@@ -104,7 +108,7 @@ describe('stripe-webhook', () => {
   });
 
   it('gives a paid item to the buyer named in the signed event, once recorded', async () => {
-    const h = await boot('../../supabase/functions/stripe-webhook/index.js');
+    const h = await boot('../../supabase/functions/ld-stripe-webhook/index.js');
     stripeReply = () => ({ latest_charge: { refunded: false, disputed: false } });
     const res = await h(await signed(itemEvent));
     expect(res.status).toBe(200);
@@ -113,7 +117,7 @@ describe('stripe-webhook', () => {
   });
 
   it('does not hand back a purchase whose payment was already refunded', async () => {
-    const h = await boot('../../supabase/functions/stripe-webhook/index.js');
+    const h = await boot('../../supabase/functions/ld-stripe-webhook/index.js');
     stripeReply = () => ({ latest_charge: { refunded: true } });
     const ev = { ...itemEvent, data: { object: { ...itemEvent.data.object, payment_intent: 'pi_9' } } };
     expect((await h(await signed(ev))).status).toBe(200);
@@ -121,7 +125,7 @@ describe('stripe-webhook', () => {
   });
 
   it('tells Stripe to try again when the database fails, so a payment is never lost', async () => {
-    const h = await boot('../../supabase/functions/stripe-webhook/index.js');
+    const h = await boot('../../supabase/functions/ld-stripe-webhook/index.js');
     const mod = await import('https://esm.sh/@supabase/supabase-js@2.117.3');
     expect(mod).toBeTruthy();
     const failing = { ...itemEvent, data: { object: { ...itemEvent.data.object, payment_intent: 'pi_9' } } };
@@ -130,21 +134,21 @@ describe('stripe-webhook', () => {
   });
 
   it('ignores events it does not know without error', async () => {
-    const h = await boot('../../supabase/functions/stripe-webhook/index.js');
+    const h = await boot('../../supabase/functions/ld-stripe-webhook/index.js');
     const res = await h(await signed({ id: 'evt_x', type: 'customer.created', data: { object: { id: 'cus_1' } } }));
     expect(res.status).toBe(200);
     expect(db).toEqual([]);
   });
 });
 
-describe('pro-checkout', () => {
+describe('ld-pro-checkout', () => {
   const call = async (h, body, jwt) => {
     const res = await h(post(body, jwt ? { authorization: 'Bearer ' + jwt } : {}));
     return { status: res.status, body: await res.json() };
   };
 
   it('needs a real signed-in account to buy anything', async () => {
-    const h = await boot('../../supabase/functions/pro-checkout/index.js');
+    const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
     expect((await call(h, { action: 'checkout', plan: 'yearly' })).status).toBe(401);
     expect((await call(h, { action: 'checkout', plan: 'yearly' }, 'nobody')).status).toBe(401);
     expect((await call(h, { action: 'checkout', plan: 'yearly' }, 'guest')).status).toBe(403);
@@ -152,7 +156,7 @@ describe('pro-checkout', () => {
   });
 
   it('charges the catalog price for an item, whatever the page asks for', async () => {
-    const h = await boot('../../supabase/functions/pro-checkout/index.js');
+    const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
     const r = await call(h, { action: 'item', item: 'trail_lanterns', price: 1, amount: 1, unit_amount: 1, user_id: 'someone-else', name: 'x' }, 'good');
     expect(r.status).toBe(200);
     const sent = stripeCalls.find((c) => c.path === 'checkout/sessions').body;
@@ -163,7 +167,7 @@ describe('pro-checkout', () => {
   });
 
   it('does not sell what is not for sale, what the member owns, or anything while the database is not ready', async () => {
-    const h = await boot('../../supabase/functions/pro-checkout/index.js');
+    const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
     expect((await call(h, { action: 'item', item: 'avatar_intern' }, 'good')).status).toBe(400);   // not a premium item
     expect((await call(h, { action: 'item', item: '__proto__' }, 'good')).status).toBe(400);
     expect((await call(h, { action: 'item', item: 'constructor' }, 'good')).status).toBe(400);
@@ -177,7 +181,7 @@ describe('pro-checkout', () => {
   });
 
   it('sells a plan at the price set on the server, and refuses an unknown plan or a second lifetime', async () => {
-    const h = await boot('../../supabase/functions/pro-checkout/index.js');
+    const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
     expect((await call(h, { action: 'checkout', plan: 'free-forever' }, 'good')).status).toBe(400);
     expect((await call(h, { action: 'checkout', plan: 'monthly' }, 'good')).status).toBe(400);   // no price set for it
     const ok = await call(h, { action: 'checkout', plan: 'yearly', price: 'price_cheap' }, 'good');
@@ -191,102 +195,219 @@ describe('pro-checkout', () => {
 });
 
 
-describe('pro-checkout: deleting an account', () => {
+describe('ld-pro-checkout: cancelling a subscription (before the Language Dash account is deleted)', () => {
   const call = async (h, body, jwt) => {
     const res = await h(post(body, jwt ? { authorization: 'Bearer ' + jwt } : {}));
     return { status: res.status, body: await res.json() };
   };
 
-  it('cancels a subscription that is still billing, then deletes the account', async () => {
-    const h = await boot('../../supabase/functions/pro-checkout/index.js');
+  it('no longer has any way to delete a login', async () => {
+    const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
+    const r = await call(h, { action: 'delete_account' }, 'good');
+    expect(r.status).toBe(400);
+    expect(deleted).toEqual([]);
+  });
+
+  it('cancels a subscription that is still billing, and nothing else', async () => {
+    const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
     customerId = 'cus_1';
     stripeReply = (path) => (path.startsWith('subscriptions?') ? { data: [{ id: 'sub_live', status: 'active' }, { id: 'sub_old', status: 'canceled' }, { id: 'sub_due', status: 'past_due' }] } : {});
-    const r = await call(h, { action: 'delete_account' }, 'good');
+    const r = await call(h, { action: 'cancel_subscription' }, 'good');
     expect(r.status).toBe(200);
     expect(stripeCalls.filter((c) => c.method === 'DELETE').map((c) => c.path)).toEqual(['subscriptions/sub_live', 'subscriptions/sub_due']);
-    expect(deleted).toEqual(['u1']);
-    expect(db.map((c) => c[0])).toContain('pro_forget_user');
+    expect(deleted).toEqual([]);
   });
 
-  it('does NOT delete the account when the subscription could not be cancelled, so nothing keeps charging', async () => {
-    const h = await boot('../../supabase/functions/pro-checkout/index.js');
+  it('reports a failure to cancel, so the app deletes nothing', async () => {
+    const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
     customerId = 'cus_1'; cancelFails = true;
     stripeReply = (path) => (path.startsWith('subscriptions?') ? { data: [{ id: 'sub_live', status: 'active' }] } : {});
-    const r = await call(h, { action: 'delete_account' }, 'good');
+    const r = await call(h, { action: 'cancel_subscription' }, 'good');
     expect(r.status).toBe(502);
-    expect(r.body.error).toMatch(/nothing was deleted/i);
-    expect(deleted).toEqual([]);
+    expect(r.body.error).toMatch(/could not cancel/i);
   });
 
-  it('deletes straight away when there is nothing to cancel, and never for a guest or a stranger', async () => {
-    const h = await boot('../../supabase/functions/pro-checkout/index.js');
-    expect((await call(h, { action: 'delete_account' }, 'good')).status).toBe(200);
-    expect(deleted).toEqual(['u1']);
-    deleted.length = 0;
-    expect((await call(h, { action: 'delete_account' }, 'guest')).status).toBe(403);
-    expect((await call(h, { action: 'delete_account' })).status).toBe(401);
-    expect((await call(h, { action: 'delete_account', user_id: 'someone-else' }, 'nobody')).status).toBe(401);
-    expect(deleted).toEqual([]);
-  });
-
-  it('deletes only the signed-in account, whatever the page says', async () => {
-    const h = await boot('../../supabase/functions/pro-checkout/index.js');
-    await call(h, { action: 'delete_account', user_id: 'victim', id: 'victim' }, 'good');
-    expect(deleted).toEqual(['u1']);
-  });
-});
-
-
-describe('pro-checkout: Sign in with Apple and account deletion', () => {
-  const call = async (h, body, jwt) => {
-    const res = await h(post(body, jwt ? { authorization: 'Bearer ' + jwt } : {}));
-    return { status: res.status, body: await res.json() };
-  };
-
-  it('keeps an Apple token only for an Apple login', async () => {
-    const h = await boot('../../supabase/functions/pro-checkout/index.js');
+  it('keeps the Apple token only for an Apple login that is a member', async () => {
+    const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
     expect((await call(h, { action: 'apple_token', refresh_token: 'r_abcdefghijk' }, 'apple')).status).toBe(200);
     expect(db.find((c) => c[0] === 'apple_token_save')[1]).toEqual({ p_user: 'ua', p_token: 'r_abcdefghijk' });
     db.length = 0;
     expect((await call(h, { action: 'apple_token', refresh_token: 'r_abcdefghijk' }, 'good')).status).toBe(400);   // (not an Apple login)
     expect((await call(h, { action: 'apple_token', refresh_token: 'x' }, 'apple')).status).toBe(400);
     expect((await call(h, { action: 'apple_token', refresh_token: 'r_abcdefghijk' }, 'guest')).status).toBe(403);
+    isMember = false;
+    expect((await call(h, { action: 'apple_token', refresh_token: 'r_abcdefghijk' }, 'apple')).status).toBe(403);
     expect(db.filter((c) => c[0] === 'apple_token_save')).toEqual([]);
-  });
-
-  it('revokes the Apple login before deleting the account', async () => {
-    const h = await boot('../../supabase/functions/pro-checkout/index.js');
-    appleToken = 'r_stored_token';
-    const r = await call(h, { action: 'delete_account' }, 'apple');
-    expect(r.status).toBe(200);
-    const sent = stripeCalls.find((c) => c.path === 'APPLE auth/revoke');
-    expect(sent.body).toMatchObject({ client_id: 'com.example.web', token: 'r_stored_token', token_type_hint: 'refresh_token' });
-    expect(sent.body.client_secret.split('.')).toHaveLength(3);
-    expect(deleted).toEqual(['ua']);
-  });
-
-  it('does NOT delete the account when Apple cannot be reached, because Apple requires the revoke', async () => {
-    const h = await boot('../../supabase/functions/pro-checkout/index.js');
-    appleToken = 'r_stored_token'; appleStatus = 500;
-    const r = await call(h, { action: 'delete_account' }, 'apple');
-    expect(r.status).toBe(502);
-    expect(r.body.error).toMatch(/nothing was deleted/i);
-    expect(deleted).toEqual([]);
-  });
-
-  it('still deletes an Apple login that has no stored token (signed in before this existed), and never calls Apple for anyone else', async () => {
-    const h = await boot('../../supabase/functions/pro-checkout/index.js');
-    appleToken = '';
-    expect((await call(h, { action: 'delete_account' }, 'apple')).status).toBe(200);
-    expect(stripeCalls.some((c) => String(c.path).startsWith('APPLE'))).toBe(false);
-    appleToken = 'r_other';
-    expect((await call(h, { action: 'delete_account' }, 'good')).status).toBe(200);
-    expect(stripeCalls.some((c) => String(c.path).startsWith('APPLE'))).toBe(false);
   });
 });
 
 
-describe('iap-verify: phone-store purchases', () => {
+describe('shared project: schema, secrets and membership', () => {
+  const call = async (h, body, jwt) => {
+    const res = await h(post(body, jwt ? { authorization: 'Bearer ' + jwt } : {}));
+    return { status: res.status, body: await res.json() };
+  };
+  const FUNCTIONS = ['ld-pro-checkout', 'ld-stripe-webhook', 'ld-iap-verify', 'ld-remove-signin'];
+
+  it('every service client is created for the language_dash schema', async () => {
+    for (const fn of FUNCTIONS) {
+      clients.length = 0;
+      await boot('../../supabase/functions/' + fn + '/index.js');
+      expect(clients.length).toBeGreaterThan(0);
+      clients.forEach((c) => expect(c[2].db).toEqual({ schema: 'language_dash' }));
+    }
+  });
+
+  it('reads only LD_ secrets: another app\'s unprefixed values are never used', async () => {
+    const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
+    await call(h, { action: 'checkout', plan: 'yearly' }, 'good');
+    const sent = stripeCalls.find((c) => c.path === 'checkout/sessions').body;
+    expect(sent['line_items[0][price]']).toBe('price_y');
+    expect(sent.success_url.startsWith('https://me.github.io/dx/')).toBe(true);
+    expect(sent['metadata[app]']).toBe('language_dash');
+    expect((await call(h, { action: 'checkout', plan: 'monthly' }, 'good')).status).toBe(400);   // (LD_ monthly is unset: the other app's price_OTHER_APP is not used)
+    // and the source never names an unprefixed secret
+    const { readFileSync, readdirSync } = await import('node:fs');
+    const root = new URL('../../supabase/functions/', import.meta.url).pathname;
+    for (const fn of FUNCTIONS) {
+      const src = readFileSync(root + fn + '/index.js', 'utf8');
+      const names = [...src.matchAll(/Deno\.env\.get\(\s*(['"])([^'"]+)\1/g)].map((m) => m[2]);
+      names.forEach((n) => expect(/^(LD_|SUPABASE_)/.test(n)).toBe(true));
+    }
+    expect(readdirSync(root).filter((n) => !n.startsWith('_')).sort()).toEqual(FUNCTIONS.slice().sort());
+  });
+
+  it('a login that has not created a Language Dash account cannot buy, sync or verify', async () => {
+    isMember = false;
+    const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
+    for (const body of [{ action: 'checkout', plan: 'yearly' }, { action: 'item', item: 'trail_lanterns' }, { action: 'sync' }, { action: 'portal' }]) {
+      const r = await call(h, body, 'good');
+      expect(r.status).toBe(403);
+      expect(r.body.code).toBe('not_a_member');
+    }
+    expect(stripeCalls.filter((c) => c.method === 'POST')).toEqual([]);
+    const iap = await boot('../../supabase/functions/ld-iap-verify/index.js');
+    const r2 = await call(iap, { platform: 'android', product_id: 'languagedash_pro_monthly', token: 'purchase-token-123' }, 'good');
+    expect(r2.status).toBe(403);
+    expect(r2.body.code).toBe('not_a_member');
+  });
+
+  it('the plan list is public: it needs no login at all', async () => {
+    isMember = false;
+    stripeReply = () => ({ unit_amount: 999, currency: 'usd', recurring: { interval: 'year' } });
+    const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
+    expect((await call(h, { action: 'prices' })).status).toBe(200);
+  });
+
+  it('the webhook ignores another app\'s events even when correctly signed, and checks the LD_ signing secret', async () => {
+    const h = await boot('../../supabase/functions/ld-stripe-webhook/index.js');
+    const sign = async (event, secret) => {
+      const raw = JSON.stringify(event);
+      const t = Math.floor(Date.now() / 1000);
+      return post(raw, { 'stripe-signature': 't=' + t + ',v1=' + (await signPayload(raw, secret, t)) });
+    };
+    const ev = (app) => ({ id: 'evt_' + app, type: 'checkout.session.completed', data: { object: { client_reference_id: 'u1', payment_status: 'paid', customer: 'cus_1', metadata: { app, kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } } } });
+    expect((await h(await sign(ev('language_dash'), 'whsec_OTHER_APP'))).status).toBe(400);   // (the other app's secret does not verify)
+    stripeReply = () => ({ latest_charge: { refunded: false, disputed: false } });
+    expect((await h(await sign(ev('dx_dash'), SECRET))).status).toBe(200);
+    expect(db.filter((c) => c[0].startsWith('pro_grant'))).toEqual([]);
+    expect((await h(await sign(ev('language_dash'), SECRET))).status).toBe(200);
+    expect(db.filter((c) => c[0] === 'pro_grant_item')).toHaveLength(1);
+  });
+});
+
+
+describe('ld-remove-signin: removing the sign-in for every app', () => {
+  const FN = '../../supabase/functions/ld-remove-signin/index.js';
+  const CONFIRM = { confirm: 'REMOVE MY SIGN-IN' };
+  const call = async (h, body, jwt) => {
+    const res = await h(post(body, jwt ? { authorization: 'Bearer ' + jwt } : {}));
+    return { status: res.status, body: await res.json() };
+  };
+
+  it('needs a real signed-in login and the typed confirmation, and deletes nothing otherwise', async () => {
+    const h = await boot(FN);
+    expect((await call(h, CONFIRM)).status).toBe(401);
+    expect((await call(h, CONFIRM, 'nobody')).status).toBe(401);
+    expect((await call(h, CONFIRM, 'guest')).status).toBe(403);
+    expect((await call(h, {}, 'good')).status).toBe(400);
+    expect((await call(h, { confirm: 'remove my sign-in' }, 'good')).status).toBe(400);
+    expect((await call(h, { confirm: true }, 'good')).status).toBe(400);
+    expect((await h(new Request('https://fn/', { method: 'GET' }))).status).toBe(405);
+    expect(deleted).toEqual([]);
+    expect(db.filter((c) => c[0] === 'delete_my_ld_data')).toEqual([]);
+  });
+
+  it('deletes the Language Dash data as the caller, then the login, and only the signed-in login', async () => {
+    const h = await boot(FN);
+    const r = await call(h, { ...CONFIRM, user_id: 'victim', id: 'victim' }, 'good');
+    expect(r.status).toBe(200);
+    expect(r.body).toMatchObject({ ok: true, removed: 'signin' });
+    expect(deleted).toEqual(['u1']);
+    expect(db.map((c) => c[0])).toContain('delete_my_ld_data');
+    // the data deletion ran through a client that carries the caller's own token, not the service key
+    const callerClient = clients.find((c) => c[2].global && c[2].global.headers);
+    expect(callerClient[1]).toBe('anon');
+    expect(callerClient[2].global.headers.Authorization).toBe('Bearer good');
+    expect(callerClient[2].db).toEqual({ schema: 'language_dash' });
+  });
+
+  it('cancels a subscription that is still billing first, and removes nothing when it cannot', async () => {
+    const h = await boot(FN);
+    customerId = 'cus_1';
+    stripeReply = (path) => (path.startsWith('subscriptions?') ? { data: [{ id: 'sub_live', status: 'active' }, { id: 'sub_old', status: 'canceled' }] } : {});
+    const ok = await call(h, CONFIRM, 'good');
+    expect(ok.status).toBe(200);
+    expect(ok.body.cancelled_subscriptions).toBe(1);
+    expect(stripeCalls.filter((c) => c.method === 'DELETE').map((c) => c.path)).toEqual(['subscriptions/sub_live']);
+    expect(deleted).toEqual(['u1']);
+
+    deleted.length = 0; db.length = 0; cancelFails = true;
+    const bad = await call(h, CONFIRM, 'good');
+    expect(bad.status).toBe(502);
+    expect(bad.body.error).toMatch(/nothing was removed/i);
+    expect(deleted).toEqual([]);
+    expect(db.map((c) => c[0])).not.toContain('delete_my_ld_data');
+  });
+
+  it('revokes an Apple login before removing it, and removes nothing when Apple cannot be reached', async () => {
+    const h = await boot(FN);
+    appleToken = 'r_stored_token';
+    const r = await call(h, CONFIRM, 'apple');
+    expect(r.status).toBe(200);
+    expect(r.body.apple_revoked).toBe(true);
+    const sent = stripeCalls.find((c) => c.path === 'APPLE auth/revoke');
+    expect(sent.body).toMatchObject({ client_id: 'com.example.web', token: 'r_stored_token', token_type_hint: 'refresh_token' });   // (the LD_ client id, not the other app's)
+    expect(sent.body.client_secret.split('.')).toHaveLength(3);
+    expect(deleted).toEqual(['ua']);
+
+    deleted.length = 0; appleStatus = 500;
+    const bad = await call(h, CONFIRM, 'apple');
+    expect(bad.status).toBe(502);
+    expect(bad.body.error).toMatch(/nothing was removed/i);
+    expect(deleted).toEqual([]);
+  });
+
+  it('never calls Apple for a login that is not from Apple, and still removes an Apple login with no stored token', async () => {
+    const h = await boot(FN);
+    appleToken = 'r_other';
+    expect((await call(h, CONFIRM, 'good')).status).toBe(200);
+    expect(stripeCalls.some((c) => String(c.path).startsWith('APPLE'))).toBe(false);
+    appleToken = '';
+    expect((await call(h, CONFIRM, 'apple')).status).toBe(200);
+    expect(stripeCalls.some((c) => String(c.path).startsWith('APPLE'))).toBe(false);
+  });
+
+  it('works for a login that never joined Language Dash (there is just no data to delete)', async () => {
+    isMember = false;
+    const h = await boot(FN);
+    expect((await call(h, CONFIRM, 'good')).status).toBe(200);
+    expect(deleted).toEqual(['u1']);
+  });
+});
+
+
+describe('ld-iap-verify: phone-store purchases', () => {
   const NOWS = () => Math.floor(Date.now() / 1000);
   const call = async (h, body, jwt) => {
     const res = await h(post(body, jwt ? { authorization: 'Bearer ' + jwt } : {}));
@@ -295,7 +416,7 @@ describe('iap-verify: phone-store purchases', () => {
   const signedTx = (payload) => 'h.' + Buffer.from(JSON.stringify(payload)).toString('base64url') + '.s';
 
   it('needs a real account, and a purchase it understands', async () => {
-    const h = await boot('../../supabase/functions/iap-verify/index.js');
+    const h = await boot('../../supabase/functions/ld-iap-verify/index.js');
     const ok = { platform: 'android', product_id: 'languagedash_pro_monthly', token: 'purchase-token-123' };
     expect((await call(h, ok)).status).toBe(401);
     expect((await call(h, ok, 'guest')).status).toBe(403);
@@ -306,7 +427,7 @@ describe('iap-verify: phone-store purchases', () => {
   });
 
   it('Google Play: a live subscription is attached to the account and runs to its end plus the grace', async () => {
-    const h = await boot('../../supabase/functions/iap-verify/index.js');
+    const h = await boot('../../supabase/functions/ld-iap-verify/index.js');
     const end = NOWS() + 20 * 86400;
     storeReply = { status: 200, body: { subscriptionState: 'SUBSCRIPTION_STATE_ACTIVE', lineItems: [{ productId: 'languagedash_pro_monthly', expiryTime: new Date(end * 1000).toISOString() }] } };
     const r = await call(h, { platform: 'android', product_id: 'languagedash_pro_monthly', token: 'purchase-token-123' }, 'good');
@@ -324,7 +445,7 @@ describe('iap-verify: phone-store purchases', () => {
   });
 
   it('Google Play: a refunded item is taken back, an unknown purchase gives nothing', async () => {
-    const h = await boot('../../supabase/functions/iap-verify/index.js');
+    const h = await boot('../../supabase/functions/ld-iap-verify/index.js');
     storeReply = { status: 200, body: { purchaseState: 1 } };
     const r = await call(h, { platform: 'android', product_id: 'languagedash_item_trail_lanterns', token: 'purchase-token-456' }, 'good');
     expect(r.body).toMatchObject({ ok: true, valid: false, revoked: true, granted: false });
@@ -337,7 +458,7 @@ describe('iap-verify: phone-store purchases', () => {
   });
 
   it('App Store: a valid transaction is attached; the sandbox is tried when production does not know it', async () => {
-    const h = await boot('../../supabase/functions/iap-verify/index.js');
+    const h = await boot('../../supabase/functions/ld-iap-verify/index.js');
     storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.example.app', productId: 'languagedash_pro_lifetime', type: 'Non-Consumable', originalTransactionId: '555' }) }, sandboxOnly: true };
     const r = await call(h, { platform: 'ios', product_id: 'languagedash_pro_lifetime', token: '2000000123456' }, 'good');
     expect(r.body).toMatchObject({ ok: true, valid: true, granted: true });
@@ -349,7 +470,7 @@ describe('iap-verify: phone-store purchases', () => {
   });
 
   it('refuses a transaction for another app or another product, and one that another account already holds', async () => {
-    const h = await boot('../../supabase/functions/iap-verify/index.js');
+    const h = await boot('../../supabase/functions/ld-iap-verify/index.js');
     storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.someone.else', productId: 'languagedash_pro_lifetime', type: 'Non-Consumable', originalTransactionId: '1' }) } };
     expect((await call(h, { platform: 'ios', product_id: 'languagedash_pro_lifetime', token: '2000000123456' }, 'good')).body).toMatchObject({ ok: true, valid: false, granted: false });
     storeReply = { status: 200, body: { signedTransactionInfo: signedTx({ bundleId: 'com.example.app', productId: 'languagedash_item_trail_lanterns', type: 'Non-Consumable', originalTransactionId: '2' }) } };
@@ -363,7 +484,7 @@ describe('iap-verify: phone-store purchases', () => {
   });
 
   it('a store that cannot be reached takes nothing away and says to try again', async () => {
-    const h = await boot('../../supabase/functions/iap-verify/index.js');
+    const h = await boot('../../supabase/functions/ld-iap-verify/index.js');
     storeReply = { status: 500, body: {} };
     const r = await call(h, { platform: 'android', product_id: 'languagedash_pro_monthly', token: 'purchase-token-123' }, 'good');
     expect(r.status).toBe(502);

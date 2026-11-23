@@ -245,7 +245,9 @@ describe('emailed sign-in links', () => {
 describe('keeping the Sign in with Apple token for account deletion', () => {
   let listener;
   let invoked;
+  let memberAnswer;
   async function bootApple() {
+    memberAnswer = memberAnswer || { member: true, joined_at: 'x' };
     vi.resetModules();
     vi.stubEnv('VITE_SUPABASE_URL', 'https://x.supabase.co');
     vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'anon');
@@ -255,12 +257,25 @@ describe('keeping the Sign in with Apple token for account deletion', () => {
         onAuthStateChange: (fn) => { listener = fn; return { data: { subscription: { unsubscribe() {} } } }; },
         getSession: async () => ({ data: { session: { user: { id: 'u1', email: 'a@b.co' } } } })
       },
+      rpc: async (name) => ({ data: name === 'join_language_dash' ? { member: true, joined_at: 'y' } : memberAnswer, error: null }),
       functions: { invoke: async (name, o) => { invoked.push(o.body); return { data: { ok: true } }; } }
     }) };
     const { leaderboard } = await import('../../js/leaderboard.js');
     await leaderboard.init();
+    return leaderboard;
   }
-  afterEach(() => { vi.unstubAllEnvs(); delete window.supabase; });
+  afterEach(() => { vi.unstubAllEnvs(); delete window.supabase; memberAnswer = null; });
+
+  it('keeps it in memory for a login that is not a Language Dash member yet, and sends it once they join (nothing reaches our functions before)', async () => {
+    memberAnswer = { member: false, joined_at: null };
+    const lb = await bootApple();
+    listener('SIGNED_IN', { user: { id: 'u1', email: 'a@b.co', app_metadata: { provider: 'apple' } }, provider_refresh_token: 'r_apple_token_2' });
+    await new Promise((r) => setTimeout(r, 10));
+    expect(invoked).toEqual([]);
+    await lb.joinLanguageDash();
+    await new Promise((r) => setTimeout(r, 10));
+    expect(invoked).toEqual([{ action: 'apple_token', refresh_token: 'r_apple_token_2' }]);
+  });
 
   it('sends it to the server at sign-in, only for an Apple login, and never keeps it in the page', async () => {
     await bootApple();

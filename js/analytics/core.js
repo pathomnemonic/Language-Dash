@@ -21,6 +21,7 @@ export var SESSION_GAP_MS = 30 * 60 * 1000;
 var K = {
   id: 'ld_an_id', consent: 'ld_an_consent', queue: 'ld_an_q', once: 'ld_an_once', seq: 'ld_an_seq', install: 'ld_an_install', sessions: 'ld_an_sessions'
 };
+var DB_SCHEMA = 'language_dash';
 var MAX_QUEUE = 500;
 var BATCH = 40;
 var MAX_AGE_MS = 5 * 24 * 3600 * 1000;
@@ -308,7 +309,8 @@ export function createAnalytics(deps) {
     if (!ep || !fetchFn) return Promise.resolve({ ok: false, offline: true });
     var opts = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', apikey: ep.key, Authorization: 'Bearer ' + ep.key },
+      // (this app's tables and functions live in the language_dash schema of the shared project: PostgREST picks the schema from these headers)
+      headers: { 'Content-Type': 'application/json', apikey: ep.key, Authorization: 'Bearer ' + ep.key, 'Content-Profile': DB_SCHEMA, 'Accept-Profile': DB_SCHEMA },
       body: JSON.stringify(body),
       keepalive: !!keepalive
     };

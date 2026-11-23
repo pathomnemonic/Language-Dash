@@ -1,15 +1,15 @@
-// iap-verify — checks a phone-store purchase (Google Play or the App Store) and attaches it to the signed-in account.
+// ld-iap-verify — checks a phone-store purchase (Google Play or the App Store) and attaches it to the signed-in account.
 //
 // The app sends { platform: 'android'|'ios', product_id, token } with the player's sign-in:
 //   android: token is the purchase token; ios: token is the transaction id.
 // The function asks Google / Apple whether the purchase is real, belongs it to this account (one purchase, one account),
 // and grants or takes back Pro or the item in the database. It only ever trusts what Google or Apple answer.
 //
-// Deploy:  supabase functions deploy iap-verify
-// Secrets (set the ones for the stores you sell in):
-//   Google Play:  GOOGLE_PLAY_PACKAGE (com.pathomnemonic.languagedash), GOOGLE_SA_EMAIL, GOOGLE_SA_PRIVATE_KEY
+// Deploy:  supabase functions deploy ld-iap-verify
+// Secrets (set the ones for the stores you sell in; ONLY the LD_ names are read, with no fallback to an unprefixed name):
+//   Google Play:  LD_GOOGLE_PLAY_PACKAGE (com.pathomnemonic.languagedash), LD_GOOGLE_SA_EMAIL, LD_GOOGLE_SA_PRIVATE_KEY
 //                 (a service account added in Play Console → Users and permissions with "View financial data" and "Manage orders")
-//   App Store:    APPLE_BUNDLE_ID (com.pathomnemonic.languagedash), APPLE_IAP_ISSUER_ID, APPLE_IAP_KEY_ID, APPLE_IAP_PRIVATE_KEY
+//   App Store:    LD_APPLE_BUNDLE_ID (com.pathomnemonic.languagedash), LD_APPLE_IAP_ISSUER_ID, LD_APPLE_IAP_KEY_ID, LD_APPLE_IAP_PRIVATE_KEY
 //                 (an In-App Purchase key from App Store Connect → Users and Access → Integrations → In-App Purchase)
 // The app only calls this when built with VITE_IAP_VERIFY=1.
 
@@ -20,8 +20,8 @@ import {
 } from '../_shared/storeverify.js';
 
 var env = {};
-['GOOGLE_PLAY_PACKAGE', 'GOOGLE_SA_EMAIL', 'GOOGLE_SA_PRIVATE_KEY', 'APPLE_BUNDLE_ID', 'APPLE_IAP_ISSUER_ID', 'APPLE_IAP_KEY_ID', 'APPLE_IAP_PRIVATE_KEY'].forEach(function (k) { env[k] = Deno.env.get(k) || ''; });
-var admin = createClient(Deno.env.get('SUPABASE_URL') || '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '', { auth: { persistSession: false } });
+['GOOGLE_PLAY_PACKAGE', 'GOOGLE_SA_EMAIL', 'GOOGLE_SA_PRIVATE_KEY', 'APPLE_BUNDLE_ID', 'APPLE_IAP_ISSUER_ID', 'APPLE_IAP_KEY_ID', 'APPLE_IAP_PRIVATE_KEY'].forEach(function (k) { env[k] = Deno.env.get('LD_' + k) || ''; }); // (read as LD_<name>; the shared modules use the short names)
+var admin = createClient(Deno.env.get('SUPABASE_URL') || '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '', { db: { schema: 'language_dash' }, auth: { persistSession: false } });
 
 var CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -70,6 +70,9 @@ Deno.serve(async function (req) {
     if (!user) return json({ error: 'Sign in first.' }, 401);
     if (user.is_anonymous || !user.email) return json({ error: 'Create an account first, so what you bought stays with you.' }, 403);
 
+    var member = await admin.from('members').select('user_id').eq('user_id', user.id).maybeSingle();
+    if (!member || !member.data) return json({ error: 'Create your Language Dash account first (Friends → Account).', code: 'not_a_member' }, 403);
+
     var platform = body.platform === 'ios' ? 'ios' : body.platform === 'android' ? 'android' : '';
     var productId = String(body.product_id || '');
     var token = String(body.token || '');
@@ -87,23 +90,23 @@ Deno.serve(async function (req) {
         if (check && check.productId && check.productId !== productId) return json({ error: 'That purchase is for a different product.' }, 400);
       }
     } catch (e) {
-      console.error('iap-verify: store check failed', e && e.message);
+      console.error('ld-iap-verify: store check failed', e && e.message);
       return json({ error: 'Could not check with the store just now. Please try again.' }, 502); // (nothing is taken away on an error)
     }
     if (!check || check.unknown || !key) return json({ ok: true, valid: false, granted: false }); // (the store does not know this purchase: nothing to give)
 
     var claim = await admin.rpc('pro_store_claim', { p_platform: platform, p_key: key, p_user: user.id, p_product: productId, p_expires: check.expiresAt ? new Date(check.expiresAt * 1000).toISOString() : null, p_revoked: !!check.revoked });
-    if (claim.error) { console.error('iap-verify: claim failed', claim.error.message); return json({ error: 'Could not save the purchase.' }, 500); }
+    if (claim.error) { console.error('ld-iap-verify: claim failed', claim.error.message); return json({ error: 'Could not save the purchase.' }, 500); }
     if (claim.data === 'other_account') return json({ error: 'That purchase already belongs to another account.' }, 409);
 
     var action = grantFor(product, check, user.id, key, nowSec);
     if (action) {
       var done = await admin.rpc(action.rpc, action.args);
-      if (done.error) { console.error('iap-verify: grant failed', action.rpc, done.error.message); return json({ error: 'Could not save the purchase.' }, 500); }
+      if (done.error) { console.error('ld-iap-verify: grant failed', action.rpc, done.error.message); return json({ error: 'Could not save the purchase.' }, 500); }
     }
     return json({ ok: true, valid: !!check.valid, revoked: !!check.revoked, pending: !!check.pending, granted: !!(action && !check.revoked && check.valid) });
   } catch (e) {
-    console.error('iap-verify failed', e && e.message);
+    console.error('ld-iap-verify failed', e && e.message);
     return json({ error: 'Something went wrong.' }, 400);
   }
 });

@@ -27,9 +27,11 @@ Otherwise nothing is limited and no Pro screen shows. So a local build, a store 
 
 **Google Play:** Monetize → Subscriptions (one subscription "Language Dash Pro" with three base plans yearly / 3-month / monthly; no store trial offer, the free trial is the account's, see below), an In-app product for Lifetime. **Apple:** one subscription group "Language Dash Pro" holding the three subscriptions (no introductory offer), a non-consumable in-app purchase for Lifetime; accept the Paid Applications agreement, tax and bank details; attach the purchases to the version you submit and add a review screenshot of the paywall. Both stores need a build uploaded (internal track / TestFlight) before purchases work.
 
+> **Shared project.** Language Dash shares one Supabase project with the owner's other apps. Everything here lives in the `language_dash` schema, the functions are named `ld-*`, every secret is `LD_`-prefixed, and Pro belongs to a Language Dash *member* (someone who created their Language Dash account), never to the bare login. See [BACKEND_AND_PAYMENTS.md](BACKEND_AND_PAYMENTS.md) for the whole picture and the full secret list.
+
 ## The free trial (every account)
 
-Everyone who signs in with an account (not a guest) gets **7 days of Pro, once, with no card and nothing to cancel**. The app starts it by itself the first time it sees the account has not had one (`start_my_trial()` in `database/pro.sql`; one row per account in `pro_trials`), on the website and in the phone apps alike, and only once Pro is live. Guests do not get it: it is the reason to create an account. When it ends the player goes back to the free version (300 cards) and can subscribe. Because the trial is the account's, do not also add a trial to the store subscriptions or to Stripe.
+Everyone who has a Language Dash account (signed in with a login and created their Language Dash account; not a guest) gets **7 days of Pro, once, with no card and nothing to cancel**. The app starts it by itself the first time it sees the account has not had one (`start_my_trial()` in `database/pro.sql`; one row per account in `pro_trials`), on the website and in the phone apps alike, and only once Pro is live. Guests do not get it: it is the reason to create an account. When it ends the player goes back to the free version (300 cards) and can subscribe. Because the trial is the account's, do not also add a trial to the store subscriptions or to Stripe.
 
 ## Web payments, codes and seats
 
@@ -37,22 +39,23 @@ On the website the paywall shows your real Stripe prices and sends the player to
 
 **One-time setup (about an hour):**
 
-1. **Database.** Run `database/pro.sql` in the Supabase SQL editor (safe to run again), then run `database/lockdown.sql` after it. **This is required**: Supabase lets every signed-in player call new functions by default, so until `lockdown.sql` (or the revokes at the end of each file) has run, the functions that grant Pro could be called by anyone.
-2. **Stripe products.** In Stripe (start in Test mode) create four Products with a Price each, matching the table above: yearly (recurring every year), 3-month pass (recurring every 3 months), monthly (recurring monthly), Lifetime (one time). Do not add a free trial in Stripe: the trial is built into accounts. Copy each **Price id** (`price_...`). The customer portal (where subscribers cancel) needs no setup: the function creates its own settings the first time someone taps Manage subscription, unless you have saved your own in the Dashboard.
-3. **Deploy the two functions** (needs the [Supabase CLI](https://supabase.com/docs/guides/cli), logged in and linked to your project):
+1. **Database.** The shared-project migration (`supabase/migrations/`, reviewed on a scratch project first; see `docs/SHARED-PROJECT-MIGRATION.md`) creates the `language_dash` schema including the Pro tables and functions and the lockdown grants. **This is required**: Supabase lets every signed-in player call new functions by default, so the lockdown part must have run before the functions that grant Pro are safe.
+2. **Stripe products.** Language Dash needs its own Stripe Products, Prices and webhook endpoint (the Stripe account may be shared with another app; nothing is shared except the account). In Stripe (start in Test mode) create four Products with a Price each, matching the table above: yearly (recurring every year), 3-month pass (recurring every 3 months), monthly (recurring monthly), Lifetime (one time). Do not add a free trial in Stripe: the trial is built into accounts. Copy each **Price id** (`price_...`). The customer portal (where subscribers cancel) needs no setup: the function creates its own settings the first time someone taps Manage subscription, unless you have saved your own in the Dashboard.
+3. **Deploy the functions** (needs the [Supabase CLI](https://supabase.com/docs/guides/cli), logged in and linked to your project):
    ```
-   supabase functions deploy pro-checkout --use-api
-   supabase functions deploy stripe-webhook --use-api
+   supabase functions deploy ld-pro-checkout --use-api
+   supabase functions deploy ld-stripe-webhook --use-api
+   supabase functions deploy ld-remove-signin --use-api
    ```
 4. **Function secrets** (Supabase dashboard → Edge Functions → Secrets, or `supabase secrets set ...`):
-   `STRIPE_SECRET_KEY` (Stripe → Developers → API keys), `SITE_URL` (your site address with no slash, e.g. `https://pathomnemonic.github.io/Language-Dash`), and one Price id each: `STRIPE_PRICE_YEARLY`, `STRIPE_PRICE_PASS3M`, `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_LIFETIME` (leave out any you do not want to sell).
-5. **Webhook.** In Stripe → Developers → Webhooks add the endpoint `https://<your-project>.supabase.co/functions/v1/stripe-webhook`, choose the events `checkout.session.completed`, `invoice.paid` and `charge.refunded`, and save its **Signing secret** as the function secret `STRIPE_WEBHOOK_SECRET`.
+   `LD_STRIPE_SECRET_KEY` (Stripe → Developers → API keys), `LD_SITE_URL` (your site address with no slash, e.g. `https://pathomnemonic.github.io/Language-Dash`), and one Price id each: `LD_STRIPE_PRICE_YEARLY`, `LD_STRIPE_PRICE_PASS3M`, `LD_STRIPE_PRICE_MONTHLY`, `LD_STRIPE_PRICE_LIFETIME` (leave out any you do not want to sell).
+5. **Webhook.** In Stripe → Developers → Webhooks add the endpoint `https://<your-project>.supabase.co/functions/v1/ld-stripe-webhook`, choose the events `checkout.session.completed`, `invoice.paid` and `charge.refunded`, and save its **Signing secret** as the function secret `LD_STRIPE_WEBHOOK_SECRET`. Everything Language Dash creates in Stripe carries `metadata.app = language_dash`, and the webhook ignores any event that does not, so another app's endpoint and this one can live in the same Stripe account without touching each other's customers.
 6. **Switch it on.** In GitHub add the repository variable `VITE_PRO_WEB_CHECKOUT` = `1` (Settings → Secrets and variables → Actions → Variables) and re-run the deploy. Until you do, the website behaves as fully free with no Pro screens. (`VITE_SUPABASE_URL` must be set too; it already is for the leaderboard.)
 7. **Test.** With Stripe in Test mode, open the site, tap a locked section → a plan → pay with card `4242 4242 4242 4242` (any future date and CVC). You should land back on the game with "Welcome to Language Dash Pro!". Then switch Stripe to Live mode, swap the live key, Price ids and webhook secret into the function secrets, and you are selling.
 
 Notes: web Pro belongs to an **account**, so a guest is told to create one first (Friends → Account) or they lose it with their browser data. A subscription runs to the end of the paid period plus two days of grace. The same person can also hold Pro from the phone stores; whichever ends last wins. You see everything in Stripe, and who has Pro in the database views `pro_v_active`.
 
-Files: `supabase/functions/pro-checkout` (prices, start checkout, billing portal), `supabase/functions/stripe-webhook`, `supabase/functions/_shared/billing.js` (all the rules, unit-tested in `tests/unit/billing.test.js`), `database/pro.sql`, and in the app `js/pro.js` (`webPlans`, `webBuy`, `webManage`, `waitForWebPayment`) and `js/proui.js` (the website paywall).
+Files: `supabase/functions/ld-pro-checkout` (prices, start checkout, billing portal), `supabase/functions/ld-stripe-webhook`, `supabase/functions/_shared/billing.js` (all the rules, unit-tested in `tests/unit/billing.test.js`), `database/pro.sql`, and in the app `js/pro.js` (`webPlans`, `webBuy`, `webManage`, `waitForWebPayment`) and `js/proui.js` (the website paywall).
 
 The old way, a single Stripe Payment Link in `VITE_PRO_WEB_URL`, still works if you set that instead (no plan choice, no Manage button; you call `pro_grant` yourself or from your own webhook).
 
@@ -130,16 +133,16 @@ money (see "Premium items" below) cannot be taken as the gift.
 - Renewals extend Pro even when they cost nothing (a 100% coupon), and a subscription that arrives without a period end still gets one paid period.
 - Two payment events in either order, or the same one twice, end in the same state; a grant never shortens what someone has.
 - A refunded lifetime takes back only the lifetime (`pro_revoke_plan`), never a subscription or trial held as well.
-- If a payment event never reaches us, the app asks `pro-checkout` (action `sync`) when the server says "no Pro" (at most twice a day, and right after a purchase), which reads the customer's subscriptions and lifetime purchase from Stripe and grants what they hold. One-time purchases now create a Stripe customer so they can be found again.
+- If a payment event never reaches us, the app asks `ld-pro-checkout` (action `sync`) when the server says "no Pro" (at most twice a day, and right after a purchase), which reads the customer's subscriptions and lifetime purchase from Stripe and grants what they hold. One-time purchases now create a Stripe customer so they can be found again.
 - A customer saved while Stripe was in test mode does not break live checkout: it starts fresh.
-- Buying needs a real account (not a guest), checked in the app and in `pro-checkout`.
+- Buying needs a real login that has created its Language Dash account (a member; a guest or a bare login is refused with `not_a_member`), checked in the app and in `ld-pro-checkout`.
 
-After updating: re-run `database/pro.sql`, then `supabase functions deploy pro-checkout` and `stripe-webhook`.
+After updating: apply the new `language_dash` migration, then `supabase functions deploy ld-pro-checkout` and `ld-stripe-webhook`.
 
 
 ## Premium items (real money): switched off for the first release
 
-The items below are built and tested, but their buttons read "Soon" and nothing can be bought until the build sets `VITE_FEATURE_LOCKER_ITEMS=1` (`js/features.js`). The shipped builds (`deploy.yml`, `android.yml`, `codemagic.yaml`) leave it off, so the first release sells only Pro; the CI browser tests build with it on so the feature stays tested. To sell them later: create the store products (table below), do the web backend steps (`pro.sql`, `lockdown.sql`, redeploy `pro-checkout` and `stripe-webhook`), set the variable to `1` in the workflows, and ship an update.
+The items below are built and tested, but their buttons read "Soon" and nothing can be bought until the build sets `VITE_FEATURE_LOCKER_ITEMS=1` (`js/features.js`). The shipped builds (`deploy.yml`, `android.yml`, `codemagic.yaml`) leave it off, so the first release sells only Pro; the CI browser tests build with it on so the feature stays tested. To sell them later: create the store products (table below), do the web backend steps (`pro.sql`, `lockdown.sql`, redeploy `ld-pro-checkout` and `ld-stripe-webhook`), set the variable to `1` in the workflows, and ship an update.
 
 A few Locker items are sold for money only, with a dollar price on the button (`supabase/functions/_shared/premium.js` lists
 them and the prices; the app and the payment function read the same list, so the button and the charge always agree):
@@ -149,12 +152,12 @@ Cells, $0.99). They sort to the bottom of their list, cannot be bought with coin
 Anyone who already owned one, or had reached the level that used to unlock one of the maps, keeps it (a one-time migration).
 Anyone who already owned one before this keeps it.
 
-- **How a purchase works.** On the website, tapping the price twice opens a Stripe Checkout page created by `pro-checkout`
+- **How a purchase works.** On the website, tapping the price twice opens a Stripe Checkout page created by `ld-pro-checkout`
   (action `item`; no per-item setup in Stripe: the amount comes from the catalog). The webhook grants the item
   (`pro_grant_item`, stored in the `pro_items` table) and `get_my_pro()` lists the member's items, which the app merges
   into their Locker on every refresh. In the phone apps each item is a one-time store product named
   `languagedash_item_<item id>` (create them in Play Console / App Store Connect); until the store lists one, its button
-  reads "Soon" and is disabled. On the web, the app first asks `pro-checkout` (action `capabilities`) whether it
+  reads "Soon" and is disabled. On the web, the app first asks `ld-pro-checkout` (action `capabilities`) whether it
   supports items; an older deployment shows "Soon" and nobody is sent to pay for something it cannot deliver. Every tap says
   something (price confirm, sign-in prompt, "coming soon", or an explained failure).
 - **Safety.** A member needs a real account to buy (so the item stays with them), a double purchase is refused, the grant is
@@ -162,7 +165,7 @@ Anyone who already owned one before this keeps it.
   adds items: a failed or empty answer cannot remove one. A full refund takes the item back on the server.
 - **Adding or changing an item.** Edit `premium.js`. A new store product is needed in the apps for each new item.
 
-After updating: re-run `database/pro.sql` (it adds the `pro_items` table), then redeploy `pro-checkout` and `stripe-webhook`.
+After updating: apply the new `language_dash` migration (it adds the `pro_items` table), then redeploy `ld-pro-checkout` and `ld-stripe-webhook`.
 
 
 ## Redeem codes
@@ -190,7 +193,7 @@ replacing it. Codes can have an end date.
 
 ## Safety updates (read before going live)
 
-After updating the code, run the database files again in order (`schema.sql`, `policies.sql`, any of `cohorts.sql`, `discovery.sql`, `pro.sql`, `analytics*.sql`), then **`lockdown.sql`**, then **`audit.sql`** (it must return no rows), and redeploy `pro-checkout` and `stripe-webhook`. In Stripe add the webhook events `checkout.session.async_payment_succeeded`, `charge.dispute.created`, `charge.dispute.updated` and `charge.dispute.closed` to the existing ones. See `docs/SECURITY.md` for the full checklist.
+After updating the code, apply the `language_dash` migration (it ends with the lockdown grants and the audit, which must return no rows) and redeploy `ld-pro-checkout` and `ld-stripe-webhook`. In Stripe add the webhook events `checkout.session.async_payment_succeeded`, `charge.dispute.created`, `charge.dispute.updated` and `charge.dispute.closed` to the existing ones. See `docs/SECURITY.md` for the full checklist.
 
 What changed for payments:
 - Anything that grants Pro or an item can no longer be called by a player (it could be, on Supabase's default settings).
@@ -220,13 +223,13 @@ Create each of these in **Play Console → Monetize → In-app products** and **
 
 ## Checking phone-store purchases on the server (optional, recommended)
 
-Without it, a phone purchase is known only to the phone. With it (`supabase/functions/iap-verify`), the purchase is confirmed with Google Play / the App Store, attached to the player's account (so it shows on the website and on a new phone), a refund is noticed, and one purchase cannot be used on several accounts.
+Without it, a phone purchase is known only to the phone. With it (`supabase/functions/ld-iap-verify`), the purchase is confirmed with Google Play / the App Store, attached to the player's account (so it shows on the website and on a new phone), a refund is noticed, and one purchase cannot be used on several accounts.
 
-1. Deploy it: `supabase functions deploy iap-verify`.
-2. Secrets. Google Play: `GOOGLE_PLAY_PACKAGE` (`com.pathomnemonic.languagedash`), `GOOGLE_SA_EMAIL`, `GOOGLE_SA_PRIVATE_KEY` (a service account added in Play Console → Users and permissions with "View financial data" and "Manage orders and subscriptions"). App Store: `APPLE_BUNDLE_ID`, `APPLE_IAP_ISSUER_ID`, `APPLE_IAP_KEY_ID`, `APPLE_IAP_PRIVATE_KEY` (App Store Connect → Users and Access → Integrations → In-App Purchase key).
-3. Re-run `database/pro.sql` and `database/lockdown.sql`.
+1. Deploy it: `supabase functions deploy ld-iap-verify`.
+2. Secrets. Google Play: `LD_GOOGLE_PLAY_PACKAGE` (`com.pathomnemonic.languagedash`), `LD_GOOGLE_SA_EMAIL`, `LD_GOOGLE_SA_PRIVATE_KEY` (a service account added in Play Console → Users and permissions with "View financial data" and "Manage orders and subscriptions"). App Store: `LD_APPLE_BUNDLE_ID`, `LD_APPLE_IAP_ISSUER_ID`, `LD_APPLE_IAP_KEY_ID`, `LD_APPLE_IAP_PRIVATE_KEY` (App Store Connect → Users and Access → Integrations → In-App Purchase key).
+3. (The `language_dash` migration already includes the Pro functions and their grants.)
 4. Build the apps with `VITE_IAP_VERIFY=1` (and test with sandbox purchases first: `docs/PAYMENT-CHECKS.md` §4). If the function or a secret is missing, the app behaves exactly as before.
 
 ## Sign in with Apple and account deletion
 
-Apple requires that deleting an account also revokes the Sign in with Apple login. The app keeps the Apple token server-side only (table `apple_tokens`) and `pro-checkout` revokes it on deletion. Set the secrets `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY` (the .p8 key text, with a "Sign in with Apple" capability) and `APPLE_CLIENT_ID` (the same Services ID that Supabase's Apple provider uses). Without them the account is still deleted (the function logs that it could not revoke), so set them before an iOS launch.
+Apple requires that deleting an account also revokes the Sign in with Apple login. The app keeps the Apple token server-side only (table `apple_tokens`, kept only once the player is a Language Dash member) and `ld-remove-signin` revokes it when the player removes their sign-in. Deleting only the Language Dash account (`delete_my_ld_data`) keeps the login, so there is nothing to revoke then. Set the secrets `LD_APPLE_TEAM_ID`, `LD_APPLE_KEY_ID`, `LD_APPLE_PRIVATE_KEY` (the .p8 key text, with a "Sign in with Apple" capability) and `LD_APPLE_CLIENT_ID` (the same Services ID that Supabase's Apple provider uses). If Apple cannot be reached, nothing is removed. Without the secrets the sign-in is still removed (the function logs that it could not revoke), so set them before an iOS launch.

@@ -99,13 +99,13 @@ Everything player-controlled uses `createElement({text})`/`textContent` (`js/dom
 
 Only relevant when a backend is configured; with no Supabase project none of this is reachable (the preview has none).
 
-- `stripe-webhook`: signature verified first (constant-time compare, 300 s window); refunds use idempotency keys (`languagedash-duplicate-<pi>`).
-- `pro-checkout`: price from server; identity from bearer token via `admin.auth.getUser`; anonymous/email-less users refused for money flows (`:~104`); item ids allow-listed (`isPremiumItem`); `plan` through `productFor`; item display name capped at 80 chars (`_shared/billing.js:195`); Apple token length 10-4000; delete-account cancels Stripe subscriptions and revokes Apple first. `Access-Control-Allow-Origin: *` is acceptable (bearer token, no cookies).
-- `iap-verify`: platform/product allow-list, token length limits, store verified server-side, one purchase to one account.
+- `ld-stripe-webhook`: signature verified first (constant-time compare, 300 s window); refunds use idempotency keys (`languagedash-duplicate-<pi>`).
+- `ld-pro-checkout`: price from server; identity from bearer token via `admin.auth.getUser`; anonymous/email-less users refused for money flows (`:~104`); item ids allow-listed (`isPremiumItem`); `plan` through `productFor`; item display name capped at 80 chars (`_shared/billing.js:195`); Apple token length 10-4000; delete-account cancels Stripe subscriptions and revokes Apple first. `Access-Control-Allow-Origin: *` is acceptable (bearer token, no cookies).
+- `ld-iap-verify`: platform/product allow-list, token length limits, store verified server-side, one purchase to one account.
 - All three use `verify_jwt = false` on purpose (`supabase/config.toml`); each does its own check.
 - (Low) **No rate limiting** in the functions. The unauthenticated `prices` action is cached 5 minutes, but `checkout`/`item`/`sync` create Stripe calls per request from any real account. Add a per-user throttle (a small table or Supabase's built-in function rate limits) before launch with real traffic.
-- (Low) The catch-all returns `e.message` to the client with status 400 (`pro-checkout/index.js:264`), which can pass Stripe error text through. Return a generic message and log the detail.
-- (Info) `iap-verify` decodes the Apple JWS without verifying the signature; safe only because the JWS is fetched from Apple over TLS. If it ever accepts a client-sent JWS, add x5c chain verification first.
+- (Low) The catch-all returns `e.message` to the client with status 400 (`ld-pro-checkout/index.js:264`), which can pass Stripe error text through. Return a generic message and log the detail.
+- (Info) `ld-iap-verify` decodes the Apple JWS without verifying the signature; safe only because the JWS is fetched from Apple over TLS. If it ever accepts a client-sent JWS, add x5c chain verification first.
 - Database SQL (`database/*.sql`) was inherited unchanged from Dx Dash and not re-audited here; run `database/audit.sql` (must return no rows) on the new Language Dash project, as `docs/SECURITY.md` says. `database/schema.sql`, `policies.sql`, `pro.sql`, `analytics.sql`, `lockdown.sql`, `audit.sql` still mention "buzzword/dx" in comments or identifiers; harmless.
 
 ## I. Android
@@ -128,7 +128,7 @@ Only relevant when a backend is configured; with no Supabase project none of thi
 
 1. Hosting: Pages cannot set security headers (C). Accept framing or move behind Cloudflare/Netlify.
 2. `allowBackup` (I).
-3. Rate limiting and generic errors in `pro-checkout` before real traffic (H).
+3. Rate limiting and generic errors in `ld-pro-checkout` before real traffic (H).
 4. Schedule the risky upgrades: three, sql.js, peerjs, playwright, vitest 3.2.7.
 5. Redeploy the three edge functions and run `npx cap sync` after merging; run `database/audit.sql` on the new project.
 6. Add the Versus privacy line (G) and decide whether to lengthen room codes.

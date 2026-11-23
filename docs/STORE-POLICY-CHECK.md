@@ -22,7 +22,7 @@ Date: 2026-10-13. Written from the current policy structure as used in the Dx Da
 ## What the app collects (for the labels)
 
 - **No backend configured (the preview, and any build without `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`):** nothing leaves the device. Accounts, friends, leaderboards, Pro and paid Locker items are hidden (`js/features.js:48`, `FEATURES.backend`). Progress, settings and custom cards are in local storage. Versus (room code) still works: it connects the two devices through the public PeerJS broker, which sees both IP addresses (and the opponent sees the IP and display name).
-- **Backend configured:** account id (guests get an anonymous one), email (only if the player creates an account, or via Google/Apple/Microsoft), display name/avatar/scores, friend/group/feed records, a cloud save, reports and feedback, optional anonymous usage statistics (random install id, asked on first launch, off for DNT/GPC), optional crash reports (off by default).
+- **Backend configured** (a Supabase project shared with the owner's other apps; Language Dash data is in its own schema `language_dash`, and a login becomes a Language Dash account only when the player chooses): account id (guests get an anonymous one), email (only if the player creates an account, or via Google/Apple/Microsoft), display name/avatar/scores, friend/group/feed records, a cloud save, reports and feedback, optional anonymous usage statistics (random install id, asked on first launch, off for DNT/GPC), optional crash reports (off by default).
 - Text-to-speech uses the device's own engine (`window.speechSynthesis` or the Capacitor TTS plugin). No audio is recorded or uploaded. No microphone.
 
 `store/google-play/policy-answers.md` and `store/app-store/listing.md` (App Privacy table) match this and `public/privacy.html`.
@@ -67,11 +67,11 @@ Date: 2026-10-13. Written from the current policy structure as used in the Dx Da
 
 ## Privacy policy, terms, deletion page
 
-- All three say Language Dash; links between them work; the mailto is the only external link. Dates: privacy 9 Oct 2026, terms 9 Oct 2026, delete-account 2 Oct 2026 (bump if edited).
+- All three say Language Dash; links between them work; the mailto is the only external link. Dates: privacy, terms and delete-account 23 Nov 2026 (bump if edited; all three now describe the shared project and the two deletion actions).
 - Accurate for a backend build. For a no-backend build it is still true (it says nothing leaves the device unless online features are used), but it describes Pro/Stripe/Supabase/Apple sign-in features that the build will not show. Acceptable; Play wants the policy to cover everything the app might do.
 - Missing: an age statement in the terms (item 1), a line that text-to-speech uses the device's speech engine (no audio sent), and that notification reminders are local. Add three sentences.
 - Contrast on the three pages in light mode was failing axe (`.meta` line); fixed in this pass (`#4f587a`).
-- Delete-account page matches the in-app path (Friends > Account) and offers an email route; required by both stores once accounts exist. In a no-backend build there is no account to delete; Play still wants the URL if the app declares accounts, so keep the page live.
+- Delete-account page matches the in-app paths (Friends > Account: Delete my Language Dash account, Remove my sign-in (all apps)) and offers an email route; required by both stores once accounts exist. In a no-backend build there is no account to delete; Play still wants the URL if the app declares accounts, so keep the page live.
 
 ## Fixed in this pass
 

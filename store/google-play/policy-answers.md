@@ -16,7 +16,7 @@ Play Console → **Policy and programs → App content**. Answer each item as be
 Does your app collect or share any of the required user data types? **Yes** (only if the player uses the optional online features).
 
 Is all of the user data collected by your app encrypted in transit? **Yes**.
-Do you provide a way for users to request that their data be deleted? **Yes.** In-app: Friends → Account → Delete my account. Web link to paste: `https://pathomnemonic.github.io/Language-Dash/delete-account.html`
+Do you provide a way for users to request that their data be deleted? **Yes.** In-app (two separate actions): Friends → Account → **Delete my Language Dash account** (removes the app's data, keeps the login) and **Remove my sign-in (all apps)** (typed confirmation; removes the login every app of the developer shares). Web link to paste: `https://pathomnemonic.github.io/Language-Dash/delete-account.html`
 
 | Data type | Collected | Shared | Optional | Why | 
 |---|---|---|---|---|
@@ -33,9 +33,9 @@ Do you provide a way for users to request that their data be deleted? **Yes.** I
 | App info and performance → **Diagnostics** | Yes | No | **Yes (same switch)** | Analytics (bug fixing) |
 
 Everything else (location, contacts, photos, files, financial, health, messages, audio, web browsing, search history, installed apps): **not collected**.
-"Shared" is **No** for everything except the live-multiplayer network address: Supabase is a service provider that hosts the data for us, which Google does not count as sharing.
+"Shared" is **No** for everything except the live-multiplayer network address: Supabase is a service provider that hosts the data for us, which Google does not count as sharing. Data is held in a Supabase project that the developer shares between their own apps, with each app's data in its own separate schema and its own membership (a sign-in becomes a Language Dash account only when the player creates one in the app). Do not describe it as a Language Dash-only backend.
 Crash/diagnostic data is not linked to the user (no ID is stored with it).
-Anonymous usage statistics use a random install identifier, are processed by our own Supabase project (not shared with any analytics vendor), and can be deleted by the player (Settings → Data → Delete my analytics data), so answer "Yes" to "data can be deleted" for them as well.
+Anonymous usage statistics use a random install identifier, are processed in the developer's own Supabase project, in the Language Dash schema (not shared with any analytics vendor), and can be deleted by the player (Settings → Data → Delete my analytics data), so answer "Yes" to "data can be deleted" for them as well.
 
 ## Content rating (IARC questionnaire)
 Category: **Reference, News or Educational** (or "Utility, Productivity, Communication, or Other" if Education is not offered). Then answer:
@@ -56,7 +56,7 @@ Target age: **18 and over** (adult learners). Not designed for children, does no
 **No**. Advertising ID: **No** (the app does not use it). Tick that you do not use the advertising ID.
 
 ## Account deletion (new Play requirement)
-Provide: in-app path (Friends → Account → Delete my account) and the web link above.
+Provide: in-app path (Friends → Account → Delete my Language Dash account, and Remove my sign-in (all apps)) and the web link above. The web page explains both.
 
 ## Declarations you may be asked for
 - Permissions: network, vibration, and notifications (the optional daily study reminder, which the player turns on; Android 13+ asks them first). No sensitive permissions.

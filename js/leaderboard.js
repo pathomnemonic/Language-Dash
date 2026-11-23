@@ -63,6 +63,20 @@ var _disposed = false;
 var _authError = null;
 var _authListeners = [];
 var _authSettings = null;
+// Membership: this app shares one Supabase project (and one login) with other apps, but Language Dash data lives only in its
+// own schema and a login becomes a Language Dash member only when the player says so (join_language_dash). Until then every
+// backend feature stays off, exactly as for a guest. null = not asked yet.
+var _member = null;
+var _joinedAt = null;
+var _membershipFor = null;   // the user id the membership answer belongs to
+var _membershipPromise = null;
+var _membershipError = null;
+var _pendingAppleToken = '';
+var DB_SCHEMA = 'language_dash';
+var REMOVE_SIGNIN_CONFIRM = 'REMOVE MY SIGN-IN';
+
+/** A guest has no email (anonymous sign-in). Guests are never members. */
+function isGuestUser(user) { return !user || !!(user.is_anonymous || !user.email); }
 
 // ===== MODE LABELS (for display — UI agent may override) =====
 
@@ -137,6 +151,7 @@ function loadSupabaseLib() {
  */
 function requireSuccess(result, context) {
   if (result.error) {
+    if (isNotMemberError(result.error)) onNotMember();
     var msg = (context || 'Supabase') + ': ' + (result.error.message || result.error.code || 'Unknown error');
     console.warn('[Leaderboard]', msg);
     throw new Error(msg);
@@ -151,6 +166,67 @@ function requireSuccess(result, context) {
  */
 function getUserId() {
   return _userId || null;
+}
+
+/** Set the signed-in user; a different user means the membership answer no longer applies. */
+function setUser(id) {
+  id = id || null;
+  if (id !== _userId) { _member = null; _joinedAt = null; _membershipFor = null; _membershipPromise = null; _membershipError = null; }
+  _userId = id;
+}
+
+/** Signed in AND a Language Dash member: the one gate every backend feature checks. */
+function isMemberNow() {
+  return !!_userId && _member === true && _membershipFor === _userId;
+}
+
+/** Does this error mean "signed in, but not a Language Dash member"? */
+function isNotMemberError(err) {
+  return !!err && (/not_a_member/i.test(String(err.message || '')) || (err.code === '42501' && /member/i.test(String(err.message || ''))));
+}
+
+function tellListeners(event) {
+  setTimeout(function () {
+    _authListeners.slice().forEach(function (fn) {
+      try { fn(event, _session); } catch (e) { console.warn('[Leaderboard] auth listener failed:', e.message); }
+    });
+  }, 0);
+}
+
+function sendPendingAppleToken() {
+  if (!_pendingAppleToken || !isMemberNow()) return;
+  var tok = _pendingAppleToken;
+  _pendingAppleToken = '';
+  leaderboard.proFunction('apple_token', { refresh_token: tok });
+}
+
+function setMember(value, joinedAt, userId) {
+  var was = _member === true;
+  _member = value;
+  _joinedAt = joinedAt || null;
+  _membershipFor = userId || _userId;
+  if (value === true) sendPendingAppleToken();
+  if (value === true && !was) tellListeners('SIGNED_IN');          // (cloud save, friends and the rest start now)
+  if (value === false && was) tellListeners('MEMBERSHIP_REQUIRED');
+}
+
+/** A gated call said "not_a_member": the answer we held is out of date. Ask again, and tell the account screen. */
+function onNotMember() {
+  if (_member !== false) { _member = false; _membershipFor = _userId; tellListeners('MEMBERSHIP_REQUIRED'); }
+  leaderboard.refreshMembership(true);
+}
+
+/** Watch a Postgrest call for the not_a_member error (the chain still works: only `then` is wrapped). */
+function watchMembership(builder) {
+  if (!builder || typeof builder.then !== 'function') return builder;
+  var inner = builder.then.bind(builder);
+  builder.then = function (ok, bad) {
+    return inner(function (res) {
+      if (res && res.error && isNotMemberError(res.error)) onNotMember();
+      return ok ? ok(res) : res;
+    }, bad);
+  };
+  return builder;
 }
 
 /**
@@ -217,17 +293,24 @@ var leaderboard = {
     return loadSupabaseLib().then(function () {
       if (_client) return; // Already initialized
 
-      _client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { storageKey: 'langdash-auth' } }); // (its own session key, never shared with another game on this host)
+      _client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: DB_SCHEMA }, auth: { storageKey: 'langdash-auth' } }); // (its own schema in the shared project; its own session key, never shared with another app on this host)
+      var plainRpc = _client.rpc;
+      if (typeof plainRpc === 'function') _client.rpc = function () { return watchMembership(plainRpc.apply(_client, arguments)); };
 
       // Listen for auth state changes
       var authSubscription = _client.auth.onAuthStateChange(function (event, session) {
         _session = session;
-        _userId = session && session.user ? session.user.id : null;
+        setUser(session && session.user ? session.user.id : null);
+        if (event === 'SIGNED_OUT') { _member = null; }
+        // A real login: find out (deferred, never inside the auth lock) whether it already belongs to Language Dash.
+        if (session && session.user && !isGuestUser(session.user) && event !== 'SIGNED_OUT') setTimeout(function () { leaderboard.refreshMembership(); }, 0);
         // Sign in with Apple hands over a token only now, at sign-in. Keep it (server side, never in the page) so that
         // deleting the account can revoke the Apple login, which the App Store requires.
         if (event === 'SIGNED_IN' && session && session.provider_refresh_token && providerOf(session.user) === 'apple') {
           var appleToken = session.provider_refresh_token;
-          setTimeout(function () { leaderboard.proFunction('apple_token', { refresh_token: appleToken }); }, 0);
+          // (held in memory until this login is a Language Dash member: nothing is sent to our functions before that)
+          _pendingAppleToken = appleToken;
+          setTimeout(function () { sendPendingAppleToken(); }, 0);
         }
         // Deferred so listeners never run inside the Supabase auth lock.
         setTimeout(function () {
@@ -242,15 +325,15 @@ var leaderboard = {
         _subscriptions.push(authSubscription.data.subscription);
       }
 
-      // Check initial session; players are signed in anonymously so that
-      // scores, friends and invites work without a password.
+      // Check the initial session. A visitor with no session stays a local guest: no anonymous account is created
+      // (an anonymous login can never be a member, and the auth pool is shared with other apps).
       return _client.auth.getSession().then(function (result) {
         if (result.data && result.data.session) {
           _session = result.data.session;
-          _userId = result.data.session.user ? result.data.session.user.id : null;
-          return null;
+          setUser(result.data.session.user ? result.data.session.user.id : null);
+          return leaderboard.refreshMembership();
         }
-        return leaderboard.signInAnonymously();
+        return null;
       });
     }).catch(function (e) {
       console.warn('[Leaderboard] Init failed:', e.message);
@@ -271,7 +354,7 @@ var leaderboard = {
       }
       _authError = null;
       _session = res.data.session;
-      _userId = res.data.session.user.id;
+      setUser(res.data.session.user.id);
       return { success: true, error: null };
     }).catch(function (e) {
       _authError = e.message;
@@ -344,8 +427,8 @@ var leaderboard = {
         return { success: false, error: friendlyAuthError(res.error) };
       }
       _session = res.data.session;
-      _userId = res.data.session.user.id;
-      return { success: true, error: null };
+      setUser(res.data.session.user.id);
+      return leaderboard.refreshMembership().then(function (m) { return { success: true, member: !!m.member, error: null }; });
     }).catch(function (e) {
       return { success: false, error: e.message };
     });
@@ -443,8 +526,8 @@ var leaderboard = {
     return _client.auth.signOut().then(function (res) {
       if (res.error) return { success: false, error: res.error.message };
       _session = null;
-      _userId = null;
-      return leaderboard.signInAnonymously();
+      setUser(null);
+      return { success: true, error: null };
     }).catch(function (e) {
       return { success: false, error: e.message };
     });
@@ -500,7 +583,8 @@ var leaderboard = {
         return { success: false, type: link.type, error: friendlyAuthError(res.error) };
       }
       _session = res.data.session;
-      _userId = res.data.session.user.id;
+      setUser(res.data.session.user.id);
+      leaderboard.refreshMembership();
       // Browsers get this event from Supabase itself; a deep link has to announce it
       if (link.type === 'recovery') {
         setTimeout(function () {
@@ -514,35 +598,111 @@ var leaderboard = {
   },
 
   /**
-   * Permanently delete this account and all its online data (scores, friends,
-   * groups, cloud save). The player continues as a fresh guest.
+   * Is this a Language Dash member? (Signed in with a real login AND has created a Language Dash account.)
+   * @returns {boolean}
+   */
+  isMember: function () {
+    return isMemberNow();
+  },
+
+  /**
+   * Ask the database whether this login already has a Language Dash account (my_membership).
+   * A guest never has one and is not asked. Always resolves: { member, joinedAt, error }.
+   * @param {boolean} [force] ask again even if an answer is held
+   */
+  refreshMembership: function (force) {
+    if (!_client || !_userId) return Promise.resolve({ member: false, joinedAt: null, error: null });
+    if (isGuestUser(_session && _session.user)) { setMember(false, null, _userId); return Promise.resolve({ member: false, joinedAt: null, error: null }); }
+    var uid = _userId;
+    if (!force && _membershipFor === uid && _member !== null) return Promise.resolve({ member: _member === true, joinedAt: _joinedAt, error: _membershipError });
+    if (_membershipPromise && _membershipPromise.uid === uid) return _membershipPromise.p;
+    var p = Promise.resolve().then(function () { return _client.rpc('my_membership'); }).then(function (res) {
+      if (uid !== _userId) return { member: false, joinedAt: null, error: null }; // (signed in as someone else meanwhile)
+      if (res.error) {
+        _membershipError = res.error.message || 'Could not check your Language Dash account.';
+        setMember(false, null, uid);
+        return { member: false, joinedAt: null, error: _membershipError };
+      }
+      var d = res.data || {};
+      _membershipError = null;
+      setMember(d.member === true, d.joined_at || null, uid);
+      return { member: d.member === true, joinedAt: d.joined_at || null, error: null };
+    }).catch(function (e) {
+      _membershipError = (e && e.message) || 'Could not check your Language Dash account.';
+      setMember(false, null, uid);
+      return { member: false, joinedAt: null, error: _membershipError };
+    }).then(function (out) { if (_membershipPromise && _membershipPromise.p === p) _membershipPromise = null; return out; });
+    _membershipPromise = { uid: uid, p: p };
+    return p;
+  },
+
+  /**
+   * The deliberate step: create this login's Language Dash account (join_language_dash, safe to repeat).
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
-  deleteAccount: function () {
+  joinLanguageDash: function () {
     if (!_client || !_userId) return Promise.resolve({ success: false, error: 'Not signed in' });
-    // First the payment function: it cancels a subscription that is still billing and then deletes the account. If it is
-    // not there (no web payments on this project) the database does the deletion itself, and refuses while a
-    // subscription is still billing, so nothing keeps charging an account that has gone.
-    // (a guest has bought nothing, so there is nothing to cancel)
-    var viaPayments = (leaderboard.isGuest() ? Promise.resolve({ error: 'not available' }) : leaderboard.proFunction('delete_account')).then(function (r) {
-      if (r && r.ok) return { done: true };
-      var msg = (r && r.error) || '';
-      if (!msg || /not set up|not available|not found|unknown request|failed to send|could not reach/i.test(msg)) return { done: false };
-      return { done: false, error: msg };
+    if (isGuestUser(_session && _session.user)) return Promise.resolve({ success: false, error: 'Sign in with an email or a Google login first.' });
+    var uid = _userId;
+    return Promise.resolve().then(function () { return _client.rpc('join_language_dash'); }).then(function (res) {
+      if (res.error) return { success: false, error: res.error.message || 'Could not create your Language Dash account.' };
+      var d = res.data || {};
+      if (d.member !== true) return { success: false, error: 'Could not create your Language Dash account.' };
+      _membershipError = null;
+      setMember(true, d.joined_at || null, uid);
+      return { success: true, error: null };
+    }).catch(function (e) {
+      return { success: false, error: (e && e.message) || 'Could not create your Language Dash account.' };
     });
-    return viaPayments.then(function (first) {
-      if (first.error) return { error: { message: first.error } };
-      if (first.done) return {};
-      return _client.rpc('delete_my_account');
+  },
+
+  /**
+   * Delete this login's Language Dash account and everything in it (delete_my_ld_data): profile, scores, friends, groups,
+   * cloud save, Pro and items. The LOGIN stays (other apps may use it) and so does progress on this device. Cancel a
+   * subscription that is still billing first (Manage subscription), otherwise it would keep charging an account that is gone.
+   * @returns {Promise<{success: boolean, counts?: object, error: string|null}>}
+   */
+  deleteLanguageDashAccount: function () {
+    if (!_client || !_userId) return Promise.resolve({ success: false, error: 'Not signed in' });
+    var uid = _userId;
+    var cancel = leaderboard.isGuest() ? Promise.resolve({}) : leaderboard.proFunction('cancel_subscription');
+    return cancel.then(function (c) {
+      if (c && c.error && !/not set up|not available|not found|unknown request|failed to send|could not reach|No web subscription/i.test(c.error)) return { error: { message: c.error } };
+      return _client.rpc('delete_my_ld_data');
     }).then(function (res) {
       if (res.error) return { success: false, error: res.error.message };
-      return _client.auth.signOut().catch(function () { return null; }).then(function () {
-        _session = null;
-        _userId = null;
-        return leaderboard.signInAnonymously();
-      });
+      setMember(false, null, uid);
+      return { success: true, counts: res.data || {}, error: null };
     }).catch(function (e) {
       return { success: false, error: e.message };
+    });
+  },
+
+  /**
+   * Remove this sign-in itself, from EVERY app that uses it (ld-remove-signin). It needs the typed confirmation. The server
+   * deletes this app's data, cancels any subscription, revokes an Apple login and deletes the login. Then the player
+   * continues as a fresh guest on this device.
+   * @param {string} confirm must be exactly 'REMOVE MY SIGN-IN'
+   * @returns {Promise<{success: boolean, error: string|null}>}
+   */
+  removeSignIn: function (confirm) {
+    if (!_client || !_userId || leaderboard.isGuest()) return Promise.resolve({ success: false, error: 'Not signed in' });
+    if (confirm !== REMOVE_SIGNIN_CONFIRM) return Promise.resolve({ success: false, error: 'Type ' + REMOVE_SIGNIN_CONFIRM + ' to confirm.' });
+    return _client.functions.invoke('ld-remove-signin', { body: { confirm: confirm } }).then(function (res) {
+      if (res.error) {
+        var ctx = res.error.context;
+        if (ctx && typeof ctx.json === 'function') return ctx.json().then(function (j) { return { error: (j && j.error) || res.error.message }; }, function () { return { error: res.error.message }; });
+        return { error: res.error.message };
+      }
+      return res.data && res.data.ok ? {} : { error: (res.data && res.data.error) || 'Could not remove the sign-in.' };
+    }).then(function (r) {
+      if (r.error) return { success: false, error: r.error };
+      return _client.auth.signOut().catch(function () { return null; }).then(function () {
+        _session = null;
+        setUser(null);
+      }).then(function () { return { success: true, error: null }; });
+    }).catch(function (e) {
+      return { success: false, error: (e && e.message) || 'Could not remove the sign-in.' };
     });
   },
 
@@ -560,7 +720,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, save: ({data: object, runCount: number, updatedAt: string}|null), error: string|null}>}
    */
   pullSave: function () {
-    if (!_client || !_userId) return Promise.resolve({ success: false, save: null, error: 'Not signed in' });
+    if (!_client || !isMemberNow()) return Promise.resolve({ success: false, save: null, error: 'Not signed in' });
     return _client.from('player_saves').select('data, run_count, updated_at').maybeSingle().then(function (res) {
       if (res.error) return { success: false, save: null, error: res.error.message };
       var row = res.data;
@@ -581,7 +741,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, conflict?: boolean, updatedAt?: string, error: string|null}>}
    */
   pushSave: function (data, runCount, base) {
-    if (!_client || !_userId) return Promise.resolve({ success: false, error: 'Not signed in' });
+    if (!_client || !isMemberNow()) return Promise.resolve({ success: false, error: 'Not signed in' });
     return _client.rpc('push_save', { p_data: data, p_run_count: runCount || 0, p_base: base || null }).then(function (res) {
       if (res.error) return { success: false, error: res.error.message };
       if (!res.data) return { success: false, conflict: true, error: null };
@@ -596,7 +756,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, updatedAt?: string, error: string|null}>}
    */
   forceSave: function (data, runCount) {
-    if (!_client || !_userId) return Promise.resolve({ success: false, error: 'Not signed in' });
+    if (!_client || !isMemberNow()) return Promise.resolve({ success: false, error: 'Not signed in' });
     return _client.rpc('force_save', { p_data: data, p_run_count: runCount || 0 }).then(function (res) {
       if (res.error) return { success: false, error: res.error.message };
       return { success: true, updatedAt: res.data, error: null };
@@ -611,7 +771,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, updatedAt?: string|null, error: string|null}>}
    */
   restoreBackupSave: function () {
-    if (!_client || !_userId) return Promise.resolve({ success: false, error: 'Not signed in' });
+    if (!_client || !isMemberNow()) return Promise.resolve({ success: false, error: 'Not signed in' });
     return _client.rpc('restore_backup_save').then(function (res) {
       if (res.error) return { success: false, error: res.error.message };
       return { success: true, updatedAt: res.data || null, error: null };
@@ -622,14 +782,19 @@ var leaderboard = {
 
   /**
    * Describe the current account for the UI.
-   * @returns {{configured: boolean, ready: boolean, authenticated: boolean, anonymous: boolean, email: string, provider: string, pendingEmail: string, error: string|null}}
+   * @returns {{configured: boolean, ready: boolean, authenticated: boolean, signedIn: boolean, member: boolean, membershipKnown: boolean, membershipError: string|null, joinedAt: string|null, anonymous: boolean, email: string, provider: string, pendingEmail: string, error: string|null}}
    */
   getStatus: function () {
     var user = _session && _session.user;
     return {
       configured: isConfigured(),
       ready: !!_client,
-      authenticated: !!_userId,
+      authenticated: isMemberNow(),
+      signedIn: !!_userId,
+      member: isMemberNow(),
+      membershipKnown: _member !== null && _membershipFor === _userId,
+      membershipError: _membershipError,
+      joinedAt: _joinedAt,
       anonymous: !!(user && user.is_anonymous),
       email: (user && user.email) || '',
       provider: providerOf(user),
@@ -645,7 +810,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   ensureProfile: function (profile) {
-    if (!_client || !_userId) return Promise.resolve({ success: false, error: 'Not authenticated' });
+    if (!_client || !isMemberNow()) return Promise.resolve({ success: false, error: 'Not authenticated' });
     profile = profile || {};
     return _client.rpc('upsert_player_profile', {
       p_user_id: _userId,
@@ -673,7 +838,7 @@ var leaderboard = {
     return _client.auth.getSession().then(function (result) {
       if (result.data && result.data.session) {
         _session = result.data.session;
-        _userId = result.data.session.user ? result.data.session.user.id : null;
+        setUser(result.data.session.user ? result.data.session.user.id : null);
         return result.data.session;
       }
       return null;
@@ -683,10 +848,15 @@ var leaderboard = {
   },
 
   /**
-   * Check if the user is authenticated.
+   * May this player use the backend? Signed in AND a Language Dash member (see isSignedIn for the plain sign-in).
    * @returns {boolean}
    */
   isAuthenticated: function () {
+    return isMemberNow();
+  },
+
+  /** Signed in with any session (a guest, or a login that is not a Language Dash member yet). Backend features need isMember(). */
+  isSignedIn: function () {
     return !!_userId;
   },
 
@@ -704,12 +874,12 @@ var leaderboard = {
   },
 
   /**
-   * Ask the web-payments function (supabase/functions/pro-checkout): 'prices', 'checkout' ({plan}) or 'portal'.
+   * Ask the web-payments function (supabase/functions/ld-pro-checkout): 'prices', 'checkout' ({plan}) or 'portal'.
    * Always resolves: { plans } | { url } | { error }.
    */
   proFunction: function (action, extra) {
     if (!_client) return Promise.resolve({ error: 'Web payments are not available right now.' });
-    return _client.functions.invoke('pro-checkout', { body: Object.assign({ action: action }, extra || {}) }).then(function (res) {
+    return _client.functions.invoke('ld-pro-checkout', { body: Object.assign({ action: action }, extra || {}) }).then(function (res) {
       if (res.error) {
         var ctx = res.error.context;
         if (ctx && typeof ctx.json === 'function') return ctx.json().then(function (j) { return { error: (j && j.error) || res.error.message }; }, function () { return { error: res.error.message }; });
@@ -724,8 +894,8 @@ var leaderboard = {
    * Always resolves: { ok, valid, granted } | { error }.
    */
   iapVerify: function (platform, productId, token) {
-    if (!_client || !_userId) return Promise.resolve({ error: 'Not signed in' });
-    return _client.functions.invoke('iap-verify', { body: { platform: platform, product_id: productId, token: token } }).then(function (res) {
+    if (!_client || !isMemberNow()) return Promise.resolve({ error: 'Not signed in' });
+    return _client.functions.invoke('ld-iap-verify', { body: { platform: platform, product_id: productId, token: token } }).then(function (res) {
       if (res.error) {
         var ctx = res.error.context;
         if (ctx && typeof ctx.json === 'function') return ctx.json().then(function (j) { return { error: (j && j.error) || res.error.message }; }, function () { return { error: res.error.message }; });
@@ -744,7 +914,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   submitVerifiedScore: function (summary) {
-    if (!_client || !_userId) {
+    if (!_client || !isMemberNow()) {
       return Promise.resolve({ success: false, error: 'Not authenticated' });
     }
     if (!summary || !summary.runId) {
@@ -864,7 +1034,7 @@ var leaderboard = {
    * @returns {Promise<object|null>}
    */
   getPlayerBest: function (options) {
-    if (!_client || !_userId) return Promise.resolve(null);
+    if (!_client || !isMemberNow()) return Promise.resolve(null);
     options = options || {};
 
     var query = _client
@@ -929,7 +1099,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   sendFriendRequest: function (targetUserId) {
-    if (!_client || !_userId) {
+    if (!_client || !isMemberNow()) {
       return Promise.resolve({ success: false, error: 'Not authenticated' });
     }
     if (_userId === targetUserId) {
@@ -982,7 +1152,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   acceptFriendRequest: function (requestId) {
-    if (!_client || !_userId) {
+    if (!_client || !isMemberNow()) {
       return Promise.resolve({ success: false, error: 'Not authenticated' });
     }
 
@@ -1012,7 +1182,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   declineFriendRequest: function (requestId) {
-    if (!_client || !_userId) {
+    if (!_client || !isMemberNow()) {
       return Promise.resolve({ success: false, error: 'Not authenticated' });
     }
 
@@ -1041,7 +1211,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   removeFriend: function (friendUserId) {
-    if (!_client || !_userId) {
+    if (!_client || !isMemberNow()) {
       return Promise.resolve({ success: false, error: 'Not authenticated' });
     }
 
@@ -1074,7 +1244,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   blockUser: function (targetUserId) {
-    if (!_client || !_userId) {
+    if (!_client || !isMemberNow()) {
       return Promise.resolve({ success: false, error: 'Not authenticated' });
     }
     if (_userId === targetUserId) {
@@ -1116,7 +1286,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   reportUser: function (targetUserId, reason) {
-    if (!_client || !_userId) {
+    if (!_client || !isMemberNow()) {
       return Promise.resolve({ success: false, error: 'Not authenticated' });
     }
     if (!reason || typeof reason !== 'string' || reason.trim().length === 0) {
@@ -1150,7 +1320,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   reportCard: function (cardId, reason, details) {
-    if (!_client || !_userId) return Promise.resolve({ success: false, error: 'Not authenticated' });
+    if (!_client || !isMemberNow()) return Promise.resolve({ success: false, error: 'Not authenticated' });
     if (!cardId || !reason) return Promise.resolve({ success: false, error: 'Missing fields' });
     return _client.from('card_reports').insert({
       reporter_id: _userId,
@@ -1169,7 +1339,7 @@ var leaderboard = {
 
   /** Wrap an RPC call into {success, data, error}. */
   _rpc: function (name, args) {
-    if (!_client || !_userId) return Promise.resolve({ success: false, data: null, error: 'Not signed in' });
+    if (!_client || !isMemberNow()) return Promise.resolve({ success: false, data: null, error: 'Not signed in' });
     return _client.rpc(name, args || {}).then(function (res) {
       if (res.error) return { success: false, data: null, error: res.error.message };
       return { success: true, data: res.data, error: null };
@@ -1272,7 +1442,7 @@ var leaderboard = {
    * @param {'friends'|'private'} [visibility]
    */
   postActivity: function (kind, payload, visibility) {
-    if (!_client || !_userId) return Promise.resolve({ success: false, error: 'Not signed in' });
+    if (!_client || !isMemberNow()) return Promise.resolve({ success: false, error: 'Not signed in' });
     var row = { user_id: _userId, kind: kind, payload: payload || {}, visibility: visibility === 'private' ? 'private' : 'friends' };
     function send(r) {
       return _client.from('activity_events').insert(r).then(function (res) { return res.error ? { success: false, error: res.error.message } : { success: true, error: null }; });
@@ -1291,7 +1461,7 @@ var leaderboard = {
    * each with {kudos_count, i_gave, kudos_by}. scope: 'all' | 'friends' | 'mine'.
    */
   getFeed: function (opts) {
-    if (!_client || !_userId) return Promise.resolve([]);
+    if (!_client || !isMemberNow()) return Promise.resolve([]);
     opts = opts || {};
     return _client.rpc('get_feed', { p_limit: opts.limit || 40, p_before: opts.before || null, p_scope: opts.scope || 'all' })
       .then(function (res) {
@@ -1323,7 +1493,7 @@ var leaderboard = {
 
   /** Delete one of the player's own posts. */
   deleteActivity: function (eventId) {
-    if (!_client || !_userId) return Promise.resolve({ success: false, error: 'Not signed in' });
+    if (!_client || !isMemberNow()) return Promise.resolve({ success: false, error: 'Not signed in' });
     return _client.from('activity_events').delete().eq('id', eventId).eq('user_id', _userId)
       .then(function (res) { return res.error ? { success: false, error: res.error.message } : { success: true, error: null }; })
       .catch(function (e) { return { success: false, error: e.message }; });
@@ -1434,7 +1604,7 @@ var leaderboard = {
    * @returns {Promise<object[]>}
    */
   getFriends: function () {
-    if (!_client || !_userId) return Promise.resolve([]);
+    if (!_client || !isMemberNow()) return Promise.resolve([]);
 
     // Get friend rows where current user is either party and status is accepted
     var q1 = _client
@@ -1498,7 +1668,7 @@ var leaderboard = {
    * @returns {Promise<object[]>}
    */
   getPendingRequests: function () {
-    if (!_client || !_userId) return Promise.resolve([]);
+    if (!_client || !isMemberNow()) return Promise.resolve([]);
 
     return _client
       .from('friends')
@@ -1556,7 +1726,7 @@ var leaderboard = {
    * @returns {Promise<object[]>}
    */
   getFriendScores: function (options) {
-    if (!_client || !_userId) return Promise.resolve([]);
+    if (!_client || !isMemberNow()) return Promise.resolve([]);
     options = options || {};
 
     return leaderboard.getFriends().then(function (friends) {
@@ -1605,7 +1775,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   sendInvite: function (options) {
-    if (!_client || !_userId) {
+    if (!_client || !isMemberNow()) {
       return Promise.resolve({ success: false, error: 'Not authenticated' });
     }
     if (!options || !options.toUserId || !options.roomCode) {
@@ -1641,7 +1811,7 @@ var leaderboard = {
    * @returns {Promise<object[]>}
    */
   getInvites: function () {
-    if (!_client || !_userId) return Promise.resolve([]);
+    if (!_client || !isMemberNow()) return Promise.resolve([]);
 
     return _client
       .from('match_invites')
@@ -1669,7 +1839,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, invite: object|null, error: string|null}>}
    */
   acceptInvite: function (inviteId) {
-    if (!_client || !_userId) {
+    if (!_client || !isMemberNow()) {
       return Promise.resolve({ success: false, invite: null, error: 'Not authenticated' });
     }
 
@@ -1700,7 +1870,7 @@ var leaderboard = {
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   declineInvite: function (inviteId) {
-    if (!_client || !_userId) {
+    if (!_client || !isMemberNow()) {
       return Promise.resolve({ success: false, error: 'Not authenticated' });
     }
 
@@ -1730,14 +1900,14 @@ var leaderboard = {
    * @returns {object|null} Subscription channel (for manual unsubscribe)
    */
   subscribeToInvites: function (callback) {
-    if (!_client || !_userId) return null;
+    if (!_client || !isMemberNow()) return null;
 
     try {
       var channel = _client
         .channel('invites-' + _userId)
         .on('postgres_changes', {
           event: 'INSERT',
-          schema: 'public',
+          schema: DB_SCHEMA,
           table: 'match_invites',
           filter: 'to_user=eq.' + _userId
         }, function (payload) {
@@ -1800,7 +1970,7 @@ var leaderboard = {
     _subscriptions = [];
 
     _session = null;
-    _userId = null;
+    setUser(null);
     // Do not null _client — Supabase client may be shared
   }
 };

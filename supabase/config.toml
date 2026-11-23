@@ -1,14 +1,18 @@
-# Only used by `supabase functions deploy`. The functions are plain JavaScript, so name the entrypoints.
+# Language Dash's functions in the shared Supabase project (all prefixed ld-). Only used by `supabase functions deploy`. The functions are plain JavaScript, so name the entrypoints.
 project_id = "language-dash"
 
-[functions.pro-checkout]
-entrypoint = "./functions/pro-checkout/index.js"
+[functions.ld-pro-checkout]
+entrypoint = "./functions/ld-pro-checkout/index.js"
 verify_jwt = false
 
-[functions.stripe-webhook]
-entrypoint = "./functions/stripe-webhook/index.js"
+[functions.ld-stripe-webhook]
+entrypoint = "./functions/ld-stripe-webhook/index.js"
 verify_jwt = false
 
-[functions.iap-verify]
-entrypoint = "./functions/iap-verify/index.js"
+[functions.ld-iap-verify]
+entrypoint = "./functions/ld-iap-verify/index.js"
+verify_jwt = false
+
+[functions.ld-remove-signin]
+entrypoint = "./functions/ld-remove-signin/index.js"
 verify_jwt = false

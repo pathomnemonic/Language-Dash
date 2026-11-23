@@ -1,8 +1,11 @@
-// stripe-webhook — Stripe tells us a payment happened; this turns it into Pro in the database.
+// ld-stripe-webhook — Stripe tells us a payment happened; this turns it into Pro in the language_dash schema.
 //
-// Deploy:  supabase functions deploy stripe-webhook --no-verify-jwt
-// Secrets: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET (Supabase sets SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY itself)
-// In Stripe: Developers -> Webhooks -> add https://<project>.supabase.co/functions/v1/stripe-webhook and send
+// Deploy:  supabase functions deploy ld-stripe-webhook --no-verify-jwt
+// Secrets: LD_STRIPE_SECRET_KEY, LD_STRIPE_WEBHOOK_SECRET (Supabase sets SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY itself).
+//   Only the LD_ names are read (no fallback to an unprefixed name: that would be another app's value).
+// The Stripe account may be shared with another app's webhook endpoint, so every event is checked for metadata.app =
+//   'language_dash' (stamped on everything this app creates) and the rest are ignored.
+// In Stripe: Developers -> Webhooks -> add https://<project>.supabase.co/functions/v1/ld-stripe-webhook and send
 //   checkout.session.completed, checkout.session.async_payment_succeeded, invoice.paid, charge.refunded,
 //   charge.dispute.created, charge.dispute.updated and charge.dispute.closed.
 // Every request is checked against the webhook signing secret first; anything unsigned is refused.
@@ -10,9 +13,9 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.117.3';
 import { verifyStripeSignature, handleEvent, chargeReturned } from '../_shared/billing.js';
 
-var STRIPE_KEY = Deno.env.get('STRIPE_SECRET_KEY') || '';
-var SIGNING_SECRET = Deno.env.get('STRIPE_WEBHOOK_SECRET') || '';
-var db = createClient(Deno.env.get('SUPABASE_URL') || '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '', { auth: { persistSession: false } });
+var STRIPE_KEY = Deno.env.get('LD_STRIPE_SECRET_KEY') || '';
+var SIGNING_SECRET = Deno.env.get('LD_STRIPE_WEBHOOK_SECRET') || '';
+var db = createClient(Deno.env.get('SUPABASE_URL') || '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '', { db: { schema: 'language_dash' }, auth: { persistSession: false } });
 
 async function getSubscription(id) {
   var res = await fetch('https://api.stripe.com/v1/subscriptions/' + encodeURIComponent(id), { headers: { Authorization: 'Bearer ' + STRIPE_KEY } });
@@ -62,7 +65,7 @@ Deno.serve(async function (req) {
     if (out.handled) await rpc('pro_event_once', { p_event: event.id, p_kind: event.type }); // (a record for the owner; repeats are harmless)
     return new Response(JSON.stringify(out), { status: 200, headers: { 'Content-Type': 'application/json' } });
   } catch (e) {
-    console.error('stripe-webhook failed', event && event.type, e && e.message);
+    console.error('ld-stripe-webhook failed', event && event.type, e && e.message);
     return new Response('failed', { status: 500 }); // Stripe tries again later
   }
 });
