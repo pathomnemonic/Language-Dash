@@ -56,10 +56,10 @@ describe('Performance tab', () => {
     storage.data.progression.totalWrong = 30;
     storage.set('examDate', new Date(Date.now() + 40 * DAY).toISOString().slice(0, 10));
     const c = mount();
-    const tiles = [...c.querySelectorAll('.perf-tile')].map((t) => t.getAttribute('aria-label'));
-    expect(tiles[0]).toMatch(/^Due now: \d+$/);
-    expect(tiles[1]).toBe('Accuracy: 70%');
-    expect(tiles[2]).toMatch(/^To goal: (39|40)d$/);
+    const tiles = [...c.querySelectorAll('.perf-tile')].map((t) => t.textContent.replace(/\s+/g, ' ').trim());   // (no aria-label: the visible text is the accessible name, WCAG 2.5.3)
+    expect(tiles[0]).toMatch(/\d+ ?Due now$/);
+    expect(tiles[1]).toMatch(/70% ?Accuracy$/);
+    expect(tiles[2]).toMatch(/(39|40)d ?To goal$/);
     c.querySelectorAll('.perf-tile')[1].click();
     expect(c.querySelector('#perf-subjects').open).toBe(true);
     expect(c.querySelector('#perf-subjects').textContent).toMatch(/Solid|Learning|Mastered|New/);
