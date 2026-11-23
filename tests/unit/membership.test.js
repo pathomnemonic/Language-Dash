@@ -257,17 +257,18 @@ describe('the account screen', () => {
     member = { member: true, joined_at: 'x' };
     const lb = await boot();
     await render(lb);
-    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
     body.querySelector('[data-delete-ld]').click();
     await tick();
-    expect(confirm).toHaveBeenCalled();
-    expect(calls).not.toContain('rpc:delete_my_ld_data');
-    confirm.mockReturnValue(true);
-    body.querySelector('[data-delete-ld]').click();
+    expect(document.querySelector('[data-confirm-dialog]')).toBeTruthy();   // an in-page dialog, not the browser's confirm()
+    document.querySelector('[data-confirm-no]').click();
     await tick(); await tick();
+    expect(calls).not.toContain('rpc:delete_my_ld_data');
+    body.querySelector('[data-delete-ld]').click();
+    await tick();
+    document.querySelector('[data-confirm-yes]').click();
+    await tick(); await tick(); await tick();
     expect(calls).toContain('rpc:delete_my_ld_data');
     expect(toasts.join(' ')).toMatch(/login was kept/);
-    confirm.mockRestore();
   });
 
   it('"Remove my sign-in" only goes ahead after the exact phrase is typed', async () => {

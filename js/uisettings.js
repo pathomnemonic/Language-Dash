@@ -5,6 +5,7 @@
  * `this` is the UI controller and nothing about how they are called has changed.
  */
 
+import { askConfirm } from './confirmdialog.js';
 import { requireGate, proGiftState, buyPremiumItem, itemPriceLabel, itemsAvailable, probeItems, hasAccount } from './pro.js';
 import { renderProTab, renderRedeemRow, applyProLock } from './proui.js';
 import { tipJarReady } from './tipjar.js';
@@ -440,10 +441,11 @@ export var settingsMethods = {
       resetWrap.appendChild(explain('Reset erases your coins, unlocks, stats and settings from this device. It cannot be undone, so save a backup first.'));
       var resetBtn = createElement('button', { className: 'btn btn-red btn-block', text: '🗑 Reset all progress', attributes: { type: 'button' } });
       resetBtn.addEventListener('click', function () {
-        if (confirm('Reset ALL progress? This cannot be undone.')) {
+        askConfirm({ title: 'Reset all progress?', message: 'This erases your coins, unlocks, stats and settings from this device. It cannot be undone.', confirmLabel: 'Reset everything', cancelLabel: 'Keep my progress', danger: true }).then(function (yes) {
+          if (!yes) return;
           storage.reset();
           window.location.reload();
-        }
+        });
       });
       resetWrap.appendChild(resetBtn);
       content.appendChild(resetWrap);

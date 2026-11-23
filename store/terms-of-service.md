@@ -8,9 +8,9 @@ The page the app currently serves is `public/terms.html` (shorter). If this draf
 
 # Terms of Service
 
-**Language Dash** · Last updated [DATE OF PUBLICATION]
+**Language Dash** · Last updated [DATE: stamped when the page goes live]
 
-These terms are the agreement between you and Mathews Sajan ("we", "us", "the developer") about your use of the Language Dash game, website and apps ("Language Dash" or "the service"). By using Language Dash, or by creating a Language Dash account, you agree to them. If you do not agree, please do not use it. How we handle your data is explained in the Privacy Policy: https://pathomnemonic.github.io/StudyBible/privacy.html
+These terms are the agreement between you and PathoMnemonic, a sole proprietorship ("we", "us", "the developer") about your use of the Language Dash game, website and apps ("Language Dash" or "the service"). By using Language Dash, or by creating a Language Dash account, you agree to them. If you do not agree, please do not use it. How we handle your data is explained in the Privacy Policy: https://pathomnemonic.github.io/StudyBible/privacy.html
 
 ## 1. Who can use Language Dash
 
@@ -148,7 +148,7 @@ Questions, refund requests for website purchases, or deletion requests: patho.mn
 
 # Decisions to confirm (not part of the terms)
 
-1. **Legal name and governing law**: confirmed by Mathews as "Mathews Sajan" and Arizona law; the venue (state and federal courts in Arizona) follows from that and is my wording. Confirm whether the developer is trading as an individual or through an entity.
+1. **Operator and governing law**: confirmed by Mathews: the operator is the trade name "PathoMnemonic" (a sole proprietorship, not separately registered), his personal name does not appear, and Arizona law governs. The venue (state and federal courts in Arizona) is my wording.
 2. **Minimum age** (section 1): drafted as 13, the usual floor for a consumer app that is not directed at children; the Privacy Policy does not state an age, so confirm both say the same, and that matches the store age ratings.
 3. **Liability cap** (section 9): drafted as the greater of 12 months' payments or US$50. Change if wanted.
 4. **Notice periods** (sections 10 and 11): 30 days to end the service and 14 days for a material change are my choices, not requirements.

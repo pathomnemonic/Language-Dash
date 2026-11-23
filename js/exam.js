@@ -8,6 +8,7 @@
  * The score is a practice signal from this game's own word list, not a fluency test.
  */
 
+import { askConfirm } from './confirmdialog.js';
 import { requireGate } from './pro.js';
 import { track } from './analytics/index.js';
 import { createElement, clearElement } from './dom.js';
@@ -320,7 +321,7 @@ function confirmFinish() {
   if (!st) return;
   var unanswered = st.answers.filter(function (a) { return a === null; }).length;
   var msg = unanswered > 0 ? unanswered + ' word(s) unanswered. Submit the quiz anyway?' : 'Submit your quiz?';
-  if (window.confirm(msg)) finishExam();
+  askConfirm({ title: 'End the quiz?', message: msg, confirmLabel: 'Submit quiz', cancelLabel: 'Keep going' }).then(function (yes) { if (yes) finishExam(); });
 }
 
 function finishExam() {

@@ -7,6 +7,7 @@ import { enabledProviders, providerLabel, onlyAvailable, applyIosAppleRule } fro
 import { track } from './analytics/index.js';
 import { createElement } from './dom.js';
 import { getNativePlatform } from './native.js';
+import { askConfirm } from './confirmdialog.js';
 
 var INPUT_STYLE = 'width:100%;padding:9px 11px;border-radius:10px;background:var(--field);color:var(--ink);border:2px solid var(--line);margin-bottom:8px;font-size:14px';
 
@@ -333,12 +334,13 @@ function renderJoinStep(body, deps, status) {
 /** Two different things, kept apart: delete this app's account, or remove the login every app uses. */
 function deleteLdAccountButton(deps) {
   var b = button('Delete my Language Dash account', function () {
-    var ok = window.confirm('Delete your Language Dash account and its online data (profile, scores, friends, groups, cloud save, Pro and items you bought)? A subscription that is still billing is cancelled first. This cannot be undone. Your sign-in is kept (other apps may use it) and progress saved on this device stays.');
-    if (!ok) return Promise.resolve();
-    return deps.leaderboard.deleteLanguageDashAccount().then(function (res) {
-      track('account_event', { action: 'delete_ld_requested', ok: !!res.success });
-      deps.toast(res.success ? 'Your Language Dash account and its online data were deleted. You are still signed in; the login was kept.' : (res.error || 'Could not delete your Language Dash account.'));
-      deps.rerender();
+    return askConfirm({ title: 'Delete your Language Dash account?', message: 'Delete your Language Dash account and its online data (profile, scores, friends, groups, cloud save, Pro and items you bought)? A subscription that is still billing is cancelled first. This cannot be undone. Your sign-in is kept (other apps may use it) and progress saved on this device stays.', confirmLabel: 'Delete my account', cancelLabel: 'Cancel', danger: true }).then(function (ok) {
+      if (!ok) return;
+      return deps.leaderboard.deleteLanguageDashAccount().then(function (res) {
+        track('account_event', { action: 'delete_ld_requested', ok: !!res.success });
+        deps.toast(res.success ? 'Your Language Dash account and its online data were deleted. You are still signed in; the login was kept.' : (res.error || 'Could not delete your Language Dash account.'));
+        deps.rerender();
+      });
     });
   }, 'btn-outline');
   b.setAttribute('data-delete-ld', '1');
