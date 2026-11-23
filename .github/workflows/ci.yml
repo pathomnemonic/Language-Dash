@@ -134,6 +134,9 @@ jobs:
         env:
           # (the browser tests exercise buying a Locker item; the shipped builds in deploy.yml and android.yml leave it off)
           VITE_FEATURE_LOCKER_ITEMS: '1'
+          # (mirror deploy.yml: without Supabase config the app cannot boot its account layer and every e2e test fails; added by Orion 2026-11-22)
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || vars.VITE_SUPABASE_ANON_KEY }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
