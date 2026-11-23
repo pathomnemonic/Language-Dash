@@ -100,7 +100,7 @@ These are the US dollar prices at the time of writing. The price you will pay, i
 
 ## 6. Tips
 
-Language Dash is free to enjoy and you may, if you wish, leave a tip. On the website a tip is a link to the developer's Ko-fi page, and payment is handled by Ko-fi and its payment partners under their own terms. In the iPhone and Android apps a tip is a small one-time purchase through the store (Apple or Google), because the stores do not allow an outside payment link inside an app. A tip is a voluntary gift. It unlocks nothing, gives no coins or advantages, creates no obligation on either side, and is not refundable except where the store's rules or the law require it.
+Language Dash is free to enjoy and you may, if you wish, leave a tip. On the website a tip is a link to a Stripe payment page, and payment is handled by Stripe under its own terms. In the iPhone and Android apps a tip is a small one-time purchase through the store (Apple or Google), because the stores do not allow an outside payment link inside an app. A tip is a voluntary gift. It unlocks nothing, gives no coins or advantages, creates no obligation on either side, and is not refundable except where the store's rules or the law require it.
 
 ## 7. Content: ours and yours
 

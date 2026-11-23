@@ -1,30 +1,31 @@
 /**
- * tips.js — optional "support the developer" link.
+ * tips.js — the optional, quiet "support the developer" link.
  *
- * The app is free. If a tip page URL is configured (VITE_TIP_URL at build
- * time, e.g. a Ko-fi, Buy Me a Coffee, GitHub Sponsors or Stripe Payment
- * Link), a small button appears in Settings and a rare, dismissible note
- * appears after a decent run. With no URL configured, nothing is shown.
- *
- * The prompt is deliberately polite: never during a run, only after
- * the player has played a few times, at most once a week, and it can be
- * turned off for good.
+ * The app is free. If a tip page is configured (TIP_URL in tipconfig.js, or VITE_TIP_URL at build time: a Stripe payment
+ * link), one row appears in Settings. That is all: there is no pop-up, no note after a run and no reminder, nothing is ever
+ * locked behind it, and it has nothing to do with Pro. With no URL configured, nothing is shown.
  */
 
 import { openExternal } from './platform.js';
 import { isNative } from './native.js';
+import { TIP_URL } from './tipconfig.js';
 
-var MIN_RUNS = 5;
-var MIN_ACCURACY = 60;
-var MIN_CORRECT = 5;
-var COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
+/**
+ * The Cathology Ko-fi page is reserved for that app (its tips are earmarked), so Language Dash must never send tips there.
+ * @param {URL} u
+ */
+function isReservedTipPage(u) {
+  var host = u.hostname.toLowerCase().replace(/^www\./, '');
+  var first = u.pathname.split('/').filter(Boolean)[0] || '';
+  return host === 'ko-fi.com' && first.toLowerCase() === 'pathomnemonic';
+}
 
-/** Only https links are accepted. @returns {boolean} */
+/** Only https links are accepted, and never another app's reserved page. @returns {boolean} */
 export function isValidTipUrl(url) {
   if (typeof url !== 'string') return false;
   try {
     var u = new URL(url);
-    return u.protocol === 'https:' && u.hostname.indexOf('.') > 0;
+    return u.protocol === 'https:' && u.hostname.indexOf('.') > 0 && !isReservedTipPage(u);
   } catch (e) {
     return false;
   }
@@ -36,32 +37,10 @@ export function getTipUrl() {
   if (isNative()) return '';
   /** @type {Record<string, any>} */
   var env = (typeof import.meta !== 'undefined' && import.meta.env) || {};
-  var url = String(env.VITE_TIP_URL || '').trim();
-  // a link pasted without its https:// (ko-fi.com/name) still works
+  var url = String(env.VITE_TIP_URL || TIP_URL || '').trim();
+  // a link pasted without its https:// still works
   if (url && !/^[a-z][a-z0-9+.-]*:/i.test(url)) url = 'https://' + url;
   return isValidTipUrl(url) ? url : '';
-}
-
-/**
- * Decide whether to show the post-run tip note.
- * @param {object} input
- * @param {string} input.tipUrl
- * @param {boolean} [input.iap] - the phone app's in-app tip jar is available (no link needed)
- * @param {boolean} input.optedOut - the player chose "don't ask again"
- * @param {number} input.totalRuns
- * @param {number} input.lastPromptAt - ms timestamp of the last prompt (0 if never)
- * @param {number} input.now
- * @param {number} input.correct - correct answers in the run just finished
- * @param {number} input.accuracy - 0..100 for that run
- * @returns {boolean}
- */
-export function shouldShowTipPrompt(input) {
-  if (!input.iap && !isValidTipUrl(input.tipUrl)) return false;
-  if (input.optedOut) return false;
-  if (input.totalRuns < MIN_RUNS) return false;
-  if (input.now - (input.lastPromptAt || 0) < COOLDOWN_MS) return false;
-  // Ask only after a run that went well, when the player is in a good mood.
-  return input.correct >= MIN_CORRECT && input.accuracy >= MIN_ACCURACY;
 }
 
 /** Open the tip page in a new tab without leaking the referrer. */

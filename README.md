@@ -224,13 +224,9 @@ The service worker's cache is named after the build (the commit in CI), so every
 
 ## Tips (Optional)
 
-Language Dash is free. To let players leave a tip, create a page on Ko-fi, Buy Me a Coffee, GitHub Sponsors or a Stripe Payment Link, then set its URL at build time:
+Language Dash is free. The website has one quiet "Support the developer" row in Settings → About, shown only when a Stripe payment link is set. There is no pop-up, no note after a run and no reminder; it never locks anything and it is separate from Pro.
 
-```
-VITE_TIP_URL=https://ko-fi.com/yourname
-```
-
-(In GitHub, add it as a repository variable named `VITE_TIP_URL`.) With no URL set, no tip UI is shown. When set, a "Support the developer" button appears in Settings, and a rare note appears after a good run: never during a run or quiz, only after five or more runs, at most once a week, and players can turn it off for good. Only `https` links are accepted.
+Put the link in one place, `js/tipconfig.js` (`TIP_URL`, an `https://buy.stripe.com/...` link), or set the `VITE_TIP_URL` repository variable at build time to override it. With neither set, no tip row is shown. Only `https` links are accepted, and the Cathology Ko-fi page (`ko-fi.com/pathomnemonic`) is refused on purpose: that page is reserved for the Cathology app, and Language Dash's tips are their own pot. In the iPhone and Android apps tips are small in-app purchases instead (`docs/TIP-JAR.md`), because the stores do not allow an outside payment link inside an app.
 
 ## Backend: leaderboards, friends, accounts and Pro (optional, shared Supabase project)
 
