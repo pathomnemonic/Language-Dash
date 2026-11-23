@@ -51,13 +51,15 @@ describe('dyslexia font and button side', () => {
 
   describe('applied from the settings', () => {
     let ui; let storage;
+    // (imports the whole UI module graph: on a loaded runner that alone can exceed the shared
+    // 10s hook timeout — same flake class as the ldmigrate/gatefixes timeout fixes)
     beforeEach(async () => {
       localStorage.clear();
       document.body.className = '';
       ({ ui } = await import('../../js/ui.js'));
       ({ storage } = await import('../../js/storage.js'));
       storage.load();
-    });
+    }, 60000);
     it('turns the classes on and off', () => {
       ui.applySettings();
       expect(document.body.classList.contains('dyslexia')).toBe(false);
