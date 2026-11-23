@@ -64,3 +64,14 @@ export function providerOf(user) {
 export function providerLabel(id) {
   return AUTH_PROVIDERS[id] ? AUTH_PROVIDERS[id].label : '';
 }
+
+/**
+ * App Store guideline 4.8: on iOS, a third-party sign-in (Google, Microsoft...) may only be offered next to Sign in with
+ * Apple. If Apple is not on the list (not in the build setting, or not switched on in Supabase) the other buttons are
+ * hidden there rather than shipping a build that gets rejected; email and password is unaffected. Other platforms keep
+ * the whole list. `platform` is 'ios', 'android' or 'web'.
+ */
+export function applyIosAppleRule(list, platform) {
+  if (platform !== 'ios') return list;
+  return list.some(function (p) { return p.id === 'apple'; }) ? list : [];
+}

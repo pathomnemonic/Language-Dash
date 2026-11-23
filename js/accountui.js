@@ -3,9 +3,10 @@
  * "which save do you want?" dialog. Safe DOM only.
  */
 
-import { enabledProviders, providerLabel, onlyAvailable } from './authproviders.js';
+import { enabledProviders, providerLabel, onlyAvailable, applyIosAppleRule } from './authproviders.js';
 import { track } from './analytics/index.js';
 import { createElement } from './dom.js';
+import { getNativePlatform } from './native.js';
 
 var INPUT_STYLE = 'width:100%;padding:9px 11px;border-radius:10px;background:var(--field);color:var(--ink);border:2px solid var(--line);margin-bottom:8px;font-size:14px';
 
@@ -152,7 +153,7 @@ function renderGuest(body, deps, status) {
     _externalDone = true;
   }
   // (no buttons until it is known which work, so none appears and then vanishes)
-  var providers = _mode === 'reset' || !_externalDone ? [] : onlyAvailable(enabledProviders(), _external);
+  var providers = _mode === 'reset' || !_externalDone ? [] : applyIosAppleRule(onlyAvailable(enabledProviders(), _external), getNativePlatform());
   if (providers.length) {
     var row = createElement('div', { className: 'auth-providers' });
     row.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin:8px 0';
@@ -311,6 +312,14 @@ function renderJoinStep(body, deps, status) {
   }, 'btn-primary');
   join.setAttribute('data-join', '1');
   box.appendChild(join);
+  var agree = createElement('div', { attributes: { 'data-join-agree': '1' } });
+  agree.style.cssText = 'font-size:12px;opacity:.8;margin:6px 0';
+  agree.appendChild(document.createTextNode('By creating an account you agree to the '));
+  agree.appendChild(createElement('a', { text: 'Terms', attributes: { href: 'terms.html', target: '_blank', rel: 'noopener' } }));
+  agree.appendChild(document.createTextNode(' and the '));
+  agree.appendChild(createElement('a', { text: 'Privacy Policy', attributes: { href: 'privacy.html', target: '_blank', rel: 'noopener' } }));
+  agree.appendChild(document.createTextNode('.'));
+  box.appendChild(agree);
   if (_declinedFor !== uid) {
     var later = button('Not now, keep playing as a guest', function () { _declinedFor = uid; deps.rerender(); return Promise.resolve(); });
     later.setAttribute('data-join-later', '1');

@@ -291,3 +291,15 @@ describe('keeping the Sign in with Apple token for account deletion', () => {
     expect(invoked).toEqual([]);
   });
 });
+
+describe('App Store 4.8: third-party sign-in on iOS needs Sign in with Apple', () => {
+  it('hides every third-party button on iOS when Apple is not on the list, and leaves other platforms alone', async () => {
+    const { enabledProviders, applyIosAppleRule } = await import('../../js/authproviders.js');
+    const noApple = enabledProviders('google,azure');
+    expect(applyIosAppleRule(noApple, 'ios')).toEqual([]);
+    expect(applyIosAppleRule(noApple, 'android').map((p) => p.id)).toEqual(['google', 'azure']);
+    expect(applyIosAppleRule(noApple, 'web').map((p) => p.id)).toEqual(['google', 'azure']);
+    const withApple = enabledProviders('google,apple');
+    expect(applyIosAppleRule(withApple, 'ios').map((p) => p.id)).toEqual(['google', 'apple']);
+  });
+});
