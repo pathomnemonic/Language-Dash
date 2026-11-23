@@ -36,6 +36,7 @@ let appleStatus;   // what Apple answers to a revoke
 let storeReply;    // what Google / Apple say about a purchase: { status, body }
 let isMember;      // does the signed-in login have a Language Dash membership row
 let clients;       // every client the functions created: [url, key, options]
+let purgeFails;    // does purge_user_data fail
 let claimResult;   // what the database says about claiming a purchase
 
 vi.mock('https://esm.sh/@supabase/supabase-js@2.117.3', () => ({
@@ -46,6 +47,7 @@ vi.mock('https://esm.sh/@supabase/supabase-js@2.117.3', () => ({
       if (name === 'pro_has_item') return dbReady ? { data: owned.includes(args.p_item), error: null } : { data: null, error: { message: 'function does not exist' } };
       if (name === 'pro_user_customer') return { data: customerId, error: null };
       if (name === 'apple_token_get') return { data: appleToken, error: null };
+      if (name === 'purge_user_data') return purgeFails ? { data: null, error: { message: 'boom' } } : { data: {}, error: null };
       if (name === 'pro_store_claim') return { data: claimResult, error: null };
       return { data: null, error: null };
     },
@@ -63,7 +65,7 @@ async function boot(file) {
 }
 
 beforeEach(() => {
-  db = []; clients = []; isMember = true; stripeCalls = []; owned = []; held = null; dbReady = true; customerId = ''; deleted = []; cancelFails = false; appleToken = ''; appleStatus = 200; storeReply = { status: 200, body: {} }; claimResult = 'ok';
+  db = []; clients = []; isMember = true; stripeCalls = []; owned = []; held = null; dbReady = true; customerId = ''; deleted = []; cancelFails = false; appleToken = ''; appleStatus = 200; storeReply = { status: 200, body: {} }; claimResult = 'ok'; purgeFails = false;
   users = { apple: { id: 'ua', email: 'p@example.com', is_anonymous: false, identities: [{ provider: 'apple' }] }, good: { id: 'u1', email: 'a@example.com', is_anonymous: false }, guest: { id: 'g1', email: '', is_anonymous: true } };
   stripeReply = (path) => ({ id: 'cs_1', url: 'https://checkout.stripe.com/pay/cs_1', data: [] });
   globalThis.fetch = vi.fn(async (url, init) => {
@@ -350,6 +352,25 @@ describe('ld-remove-signin: removing the sign-in for every app', () => {
     expect(callerClient[1]).toBe('anon');
     expect(callerClient[2].global.headers.Authorization).toBe('Bearer good');
     expect(callerClient[2].db).toEqual({ schema: 'language_dash' });
+  });
+
+  it('purges every language_dash row (including the FK-less pro_* tables) before the login is deleted, and keeps the login if the purge fails', async () => {
+    const h = await boot(FN);
+    const ok = await call(h, CONFIRM, 'good');
+    expect(ok.status).toBe(200);
+    const purge = db.find((c) => c[0] === 'purge_user_data');
+    expect(purge[1]).toEqual({ p_user: 'u1' });   // the verified caller, never an id from the request body
+    expect(db.map((c) => c[0]).indexOf('purge_user_data')).toBeLessThan(db.length);
+    expect(deleted).toEqual(['u1']);
+    // it runs with the service-role client (the function is not executable by the signed-in role)
+    const adminClient = clients.find((c) => !(c[2].global && c[2].global.headers));
+    expect(adminClient[1]).not.toBe('anon');
+
+    deleted.length = 0; db.length = 0; purgeFails = true;
+    const bad = await call(h, CONFIRM, 'good');
+    expect(bad.status).toBe(500);
+    expect(bad.body.error).toMatch(/not removed/i);
+    expect(deleted).toEqual([]);
   });
 
   it('cancels a subscription that is still billing first, and removes nothing when it cannot', async () => {

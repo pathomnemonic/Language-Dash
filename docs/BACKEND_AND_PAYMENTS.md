@@ -58,7 +58,7 @@ at the first failure so nothing is half done:
 1. verify the JWT and the confirmation phrase;
 2. cancel any Stripe subscription still billing (fails closed: nothing is removed if it cannot be cancelled);
 3. revoke the Sign in with Apple token for an Apple login (fails closed);
-4. `delete_my_ld_data()` through the caller's own context (best effort) and `pro_forget_user` (payment records);
+4. `delete_my_ld_data()` through the caller's own context (best effort), `pro_forget_user`, then `purge_user_data(uuid)` as the service role (required: the pro_* tables have no foreign key, so the login deletion would orphan them; a failure stops here and keeps the login);
 5. delete the auth user with the admin API.
 
 The old `delete_my_account` RPC (which deleted the auth user) no longer exists.

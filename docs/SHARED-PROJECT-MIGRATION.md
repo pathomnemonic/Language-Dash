@@ -439,7 +439,7 @@ Deviation from the brief: the Postgres data directory is under the system temp d
 4. **Anonymous users join too.** Guests can join and will have a membership; guests that are never upgraded accumulate in `members` and
    the data tables, as they did before. No cleanup job exists for them.
 5. **Realtime publication is shared.** Only `language_dash.match_invites` is added, but a project-wide object is touched (decision 2).
-6. **Deleting the sign-in orphans Pro rows** unless `purge_user_data` runs first (payment tables have no foreign key by design).
+6. **Deleting the sign-in orphans Pro rows** unless `purge_user_data` runs first (payment tables have no foreign key by design). Handled: `ld-remove-signin` calls it before deleting the login.
 7. **Resource sharing.** Connections, disk, `statement_timeout` and Postgres version are shared. The migration was tested on 16; it needs
    15+ (`security_invoker` views and `AS RESTRICTIVE` policies, which the template already required).
 8. **Default privileges.** The migration runs `ALTER DEFAULT PRIVILEGES IN SCHEMA language_dash` for the migrating role only. Objects
@@ -461,4 +461,4 @@ Deviation from the brief: the Postgres data directory is under the system temp d
    hide the public leaderboard from everyone who has not joined, revoke the `anon` SELECT grants in the lockdown list.
 5. **Guests joining.** Allowed today; require a non-anonymous sign-in (`auth.jwt() ->> 'is_anonymous'`) in `join_language_dash()` if not wanted.
 6. **Retention job** for analytics and for abandoned guest memberships (cron).
-7. **Who calls `purge_user_data`** when a sign-in is removed (edge function owner).
+7. **Who calls `purge_user_data`**: resolved. `ld-remove-signin` calls it (service role, required step, aborts before deleting the login if it fails).

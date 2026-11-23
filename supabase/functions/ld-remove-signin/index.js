@@ -8,8 +8,9 @@
 //   1. verify the caller's JWT (a real login: not a guest);
 //   2. cancel any subscription that is still billing (so nobody keeps paying for a login that is gone);
 //   3. revoke the Sign in with Apple token if the login came from Apple (an App Store rule);
-//   4. delete this app's data through the caller's own context (language_dash.delete_my_ld_data; best effort: a login that
-//      never joined has nothing, and the auth deletion below would cascade it anyway) and the payment records;
+//   4. delete this app's data through the caller's own context (language_dash.delete_my_ld_data; best effort), clear the payment
+//      records, then call language_dash.purge_user_data(uuid) as the service role (REQUIRED: the pro_* tables hold a bare uuid
+//      with no foreign key, so the auth deletion would leave them orphaned; a failure here stops before the login is touched);
 //   5. delete the auth user with the admin API.
 //
 // Deploy:  supabase functions deploy ld-remove-signin
@@ -100,6 +101,14 @@ Deno.serve(async function (req) {
     } catch (e) { console.warn('ld-remove-signin: delete_my_ld_data failed', e && e.message); }
     var forgot = await admin.rpc('pro_forget_user', { p_user: user.id });
     if (forgot && forgot.error) console.warn('ld-remove-signin: could not clear payment records', forgot.error.message);
+    // purge_user_data removes every language_dash row for this user, including the pro_* tables, which hold a bare uuid with
+    // no foreign key and so would NOT be cleaned up by the auth deletion. Required: if it fails, the login is kept so the
+    // player can simply try again (nothing orphaned, nothing half-done).
+    var purged = await admin.rpc('purge_user_data', { p_user: user.id });
+    if (!purged || purged.error) {
+      console.error('ld-remove-signin: purge_user_data failed', purged && purged.error && purged.error.message);
+      return json({ error: 'Could not clear your Language Dash data, so your sign-in was not removed. Please try again.' }, 500);
+    }
 
     // 5. the login itself
     var gone = await admin.auth.admin.deleteUser(user.id);
