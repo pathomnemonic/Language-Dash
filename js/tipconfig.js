@@ -9,4 +9,4 @@
  * Language Dash's tips are their own pot, separate from Pro and from every other app. Never point this at another app's tip
  * page: tips.js refuses the Cathology Ko-fi page (ko-fi.com/pathomnemonic), which is reserved for that app.
  */
-export var TIP_URL = '';
+export var TIP_URL = 'https://buy.stripe.com/4gM28s6s83jj6jp4nC3wQ02';
