@@ -91,5 +91,64 @@ export function syncNativeReminder(s) {
   }).catch(function () { /* a reminder that cannot be scheduled must never break the app */ });
 }
 
+var STREAK_NOTIFICATION_ID = 4102;
+export var STREAK_RISK_HOUR = 21;
+var _lastStreakAt = 0;
+var _lastStreakBody = '';
+
+/** The words of the streak-at-risk nudge. */
+export function streakRiskBody(streak) {
+  return 'Your ' + streak + '-day streak ends tonight. A few words keep it alive! 🔥';
+}
+
+/**
+ * The evening "your streak is about to end" nudge: a second, later notification on top of the daily reminder. It is
+ * only for a player who has a streak to lose. Tonight at 21:00 while that is still ahead and they have not practised
+ * today, otherwise tomorrow at 21:00 (opening the app after practising moves it on, so it never fires for someone who
+ * has already played). No streak, or reminders off: nothing is scheduled and any pending nudge is cancelled.
+ * @param {number} now ms
+ * @param {number} streak
+ * @param {boolean} playedToday
+ * @returns {Date|null}
+ */
+export function nextStreakRiskTime(now, streak, playedToday) {
+  if (!(streak > 0)) return null;
+  var d = new Date(now);
+  var at = new Date(d.getFullYear(), d.getMonth(), d.getDate(), STREAK_RISK_HOUR, 0, 0, 0);
+  if (playedToday || at.getTime() <= now) at = new Date(at.getFullYear(), at.getMonth(), at.getDate() + 1, STREAK_RISK_HOUR, 0, 0, 0);
+  return at;
+}
+
+/**
+ * Inside the app: keep the streak-at-risk nudge scheduled (or cancelled). Same rules as syncNativeReminder: safe to call
+ * often, only talks to the phone when something changes, and never throws.
+ * @param {{enabled: boolean, streak: number, playedToday: boolean, now?: number}} s
+ * @returns {Promise<void>}
+ */
+export function syncStreakRiskReminder(s) {
+  if (!_testPlugin && !isNative()) return Promise.resolve();
+  var now = s.now || Date.now();
+  return loadPlugin().then(function (p) {
+    if (!p) return null;
+    var at = s.enabled ? nextStreakRiskTime(now, s.streak, s.playedToday) : null;
+    if (!at) {
+      if (_lastStreakAt === 0) return null;
+      _lastStreakAt = 0;
+      return p.cancel({ notifications: [{ id: STREAK_NOTIFICATION_ID }] });
+    }
+    var body = streakRiskBody(s.streak);
+    if (at.getTime() === _lastStreakAt && body === _lastStreakBody) return null;
+    return p.checkPermissions().then(function (perm) {
+      if (perm.display !== 'granted') return null;
+      return p.schedule({
+        notifications: [{
+          id: STREAK_NOTIFICATION_ID, title: REMINDER_TITLE, body: body,
+          schedule: { at: at, allowWhileIdle: true }, isExactNotification: false
+        }]
+      }).then(function () { _lastStreakAt = at.getTime(); _lastStreakBody = body; });
+    });
+  }).catch(function () { /* never break the app over a notification */ });
+}
+
 /** For tests. */
-export function setReminderPluginForTest(plugin) { _testPlugin = plugin; _plugin = null; _lastScheduled = 0; _lastBody = ''; }
+export function setReminderPluginForTest(plugin) { _testPlugin = plugin; _plugin = null; _lastScheduled = 0; _lastBody = ''; _lastStreakAt = 0; _lastStreakBody = ''; }

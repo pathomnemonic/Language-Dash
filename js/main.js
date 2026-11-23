@@ -67,7 +67,7 @@ import { ranked, useTestClient as useRankedTestClient } from './ranked.js';
 import { FEATURES } from './features.js';
 import { watchBattery } from './battery.js';
 import { appPublicUrl } from './publicurl.js';
-import { syncNativeReminder } from './reminders.js';
+import { syncNativeReminder, syncStreakRiskReminder } from './reminders.js';
 import { watchConnection } from './offline.js';
 import { shareSetting, isShareableRun, runPayload, crossedCardMilestone, crossedDayMilestone } from './sharing.js';
 import { LOCKER_ITEMS, QUESTS } from './game/shopdata.js';
@@ -2113,6 +2113,8 @@ function checkStudyReminder() {
   if (isNative()) {
     var buddy = currentPal();
     syncNativeReminder({ enabled: !!storage.get('reminders'), hour: storage.get('reminderHour') || 19, goalMetToday: storage.getStudiedToday() >= (storage.get('dailyGoal') || 20), body: buddy ? palReminder(buddy, storage.getStreakStatus().streak) : undefined });
+    var st = storage.getStreakStatus();
+    syncStreakRiskReminder({ enabled: !!storage.get('reminders'), streak: st.streak, playedToday: !!st.playedToday });
     return;
   }
   if (!storage.get('reminders') || !('Notification' in window) || Notification.permission !== 'granted') return;

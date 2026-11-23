@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { nextReminderTime, syncNativeReminder, requestReminderPermission, canRemind, setReminderPluginForTest, REMINDER_BODY } from '../../js/reminders.js';
+import { nextReminderTime, nextStreakRiskTime, syncStreakRiskReminder, streakRiskBody, syncNativeReminder, requestReminderPermission, canRemind, setReminderPluginForTest, REMINDER_BODY } from '../../js/reminders.js';
 
 const at = (y, m, d, h, min = 0) => new Date(y, m - 1, d, h, min).getTime();
 
@@ -64,5 +64,47 @@ describe('the phone app reminder', () => {
   it('a failing phone never throws into the app', async () => {
     plugin.checkPermissions.mockRejectedValue(new Error('boom'));
     await expect(syncNativeReminder({ enabled: true, hour: 19, goalMetToday: false, now: at(2026, 10, 3, 9) })).resolves.toBeUndefined();
+  });
+});
+
+
+describe('the streak-at-risk nudge', () => {
+  let plugin;
+  beforeEach(() => {
+    plugin = { checkPermissions: vi.fn(async () => ({ display: 'granted' })), requestPermissions: vi.fn(), schedule: vi.fn(async () => ({})), cancel: vi.fn(async () => {}) };
+    setReminderPluginForTest(plugin);
+  });
+
+  it('is tonight at 21:00 only while that is ahead and the player has a streak and has not practised', () => {
+    expect(nextStreakRiskTime(at(2026, 10, 3, 9), 5, false)).toEqual(new Date(2026, 9, 3, 21));
+    expect(nextStreakRiskTime(at(2026, 10, 3, 22), 5, false)).toEqual(new Date(2026, 9, 4, 21));
+    expect(nextStreakRiskTime(at(2026, 10, 3, 9), 5, true)).toEqual(new Date(2026, 9, 4, 21));   // practised: tomorrow's
+    expect(nextStreakRiskTime(at(2026, 10, 3, 9), 0, false)).toBeNull();                          // nothing to lose
+  });
+
+  it('schedules a second notification with the streak in it, once, and moves it on after practising', async () => {
+    const now = at(2026, 10, 3, 9);
+    await syncStreakRiskReminder({ enabled: true, streak: 7, playedToday: false, now });
+    expect(plugin.schedule).toHaveBeenCalledTimes(1);
+    const n = plugin.schedule.mock.calls[0][0].notifications[0];
+    expect(n.id).not.toBe(4101);                      // the daily reminder keeps its own id
+    expect(n.body).toBe(streakRiskBody(7));
+    expect(n.body).toContain('7-day streak');
+    expect(n.schedule.at).toEqual(new Date(2026, 9, 3, 21));
+    expect(n.isExactNotification).toBe(false);
+    await syncStreakRiskReminder({ enabled: true, streak: 7, playedToday: false, now: now + 60000 });
+    expect(plugin.schedule).toHaveBeenCalledTimes(1);
+    await syncStreakRiskReminder({ enabled: true, streak: 8, playedToday: true, now: now + 120000 });
+    expect(plugin.schedule.mock.calls[1][0].notifications[0].schedule.at).toEqual(new Date(2026, 9, 4, 21));
+  });
+
+  it('cancels it when reminders are off or the streak is gone, and does nothing without permission', async () => {
+    const now = at(2026, 10, 3, 9);
+    await syncStreakRiskReminder({ enabled: true, streak: 3, playedToday: false, now });
+    await syncStreakRiskReminder({ enabled: false, streak: 3, playedToday: false, now });
+    expect(plugin.cancel).toHaveBeenCalledWith({ notifications: [{ id: 4102 }] });
+    setReminderPluginForTest({ ...plugin, checkPermissions: vi.fn(async () => ({ display: 'denied' })), schedule: vi.fn(), cancel: vi.fn() });
+    const p2 = await import('../../js/reminders.js');
+    await p2.syncStreakRiskReminder({ enabled: true, streak: 3, playedToday: false, now });
   });
 });
