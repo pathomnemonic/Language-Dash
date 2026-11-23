@@ -1,4 +1,9 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+
+// (this file builds full decks — up to ~6,900 cards for en→fr — and checks every card, so most
+// of its tests and hooks are heavy: on a loaded runner they exceed the shared 15s/10s timeouts
+// one by one. Same flake class as the ldmigrate/gatefixes fixes; budgets raised for this file.)
+vi.setConfig({ testTimeout: 90000, hookTimeout: 60000 });
 import { buildDeck, cardId, wordKey } from '../../js/lang/deck.js';
 import { loadDeck, computeCardPoolHash } from '../../js/cards.js';
 import { getPair, setPair, hasPair, getPairOrDefault, getShowRoman, setShowRoman } from '../../js/lang/pair.js';
