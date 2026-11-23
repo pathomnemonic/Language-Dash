@@ -330,7 +330,9 @@ describe('the real templates', () => {
     const region = doc.slice(doc.indexOf('-->', a) + 3, b).trim();
     expect(region).toBe(renderReportMarkdown(report).trim());
   });
-  it('is deterministic', async () => {
+  // (two full generations of the migration: the heaviest test in the suite, and the only one that
+  // runs generate() twice uncached — it needs more than the shared 15s timeout on a loaded runner)
+  it('is deterministic', { timeout: 90000 }, async () => {
     const f = files();
     expect((await generate(f)).sql).toBe((await generate(f)).sql);
   });
