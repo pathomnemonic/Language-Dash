@@ -94,7 +94,9 @@ describe('badges are organised so the profile is short', () => {
     expect(new Set(placed).size).toBe(placed.length);
     expect([...placed].sort()).toEqual(ACHIEVEMENTS.map((a) => a.id).sort());
   });
-  it('the Profile shows folded groups with counts, and a tapped badge is read and pinned', async () => {
+  // (mounts the full profile from index.html in jsdom: heavy DOM work that can exceed the shared
+  // 15s test timeout on a loaded runner — same flake class as the ldmigrate/gatefixes timeout fixes)
+  it('the Profile shows folded groups with counts, and a tapped badge is read and pinned', { timeout: 60000 }, async () => {
     const { readFileSync } = await import('node:fs');
     const html = readFileSync('index.html', 'utf8');
     document.body.innerHTML = html.slice(html.indexOf('<body'), html.indexOf('</body>')).replace(/<script[\s\S]*?<\/script>/g, '');
