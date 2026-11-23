@@ -297,7 +297,9 @@ export function openPaywall(o) {
 /** Fill in whether the subscription renews or is set to end, from the billing system itself (never from what we assume). */
 function fillSubscriptionLine(el) {
   if (!canCancel()) return;
-  subscriptionState(_lb).then(function (v) {
+  // (always ask the billing system when this screen opens: a plan changed or cancelled in Stripe's own portal does not tell the app,
+  // and the 5-minute memory of the last answer would keep showing the old state)
+  subscriptionState(_lb, { force: true }).then(function (v) {
     if (!v || !v.known || v.none) return;
     var when = v.endsAt ? new Date(v.endsAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : '';
     if (v.cancelling) { setText(el, '⚠ Cancelled: Pro ends ' + (when || 'at the end of the period you paid for') + '. You keep everything until then.'); el.classList.add('pro-sub-ending'); }
