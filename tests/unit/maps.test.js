@@ -66,13 +66,15 @@ function loadPage() {
 
 describe('buying and choosing maps', () => {
   let storage, ui;
+  // (imports the whole UI module graph: on a loaded runner that alone can exceed the shared
+  // 10s hook timeout — same flake class as the ldmigrate/gatefixes timeout fixes)
   beforeEach(async () => {
     localStorage.clear();
     loadPage();
     ({ storage } = await import('../../js/storage.js'));
     storage.load();
     ({ ui } = await import('../../js/ui.js'));
-  });
+  }, 60000);
 
   it('the Locker has a Maps tab where a map can be bought and made the favorite', () => {
     storage.set('coins', 20000);
