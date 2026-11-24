@@ -5,7 +5,7 @@ import fs from 'node:fs';
 const FIXED = [
   ['es', 14, 'porqué', 'por qué'], ['pt', 14, 'porquê', 'por que'], ['pl', 81, 'uczyć', 'uczyć się'],
   ['ru', 647, 'писать', 'писать по буквам'], ['ru', 877, 'посреди', 'во время'], ['it', 886, 'circa', 'riguardo a'],
-  ['hi', 103, 'तय', 'तय करना'], ['hi', 647, 'हिज्जे', 'हिज्जे करना'], ['hi', 749, 'ख़र्च', 'ख़र्च करना'], ['fr', 900, 'plupart', 'le plus']
+  ['hi', 103, 'तय', 'तय करना'], ['hi', 647, 'हिज्जे', 'हिज्जे करना'], ['hi', 749, 'ख़र्च', 'ख़र्च करना'], ['fr', 900, 'plupart', 'la plupart']
 ];
 const words = (lang) => JSON.parse(fs.readFileSync('data/words/' + lang + '.json', 'utf8'));
 
