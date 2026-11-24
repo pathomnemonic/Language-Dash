@@ -77,6 +77,8 @@ describe('the hold list', () => {
     expect(checkHolds('en-fr', [14], holds)).toEqual([]);
     expect(checkHolds('en-pl', [81], holds).length).toBe(1);
     expect(checkHolds('en-ru', [647], holds, [{ pair: 'en-ru', rank: 647, reason: 'a long enough reason to try' }]).length).toBe(1);
+    expect(checkHolds('en-fr', [900], holds, [{ pair: 'en-fr', rank: 900, reason: 'a long enough reason to try' }]).length).toBe(1);   // wrong in French
+    expect(checkHolds('en-es', [900], holds, [{ pair: 'en-es', rank: 900, reason: 'a post about this word' }])).toEqual([]);   // a doubt in Spanish
   });
   it('blocks a flagged doubt unless the spec acknowledges it with a reason', () => {
     expect(checkHolds('en-hi', [214], holds).join(' ')).toMatch(/flagged as imprecise/);
@@ -90,8 +92,8 @@ describe('the hold list', () => {
     expect(validateHook(k, holds).errors.join(' ')).toMatch(/hold list/);   // the kal hook needs its acknowledgement
   });
   it('is the full list derived from the deck reviews: the B-04 entries plus every review doubt, ids checked against the English word', () => {
-    const wrong = holds.filter((h) => h.kind === 'wrong').map((h) => h.concept).sort((a, b) => a - b);
-    expect(wrong).toEqual([14, 81, 647, 877, 886]);
+    const wrong = holds.flatMap((h) => h.langs.filter((l) => h.kinds[l] === 'wrong').map((l) => h.concept + '/' + l)).sort();
+    expect(wrong).toEqual(['103/hi', '14/es', '14/pt', '647/hi', '647/ru', '749/hi', '81/pl', '877/ru', '886/it', '900/fr']);
     expect(holds.length).toBeGreaterThanOrEqual(150);
     expect(holds.every((h) => h.concept >= 1 && h.concept <= 1000 && Array.isArray(h.langs) && h.langs.length && h.reason && h.english)).toBe(true);
     // every language with a review is represented, and a hand-numbered review line was corrected to the English word it names
@@ -99,6 +101,8 @@ describe('the hold list', () => {
     ['ar', 'de', 'es', 'fr', 'hi', 'it', 'ja', 'ko', 'nl', 'pl', 'pt', 'ru', 'sv', 'zh'].forEach((l) => expect(langs.has(l), l).toBe(true));
     expect(holds.find((h) => h.concept === 8 && h.langs.includes('de')).english).toBe('that');
     expect(holds.find((h) => h.concept === 877).kind).toBe('wrong');
+    // the kind is per language: concept 900 is wrong for French (a noun fragment) but only a doubt for Spanish (mayormente)
+    expect(holds.find((h) => h.concept === 900).kinds).toEqual({ es: 'doubt', fr: 'wrong' });
   });
 });
 

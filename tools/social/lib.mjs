@@ -185,8 +185,9 @@ export function checkHolds(pair, ranks, holds, acknowledge) {
       const lang = h.langs === '*' || (h.langs || []).indexOf('*') >= 0 || (h.langs || []).indexOf(target) >= 0;
       if (!lang) return;
       const ack = (acknowledge || []).find((a) => a.rank === r && (!a.pair || a.pair === pair) && String(a.reason || '').trim().length >= 10);
-      if (h.kind === 'doubt' && ack) return;
-      errors.push('hold list: concept #' + r + (h.english ? ' (' + h.english + ')' : '') + ' is on hold for ' + target + ' (' + (h.kind === 'wrong' ? 'known wrong' : 'flagged as imprecise; a post about the quirk may acknowledge it') + ': ' + h.reason + ')');
+      const kind = (h.kinds && h.kinds[target]) || h.kind;
+      if (kind === 'doubt' && ack) return;
+      errors.push('hold list: concept #' + r + (h.english ? ' (' + h.english + ')' : '') + ' is on hold for ' + target + ' (' + (kind === 'wrong' ? 'known wrong' : 'flagged as imprecise; a post about the quirk may acknowledge it') + ': ' + h.reason + ')');
     });
   });
   return errors;

@@ -8,8 +8,7 @@
 //      the core 1,000 (entries the reviewer left as they were because no single better word exists, but flagged as imprecise).
 //      Ids are read from the line ("#135/#136", "262-266", "55/636", "207/208"). Arabic and Hindi list the words, not ids: those are
 //      matched against that language's own word list (data/words/<lang>.json, first 1,000).
-//   2. B-04 (deck audit §4), kept by hand below: glosses known to be wrong. These can never be overridden by a post.
-//   3. EXTRA_WRONG: further entries from the audit, added by hand when the audit's list is received.
+//   2. The deck audit's §4 list (Nov 22 spot check), kept by hand below: WRONG entries (never usable) and DOUBT_EXTRA entries.
 // A "doubt" hold can be acknowledged by a post that is ABOUT the quirk (spec.acknowledge, see lib.mjs); a "wrong" hold never can.
 // Without --write it prints the counts only.
 
@@ -21,13 +20,27 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const concepts = JSON.parse(readFileSync(resolve(ROOT, 'data/concepts.json'), 'utf8'));
 const CORE = 1000;
 
-// B-04 (deck audit §4): wrong glosses. Add the rest of the audit's list here.
+// Deck audit §4 (Nov 22 spot check, about 35 concepts sampled). Two kinds, decided by one question: can a learner use the word shown, on its own,
+// for the concept shown? If not (wrong word, or the wrong part of speech so the shown form cannot stand alone), it is WRONG and a post may never
+// use it. If it is a real word with the right core meaning but a narrower or looser sense, it is a DOUBT: a post may use it only if the post is
+// about that quirk and says so (acknowledge in the spec).
 const WRONG = [
-  { concept: 14, langs: ['es', 'pt'], reason: "B-04: 'why' is glossed as a noun (porqué / porquê, 'the reason'); should be por qué / por que" },
-  { concept: 81, langs: ['pl'], reason: "B-04: 'learn' is uczyć, which means 'teach'; should be uczyć się" },
-  { concept: 647, langs: ['ru'], reason: "B-04: 'spell' is писать, which means 'write'" },
-  { concept: 877, langs: ['ru'], reason: "B-04: 'during' is посреди, which is wrong" },
-  { concept: 886, langs: ['it'], reason: "B-04: 'about' is circa, which is wrong" }
+  { concept: 14, langs: ['es'], reason: "audit §4: gloss porqué is a noun ('the reason'); why is 'por qué'" },
+  { concept: 14, langs: ['pt'], reason: "audit §4: gloss porquê is a noun; why is 'por que'" },
+  { concept: 81, langs: ['pl'], reason: "audit §4: gloss uczyć means 'teach'; learn is 'uczyć się'" },
+  { concept: 647, langs: ['ru'], reason: "audit §4: gloss писать means 'to write'; spelling is 'писать по буквам'" },
+  { concept: 877, langs: ['ru'], reason: "audit §4: gloss посреди means 'in the middle of'; during is 'во время'" },
+  { concept: 886, langs: ['it'], reason: "audit §4: gloss circa means 'approximately'; concerning is 'riguardo a'" },
+  { concept: 103, langs: ['hi'], reason: "audit §4: तय is an adjective or noun ('decided, fixed') shown for a verb; the verb is 'तय करना'" },
+  { concept: 647, langs: ['hi'], reason: "audit §4: हिज्जे is a noun ('spelling') shown for a verb concept" },
+  { concept: 749, langs: ['hi'], reason: "audit §4: ख़र्च is a noun ('expense') shown for a verb; the verb is 'ख़र्च करना'" },
+  { concept: 900, langs: ['fr'], reason: "audit §4: plupart is a noun fragment ('la plupart') shown for an adverb concept; it cannot stand alone" }
+];
+const DOUBT_EXTRA = [
+  { concept: 900, langs: ['es'], reason: "audit §4: mayormente means 'mostly, mainly': a real adverb, but not the general 'most'" },
+  { concept: 309, langs: ['ja'], reason: "audit §4: 上 means 'above, up': a loose rendering of the noun 'top'" },
+  { concept: 134, langs: ['pt'], reason: "audit §4: sala is a room of a house or a hall ('living room' in a home); the audit prefers quarto, but quarto usually means bedroom, so neither is a clean 'room'" },
+  { concept: 895, langs: ['es'], reason: "audit §4: pero means 'but'; however is 'sin embargo' (a real contrast word, but the wrong register)" }
 ];
 
 // lines whose ids are written in a way the parser cannot read (checked by hand)
@@ -55,9 +68,10 @@ function section(text) {
 const holds = new Map();   // concept -> { kind, langs:{lang: reason} }
 function add(concept, lang, reason, kind) {
   if (concept < 1 || concept > CORE) return;
-  const h = holds.get(concept) || { kind: 'doubt', langs: {} };
-  if (kind === 'wrong') h.kind = 'wrong';
-  h.langs[lang] = reason;
+  const h = holds.get(concept) || { kinds: {}, langs: {} };
+  // a wrong hold is never downgraded by a doubt for the same word; reasons from several sources are joined
+  if (kind === 'wrong') h.kinds[lang] = 'wrong'; else if (!h.kinds[lang]) h.kinds[lang] = 'doubt';
+  h.langs[lang] = h.langs[lang] && h.langs[lang] !== reason ? h.langs[lang] + ' / ' + reason : reason;
   holds.set(concept, h);
 }
 
@@ -105,26 +119,28 @@ for (const f of readdirSync(dir).filter((x) => x.endsWith('.md')).sort()) {
   perLang[lang] = n;
 }
 WRONG.forEach((w) => w.langs.forEach((l) => add(w.concept, l, w.reason, 'wrong')));
+DOUBT_EXTRA.forEach((w) => w.langs.forEach((l) => add(w.concept, l, w.reason, 'doubt')));
 
 const out = [];
 [...holds.keys()].sort((a, b) => a - b).forEach((concept) => {
   const h = holds.get(concept);
   const langs = Object.keys(h.langs).sort();
   out.push({
-    concept, kind: h.kind, langs,
+    concept, kind: langs.some((l) => h.kinds[l] === 'wrong') ? 'wrong' : 'doubt', kinds: Object.fromEntries(langs.map((l) => [l, h.kinds[l]])), langs,
     english: concepts[concept - 1] && concepts[concept - 1].en,
     reason: langs.map((l) => l + ': ' + h.langs[l]).join(' | ').slice(0, 900)
   });
 });
 
 const pairs = out.reduce((n, h) => n + h.langs.length, 0);
-console.log('hold list: ' + out.length + ' concepts, ' + pairs + ' concept-language pairs (' + out.filter((h) => h.kind === 'wrong').length + ' wrong, ' + out.filter((h) => h.kind === 'doubt').length + ' doubts)');
+const wrongPairs = out.reduce((n, h) => n + h.langs.filter((l) => h.kinds[l] === 'wrong').length, 0);
+console.log('hold list: ' + out.length + ' concepts, ' + pairs + ' concept-language pairs (' + wrongPairs + ' wrong, ' + (pairs - wrongPairs) + ' doubts)');
 if (corrected.length) console.log('ids corrected to the named English word: ' + corrected.join('; '));
 if (unverified.length) console.log('ids kept but the English word does not match: ' + unverified.join('; '));
 console.log('per language: ' + Object.entries(perLang).map(([l, n]) => l + ' ' + n).join(', '));
 if (process.argv.includes('--write')) {
   writeFileSync(resolve(ROOT, 'data/content-hold.json'), JSON.stringify({
-    note: "Concepts the social post factory must NOT use for the listed languages. 'wrong' holds are glosses known to be wrong (B-04, deck audit §4) and can never be overridden. 'doubt' holds are entries the independent reviews (docs/translation-review) left as they were but flagged as imprecise or misleading; a post that is ABOUT the quirk may acknowledge one in its spec (acknowledge: [{ pair, rank, reason }]), nothing else may use it. Generated by tools/social/derive-holds.mjs: edit that file, not this one.",
+    note: "Concepts the social post factory must NOT use for the listed languages. 'wrong' holds are glosses known to be wrong (deck audit §4) and can never be overridden; each language has its own kind in 'kinds'. 'doubt' holds are entries the independent reviews (docs/translation-review) left as they were but flagged as imprecise or misleading; a post that is ABOUT the quirk may acknowledge one in its spec (acknowledge: [{ pair, rank, reason }]), nothing else may use it. Generated by tools/social/derive-holds.mjs: edit that file, not this one.",
     holds: out
   }, null, 1) + '\n');
   console.log('wrote data/content-hold.json');
