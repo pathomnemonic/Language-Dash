@@ -1,0 +1,42 @@
+[
+  {
+    "id": "kal-hindi-yesterday-tomorrow",
+    "vein": "same-word-two-meanings",
+    "layout": "scenario",
+    "theme": "navy-gold",
+    "map": "skin_neonatal_cloud_nursery",
+    "runner": "avatar_intern",
+    "challenge": "Spot it at full speed in Language Dash",
+    "cta": "Free to play"
+  },
+  {
+    "id": "burro-butter-donkey",
+    "vein": "false-friend",
+    "layout": "bold-claim",
+    "theme": "plum-coral",
+    "map": "skin_surgical_theater",
+    "runner": "avatar_robot",
+    "challenge": "Think you could steer to it in time? Try Language Dash",
+    "cta": "Free to play"
+  },
+  {
+    "id": "ciao-slave",
+    "vein": "etymology",
+    "layout": "big-word",
+    "theme": "forest-brass",
+    "map": "skin_hospital_hallway",
+    "runner": "avatar_wizard",
+    "challenge": "Now try it with a clock running, in Language Dash",
+    "cta": "Free to play"
+  },
+  {
+    "id": "nun-eye-snow",
+    "vein": "same-word-two-meanings",
+    "layout": "story",
+    "theme": "ink-teal",
+    "map": "skin_neon_er",
+    "runner": "avatar_zombie",
+    "challenge": "Can you still find it when the track is moving? Language Dash",
+    "cta": "Free to play"
+  }
+]

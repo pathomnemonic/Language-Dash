@@ -1,0 +1,61 @@
+{
+  "id": "ciao-slave",
+  "note": "Capture the real game screen for each item with: node tools/social/capture-gates.mjs <this file>, then compose the posted slide with: node tools/social/compose-slide3.mjs <this file>. The gates below are what the game itself deals for this pair (buildDeck); the capture script checks the screen against them. The overlay is the standard: a challenge line and a free-play call to action, never a claim that this word is in the game.",
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "deviceScaleFactor": 3
+  },
+  "theme": "forest-brass",
+  "capture": {
+    "map": "skin_hospital_hallway",
+    "mapLabel": "Library Hall",
+    "runner": "avatar_wizard",
+    "runnerLabel": "Wizard of Words"
+  },
+  "overlay": {
+    "challenge": "Now try it with a clock running, in Language Dash",
+    "cta": "Free to play"
+  },
+  "items": [
+    {
+      "pair": "en-it",
+      "rank": 716,
+      "cardId": "en-it-716",
+      "hint": "hello",
+      "answer": "ciao",
+      "roman": "",
+      "gates": [
+        {
+          "label": "ciao",
+          "roman": "",
+          "correct": true
+        },
+        {
+          "label": "ok",
+          "roman": "",
+          "correct": false
+        },
+        {
+          "label": "sito",
+          "roman": "",
+          "correct": false
+        }
+      ],
+      "correctLane": 0,
+      "rankPhrase": "word #716 of the deck (English-frequency order)",
+      "storage": {
+        "langdash.pair.v1": {
+          "known": "en",
+          "target": "it"
+        }
+      },
+      "steps": [
+        "serve the built app (npm run build && npx vite preview --port 4173)",
+        "open /?debug=1 with the storage above set, set the map and runner above, start a run, wait for the first gate",
+        "seed this card and lane: __game.seededCardOrder=[cardId]; __game._seededCardIndex=0; __game._clearGates(); (Math.random fixed to the lane) __game._spawnEncounter()",
+        "screenshot the page once the three gates are on the track"
+      ]
+    }
+  ]
+}

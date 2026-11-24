@@ -1,0 +1,116 @@
+[
+  {
+    "id": "kal-hindi-yesterday-tomorrow",
+    "pair": "en-hi",
+    "concepts": [
+      214,
+      215
+    ],
+    "verified": "deck",
+    "expect": [
+      {
+        "rank": 214,
+        "hint": "tomorrow",
+        "answer": "कल"
+      },
+      {
+        "rank": 215,
+        "hint": "yesterday",
+        "answer": "कल"
+      }
+    ],
+    "hook": "Hindi has ONE word for both yesterday and tomorrow.",
+    "kicker": "Same word. Two days.",
+    "payoff": [
+      "It is कल (kal). Whether it means yesterday or tomorrow, the verb tells you which.",
+      "So nobody is confused: the time is in how you say the sentence, not in a second word."
+    ],
+    "vein": "same-word-two-meanings"
+  },
+  {
+    "id": "burro-butter-donkey",
+    "vein": "false-friend",
+    "pair": "en-it",
+    "verified": "deck",
+    "concepts": [
+      {
+        "pair": "en-it",
+        "rank": 423
+      },
+      {
+        "pair": "en-es",
+        "rank": 981
+      }
+    ],
+    "expect": [
+      {
+        "pair": "en-it",
+        "rank": 423,
+        "hint": "butter",
+        "answer": "burro"
+      },
+      {
+        "pair": "en-es",
+        "rank": 981,
+        "hint": "donkey",
+        "answer": "burro"
+      }
+    ],
+    "hook": "The same word is butter in one language and a donkey in another.",
+    "kicker": "Burro. Burro.",
+    "payoff": [
+      "In Italian, **burro** is butter. In Spanish, **burro** is a donkey.",
+      "Order carefully, whichever country you are in."
+    ]
+  },
+  {
+    "id": "ciao-slave",
+    "vein": "etymology",
+    "pair": "en-it",
+    "verified": "knowledge",
+    "concepts": [
+      716
+    ],
+    "expect": [
+      {
+        "rank": 716,
+        "hint": "hello",
+        "answer": "ciao"
+      }
+    ],
+    "hook": "The Italian hello that started out as **\"I am your slave.\"**",
+    "kicker": "Where it came from",
+    "payoff": [
+      "Ciao comes from the Venetian s-ciào, from the word for slave: a polite way of saying \"at your service\".",
+      "Over the years it turned into a casual hello and goodbye."
+    ]
+  },
+  {
+    "id": "nun-eye-snow",
+    "vein": "same-word-two-meanings",
+    "pair": "en-ko",
+    "verified": "deck",
+    "concepts": [
+      126,
+      322
+    ],
+    "expect": [
+      {
+        "rank": 126,
+        "hint": "eye",
+        "answer": "눈"
+      },
+      {
+        "rank": 322,
+        "hint": "snow",
+        "answer": "눈"
+      }
+    ],
+    "hook": "Korean uses the same word for what you see with and what falls from the sky.",
+    "kicker": "One word, two worlds",
+    "payoff": [
+      "It is 눈 (nun): both eye and snow.",
+      "Context does the rest, so \"my eyes are cold\" and \"the snow is cold\" never get mixed up for long."
+    ]
+  }
+]

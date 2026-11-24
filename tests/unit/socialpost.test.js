@@ -1,7 +1,7 @@
 // The social post factory's standing rules (tools/social): they must hold whatever a hook spec says.
 import { describe, it, expect } from 'vitest';
-import { validateHook, checkCopy, checkHolds, expandTokens, rankPhrase, lookupConcept, loadHolds, FOOTER_TEXT } from '../../tools/social/lib.mjs';
-import { slide1Html, slide2Html, footerHtml } from '../../tools/social/template.mjs';
+import { validateHook, checkCopy, checkHolds, expandTokens, rankPhrase, lookupConcept, loadHolds, FOOTER_TEXT, planWeek, checkOverlay, VEINS, LAYOUTS, THEMES, MAPS, RUNNERS, OVERLAY_CHALLENGES, OVERLAY_CTA } from '../../tools/social/lib.mjs';
+import { slide1Html, slide2Html, slide3Html, footerHtml } from '../../tools/social/template.mjs';
 import { captionFor, slide3For } from '../../tools/social/build-week.mjs';
 import { readFileSync } from 'node:fs';
 
@@ -88,7 +88,7 @@ describe('every export carries the footer band', () => {
   it('both slides contain the required footer text', () => {
     const v = validateHook(kal(), holds);
     const reveal = v.concepts.map((c) => ({ hint: c.hint, answer: c.answer, roman: c.roman }));
-    [slide1Html(kal(), '/f'), slide2Html(kal(), reveal, '/f')].forEach((html) => {
+    [slide1Html(kal(), '/f', {}), slide2Html(kal(), reveal, '/f', {})].forEach((html) => {
       expect(html).toContain('data-footer="1"');
       expect(html).toContain(FOOTER_TEXT);
     });
@@ -99,5 +99,91 @@ describe('every export carries the footer band', () => {
     const c = lookupConcept('en-hi', 214);
     expect(c.rankPhrase).toBe('word #214 of the deck (English-frequency order)');
     expect(c.rankPhrase).not.toMatch(/top/i);
+  });
+});
+
+describe('variety: layouts, themes, maps, runners and hook veins', () => {
+  const specs = (veins) => veins.map((v, i) => ({ id: 'p' + i, pair: 'en-es', vein: v }));
+  const mixed = ['same-word-two-meanings', 'false-friend', 'etymology', 'same-word-two-meanings', 'cultural-word', 'false-friend', 'meaning-flip'];
+
+  it('has at least four layouts, five themes, and plans a week with nothing repeated back to back', () => {
+    expect(LAYOUTS.length).toBeGreaterThanOrEqual(4);
+    expect(THEMES.length).toBeGreaterThanOrEqual(4);
+    const w = planWeek(specs(mixed));
+    expect(w.errors).toEqual([]);
+    ['layout', 'theme', 'map', 'runner', 'challenge'].forEach((k) => {
+      for (let i = 1; i < w.posts.length; i++) expect(w.posts[i][k], k + ' at ' + i).not.toBe(w.posts[i - 1][k]);
+    });
+    // and it uses every layout in a seven-post week
+    expect(new Set(w.posts.map((p) => p.layout)).size).toBe(LAYOUTS.length);
+  });
+
+  it('refuses the same hook vein twice in a row, and an explicit repeat of a layout', () => {
+    const w1 = planWeek(specs(['etymology', 'etymology']));
+    expect(w1.errors.join(' ')).toMatch(/same hook vein/);
+    const w2 = planWeek([{ id: 'a', pair: 'en-es', vein: 'etymology', layout: 'story' }, { id: 'b', pair: 'en-es', vein: 'false-friend', layout: 'story' }]);
+    expect(w2.errors.join(' ')).toMatch(/same layout/);
+  });
+
+  it('warns when a week of five or more uses fewer than three kinds of hook', () => {
+    const w = planWeek(specs(['etymology', 'false-friend', 'etymology', 'false-friend', 'etymology']));
+    expect(w.warnings.join(' ')).toMatch(/only 2 kind/);
+  });
+
+  it('a spec must name a known vein', () => {
+    const h = kal(); delete h.vein;
+    expect(validateHook(h, holds).errors.join(' ')).toMatch(/missing field: vein/);
+    expect(validateHook({ ...kal(), vein: 'gossip' }, holds).errors.join(' ')).toMatch(/vein must be one of/);
+    VEINS.forEach((v) => expect(validateHook({ ...kal(), vein: v }, holds).errors).toEqual([]));
+  });
+
+  it('each layout draws a different composition, each with the footer', () => {
+    const v = validateHook(kal(), holds);
+    const reveal = v.concepts.map((c) => ({ hint: c.hint, answer: c.answer, roman: c.roman }));
+    const htmls = LAYOUTS.map((layout) => slide1Html(kal(), '/f', { layout, theme: 'plum-coral' }));
+    expect(new Set(htmls).size).toBe(LAYOUTS.length);
+    LAYOUTS.forEach((layout, i) => {
+      expect(htmls[i]).toContain('data-layout="' + layout + '"');
+      expect(htmls[i]).toContain('data-footer="1"');
+      const two = slide2Html(kal(), reveal, '/f', { layout, theme: 'ink-teal' });
+      expect(two).toContain('data-layout="' + layout + '"');
+      expect(two).toContain(FOOTER_TEXT);
+    });
+  });
+
+  it('plans maps and runners for the slide-3 capture, and puts them in the package', () => {
+    const w = planWeek(specs(mixed));
+    const v = validateHook(kal(), holds);
+    const s3 = slide3For(kal(), v.concepts, w.posts[0]);
+    expect(MAPS.map((m) => m.id)).toContain(s3.capture.map);
+    expect(RUNNERS.map((r) => r.id)).toContain(s3.capture.runner);
+    expect(s3.overlay.cta).toBe('Free to play');
+  });
+});
+
+describe('the slide-3 overlay standard', () => {
+  it('accepts every standard challenge line with the free-play call to action', () => {
+    OVERLAY_CHALLENGES.forEach((c) => expect(checkOverlay(c, OVERLAY_CTA).errors, c).toEqual([]));
+    expect(checkOverlay('Spot it at full speed in Language Dash', 'Free to play').errors).toEqual([]);
+  });
+
+  it('refuses any claim that this word is in the game', () => {
+    ['This exact word is in the game', 'This word is in Language Dash', 'You will find this word in the app', 'That card is inside the game', 'Language Dash: this word is waiting for you'].forEach((c) => {
+      expect(checkOverlay(c + ' Language Dash', 'Free to play').errors.length, c).toBeGreaterThan(0);
+    });
+  });
+
+  it('needs the free call to action and the game name, and refuses a bad hand-written overlay in a spec', () => {
+    expect(checkOverlay('Try it at full speed', 'Free to play').errors.join(' ')).toMatch(/name Language Dash/);
+    expect(checkOverlay('Try it in Language Dash', 'Download now').errors.join(' ')).toMatch(/free to play/);
+    const bad = { ...kal(), overlay: { challenge: 'This exact word is in the game: Language Dash', cta: 'Free to play' } };
+    expect(validateHook(bad, holds).errors.join(' ')).toMatch(/overlay/);
+  });
+
+  it('slide 3 as posted carries the challenge, the call to action and the footer band', () => {
+    const html = slide3Html('file:///x.png', { challenge: OVERLAY_CHALLENGES[0], cta: OVERLAY_CTA }, '/f', 'ink-teal');
+    expect(html).toContain(OVERLAY_CHALLENGES[0]);
+    expect(html).toContain('Free to play');
+    expect(html).toContain('data-footer="1"');
   });
 });

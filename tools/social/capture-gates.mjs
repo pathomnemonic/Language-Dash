@@ -44,6 +44,17 @@ try {
     const page = await ctx.newPage();
     await page.goto(url + '/');
     await openApp(page, url + '/?debug=1');
+    // the map and the runner for this post (the debug page exposes the save: own the map, equip the runner, favour the map)
+    if (spec.capture) {
+      await page.evaluate((c) => {
+        const st = globalThis.__storage;
+        if (!st) return;
+        const owned = st.data.progression.ownedItems;
+        ['map_' + c.map.replace(/^skin_/, ''), c.runner].forEach((id) => { if (owned.indexOf(id) < 0) owned.push(id); });
+        st.data.progression.equipped.skin = c.runner;
+        st.set('preferredMap', c.map);
+      }, spec.capture);
+    }
     await page.locator('.btn-play').click();
     await page.waitForFunction(() => globalThis.__game && globalThis.__game.gatesActive, null, { timeout: 45000 });
     // Put the card on the track with the correct gate in the stated lane. The game picks that lane with floor(random * 3), so
