@@ -12,19 +12,21 @@
 // Secrets (ONLY the LD_ names are read; there is no fallback to an unprefixed name, which would be another app's value):
 //   LD_STRIPE_SECRET_KEY, LD_SITE_URL (https://pathomnemonic.github.io/Language-Dash), and one Price id per product:
 //   LD_STRIPE_PRICE_YEARLY, LD_STRIPE_PRICE_PASS3M, LD_STRIPE_PRICE_MONTHLY, LD_STRIPE_PRICE_LIFETIME (any you do not sell can be left out)
-//   LD_APPLE_TEAM_ID, LD_APPLE_KEY_ID, LD_APPLE_PRIVATE_KEY, LD_APPLE_CLIENT_ID (only for Sign in with Apple token revocation; used by ld-remove-signin)
+//   LD_APPLE_TEAM_ID, LD_APPLE_KEY_ID, LD_APPLE_PRIVATE_KEY, LD_APPLE_CLIENT_ID (for Sign in with Apple token exchange and revocation; revocation is done by ld-remove-signin), LD_APPLE_BUNDLE_ID (optional; defaults to com.pathomnemonic.languagedash)
 // Every database call goes to the language_dash schema, and only a Language Dash member may buy.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.117.3';
 import { PRODUCTS, LIFETIME_DAYS, chargeReturned, configuredProducts, describePrice, checkoutParams, itemCheckoutParams, portalConfig, productFor, grantsFromSubscriptions, periodEnd } from '../_shared/billing.js';
 import { isPremiumItem } from '../_shared/premium.js';
-import { hasAppleLogin } from '../_shared/applesignin.js';
+import { hasAppleLogin, appleConfigured, appleCodeForm, markIosToken } from '../_shared/applesignin.js';
 import { cancelBillingSubscriptions } from '../_shared/stripecancel.js';
 
 var STRIPE_KEY = Deno.env.get('LD_STRIPE_SECRET_KEY') || '';
 var env = {};
 Object.keys(PRODUCTS).forEach(function (id) { env[PRODUCTS[id].env] = Deno.env.get(PRODUCTS[id].env) || ''; });
 env.SITE_URL = Deno.env.get('LD_SITE_URL') || '';
+var appleEnv = {};
+['APPLE_TEAM_ID', 'APPLE_KEY_ID', 'APPLE_PRIVATE_KEY', 'APPLE_CLIENT_ID', 'APPLE_BUNDLE_ID'].forEach(function (k) { appleEnv[k] = Deno.env.get('LD_' + k) || ''; });
 var admin = createClient(Deno.env.get('SUPABASE_URL') || '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '', { db: { schema: 'language_dash' }, auth: { persistSession: false } });
 
 var CORS = {
@@ -112,6 +114,28 @@ Deno.serve(async function (req) {
       if (!hasAppleLogin(user) || tok.length < 10 || tok.length > 4000) return json({ error: 'Nothing to keep.' }, 400);
       var saved = await admin.rpc('apple_token_save', { p_user: user.id, p_token: tok });
       if (saved && saved.error) { console.error('ld-pro-checkout apple_token failed', saved.error.message); return json({ error: 'Could not save.' }, 500); }
+      return json({ ok: true });
+    }
+
+    // The iOS app's native Sign in with Apple hands the app a one-time code. Exchange it here (the key never leaves the server)
+    // for a refresh token, so that removing the sign-in can revoke the login. Stored marked as an iOS token.
+    if (body.action === 'apple_code') {
+      var code = String(body.code || '');
+      if (!hasAppleLogin(user) || code.length < 10 || code.length > 4000 || !appleConfigured(appleEnv)) return json({ error: 'Nothing to keep.' }, 400);
+      try {
+        var tres = await fetch('https://appleid.apple.com/auth/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(await appleCodeForm(appleEnv, code, Math.floor(Date.now() / 1000))).toString()
+        });
+        var tjson = await tres.json().catch(function () { return {}; });
+        if (!tres.ok || !tjson.refresh_token) throw new Error('Apple said ' + tres.status);
+        var savedIos = await admin.rpc('apple_token_save', { p_user: user.id, p_token: markIosToken(tjson.refresh_token) });
+        if (savedIos && savedIos.error) throw new Error(savedIos.error.message);
+      } catch (e) {
+        console.error('ld-pro-checkout apple_code failed', e && e.message);
+        return json({ error: 'Could not save.' }, 502);
+      }
       return json({ ok: true });
     }
 
