@@ -72,13 +72,16 @@ describe('pronunciation, mechanics and multiple choice', () => {
 });
 
 describe('the hold list', () => {
-  it('blocks a known wrong gloss for its language only, and it can never be acknowledged', () => {
-    expect(checkHolds('en-es', [14], holds).join(' ')).toMatch(/known wrong/);
-    expect(checkHolds('en-fr', [14], holds)).toEqual([]);
-    expect(checkHolds('en-pl', [81], holds).length).toBe(1);
-    expect(checkHolds('en-ru', [647], holds, [{ pair: 'en-ru', rank: 647, reason: 'a long enough reason to try' }]).length).toBe(1);
-    expect(checkHolds('en-fr', [900], holds, [{ pair: 'en-fr', rank: 900, reason: 'a long enough reason to try' }]).length).toBe(1);   // wrong in French
-    expect(checkHolds('en-es', [900], holds, [{ pair: 'en-es', rank: 900, reason: 'a post about this word' }])).toEqual([]);   // a doubt in Spanish
+  it('a wrong hold refuses for its language only and can never be acknowledged (tested with synthetic holds: none is left in the real list)', () => {
+    const fake = [{ concept: 14, kind: 'wrong', kinds: { es: 'wrong' }, langs: ['es'], english: 'why', reason: 'test' }];
+    expect(checkHolds('en-es', [14], fake).join(' ')).toMatch(/known wrong/);
+    expect(checkHolds('en-fr', [14], fake)).toEqual([]);
+    expect(checkHolds('en-es', [14], fake, [{ pair: 'en-es', rank: 14, reason: 'a long enough reason to try' }]).length).toBe(1);
+  });
+  it('the ten glosses the audit found wrong were fixed in the deck, so they are no longer held', () => {
+    [['en-es', 14], ['en-pt', 14], ['en-pl', 81], ['en-ru', 647], ['en-ru', 877], ['en-it', 886], ['en-hi', 103], ['en-hi', 647], ['en-hi', 749], ['en-fr', 900]].forEach(([pair, r]) => {
+      expect(checkHolds(pair, [r], holds).filter((e) => /known wrong/.test(e)), pair + ' #' + r).toEqual([]);
+    });
   });
   it('blocks a flagged doubt unless the spec acknowledges it with a reason', () => {
     expect(checkHolds('en-hi', [214], holds).join(' ')).toMatch(/flagged as imprecise/);
@@ -93,16 +96,15 @@ describe('the hold list', () => {
   });
   it('is the full list derived from the deck reviews: the B-04 entries plus every review doubt, ids checked against the English word', () => {
     const wrong = holds.flatMap((h) => h.langs.filter((l) => h.kinds[l] === 'wrong').map((l) => h.concept + '/' + l)).sort();
-    expect(wrong).toEqual(['103/hi', '14/es', '14/pt', '647/hi', '647/ru', '749/hi', '81/pl', '877/ru', '886/it', '900/fr']);
+    expect(wrong).toEqual([]);   // the audit's ten wrong glosses were corrected in the deck
     expect(holds.length).toBeGreaterThanOrEqual(150);
     expect(holds.every((h) => h.concept >= 1 && h.concept <= 1000 && Array.isArray(h.langs) && h.langs.length && h.reason && h.english)).toBe(true);
     // every language with a review is represented, and a hand-numbered review line was corrected to the English word it names
     const langs = new Set(holds.flatMap((h) => h.langs));
     ['ar', 'de', 'es', 'fr', 'hi', 'it', 'ja', 'ko', 'nl', 'pl', 'pt', 'ru', 'sv', 'zh'].forEach((l) => expect(langs.has(l), l).toBe(true));
     expect(holds.find((h) => h.concept === 8 && h.langs.includes('de')).english).toBe('that');
-    expect(holds.find((h) => h.concept === 877).kind).toBe('wrong');
     // the kind is per language: concept 900 is wrong for French (a noun fragment) but only a doubt for Spanish (mayormente)
-    expect(holds.find((h) => h.concept === 900).kinds).toEqual({ es: 'doubt', fr: 'wrong' });
+    expect(holds.find((h) => h.concept === 900).kinds).toEqual({ es: 'doubt' });   // fr was fixed, es mayormente stays a doubt
   });
 });
 

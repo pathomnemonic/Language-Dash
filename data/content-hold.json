@@ -29,17 +29,17 @@
   },
   {
    "concept": 14,
-   "kind": "wrong",
+   "kind": "doubt",
    "kinds": {
-    "es": "wrong",
-    "pt": "wrong"
+    "es": "doubt",
+    "pt": "doubt"
    },
    "langs": [
     "es",
     "pt"
    ],
    "english": "why",
-   "reason": "es: 14 why: porqué (noun; real word is \"por qué\") / audit §4: gloss porqué is a noun ('the reason'); why is 'por qué' | pt: 14 why: porquê / audit §4: gloss porquê is a noun; why is 'por que'"
+   "reason": "es: 14 why: porqué (noun; real word is \"por qué\") | pt: 14 why: porquê"
   },
   {
    "concept": 19,
@@ -268,18 +268,6 @@
    "reason": "pl: 80 learn / 89 teach: both uczyć; learning is properly 'uczyć się' (reflexive); no clean one-word alternative"
   },
   {
-   "concept": 81,
-   "kind": "wrong",
-   "kinds": {
-    "pl": "wrong"
-   },
-   "langs": [
-    "pl"
-   ],
-   "english": "learn",
-   "reason": "pl: audit §4: gloss uczyć means 'teach'; learn is 'uczyć się'"
-  },
-  {
    "concept": 85,
    "kind": "doubt",
    "kinds": {
@@ -332,18 +320,6 @@
    ],
    "english": "wait",
    "reason": "hi: इस्तेमाल (use), काम (work), बात (talk), मदद, कोशिश, महसूस, पसंद, याद, प्यार, इंतज़ार, तय, उम्मीद: noun/verb stems that need करना; kept as the usual single-word form"
-  },
-  {
-   "concept": 103,
-   "kind": "wrong",
-   "kinds": {
-    "hi": "wrong"
-   },
-   "langs": [
-    "hi"
-   ],
-   "english": "decide",
-   "reason": "hi: इस्तेमाल (use), काम (work), बात (talk), मदद, कोशिश, महसूस, पसंद, याद, प्यार, इंतज़ार, तय, उम्मीद: noun/verb stems that need करना; kept as the usual single-word form / audit §4: तय is an adjective or noun ('decided, fixed') shown for a verb; the verb is 'तय करना'"
   },
   {
    "concept": 106,
@@ -1381,17 +1357,15 @@
   },
   {
    "concept": 647,
-   "kind": "wrong",
+   "kind": "doubt",
    "kinds": {
-    "hi": "wrong",
-    "ru": "wrong"
+    "ru": "doubt"
    },
    "langs": [
-    "hi",
     "ru"
    ],
    "english": "spell",
-   "reason": "hi: audit §4: हिज्जे is a noun ('spelling') shown for a verb concept | ru: 646 spell: no single Russian verb ('писать по буквам'); писать is an approximation / audit §4: gloss писать means 'to write'; spelling is 'писать по буквам'"
+   "reason": "ru: 646 spell: no single Russian verb ('писать по буквам'); писать is an approximation"
   },
   {
    "concept": 654,
@@ -1588,18 +1562,6 @@
    "reason": "ar: دان (owe): literary; كان مدينا is the common form | ja: #746 負う (\"owe\") is weak; 借りがある is a phrase. | pl: 745 owe: zawdzięczać means 'owe gratitude'; for money: być dłużnym | sv: 746 owe = skyldas (passive; \"vara skyldig\")"
   },
   {
-   "concept": 749,
-   "kind": "wrong",
-   "kinds": {
-    "hi": "wrong"
-   },
-   "langs": [
-    "hi"
-   ],
-   "english": "spend",
-   "reason": "hi: audit §4: ख़र्च is a noun ('expense') shown for a verb; the verb is 'ख़र्च करना'"
-  },
-  {
    "concept": 780,
    "kind": "doubt",
    "kinds": {
@@ -1781,15 +1743,15 @@
   },
   {
    "concept": 877,
-   "kind": "wrong",
+   "kind": "doubt",
    "kinds": {
-    "ru": "wrong"
+    "ru": "doubt"
    },
    "langs": [
     "ru"
    ],
    "english": "during",
-   "reason": "ru: 876 during: посреди means 'in the middle of'; correct is the phrase 'во время' / 'в течение' (no single word) / audit §4: gloss посреди means 'in the middle of'; during is 'во время'"
+   "reason": "ru: 876 during: посреди means 'in the middle of'; correct is the phrase 'во время' / 'в течение' (no single word)"
   },
   {
    "concept": 878,
@@ -1802,18 +1764,6 @@
    ],
    "english": "until",
    "reason": "it: 878 until: fino (\"fino a\")"
-  },
-  {
-   "concept": 886,
-   "kind": "wrong",
-   "kinds": {
-    "it": "wrong"
-   },
-   "langs": [
-    "it"
-   ],
-   "english": "about",
-   "reason": "it: audit §4: gloss circa means 'approximately'; concerning is 'riguardo a'"
   },
   {
    "concept": 888,
@@ -1893,17 +1843,15 @@
   },
   {
    "concept": 900,
-   "kind": "wrong",
+   "kind": "doubt",
    "kinds": {
-    "es": "doubt",
-    "fr": "wrong"
+    "es": "doubt"
    },
    "langs": [
-    "es",
-    "fr"
+    "es"
    ],
    "english": "most",
-   "reason": "es: audit §4: mayormente means 'mostly, mainly': a real adverb, but not the general 'most' | fr: audit §4: plupart is a noun fragment ('la plupart') shown for an adverb concept; it cannot stand alone"
+   "reason": "es: audit §4: mayormente means 'mostly, mainly': a real adverb, but not the general 'most'"
   },
   {
    "concept": 901,

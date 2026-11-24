@@ -24,18 +24,14 @@ const CORE = 1000;
 // for the concept shown? If not (wrong word, or the wrong part of speech so the shown form cannot stand alone), it is WRONG and a post may never
 // use it. If it is a real word with the right core meaning but a narrower or looser sense, it is a DOUBT: a post may use it only if the post is
 // about that quirk and says so (acknowledge in the spec).
-const WRONG = [
-  { concept: 14, langs: ['es'], reason: "audit §4: gloss porqué is a noun ('the reason'); why is 'por qué'" },
-  { concept: 14, langs: ['pt'], reason: "audit §4: gloss porquê is a noun; why is 'por que'" },
-  { concept: 81, langs: ['pl'], reason: "audit §4: gloss uczyć means 'teach'; learn is 'uczyć się'" },
-  { concept: 647, langs: ['ru'], reason: "audit §4: gloss писать means 'to write'; spelling is 'писать по буквам'" },
-  { concept: 877, langs: ['ru'], reason: "audit §4: gloss посреди means 'in the middle of'; during is 'во время'" },
-  { concept: 886, langs: ['it'], reason: "audit §4: gloss circa means 'approximately'; concerning is 'riguardo a'" },
-  { concept: 103, langs: ['hi'], reason: "audit §4: तय is an adjective or noun ('decided, fixed') shown for a verb; the verb is 'तय करना'" },
-  { concept: 647, langs: ['hi'], reason: "audit §4: हिज्जे is a noun ('spelling') shown for a verb concept" },
-  { concept: 749, langs: ['hi'], reason: "audit §4: ख़र्च is a noun ('expense') shown for a verb; the verb is 'ख़र्च करना'" },
-  { concept: 900, langs: ['fr'], reason: "audit §4: plupart is a noun fragment ('la plupart') shown for an adverb concept; it cannot stand alone" }
-];
+// Nothing is wrong any more: the ten glosses the audit found wrong were corrected in the deck itself (data/words/*.json, see FIXED_IN_DECK below), so they are
+// no longer held. A future wrong gloss goes here and can never be used by a post. The mechanism is tested with synthetic holds (tests/unit/socialpost.test.js).
+const WRONG = [];
+
+// Corrected in the deck (kept here as the record; not holds). Pinned by tests/unit/deckglosses.test.js.
+//   14 es porqué -> por qué | 14 pt porquê -> por que | 81 pl uczyć -> uczyć się | 647 ru писать -> писать по буквам | 877 ru посреди -> во время
+//   886 it circa -> riguardo a | 103 hi तय -> तय करना | 647 hi हिज्जे -> हिज्जे करना | 749 hi ख़र्च -> ख़र्च करना | 900 fr plupart -> le plus
+
 const DOUBT_EXTRA = [
   { concept: 900, langs: ['es'], reason: "audit §4: mayormente means 'mostly, mainly': a real adverb, but not the general 'most'" },
   { concept: 309, langs: ['ja'], reason: "audit §4: 上 means 'above, up': a loose rendering of the noun 'top'" },
