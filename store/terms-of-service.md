@@ -33,11 +33,11 @@ You must be at least [13] years old, or the minimum age at which you can consent
 
 For either action, a subscription that is still billing is cancelled first. If it cannot be cancelled, nothing is deleted and you are told, so you are never charged for an account that no longer exists. You can also stop using Language Dash at any time by simply uninstalling it, but that does not cancel a subscription (see section 5). Progress stored only on your device is not removed by either action; you can clear it through your device or the app's settings.
 
-We may suspend or end an account that breaks these terms (section 4), and we may stop offering the service as described in section 10.
+We may suspend or end an account that breaks these terms (section 4), and we may stop offering the service as described in section 11.
 
 ## 3. What Language Dash is
 
-Language Dash is a language-learning game. You run through levels and answer vocabulary questions. It is a practice aid. It is not a language course, a qualification, a translation service or a test of fluency. See section 8 about the accuracy of its content.
+Language Dash is a language-learning game. You run through levels and answer vocabulary questions. It is a practice aid. It is not a language course, a qualification, a translation service or a test of fluency. See section 9 about the accuracy of its content.
 
 **The free version.** Language Dash is free to use with a starter library: the 300 most common words of every language pair, plus the game, its basic study tools, and the free parts of its online features. We may change what is included in the free version, but we will not remove access to your own progress, streaks, coins or things you have unlocked because of such a change.
 
@@ -86,7 +86,7 @@ These are the US dollar prices at the time of writing. The price you will pay, i
 
 **Restoring purchases.** Use "Restore purchases" in Settings on a new device or after reinstalling. Purchases made through a store are tied to your store account and to your Language Dash account.
 
-**Lifetime.** "Lifetime" means for the lifetime of the Language Dash service and of your account, not for your own lifetime and not if the service is discontinued (section 10). If we discontinue the service we will give notice as set out in section 10.
+**Lifetime.** "Lifetime" means for the lifetime of the Language Dash service and of your account, not for your own lifetime and not if the service is discontinued (section 11). If we discontinue the service we will give notice as set out in section 11.
 
 **Locker items** are cosmetic, give no advantage in scoring, are tied to your Language Dash account, and have no cash value. They are lost if the account is deleted.
 
@@ -108,13 +108,28 @@ Language Dash is free to enjoy and you may, if you wish, leave a tip. On the web
 
 **Your content.** You keep ownership of what you create: custom words, imported decks, notes, display names, feedback and anything else you put into Language Dash. Custom words and decks you create or import stay on your device unless you choose to share them. If you do share or post something (for example a display name, a group, or an item in the activity feed), you give us a worldwide, non-exclusive, royalty-free licence to host, display and transmit it as needed to run the feature you used, for as long as you leave it in the service. You promise that you have the right to share it and that it does not break the law, anyone's rights, or these terms. Import only decks and material you have the right to use; you are responsible for what you import, including respecting the licence and terms of the deck's creator.
 
+**Contributions.** If you send us a translation fix or other language content to consider for the game, section 8 (Contributions) applies.
+
 **Feedback.** If you send us feedback or ideas, we may use them to improve Language Dash without owing you anything, but we will not publish your name or message without your permission.
 
-## 8. Educational-content disclaimer
+## 8. Contributions
+
+You may send us a translation fix, a word correction, a note about what a word means, or other language content (a "Contribution") through a Language Dash contribution form or by email. Sending one is entirely optional. So that we can check a translation fix, please give the word's place in the game's word list (its number) or its English headword, the language, the word the game shows now, the word you propose, and one line on why. We may ask for more. If you send a Contribution:
+
+- **Your own work.** You confirm that the Contribution is your own work or that you have the right to submit it, and that it does not copy a dictionary, textbook, course, word list, app or any other material you do not have the right to share. To the best of your knowledge it is accurate. You must be 18 or older.
+- **Licence.** You keep ownership of your Contribution. You grant PathoMnemonic a worldwide, perpetual, irrevocable, royalty-free, non-exclusive licence to use, copy, edit, adapt, translate, combine with other material, publish, distribute and display it, in whole or in part, in Language Dash and in PathoMnemonic's other apps, websites and promotional materials, in any format. We may edit a Contribution for accuracy, clarity, length and fit, and we may change or correct it later.
+- **No payment.** You are not paid for a Contribution and have no right to royalties or any other compensation, whether or not we use it. We may, but need not, credit you by name; if you want to be credited, or to stay anonymous, say so when you send it.
+- **Acceptance is our decision.** Sending a Contribution does not oblige us to review, accept, publish or keep it. We may accept, edit, hold, decline or remove any Contribution at any time, without giving a reason. A Contribution is not part of Language Dash until we publish it.
+- **Automated checking.** We may check Contributions with automated tools, including AI, to sort them and to flag ones that look wrong or unclear, as well as by a person. Nothing is published until a person has approved it.
+- **Language content.** A Contribution we publish is still part of a practice aid, and the accuracy notice in section 9 applies to it. Publishing it is not a promise that it is correct, and we may change or remove it later.
+- **Your details.** Any name or email address you give with a Contribution is used only to review it, to contact you about it and to credit you if you ask. We keep it out of any public listing. See the [Privacy Policy](https://pathomnemonic.github.io/StudyBible/privacy.html).
+- **Taking one back.** If you ask us before we publish a Contribution, we will not use it. Once it has been published, the licence above continues for what has already been published or distributed.
+
+## 9. Educational-content disclaimer
 
 Language Dash is a practice aid. Its words and explanations are written to help you recognise and recall common vocabulary. They are simplified, usually one meaning per word, may be incomplete, may not reflect regional variation, register or changing usage, and may contain mistakes, including in the translations, the example sentences and the audio. Some content, especially for less-resourced languages, has not been checked by a native speaker. Do not rely on Language Dash for translations or decisions that matter, such as legal, medical, immigration, safety or professional text; ask a qualified translator, and check anything important against a dictionary or a native speaker. We do not promise that using the game will make you fluent or improve any test result, grade or qualification. If you spot an error, please use the report button on a word and we will look at it.
 
-## 9. Disclaimer of warranties and limit of liability
+## 10. Disclaimer of warranties and limit of liability
 
 To the fullest extent the law allows:
 
@@ -126,19 +141,19 @@ Nothing in these terms limits liability that cannot be limited by law (for examp
 
 You agree to be responsible for losses we suffer because you broke these terms or the law in using Language Dash, to the extent the law allows.
 
-## 10. Changes to the service, and discontinuation
+## 11. Changes to the service, and discontinuation
 
 We keep improving Language Dash, and we may add, change or remove features, content, languages, prices or products. If we decide to end the service as a whole, we will give notice in the app and on our website at least 30 days before, we will stop selling products first, and we will try to offer you a reasonable way to keep your progress (for example, export). A Lifetime purchase is covered by the paragraph on Lifetime in section 5.
 
-## 11. Changes to these terms
+## 12. Changes to these terms
 
 We may update these terms, for example when we add features or when the law changes. We will change the date at the top, and for a material change we will tell you in the app or by email before it takes effect (and at least [14] days before it applies to you where the law requires notice). If you keep using Language Dash after a change takes effect, you accept the updated terms. If you do not agree with a change, you can stop using the service, delete your account (section 2) and, if you have a subscription, cancel it (section 5). The Privacy Policy may be updated separately and applies as updated.
 
-## 12. Contact
+## 13. Contact
 
 Questions, billing problems (a charge you do not recognise, or a purchase that did not unlock), or deletion requests: patho.mnemonic1@gmail.com. For data requests, see the Privacy Policy: https://pathomnemonic.github.io/StudyBible/privacy.html
 
-## 13. General
+## 14. General
 
 **Governing law and disputes.** These terms are governed by the laws of the State of Arizona, United States, without regard to its conflict-of-laws rules, and the state and federal courts located in Arizona will have exclusive jurisdiction, except that if you are a consumer, you keep the protection of the mandatory laws of the country where you live and any right to bring a claim in your local courts. Please contact us first so that we can try to resolve a problem informally.
 
@@ -150,9 +165,9 @@ Questions, billing problems (a charge you do not recognise, or a purchase that d
 
 1. **Operator and governing law**: confirmed by Mathews: the operator is the trade name "PathoMnemonic" (a sole proprietorship, not separately registered), his personal name does not appear, and Arizona law governs. The venue (state and federal courts in Arizona) is my wording.
 2. **Minimum age** (section 1): drafted as 13, the usual floor for a consumer app that is not directed at children; the Privacy Policy does not state an age, so confirm both say the same, and that matches the store age ratings.
-3. **Liability cap** (section 9): drafted as the greater of 12 months' payments or US$50. Change if wanted.
-4. **Notice periods** (sections 10 and 11): 30 days to end the service and 14 days for a material change are my choices, not requirements.
-5. **Refunds** (sections 5 and 10): reworded on 23 November to a plain no-refunds policy, as Mathews decided (matching the Dx Dash terms). The earlier case-by-case promise and the shutdown refund promise were removed. Mandatory consumer rights are kept in one sentence because they cannot be waived; a lawyer should confirm the wording for the EU and UK.
+3. **Liability cap** (section 10): drafted as the greater of 12 months' payments or US$50. Change if wanted.
+4. **Notice periods** (sections 11 and 12): 30 days to end the service and 14 days for a material change are my choices, not requirements.
+5. **Refunds** (sections 5 and 11): reworded on 23 November to a plain no-refunds policy, as Mathews decided (matching the Dx Dash terms). The earlier case-by-case promise and the shutdown refund promise were removed. Mandatory consumer rights are kept in one sentence because they cannot be waived; a lawyer should confirm the wording for the EU and UK.
 6. **"Lifetime" definition** (section 5): defined as the life of the service and account, not the user's life.
 7. **Prices in the text**: US$ list prices match Dx Dash (3.49 / 7.49 / 19.99 / 39.99) and the Locker range ($0.99 to $2.99 from `docs/PRO.md`). If prices will change often, replace them with "shown in the app before you buy" so the terms need not change.
 8. **Privacy Policy link**: points at the shared policy, https://pathomnemonic.github.io/StudyBible/privacy.html, as asked. The app's own `public/privacy.html` is a Language Dash-specific policy with more detail; confirm the shared one covers Language Dash's data (Supabase tables, analytics, Apple/Google sign-in, tips). If it does not, link both.
