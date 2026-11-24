@@ -117,7 +117,7 @@ export default defineConfig(({ mode }) => {
       // On the CI runner the full run (184 files, with coverage) occasionally trips Vitest's own "[vitest-worker]: Timeout
       // calling onTaskUpdate" after every test has already passed, which still fails the step. It is the worker <-> runner
       // message channel starving under load, and its 60s limit is fixed, so the fix is less load: two workers in CI.
-      maxWorkers: process.env.CI ? 2 : undefined,
+      ...(process.env.CI ? { minWorkers: 1, maxWorkers: 2 } : {}),
       testTimeout: 15000,
       hookTimeout: 10000
     }
