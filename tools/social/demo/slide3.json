@@ -1,0 +1,89 @@
+{
+  "id": "kal-hindi-yesterday-tomorrow",
+  "note": "Capture the real game screen for each item with: node tools/social/capture-gates.mjs <this file>. The gates below are what the game itself deals for this pair (buildDeck); the capture script checks the screen against them.",
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "deviceScaleFactor": 3
+  },
+  "items": [
+    {
+      "pair": "en-hi",
+      "rank": 214,
+      "cardId": "en-hi-214",
+      "hint": "tomorrow",
+      "answer": "कल",
+      "roman": "kal",
+      "gates": [
+        {
+          "label": "कल",
+          "roman": "kal",
+          "correct": true
+        },
+        {
+          "label": "कबका",
+          "roman": "kabka",
+          "correct": false
+        },
+        {
+          "label": "अक्सर",
+          "roman": "aksar",
+          "correct": false
+        }
+      ],
+      "correctLane": 0,
+      "rankPhrase": "word #214 of the deck (English-frequency order)",
+      "storage": {
+        "langdash.pair.v1": {
+          "known": "en",
+          "target": "hi"
+        }
+      },
+      "steps": [
+        "serve the built app (npm run build && npx vite preview --port 4173)",
+        "open /?debug=1 with the storage above set, start a run, wait for the first gate",
+        "seed this card and lane: __game.seededCardOrder=[cardId]; __game._seededCardIndex=0; __game._clearGates(); (Math.random fixed to the lane) __game._spawnEncounter()",
+        "screenshot the page once the three gates are on the track"
+      ]
+    },
+    {
+      "pair": "en-hi",
+      "rank": 215,
+      "cardId": "en-hi-215",
+      "hint": "yesterday",
+      "answer": "कल",
+      "roman": "kal",
+      "gates": [
+        {
+          "label": "भी",
+          "roman": "bhi",
+          "correct": false
+        },
+        {
+          "label": "कल",
+          "roman": "kal",
+          "correct": true
+        },
+        {
+          "label": "कबका",
+          "roman": "kabka",
+          "correct": false
+        }
+      ],
+      "correctLane": 1,
+      "rankPhrase": "word #215 of the deck (English-frequency order)",
+      "storage": {
+        "langdash.pair.v1": {
+          "known": "en",
+          "target": "hi"
+        }
+      },
+      "steps": [
+        "serve the built app (npm run build && npx vite preview --port 4173)",
+        "open /?debug=1 with the storage above set, start a run, wait for the first gate",
+        "seed this card and lane: __game.seededCardOrder=[cardId]; __game._seededCardIndex=0; __game._clearGates(); (Math.random fixed to the lane) __game._spawnEncounter()",
+        "screenshot the page once the three gates are on the track"
+      ]
+    }
+  ]
+}

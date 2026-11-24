@@ -1,0 +1,10 @@
+{
+  "note": "Words and concepts the social post factory must NOT use, because the deck's gloss is known to be wrong or unverified. Each hold names a concept id (the deck rank) and the target languages it applies to ('*' means every language). Remove a hold only after the fix is merged and a human has checked it. B-04 (deck audit §4): the five below are the ones named so far; add the rest of the list when it is received.",
+  "holds": [
+    { "concept": 14, "langs": ["es", "pt"], "reason": "B-04: 'why' is glossed as a noun (porqué / porquê, 'the reason'); should be por qué / por que" },
+    { "concept": 81, "langs": ["pl"], "reason": "B-04: 'learn' → uczyć means 'teach'; should be uczyć się" },
+    { "concept": 647, "langs": ["ru"], "reason": "B-04: 'spell' → писать means 'write'" },
+    { "concept": 877, "langs": ["ru"], "reason": "B-04: 'during' → посреди is wrong" },
+    { "concept": 886, "langs": ["it"], "reason": "B-04: 'about' → circa is wrong" }
+  ]
+}

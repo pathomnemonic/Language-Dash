@@ -1,0 +1,18 @@
+[
+  {
+    "id": "kal-hindi-yesterday-tomorrow",
+    "pair": "en-hi",
+    "concepts": [214, 215],
+    "verified": "deck",
+    "expect": [
+      { "rank": 214, "hint": "tomorrow", "answer": "कल" },
+      { "rank": 215, "hint": "yesterday", "answer": "कल" }
+    ],
+    "hook": "Hindi has ONE word for both yesterday and tomorrow.",
+    "kicker": "Same word. Two days.",
+    "payoff": [
+      "It is कल (kal). Whether it means yesterday or tomorrow, the verb tells you which.",
+      "So nobody is confused: the time is in how you say the sentence, not in a second word."
+    ]
+  }
+]
