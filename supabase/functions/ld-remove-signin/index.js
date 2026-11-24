@@ -19,13 +19,13 @@
 // Supabase sets SUPABASE_URL, SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY itself.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.117.3';
-import { appleConfigured, appleRevokeForm, revokeSucceeded, hasAppleLogin } from '../_shared/applesignin.js';
+import { appleConfigured, appleRevokeForm, revokeSucceeded, hasAppleLogin, revokeTarget } from '../_shared/applesignin.js';
 import { cancelBillingSubscriptions } from '../_shared/stripecancel.js';
 
 var CONFIRM = 'REMOVE MY SIGN-IN';
 var STRIPE_KEY = Deno.env.get('LD_STRIPE_SECRET_KEY') || '';
 var appleEnv = {};
-['APPLE_TEAM_ID', 'APPLE_KEY_ID', 'APPLE_PRIVATE_KEY', 'APPLE_CLIENT_ID'].forEach(function (k) { appleEnv[k] = Deno.env.get('LD_' + k) || ''; });
+['APPLE_TEAM_ID', 'APPLE_KEY_ID', 'APPLE_PRIVATE_KEY', 'APPLE_CLIENT_ID', 'APPLE_BUNDLE_ID'].forEach(function (k) { appleEnv[k] = Deno.env.get('LD_' + k) || ''; });
 var SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
 var admin = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '', { db: { schema: 'language_dash' }, auth: { persistSession: false } });
 
@@ -74,12 +74,13 @@ Deno.serve(async function (req) {
     var revoked = false;
     if (hasAppleLogin(user)) {
       var appleTok = await admin.rpc('apple_token_get', { p_user: user.id });
-      if (appleTok && appleTok.data && appleConfigured(appleEnv)) {
+      var appleTarget = revokeTarget(appleEnv, appleTok && appleTok.data);
+      if (appleTok && appleTok.data && appleConfigured(appleTarget.env)) {
         try {
           var ares = await fetch('https://appleid.apple.com/auth/revoke', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(await appleRevokeForm(appleEnv, appleTok.data, Math.floor(Date.now() / 1000))).toString()
+            body: new URLSearchParams(await appleRevokeForm(appleTarget.env, appleTarget.token, Math.floor(Date.now() / 1000))).toString()
           });
           if (!revokeSucceeded({ status: ares.status, body: await ares.text().catch(function () { return ''; }) })) throw new Error('Apple said ' + ares.status);
           revoked = true;
