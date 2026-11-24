@@ -58,9 +58,9 @@ Data collected, **not used for tracking**:
 | Identifiers → User ID | Yes | App functionality |
 | User content → Other user content (display name, shared run summaries, kudos) | Yes | App functionality |
 | Usage data → Product interaction (scores, progress) | Yes | App functionality |
-| Diagnostics → Crash data, Performance data (only if the player switches it on) | **No** | App functionality (bug fixing) |
+| Diagnostics → Crash data, Performance data (only if the player switches on "Help fix problems"; error reports go to our own database and to Sentry) | **No** | App functionality (bug fixing) |
 | Purchases → Purchase history: **collected, not linked** (the store handles payment; the app learns only which products you own, plus anonymous paywall and purchase events if you opted in to statistics) | **No** | App functionality, Analytics |
-| Usage data → Product interaction (anonymous usage statistics: modes, questions, screens; asked on first launch, can be switched off) | **No** (a random install ID, never the account) | Analytics |
+| Usage data → Product interaction (anonymous usage statistics: modes, questions, screens, page views; asked on first launch, can be switched off; sent to our own database and to PostHog) | **No** (a random install ID, never the account) | Analytics |
 | Identifiers → Device ID (the random install ID the app makes for itself; not the advertising identifier) | **No** | Analytics |
 | Diagnostics → Performance data, Other diagnostic data (frame rate, load times, errors; same switch) | **No** | Analytics |
 Tracking: **No**. Third-party advertising: **No**.

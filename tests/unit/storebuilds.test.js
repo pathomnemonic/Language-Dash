@@ -56,3 +56,41 @@ describe('both store builds', () => {
     expect(main).toMatch(/smallestScreenWidthDp < 600/);
   });
 });
+
+describe('the iOS cloud build is ready to run once the Apple account is active', () => {
+  it('runs only when started by a person (no automatic trigger), with its App Store Connect integration named', () => {
+    expect(codemagic).not.toMatch(/^\s*triggering:/m);
+    expect(codemagic).toContain('app_store_connect: Language Dash App Store Connect');
+    expect(codemagic).toMatch(/submit_to_testflight: true/);
+  });
+
+  it('takes the alpha channel off the app icons and fails the build if one is left', () => {
+    expect(codemagic).toMatch(/AppIcon\.appiconset\/\*\.png/);
+    expect(codemagic).toMatch(/sips -g hasAlpha/);
+    expect(codemagic.indexOf('App icons without an alpha channel')).toBeGreaterThan(codemagic.indexOf('capacitor-assets generate --ios'));
+  });
+
+  it('has the privacy manifest, icon and splash sources it copies and generates from', () => {
+    const manifestXml = readFileSync('ios-config/PrivacyInfo.xcprivacy', 'utf8');
+    expect(manifestXml).toMatch(/<key>NSPrivacyTracking<\/key>\s*<false\/>/);
+    expect(manifestXml).toContain('NSPrivacyAccessedAPICategoryUserDefaults');
+    expect(codemagic).toContain('ios-config/PrivacyInfo.xcprivacy');
+    for (const [f, size] of [['icon-only', 1024], ['icon-foreground', 1024], ['icon-background', 1024], ['splash', 2732], ['splash-dark', 2732]]) {
+      const buf = readFileSync('assets/' + f + '.png');
+      expect(buf.readUInt32BE(16), f + ' width').toBe(size);
+      expect(buf.readUInt32BE(20), f + ' height').toBe(size);
+    }
+  });
+
+  it('has the store purchase plugin and the app name and identifier the signing uses', () => {
+    expect(pkg.dependencies['capacitor-plugin-cdv-purchase']).toBeTruthy();
+    expect(config.appName).toBe('Language Dash');
+    expect(codemagic).toContain('name: Language Dash iOS (TestFlight)');
+  });
+
+  it('the launch guide exists and names what still blocks a first build', () => {
+    const guide = readFileSync('docs/IOS-LAUNCH.md', 'utf8');
+    ['Language Dash App Store Connect', 'LD_APPLE_IAP_PRIVATE_KEY', 'VITE_SUPABASE_ANON_KEY', 'languagedash_pro_lifetime', 'screenshots'].forEach((t) => expect(guide).toContain(t));
+  });
+});
+

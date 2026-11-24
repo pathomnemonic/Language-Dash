@@ -20,6 +20,8 @@ workflows:
         # Add VITE_SUPPORT_EMAIL (where feedback emails go if the in-app form cannot reach the server)
         # Optional: VITE_AUTH_PROVIDERS (default google,apple,azure), VITE_IAP_VERIFY=1 once the ld-iap-verify function is live (docs/PRO.md)
         # Add VITE_APPSTORE_ID (the numeric id from App Store Connect, once the app exists) so "Rate" can open the App Store page
+        # VITE_IAP_VERIFY: 1 once ld-iap-verify (deployed) has the LD_APPLE_IAP_* secrets, so Apple purchases are checked by the server
+        # VITE_FEATURE_LOCKER_ITEMS: 1 only when the Locker item products exist in App Store Connect (otherwise their buttons read "Soon")
     scripts:
       - name: Build the web game
         script: |
@@ -31,6 +33,15 @@ workflows:
           npx cap add ios
           npx cap sync ios
           npx capacitor-assets generate --ios
+      - name: App icons without an alpha channel (App Store Connect rejects an icon that has one)
+        script: |
+          # assets/icon-only.png is saved with an (unused, fully opaque) alpha channel; a round trip through JPEG drops it
+          for f in ios/App/App/Assets.xcassets/AppIcon.appiconset/*.png; do
+            sips -s format jpeg "$f" --out "$f.jpg" >/dev/null
+            sips -s format png "$f.jpg" --out "$f" >/dev/null
+            rm "$f.jpg"
+            if sips -g hasAlpha "$f" | grep -q "hasAlpha: yes"; then echo "$f still has an alpha channel"; exit 1; fi
+          done
       - name: Orientations (iPhone upright, iPad any way), export compliance, email-link scheme, build number
         script: |
           PLIST=ios/App/App/Info.plist
