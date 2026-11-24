@@ -66,6 +66,7 @@ import { FEATURES } from './features.js';
 import { watchBattery } from './battery.js';
 import { appPublicUrl } from './publicurl.js';
 import { syncNativeReminder, syncStreakRiskReminder } from './reminders.js';
+import { syncMonitoring, enabled as monitoringEnabled } from './monitoring.js';
 import { watchConnection } from './offline.js';
 import { shareSetting, isShareableRun, runPayload, crossedCardMilestone, crossedDayMilestone } from './sharing.js';
 import { LOCKER_ITEMS, QUESTS } from './game/shopdata.js';
@@ -1350,6 +1351,15 @@ function init() {
   probeTipJar(); // phone apps: find out whether the store has the tip products
   watchBattery(); // a nearly flat phone steps Auto graphics down a tier
   watchConnection(function (msg) { ui.showNotice(msg, { ms: 4500 }); });
+  // Error reports (Sentry) and anonymous pageview and error counts (PostHog): production builds only, and each only for a player who agreed
+  // (Settings → Help fix problems; the one-time usage-statistics question). They are re-checked every few seconds so a change takes effect.
+  var monitorSync = function () {
+    syncMonitoring({
+      diagnosticsOn: function () { return !!storage.get('sendDiagnostics'); },
+      analyticsGranted: function () { return analytics.consentState() === 'granted'; }
+    });
+  };
+  if (monitoringEnabled()) { monitorSync(); setInterval(monitorSync, 10000); }
   // Anonymous crash and slow-frame reports, only for players who switched them on in Settings
   setDiagnosticsSink(function (report) {
     if (!storage.get('sendDiagnostics')) return;

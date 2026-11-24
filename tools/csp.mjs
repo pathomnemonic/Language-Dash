@@ -9,10 +9,11 @@
  *   - its own scripts (and the one small inline boot-splash script, allowed by its hash), WebAssembly for the Anki importer
  *   - styles, with inline allowed (the interface sets many styles directly)
  *   - images, audio and 3D models from itself, plus data: and blob: (generated textures, model textures)
- *   - connections to itself, to the Supabase project (REST and realtime), and to the PeerJS signaling server
+ *   - connections to itself, to the Supabase project (REST and realtime), to the PeerJS signaling server, and to Sentry and PostHog (monitoring.js)
  */
 
 import { createHash } from 'node:crypto';
+import { monitoringHosts } from '../js/monitoring.js';
 
 export var PEER_HOSTS = ['0.peerjs.com'];
 
@@ -44,6 +45,8 @@ export function buildCsp(opts) {
     } catch { /* a malformed URL just means no Supabase host is allowed */ }
   }
   PEER_HOSTS.forEach(function (h) { connect.push('https://' + h, 'wss://' + h); });
+  // the error and statistics services (js/monitoring.js): only contacted after the player agreed, but the page must be allowed to reach them
+  monitoringHosts().forEach(function (h) { connect.push('https://' + h); });
   var scripts = ["'self'", "'wasm-unsafe-eval'"].concat(inlineScripts(opts.html || '').map(scriptHash));
   return [
     "default-src 'self'",
