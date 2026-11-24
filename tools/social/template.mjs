@@ -125,12 +125,12 @@ export function slide2Html(post, reveal, fontsDir, plan) {
  */
 export function slide3Html(imageUrl, overlay, fontsDir, theme) {
   const t = themeOf(theme);
-  // the whole game screen (HUD, hint, gates, track and runner) in a phone frame on the right; the challenge and call to action on the left
+  // the whole game screen (HUD, hint, gates, track and runner) in a phone frame on the right; the challenge line in a pill on the left.
+  // The pill carries the challenge only: the free to play and link in bio message is the footer band, never repeated here.
   return `<!doctype html><html><head><meta charset="utf-8"><style>${css(fontsDir, t)}
 .s3 { position: absolute; inset: 0 0 160px 0; padding: 60px 50px 50px 60px; display: flex; gap: 36px; align-items: center; }
 .s3 .txt { flex: 1; display: flex; flex-direction: column; justify-content: center; height: 100%; }
-.s3 .ch { font-family: "Fraunces", Georgia, serif; font-weight: 900; font-size: 58px; line-height: 1.12; color: var(--ink); }
-.s3 .cta { align-self: flex-start; margin-top: 34px; background: var(--accent); color: var(--foot-ink); font-weight: 700; font-size: 40px; padding: 14px 34px; border-radius: 999px; letter-spacing: .5px; }
+.s3 .pill { background: var(--accent); color: var(--foot-ink); font-family: "Fraunces", Georgia, serif; font-weight: 900; font-size: 52px; line-height: 1.15; padding: 38px 40px; border-radius: 44px; }
 .s3 .phone { width: 520px; height: 1124px; border-radius: 44px; border: 8px solid var(--accent); background: #000 url("${imageUrl}") center / cover no-repeat; flex: none; }
-</style></head><body><div class="s3"><div class="txt" data-overlay="1"><div class="tag" style="margin-bottom:34px">Language Dash</div><div class="ch">${esc(overlay.challenge)}</div><div class="cta">${esc(overlay.cta)}</div></div><div class="phone"></div></div>${footerHtml()}</body></html>`;
+</style></head><body><div class="s3"><div class="txt" data-overlay="1"><div class="tag" style="margin-bottom:34px">Language Dash</div><div class="pill" data-pill="1">${esc(overlay.challenge)}</div></div><div class="phone"></div></div>${footerHtml()}</body></html>`;
 }

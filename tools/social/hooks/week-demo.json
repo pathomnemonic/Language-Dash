@@ -19,13 +19,25 @@
         "answer": "कल"
       }
     ],
-    "hook": "Hindi has ONE word for both yesterday and tomorrow.",
-    "kicker": "Same word. Two days.",
+    "hook": "Hindi has one word for both yesterday and tomorrow.",
+    "kicker": "The same word covers both days.",
     "payoff": [
-      "It is कल (kal). Whether it means yesterday or tomorrow, the verb tells you which.",
-      "So nobody is confused: the time is in how you say the sentence, not in a second word."
+      "It is कल, pronounced kal. The verb in the sentence tells you whether it means yesterday or tomorrow.",
+      "So there is no confusion: the time is carried by the verb, not by a second word."
     ],
-    "vein": "same-word-two-meanings"
+    "vein": "same-word-two-meanings",
+    "acknowledge": [
+      {
+        "pair": "en-hi",
+        "rank": 214,
+        "reason": "the post is about this quirk: Hindi uses one word for both days"
+      },
+      {
+        "pair": "en-hi",
+        "rank": 215,
+        "reason": "the post is about this quirk: Hindi uses one word for both days"
+      }
+    ]
   },
   {
     "id": "burro-butter-donkey",
@@ -57,7 +69,7 @@
       }
     ],
     "hook": "The same word is butter in one language and a donkey in another.",
-    "kicker": "Burro. Burro.",
+    "kicker": "Both are spelled burro.",
     "payoff": [
       "In Italian, **burro** is butter. In Spanish, **burro** is a donkey.",
       "Order carefully, whichever country you are in."
@@ -79,9 +91,9 @@
       }
     ],
     "hook": "The Italian hello that started out as **\"I am your slave.\"**",
-    "kicker": "Where it came from",
+    "kicker": "Where the word came from.",
     "payoff": [
-      "Ciao comes from the Venetian s-ciào, from the word for slave: a polite way of saying \"at your service\".",
+      "Ciao comes from a Venetian greeting built on the word schiavo, which means slave. It was a polite way of saying at your service.",
       "Over the years it turned into a casual hello and goodbye."
     ]
   },
@@ -107,10 +119,10 @@
       }
     ],
     "hook": "Korean uses the same word for what you see with and what falls from the sky.",
-    "kicker": "One word, two worlds",
+    "kicker": "It is the same word both times.",
     "payoff": [
-      "It is 눈 (nun): both eye and snow.",
-      "Context does the rest, so \"my eyes are cold\" and \"the snow is cold\" never get mixed up for long."
+      "It is 눈, pronounced nun. It means both eye and snow.",
+      "Context sorts it out, so nobody confuses the two for long."
     ]
   }
 ]

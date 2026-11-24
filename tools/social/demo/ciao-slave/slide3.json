@@ -1,6 +1,6 @@
 {
   "id": "ciao-slave",
-  "note": "Capture the real game screen for each item with: node tools/social/capture-gates.mjs <this file>, then compose the posted slide with: node tools/social/compose-slide3.mjs <this file>. The gates below are what the game itself deals for this pair (buildDeck); the capture script checks the screen against them. The overlay is the standard: a challenge line and a free-play call to action, never a claim that this word is in the game.",
+  "note": "Capture the real game screen for each item with: node tools/social/capture-gates.mjs <this file>, then compose the posted slide with: node tools/social/compose-slide3.mjs <this file>. The gates below are what the game itself deals for this pair (buildDeck); the capture script checks the screen against them. The overlay is the standard: a challenge line in the pill only (the free to play message is the footer band), never a claim that this word is in the game.",
   "viewport": {
     "width": 390,
     "height": 844,
@@ -14,8 +14,7 @@
     "runnerLabel": "Wizard of Words"
   },
   "overlay": {
-    "challenge": "Now try it with a clock running, in Language Dash",
-    "cta": "Free to play"
+    "challenge": "Now try it with a clock running, in Language Dash."
   },
   "items": [
     {
@@ -43,7 +42,7 @@
         }
       ],
       "correctLane": 0,
-      "rankPhrase": "word #716 of the deck (English-frequency order)",
+      "rankPhrase": "word #716 of the deck (ordered by English frequency)",
       "storage": {
         "langdash.pair.v1": {
           "known": "en",

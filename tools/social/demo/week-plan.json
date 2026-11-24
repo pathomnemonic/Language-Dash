@@ -6,8 +6,7 @@
     "theme": "navy-gold",
     "map": "skin_neonatal_cloud_nursery",
     "runner": "avatar_intern",
-    "challenge": "Spot it at full speed in Language Dash",
-    "cta": "Free to play"
+    "challenge": "Spot it at full speed in Language Dash."
   },
   {
     "id": "burro-butter-donkey",
@@ -16,8 +15,7 @@
     "theme": "plum-coral",
     "map": "skin_surgical_theater",
     "runner": "avatar_robot",
-    "challenge": "Think you could steer to it in time? Try Language Dash",
-    "cta": "Free to play"
+    "challenge": "Think you could steer to it in time? Try Language Dash."
   },
   {
     "id": "ciao-slave",
@@ -26,8 +24,7 @@
     "theme": "forest-brass",
     "map": "skin_hospital_hallway",
     "runner": "avatar_wizard",
-    "challenge": "Now try it with a clock running, in Language Dash",
-    "cta": "Free to play"
+    "challenge": "Now try it with a clock running, in Language Dash."
   },
   {
     "id": "nun-eye-snow",
@@ -36,7 +33,6 @@
     "theme": "ink-teal",
     "map": "skin_neon_er",
     "runner": "avatar_zombie",
-    "challenge": "Can you still find it when the track is moving? Language Dash",
-    "cta": "Free to play"
+    "challenge": "Can you still find it when the track is moving? Try Language Dash."
   }
 ]

@@ -14,7 +14,7 @@ const CONCEPTS = JSON.parse(readFileSync(resolve(ROOT, 'data/concepts.json'), 'u
 const CONCEPT_ROWS = CONCEPTS.map((k) => [k.cat, k.pos]);
 const wordsCache = {};
 
-export const FOOTER_TEXT = 'Play Language Dash free — link in bio';
+export const FOOTER_TEXT = 'Play Language Dash free. Link in bio.';
 export const VERIFIED_TAGS = ['deck', 'knowledge', 'needs-check'];
 
 function wordsFor(lang) {
@@ -38,7 +38,7 @@ export function normConcepts(h) {
 }
 
 /** The honest way to mention a rank. Never "top N <language>": the rank is the English concept's frequency order. */
-export function rankPhrase(n) { return 'word #' + n + ' of the deck (English-frequency order)'; }
+export function rankPhrase(n) { return 'word #' + n + ' of the deck (ordered by English frequency)'; }
 
 /** The real card, gates and facts for one concept in one pair. Throws when the pair has no such card. */
 export function lookupConcept(pair, rank, lane) {
@@ -73,7 +73,7 @@ export function loadHolds() {
 // ---------------------------------------------------------------------------------------------------------------------
 
 const RANK_BANNED = [
-  [/\btop[\s-]*\d+/i, 'a "top N" claim: the deck ranking is English-frequency order, so use {{rank:N}} for an honest rank phrase'],
+  [/\btop[\s-]*\d+/i, 'a "top N" claim: the deck ranking follows English frequency, so use {{rank:N}} for an honest rank phrase'],
   [/\b(most|more)[\s-](common|used|frequent|popular)\b[^.]*\b(words?|terms?)\b/i, 'a "most common/used words" claim about a language: the deck has no ranking of the language\'s own frequency'],
   [/\bfirst\s+\d+\s+words?\b/i, 'a "first N words" claim: use {{rank:N}}'],
   [/\b(word\s*)?#\s*\d+/i, 'a bare rank number: use {{rank:N}} so the wording stays honest'],
@@ -107,6 +107,36 @@ const MULTIPLE_CHOICE = [
 // Letters outside Latin that a viewer who knows none of the language cannot read
 const NON_LATIN = /\p{Script=Greek}|\p{Script=Cyrillic}|\p{Script=Hebrew}|\p{Script=Arabic}|\p{Script=Devanagari}|\p{Script=Thai}|\p{Script=Hangul}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Han}/u;
 
+const DASHES = /[-\u2010-\u2015\u2212\u2043\uFE58\uFE63\uFF0D]/;
+
+// ad speak and theatre: refused wherever it appears
+const AD_SPEAK = [
+  /\bgame[\s]?chang/i, /\bunlock(ed|s|ing)?\b/i, /\bsupercharge/i, /\blevel[\s]?up\b/i, /\bmaster(ing)?\s+(a|the|any|every)\b/i,
+  /\brevolution/i, /\bultimate\b/i, /\bsecret(s)?\b/i, /\bhacks?\b/i, /\bmind[\s]?blow/i, /\bwon'?t believe\b/i, /\bamazing\b/i,
+  /\bincredible\b/i, /\bmust[\s]?(see|try|have|watch)\b/i, /\bdon'?t miss\b/i, /\blimited time\b/i, /\bfluent in\b/i, /\bin just \d+/i,
+  /\bshocking\b/i, /\bobsessed\b/i, /\bdownload now\b/i, /\bclick (the )?link\b/i, /\bsign up\b/i, /\bsmash\b/i, /\bnext level\b/i
+];
+
+/** Natural copy: whole sentences, plain emphasis, no ad speak. Heuristics: a person still reads every post. */
+export function naturalCopyErrors(text, slide) {
+  const errors = [];
+  const t = String(text || '');
+  if (/!/.test(t)) errors.push(slide + ': an exclamation mark (copy should sound like a person, not an advert)');
+  if (/\.{2,}|\u2026/.test(t)) errors.push(slide + ': an ellipsis (theatrical)');
+  if (/\b[A-Z]{3,}\b/.test(t)) errors.push(slide + ': a word in capital letters (shouting); use plain words');
+  AD_SPEAK.forEach((re) => { const m = t.match(re); if (m) errors.push(slide + ': ad speak ("' + m[0] + '")'); });
+  // sentences: split on . ? : and newlines; a theatrical fragment is a sentence of fewer than three words
+  const sentences = t.split(/[.?\n]+/).map((x) => x.trim()).filter(Boolean);
+  sentences.forEach((x) => {
+    const words = (x.match(/[\p{L}\p{M}']+/gu) || []);
+    if (words.length > 0 && words.length < 3) errors.push(slide + ': a very short fragment ("' + x + '"): write whole sentences');
+  });
+  // a word said twice in a row as its own sentence ("Burro. Burro.") is a stunt
+  const repeats = t.match(/\b([\p{L}']+)[.?]\s+\1\b/giu);
+  if (repeats) errors.push(slide + ': the same word repeated for effect ("' + repeats[0] + '")');
+  return errors;
+}
+
 /** Expand {{rank:N}} tokens into the one honest wording. Anything else with a rank in it is refused by checkCopy. */
 export function expandTokens(text) {
   return String(text || '').replace(/\{\{rank:(\d+)\}\}/g, (_, n) => rankPhrase(Number(n)));
@@ -126,6 +156,10 @@ export function checkCopy(raw, slide, ctx) {
   PRONUNCIATION_BANNED.forEach((re) => { if (re.test(stripped)) errors.push(slide + ': pronunciation-difficulty claim (the data has nothing to support it)'); });
   MECHANICS_BANNED.forEach((re) => { const m = stripped.match(re); if (m) errors.push(slide + ': game mechanics or developer wording ("' + m[0] + '"): copy is player-facing curiosity only'); });
   if (MULTIPLE_CHOICE.some((re) => re.test(stripped))) errors.push(slide + ': multiple-choice style: the hook must stand on its own as a curiosity');
+  // owner rule: never a hyphen or a dash in rendered copy; periods, commas and colons only
+  if (DASHES.test(text)) errors.push(slide + ': a hyphen or dash in the copy (never allowed: use periods, commas or colons)');
+  // owner rule: it has to read like a person wrote it
+  errors.push(...naturalCopyErrors(text.replace(/\{\{rank:\d+\}\}/g, 'word number of the deck'), slide));
   if (slide === 'hook') {
     if (NON_LATIN.test(stripped)) errors.push('hook: contains non-Latin script; slide 1 must make sense to someone who knows none of the language (show the word on slide 2)');
     if (ctx && ctx.targetWords) {
@@ -137,15 +171,22 @@ export function checkCopy(raw, slide, ctx) {
   return { errors, warnings };
 }
 
-/** Does any concept in the post match a hold? */
-export function checkHolds(pair, ranks, holds) {
+/**
+ * Does any concept in the post match a hold? A 'wrong' hold (a gloss known to be wrong) always refuses. A 'doubt' hold (an entry the
+ * reviews flagged as imprecise) refuses unless the spec acknowledges it: acknowledge: [{ pair, rank, reason }], for a post that is
+ * ABOUT the quirk, with a reason of at least ten characters.
+ */
+export function checkHolds(pair, ranks, holds, acknowledge) {
   const target = String(pair).split('-')[1];
   const errors = [];
   ranks.forEach((r) => {
     holds.forEach((h) => {
-      if (h.concept === r && (h.langs === '*' || (h.langs || []).indexOf(target) >= 0 || (h.langs || []).indexOf('*') >= 0)) {
-        errors.push('hold list: concept #' + r + ' is on hold for ' + target + ' (' + h.reason + ')');
-      }
+      if (h.concept !== r) return;
+      const lang = h.langs === '*' || (h.langs || []).indexOf('*') >= 0 || (h.langs || []).indexOf(target) >= 0;
+      if (!lang) return;
+      const ack = (acknowledge || []).find((a) => a.rank === r && (!a.pair || a.pair === pair) && String(a.reason || '').trim().length >= 10);
+      if (h.kind === 'doubt' && ack) return;
+      errors.push('hold list: concept #' + r + (h.english ? ' (' + h.english + ')' : '') + ' is on hold for ' + target + ' (' + (h.kind === 'wrong' ? 'known wrong' : 'flagged as imprecise; a post about the quirk may acknowledge it') + ': ' + h.reason + ')');
     });
   });
   return errors;
@@ -181,14 +222,15 @@ export function validateHook(h, holds) {
     if (x.hint && got.hint.toLowerCase().indexOf(String(x.hint).toLowerCase()) < 0) errors.push('deck check: #' + x.rank + ' is "' + got.hint + '", but the spec expects "' + x.hint + '"');
   });
   if (h.verified === 'deck' && !(h.expect && h.expect.length)) warnings.push('verified "deck" without an expect list: add the expected words so a typo cannot slip through');
-  holds && items.forEach((it) => errors.push(...checkHolds(it.pair, [it.rank], holds)));
+  holds && items.forEach((it) => errors.push(...checkHolds(it.pair, [it.rank], holds, h.acknowledge)));
 
-  if (h.overlay) errors.push(...checkOverlay(h.overlay.challenge, h.overlay.cta || OVERLAY_CTA).errors);
+  if (h.overlay) errors.push(...checkOverlay(h.overlay.challenge).errors);
 
   // the copy
   const ctx = copyContext(h.pair);
   const payoffText = Array.isArray(h.payoff) ? h.payoff.join('\n') : String(h.payoff);
-  [['hook', h.hook], ['payoff', payoffText], ['caption', h.caption || '']].forEach(([slide, text]) => {
+  out.concepts.forEach((c) => { [c.hint, c.answer, c.roman].forEach((w) => { if (w && DASHES.test(w)) errors.push('deck word "' + w + '" contains a hyphen or dash, which the copy rules forbid: choose another word'); }); });
+  [['hook', h.hook], ['kicker', h.kicker || ''], ['payoff', payoffText], ['caption', h.caption || '']].forEach(([slide, text]) => {
     if (!text) return;
     const r = checkCopy(text, slide, slide === 'hook' ? ctx : null);
     errors.push(...r.errors); warnings.push(...r.warnings);
@@ -246,18 +288,17 @@ export const RUNNERS = [
 ];
 
 /**
- * Slide-3 overlay standard: a challenge line and a free-play call to action. Never a claim that this word is in the game.
- * `Free to play` is the call to action on every slide 3.
+ * Slide-3 overlay standard: the pill carries the challenge line only. The free to play and link in bio message lives only in the footer
+ * band, never in the pill, so it is never said twice. Never a claim that this word is in the game.
  */
 export const OVERLAY_CHALLENGES = [
-  'Spot it at full speed in Language Dash',
-  'Think you could steer to it in time? Try Language Dash',
-  'Now try it with a clock running, in Language Dash',
-  'Can you still find it when the track is moving? Language Dash',
-  'Same kind of question, at running speed: Language Dash',
-  'Test your eye at full speed in Language Dash'
+  'Spot it at full speed in Language Dash.',
+  'Think you could steer to it in time? Try Language Dash.',
+  'Now try it with a clock running, in Language Dash.',
+  'Can you still find it when the track is moving? Try Language Dash.',
+  'Same kind of question, at running speed, in Language Dash.',
+  'Test your eye at full speed in Language Dash.'
 ];
-export const OVERLAY_CTA = 'Free to play';
 
 const OVERLAY_CLAIMS = [
   /\b(this|that|the|today'?s)\s+(exact\s+|very\s+)?(word|card|one)\b[^.]*\b(is|are|appears?|shows?\s+up)\s+(in|inside|on)\b/i,
@@ -267,15 +308,15 @@ const OVERLAY_CLAIMS = [
   /\b(this|that)\s+(exact\s+)?(word|card|question)\s+(awaits|is waiting|is there)\b/i
 ];
 
-/** Check the text of a slide-3 overlay (the challenge line, and the call to action). */
-export function checkOverlay(challenge, cta) {
+/** Check the text of the slide-3 pill (the challenge line). */
+export function checkOverlay(challenge) {
   const errors = [];
-  const text = String(challenge || '') + ' ' + String(cta || '');
-  OVERLAY_CLAIMS.forEach((re) => { if (re.test(text)) errors.push('slide 3 overlay: it claims this word is in the game; use a challenge line instead'); });
-  if (!/free/i.test(String(cta || ''))) errors.push('slide 3 overlay: the call to action must say the game is free to play');
-  if (!/language dash/i.test(text)) errors.push('slide 3 overlay: it must name Language Dash');
-  MECHANICS_BANNED.filter((re) => /rank|frequency|json|build|version|update|commit|changelog|algorithm/.test(re.source)).forEach((re) => { if (re.test(text)) errors.push('slide 3 overlay: developer wording'); });
-  RANK_BANNED.forEach(([re]) => { if (re.test(text)) errors.push('slide 3 overlay: rank wording is not allowed'); });
+  const text = String(challenge || '');
+  OVERLAY_CLAIMS.forEach((re) => { if (re.test(text)) errors.push('slide 3 pill: it claims this word is in the game; use a challenge line instead'); });
+  if (/\bfree\b|link in bio|\bdownload\b|\bsign up\b/i.test(text)) errors.push('slide 3 pill: the free to play and link in bio message belongs only in the footer band, never in the pill');
+  if (!/language dash/i.test(text)) errors.push('slide 3 pill: it must name Language Dash');
+  if (!text.trim()) errors.push('slide 3 pill: empty');
+  errors.push(...checkCopy(text, 'slide 3 pill').errors.filter((e) => !/Language Dash/.test(e)));
   return { errors: Array.from(new Set(errors)) };
 }
 
@@ -292,7 +333,7 @@ function pickNext(options, prev, usage, preferred) {
 /**
  * Plan a week: give every post a layout, theme, map, runner and overlay line so that nothing repeats back to back, and check the
  * mix of hook veins. `specs` are in posting order. Explicit `layout` / `theme` / `map` / `runner` in a spec are kept, and an
- * explicit repeat back to back is an error. Returns { posts: [{ id, layout, theme, map, runner, challenge, cta }], errors, warnings }.
+ * explicit repeat back to back is an error. Returns { posts: [{ id, layout, theme, map, runner, challenge }], errors, warnings }.
  */
 export function planWeek(specs) {
   const errors = [];
@@ -309,8 +350,7 @@ export function planWeek(specs) {
       theme: h.theme || pickNext(THEMES.map((t) => t.id), prev.theme, use.theme),
       map: h.map || pickNext(MAPS.map((m) => m.id), prev.map, use.map, likedMap),
       runner: h.runner || pickNext(RUNNERS.map((r) => r.id), prev.runner, use.runner),
-      challenge: (h.overlay && h.overlay.challenge) || pickNext(OVERLAY_CHALLENGES, prev.challenge, use.line),
-      cta: (h.overlay && h.overlay.cta) || OVERLAY_CTA
+      challenge: (h.overlay && h.overlay.challenge) || pickNext(OVERLAY_CHALLENGES, prev.challenge, use.line)
     };
     if (h.layout && LAYOUTS.indexOf(h.layout) < 0) errors.push(h.id + ': unknown layout "' + h.layout + '" (use ' + LAYOUTS.join(', ') + ')');
     if (h.theme && !THEMES.some((t) => t.id === h.theme)) errors.push(h.id + ': unknown theme "' + h.theme + '"');

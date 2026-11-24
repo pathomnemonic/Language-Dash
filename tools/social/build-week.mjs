@@ -12,7 +12,7 @@
 // The tool plans the whole list as one week: every post gets a layout (scenario, bold-claim, big-word, story), a colour theme,
 // a map and a runner for the slide-3 capture, and a challenge line, and none repeats back to back. Every spec names its hook
 // vein (false-friend, meaning-flip, etymology, same-word-two-meanings, cultural-word); the same vein twice in a row is refused.
-// Slide 3 is composed afterwards by compose-slide3.mjs (screenshot + challenge line + "Free to play" + footer).
+// Slide 3 is composed afterwards by compose-slide3.mjs (screenshot + challenge line + footer band).
 // --check validates only (no rendering). --final also refuses a post with warnings and writes into <out>/final.
 // Needs Chromium for rendering: it uses PW_CHROMIUM if set, otherwise Playwright's own browser.
 
@@ -47,11 +47,11 @@ export function slide3For(h, lookups, plan) {
   const runner = RUNNERS.find((r) => r.id === (plan && plan.runner)) || RUNNERS[0];
   return {
     id: h.id,
-    note: 'Capture the real game screen for each item with: node tools/social/capture-gates.mjs <this file>, then compose the posted slide with: node tools/social/compose-slide3.mjs <this file>. The gates below are what the game itself deals for this pair (buildDeck); the capture script checks the screen against them. The overlay is the standard: a challenge line and a free-play call to action, never a claim that this word is in the game.',
+    note: 'Capture the real game screen for each item with: node tools/social/capture-gates.mjs <this file>, then compose the posted slide with: node tools/social/compose-slide3.mjs <this file>. The gates below are what the game itself deals for this pair (buildDeck); the capture script checks the screen against them. The overlay is the standard: a challenge line in the pill only (the free to play message is the footer band), never a claim that this word is in the game.',
     viewport: { width: 390, height: 844, deviceScaleFactor: 3 },
     theme: plan && plan.theme,
     capture: { map: map.id, mapLabel: map.label, runner: runner.id, runnerLabel: runner.label },
-    overlay: { challenge: plan && plan.challenge, cta: plan && plan.cta },
+    overlay: { challenge: plan && plan.challenge },
     items: lookups.map((c) => ({
       pair: c.pair, rank: c.rank, cardId: c.cardId, hint: c.hint, answer: c.answer, roman: c.roman,
       gates: c.gates, correctLane: c.correctLane,

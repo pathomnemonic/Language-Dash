@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// tools/social/compose-slide3.mjs — the posted slide 3: the captured game screen + a challenge line + "Free to play" + the footer band.
+// tools/social/compose-slide3.mjs — the posted slide 3: the captured game screen + a challenge pill + the footer band.
 //
 //   node tools/social/compose-slide3.mjs <slide3.json>      (run capture-gates.mjs first: it writes slide3-<cardId>.png beside the json)
 //
@@ -17,7 +17,7 @@ const file = process.argv[2];
 if (!file) { console.error('usage: node tools/social/compose-slide3.mjs <slide3.json>'); process.exit(2); }
 const spec = JSON.parse(readFileSync(file, 'utf8'));
 const dir = dirname(resolve(file));
-const verdict = checkOverlay(spec.overlay && spec.overlay.challenge, spec.overlay && spec.overlay.cta);
+const verdict = checkOverlay(spec.overlay && spec.overlay.challenge);
 if (verdict.errors.length) { verdict.errors.forEach((e) => console.error('REFUSED ' + e)); process.exit(1); }
 
 const { chromium } = await import('playwright');

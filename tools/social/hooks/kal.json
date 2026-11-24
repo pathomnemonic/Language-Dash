@@ -19,12 +19,24 @@
         "answer": "कल"
       }
     ],
-    "hook": "Hindi has ONE word for both yesterday and tomorrow.",
-    "kicker": "Same word. Two days.",
+    "hook": "Hindi has one word for both yesterday and tomorrow.",
+    "kicker": "The same word covers both days.",
     "payoff": [
-      "It is कल (kal). Whether it means yesterday or tomorrow, the verb tells you which.",
-      "So nobody is confused: the time is in how you say the sentence, not in a second word."
+      "It is कल, pronounced kal. The verb in the sentence tells you whether it means yesterday or tomorrow.",
+      "So there is no confusion: the time is carried by the verb, not by a second word."
     ],
-    "vein": "same-word-two-meanings"
+    "vein": "same-word-two-meanings",
+    "acknowledge": [
+      {
+        "pair": "en-hi",
+        "rank": 214,
+        "reason": "the post is about this quirk: Hindi uses one word for both days"
+      },
+      {
+        "pair": "en-hi",
+        "rank": 215,
+        "reason": "the post is about this quirk: Hindi uses one word for both days"
+      }
+    ]
   }
 ]
