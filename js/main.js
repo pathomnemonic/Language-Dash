@@ -1249,6 +1249,10 @@ function fillProfileAccount() {
 }
 
 function init() {
+  // Deterministic clip capture for marketing video: only in a VITE_FEATURE_CAPTURE=1 build, only on a ?clip=1 page (js/capture.js)
+  // (written with the build variable inline, so a normal build drops these branches and does not even emit js/capture.js)
+  var clipWanted = import.meta.env.VITE_FEATURE_CAPTURE === '1' && /[?&]clip=/.test(window.location.search);
+  var clipModule = (import.meta.env.VITE_FEATURE_CAPTURE === '1' && /[?&]clip=/.test(window.location.search)) ? import('./capture.js') : null;
   // Load the question database in the background; screens that show counts refresh when it arrives
   loadCards().then(function () {
     setLibraryUnlocked(libraryUnlocked());
@@ -1271,6 +1275,7 @@ function init() {
     Object.defineProperty(window, '__cards', { get: function () { return CARDS; } }); // (CARDS is filled in after the first paint)
   }
   storage.load();
+  if (clipModule) clipModule.then(function (m) { m.prepareClip(storage); });
   // In the phone apps the save is also kept in a file (the browser storage can be cleared by the system); if this game started
   // empty and the file holds a fuller save, it is offered back before the first-run tutorial
   storage.onSaved = scheduleNativeBackup;
@@ -2016,7 +2021,7 @@ function init() {
   }, 1000);
   var canvasShown = null;
   var SAVER_FRAME_MS = 1000 / 30 - 2;
-  if (webglOk && game.renderer) game.renderer.setAnimationLoop(function (nowMs) {
+  var frameStep = function (nowMs) {
     var inGame = GAME_SCENE_STATES.indexOf(game._state) >= 0;
     // The 3D canvas is only used during a run; every other screen is plain HTML
     if (inGame !== canvasShown) {
@@ -2041,7 +2046,16 @@ function init() {
     }
     game.update(dt, nowMs);
     game.render();
-  });
+  };
+  // (a clip capture drives frameStep itself, one fixed step at a time, so the free-running loop is not started)
+  if (webglOk && game.renderer && !clipWanted) game.renderer.setAnimationLoop(frameStep);
+  if (clipModule && webglOk) {
+    loadCards().then(function () {
+      clipModule.then(function (m) {
+        m.startClip({ game: game, ui: ui, storage: storage, launchRun: launchRun, frame: frameStep, cardById: function (id) { return CARD_BY_ID.get(id); }, setLibraryUnlocked: setLibraryUnlocked });
+      });
+    });
+  }
 
   // A glTF avatar finished downloading: swap the stand-in for the real model.
   window.addEventListener('langdash:model-ready', function () {

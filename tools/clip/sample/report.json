@@ -1,0 +1,58 @@
+{
+  "query": "pair=en-hi&concept=214,215&lane=1,2&outcome=hit,hit&map=skin_neon_er&hero=avatar_robot&approach=2.6&lead=1.2&duration=7&seed=7",
+  "frames": 210,
+  "fps": 30,
+  "scale": 2,
+  "build": "VITE_FEATURE_CAPTURE=1",
+  "events": [
+    {
+      "t": 0,
+      "event": "question",
+      "index": 0,
+      "card": "en-hi-214",
+      "lane": 1,
+      "outcome": "hit"
+    },
+    {
+      "t": 5.133333333333412,
+      "event": "question",
+      "index": 1,
+      "card": "en-hi-215",
+      "lane": 2,
+      "outcome": "hit"
+    }
+  ],
+  "duplicateFrames": 0,
+  "longestRunOfIdenticalFrames": 0,
+  "info": {
+    "pair": "en-hi",
+    "cards": [
+      "en-hi-214",
+      "en-hi-215"
+    ],
+    "lanes": [
+      "1",
+      "2"
+    ],
+    "outcomes": [
+      "hit",
+      "hit"
+    ],
+    "approach": 2.6,
+    "duration": 7,
+    "frames": 210,
+    "fps": 30,
+    "seed": 7
+  },
+  "video": {
+    "codec_name": "h264",
+    "width": 1080,
+    "height": 1920,
+    "pix_fmt": "yuv420p",
+    "r_frame_rate": "30/1",
+    "avg_frame_rate": "30/1",
+    "duration": "7.000000",
+    "nb_read_frames": "210"
+  },
+  "verified": true
+}

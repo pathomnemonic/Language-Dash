@@ -27,3 +27,7 @@ dist2/
 beta-report.json
 chaos-report.json
 soak-report.json
+
+# clip capture (marketing video): the capture build and its output
+dist-capture/
+out/

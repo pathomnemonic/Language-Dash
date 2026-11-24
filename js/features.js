@@ -53,5 +53,6 @@ export var FEATURES = {
   studyBuddies: flag(import.meta.env && import.meta.env.VITE_FEATURE_STUDY_BUDDIES),
   rankedMatches: flag(import.meta.env && import.meta.env.VITE_FEATURE_RANKED_MATCHES),
   pro: flag(import.meta.env && import.meta.env.VITE_FEATURE_PRO),
-  lockerItems: flag(import.meta.env && import.meta.env.VITE_FEATURE_LOCKER_ITEMS)
+  lockerItems: flag(import.meta.env && import.meta.env.VITE_FEATURE_LOCKER_ITEMS),
+  capture: flag(import.meta.env && import.meta.env.VITE_FEATURE_CAPTURE)
 };

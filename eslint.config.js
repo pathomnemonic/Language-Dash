@@ -6,6 +6,8 @@ export default [
   {
     ignores: [
       'dist/**',
+      'dist-capture/**',
+      'out/**',
       'android/app/src/main/assets/**',
       'tools/_*.mjs',
       'coverage/**',
