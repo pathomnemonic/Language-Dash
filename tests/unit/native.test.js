@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { parseAuthLink, getAuthRedirectUrl, isNative, APP_SCHEME } from '../../js/native.js';
 import { getTipUrl } from '../../js/tips.js';
+import { TIP_URL } from '../../js/tipconfig.js';
 
 describe('native app helpers', () => {
   it('is a browser here, so the web behavior is unchanged', () => {
@@ -28,6 +29,6 @@ describe('native app helpers', () => {
   });
 
   it('the tip link still works on the web (it is only hidden inside the store apps)', () => {
-    expect(getTipUrl()).toBe(''); // no VITE_TIP_URL in tests: nothing configured
+    expect(getTipUrl()).toBe(TIP_URL); // the configured link (or none): the web build passes it through unchanged
   });
 });

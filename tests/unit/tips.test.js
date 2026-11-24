@@ -11,8 +11,9 @@ describe('tip link', () => {
     expect(isValidTipUrl(null)).toBe(false);
   });
 
-  it('shows nothing when no tip page is configured', () => {
-    expect(getTipUrl()).toBe('');
+  it('shows the configured link, or nothing at all when none is set', async () => {
+    const { TIP_URL } = await import('../../js/tipconfig.js');
+    expect(getTipUrl()).toBe(TIP_URL);   // (no VITE_TIP_URL in tests: the constant is what is used)
   });
 });
 
@@ -33,9 +34,12 @@ describe('the tip link is quiet and never another app\'s page', () => {
     expect(main).not.toMatch(/Leave a tip|tipPromptOff|lastTipPromptAt/);
   });
 
-  it('is configured in one constant that ships empty (no row until a link is set)', async () => {
+  it('is configured in one constant: empty, or a valid https link that is not the Cathology page', async () => {
     const { TIP_URL } = await import('../../js/tipconfig.js');
-    expect(TIP_URL).toBe('');
-    expect(getTipUrl()).toBe('');
+    expect(typeof TIP_URL).toBe('string');
+    if (TIP_URL) {
+      expect(isValidTipUrl(TIP_URL)).toBe(true);
+      expect(TIP_URL).toMatch(/^https:\/\/buy\.stripe\.com\//);   // a Stripe payment link, as the owner specified
+    }
   });
 });
