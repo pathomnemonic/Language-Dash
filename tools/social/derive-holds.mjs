@@ -30,7 +30,7 @@ const WRONG = [];
 
 // Corrected in the deck (kept here as the record; not holds). Pinned by tests/unit/deckglosses.test.js.
 //   14 es porqué -> por qué | 14 pt porquê -> por que | 81 pl uczyć -> uczyć się | 647 ru писать -> писать по буквам | 877 ru посреди -> во время
-//   886 it circa -> riguardo a | 103 hi तय -> तय करना | 647 hi हिज्जे -> हिज्जे करना | 749 hi ख़र्च -> ख़र्च करना | 900 fr plupart -> le plus
+//   886 it circa -> riguardo a | 103 hi तय -> तय करना | 647 hi हिज्जे -> हिज्जे करना | 749 hi ख़र्च -> ख़र्च करना | 900 fr plupart -> la plupart
 
 const DOUBT_EXTRA = [
   { concept: 900, langs: ['es'], reason: "audit §4: mayormente means 'mostly, mainly': a real adverb, but not the general 'most'" },
