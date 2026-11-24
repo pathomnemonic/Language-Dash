@@ -3,7 +3,7 @@
 All 1000 concepts reviewed in 8 blocks of 125.
 
 - Fixed: 22
-- Left with doubt: 10 groups (listed below, roughly 25 entries)
+- Left with doubt: 11 groups (listed below, roughly 26 entries)
 - Correct as is: 953 (approximate)
 
 ## Changes
@@ -45,3 +45,4 @@ All 1000 concepts reviewed in 8 blocks of 125.
 - समुद्रतट (beach), हवाईजहाज़ (airplane): joined; two words in normal spelling
 - कल (yesterday and tomorrow): same word in Hindi, unavoidable
 - लाँघना (cross), रवाना (depart), भेंट (visit): loose sense; consider पार / निकलना / जाना
+- हिज्जे करना (spell): review panel split on register; ChatGPT judged it correct, Gemini called it rare or archaic; kept as is pending a native speaker check
