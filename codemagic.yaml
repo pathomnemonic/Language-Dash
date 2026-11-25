@@ -11,6 +11,8 @@ workflows:
     environment:
       node: 22
       xcode: latest
+      groups:
+        - app   # secure variables set in Codemagic: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_SUPPORT_EMAIL, VITE_APPSTORE_ID
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.pathomnemonic.languagedash
