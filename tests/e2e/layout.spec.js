@@ -22,13 +22,15 @@ test('Home still fits at 200% zoom (195px wide)', async ({ page }) => {
   expect(off).toEqual([]);
 });
 
-test('the four Locker tabs each show their icon above their label', async ({ page }) => {
+test('the five Locker tabs each show their icon above their label', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 640 });
   await openApp(page, '/?debug=1');
   await page.evaluate(() => window.__ui.show('screenShop'));
+  // (five sections: Heroes, Wardrobe, Trails, Maps, Monsters. A sixth, Pals, only joins them when the
+  // studyBuddies feature is on; it is shelved, so the tab bar renders with class "five" — js/uisettings.js)
   const tabs = page.locator('#shopItems [role="tab"]');
-  await expect(tabs).toHaveCount(4);
-  for (let i = 0; i < 4; i++) {
+  await expect(tabs).toHaveCount(5);
+  for (let i = 0; i < 5; i++) {
     const t = await tabs.nth(i).evaluate((el) => { const icon = el.querySelector('.tab-icon').getBoundingClientRect(); const label = el.getBoundingClientRect(); return { stacked: getComputedStyle(el).flexDirection === 'column', iconInside: icon.left >= label.left - 1 && icon.right <= label.right + 1 }; });
     expect(t.stacked).toBe(true);
     expect(t.iconInside).toBe(true);
@@ -36,13 +38,18 @@ test('the four Locker tabs each show their icon above their label', async ({ pag
 });
 
 for (const [w, h] of [[320, 568], [360, 640], [375, 667], [390, 780], [412, 915]]) {
-  test(`the Stats page fits without scrolling at ${w}x${h}`, async ({ page }) => {
+  test(`the Stats page scrolls only by its mastery card at ${w}x${h}`, async ({ page }) => {
     await page.setViewportSize({ width: w, height: h });
     await openApp(page, '/?debug=1');
     await page.evaluate(() => window.__ui.show('screenStats'));
     await page.waitForTimeout(600);
-    const over = () => page.evaluate(() => { const sc = document.querySelector('#screenStats .screen-scroll'); return sc.scrollHeight - sc.clientHeight; });
-    expect(await over()).toBeLessThanOrEqual(1);
+    // (Stats opens with the long mastery card for the language pair, so the page is meant to scroll by
+    // that card — fit.spec.js takes the same line and leaves Stats out of its one-page screens for this
+    // reason. What must not happen is anything after the card needing scroll too: the today card, the
+    // three numbers and the folded sections still have to fit in the space the card leaves, so the
+    // overflow may not exceed the card's own height by more than its margins.)
+    const m = await page.evaluate(() => { const sc = document.querySelector('#screenStats .screen-scroll'); const card = document.querySelector('#screenStats .mastery-box'); return { over: sc.scrollHeight - sc.clientHeight, card: card ? card.getBoundingClientRect().height : 0 }; });
+    expect(m.over).toBeLessThanOrEqual(m.card + 16);
   });
 }
 
