@@ -111,8 +111,9 @@ test.describe('Settings and screens', () => {
     await page.getByRole('radio', { name: 'Untimed' }).click();
     await page.getByRole('button', { name: /Start quiz/ }).click();
     await expect(page.locator('#examContent')).toContainText(/Word 1 of 10/);
-    page.once('dialog', (d) => d.accept());
     await page.getByRole('button', { name: /End quiz now/ }).click();
+    // (ending asks in the page's own dialog, not a native confirm: js/confirmdialog.js)
+    await page.locator('[data-confirm-yes]').click();
     await expect(page.locator('#examContent')).toContainText(/Quiz complete/);
   });
 });
