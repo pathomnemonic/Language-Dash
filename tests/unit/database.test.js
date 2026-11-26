@@ -109,9 +109,32 @@ describe('ranked matches', () => {
     const aBefore = await trophies(A);
     const early = (await call(A, "SELECT ranked_report($1, 'win') AS r", [m2.match_id])).r;
     expect(early.settled).toBe(false);
+    // a match that was actually played: the pairing is minutes old by the time the report stands unanswered
+    await db.query("UPDATE ranked_matches SET created_at = now() - interval '3 minutes' WHERE id = $1", [m2.match_id]);
     await db.query("UPDATE ranked_reports SET reported_at = now() - interval '2 minutes' WHERE match_id = $1", [m2.match_id]);
     const n = (await call(C, 'SELECT ranked_settle_stale() AS n')).n;
     expect(n).toBeGreaterThan(0);
+    expect(await trophies(A)).toBeGreaterThan(aBefore);
+  });
+
+  it('never settles a win claimed before the match could have been played (issue 42)', async () => {
+    await call(A, "SELECT ranked_find_match('MMMM5') AS r");
+    const m = (await call(B, "SELECT ranked_find_match('NNNN6') AS r")).r;
+    const aBefore = await trophies(A);
+    const bBefore = await trophies(B);
+    // paired and a win reported in the same breath: no round was played (the round runs 90 seconds)
+    const claim = (await call(A, "SELECT ranked_report($1, 'win') AS r", [m.match_id])).r;
+    expect(claim.settled).toBe(false);
+    // the claim standing unanswered for a long time does not rescue it
+    await db.query("UPDATE ranked_reports SET reported_at = now() - interval '1 hour' WHERE match_id = $1", [m.match_id]);
+    await call(C, 'SELECT ranked_settle_stale() AS n');
+    const row = (await db.query('SELECT settled FROM ranked_matches WHERE id = $1', [m.match_id])).rows[0];
+    expect(row.settled).toBe(false);
+    expect(await trophies(A)).toBe(aBefore);
+    expect(await trophies(B)).toBe(bBefore);
+    // and the honest opponent is not trapped: their own report still decides the match two-sided
+    const second = (await call(B, "SELECT ranked_report($1, 'loss') AS r", [m.match_id])).r;
+    expect(second.settled).toBe(true);
     expect(await trophies(A)).toBeGreaterThan(aBefore);
   });
 
