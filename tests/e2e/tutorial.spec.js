@@ -129,6 +129,13 @@ test.describe('Interactive tutorial (on the real track)', () => {
     await expect(page.locator('.tour-card .tut-count')).toHaveCount(0); // not numbered
     await walkTour(page);
 
+    // The account invitation comes second to last, after the tour (the order lessons.spec.js
+    // documents): "Maybe later" asks "are you sure?", and "Skip for now" leads to the closing page.
+    await step(page, 'account', 20000);
+    await page.locator('#tutAccountLater').click();
+    await expect(page.locator('#tutExitConfirm')).toBeVisible();
+    await page.locator('#tutExitYes').click();
+
     await step(page, 'done', 20000);
     await expect(card(page)).not.toContainText(/step \d+ of/i);
     await expect(card(page)).toContainText(/red dot/i); // the last page sends them off to the menus
