@@ -36,11 +36,21 @@ describe('Performance tab', () => {
     expect(c.textContent.length).toBeLessThan(700);
   });
 
-  it('lifetime hint says "1 word" after one encounter and "2 words" after two', () => {
+  it('lifetime hint counts answers, not distinct words: "1 answer" after one encounter, "2 answers" after two (issue 44)', () => {
     storage.set('totalEncounters', 1);
-    expect(mount().querySelector('#perf-lifetime .perf-hint').textContent).toBe('1 word');
+    expect(mount().querySelector('#perf-lifetime .perf-hint').textContent).toBe('1 answer');
     storage.set('totalEncounters', 2);
-    expect(mount().querySelector('#perf-lifetime .perf-hint').textContent).toBe('2 words');
+    expect(mount().querySelector('#perf-lifetime .perf-hint').textContent).toBe('2 answers');
+  });
+
+  it('lifetime shows a thousands separator and the grid labels the count Answers (issue 44)', () => {
+    storage.set('totalEncounters', 1080);
+    const c = mount();
+    expect(c.querySelector('#perf-lifetime .perf-hint').textContent).toBe('1,080 answers');
+    const sec = c.querySelector('#perf-lifetime');
+    sec.open = true; sec.dispatchEvent(new Event('toggle'));
+    const stats = [...sec.querySelectorAll('.perf-stat')].map((s) => s.textContent.replace(/\s+/g, ' ').trim());
+    expect(stats[0]).toBe('1,080Answers');
   });
 
   it('the Today bar renders empty at 0 words and shows real progress after an answer (issue 43)', () => {
