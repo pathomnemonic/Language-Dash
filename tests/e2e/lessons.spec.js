@@ -2,7 +2,7 @@
 // After the short how-to-play, every other menu has a red dot and teaches itself the first time it is opened.
 
 import { test, expect } from '@playwright/test';
-import { openApp, hasWebGL } from './helpers.js';
+import { openApp, hasWebGL, answerConsent } from './helpers.js';
 
 async function openWithLessons(page) {
   await openApp(page, '/?debug=1', { lessons: true });
@@ -60,12 +60,15 @@ test.describe('Red dots and lessons', () => {
     const coins = await page.evaluate(() => window.__storage.get('coins'));
     await page.locator('.nav-item[data-screen="screenShop"]').click();
     await expect(page.locator('.tour-card h2')).toHaveText('Your hero', { timeout: 5000 });
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 24; i++) {
       if (!(await page.locator('#tourOverlay').count())) break;
+      const title = await page.locator('.tour-card h2').textContent().catch(() => null);
       const next = page.locator('#tourNextBtn');
       if (await next.count()) await next.click();
       else { const b = await page.locator('.tour-ring').boundingBox(); await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2); }
-      await page.waitForTimeout(450);
+      // (wait for the step to actually change: a fixed sleep raced the card animation on WebKit and spent
+      // iterations clicking a step that had already moved on, so the walk ran out before the last step)
+      await page.waitForFunction((t) => !document.querySelector('#tourOverlay') || (document.querySelector('.tour-card h2') || {}).textContent !== t, title, { timeout: 5000 }).catch(() => {});
     }
     await expect(page.locator('#tourOverlay')).toHaveCount(0);
     expect(await page.evaluate(() => window.__storage.get('coins'))).toBeLessThan(coins);
@@ -136,6 +139,8 @@ test.describe('The account invitation at the end of the how-to-play', () => {
     });
     await page.addInitScript(() => { try { localStorage.setItem('ld_lessons_off', '1'); } catch (e) { /* ignore */ } });
     await page.goto('/?debug=1');
+    // (the analytics question comes first on a configured build; the how-to-play waits behind the answer)
+    await answerConsent(page);
     await expect(page.locator('#tutorialOverlay')).toHaveClass(/active/);
     await step(page, 'welcome');
     await page.locator('#tutNextBtn').click();

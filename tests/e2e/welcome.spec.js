@@ -1,11 +1,14 @@
 // tests/e2e/welcome.spec.js — the first-run language welcome: pick what you speak and what you are learning.
 import { test, expect } from '@playwright/test';
+import { answerConsent } from './helpers.js';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
 test.describe('first-run language welcome', () => {
   test('asks for both languages, then starts the game with that pair', async ({ page }) => {
     await page.goto('/');
+    // (the analytics question comes first on a configured build; the welcome waits behind the answer)
+    await answerConsent(page);
     const welcome = page.locator('#langWelcome');
     await expect(welcome).toBeVisible({ timeout: 15000 });
     const go = page.locator('#langGo');
