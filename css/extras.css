@@ -183,10 +183,11 @@ body.dyslexia #reviewFullList, body.dyslexia #quickReviewOverlay, body.dyslexia 
 }
 @media (max-height: 860px) {
   .se-body em { display: none; }
-  .se-body span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  /* three lines, not two: the longest mode descriptions (Weekly Gauntlet, Friend challenge) need the third line at phone widths, and two clipped them mid sentence (issue 39) */
+  .se-body span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
 }
 @media (max-height: 580px) {
-  .se-body span { -webkit-line-clamp: 1; }
+  .se-body span { -webkit-line-clamp: 2; }
   .sheet-list { gap: 4px; }
   .sheet-card h2 { font-size: 17px; }
 }

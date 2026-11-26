@@ -540,7 +540,7 @@ input[type="checkbox"], input[type="radio"] { box-shadow: none; padding: 0; }
 .sheet-entry:nth-child(3n+1) .se-icon { background: var(--gold); }
 .sheet-entry:nth-child(3n+2) .se-icon { background: var(--sky); }
 .sheet-entry:nth-child(3n+3) .se-icon { background: var(--paper-deep); }
-.se-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 9px 12px 9px 11px; }
+.se-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; padding: 9px 12px 9px 11px; }
 .se-body strong { font-family: var(--font-display); font-size: 16px; font-weight: 900; }
 .se-body span { font-size: 12px; line-height: 1.35; color: var(--ink-soft); font-weight: 500; }
 .se-body em { font-size: 10px; font-style: normal; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--red-deep); }
