@@ -325,7 +325,8 @@ export function renderPerformance(container, ui) {
     });
   }, 'analytics_detail', 'See your trickiest words, ranked, with one tap to drill them.'));
 
-  secs.appendChild(section('lifetime', '🏅', 'Lifetime', storage.get('totalEncounters') + ' words', function (body) {
+  var lifetimeWords = storage.get('totalEncounters');
+  secs.appendChild(section('lifetime', '🏅', 'Lifetime', lifetimeWords + (lifetimeWords === 1 ? ' word' : ' words'), function (body) {
     var tc = storage.get('totalCorrect');
     var tw = storage.get('totalWrong');
     var acc = (tc + tw) > 0 ? Math.round(tc / (tc + tw) * 100) : 0;
