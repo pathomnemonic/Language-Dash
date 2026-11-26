@@ -3,13 +3,15 @@
 // that needs it is sent on the real track, and nothing from it is saved.
 
 import { test, expect } from '@playwright/test';
-import { hasWebGL, closeTutorial, dismissDailyReward } from './helpers.js';
+import { hasWebGL, closeTutorial, dismissDailyReward, answerConsent } from './helpers.js';
 
 const card = (page) => page.locator('#tutorialCoach .tut-card, #tutorialOverlay .tut-card');
 const step = (page, id, timeout = 30000) => expect(card(page)).toHaveAttribute('data-step', id, { timeout });
 
 async function openFirstRun(page) {
   await page.goto('/?debug=1');
+  // (the analytics question comes first on a configured build; the how-to-play waits behind the answer)
+  await answerConsent(page);
   await expect(page.locator('#tutorialOverlay')).toHaveClass(/active/);
   await step(page, 'welcome');
   test.skip(!(await hasWebGL(page)), 'the real-track tutorial needs WebGL');
