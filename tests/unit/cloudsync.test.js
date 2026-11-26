@@ -60,7 +60,7 @@ describe('decideSync', () => {
 });
 
 function makeDeps({ local, cloud, anonymous = false, choice = 'cloud', cards = null }) {
-  const calls = { push: [], force: [], applied: null, pulled: 0, asked: null };
+  const calls = { push: [], force: [], applied: null, pulled: 0, asked: null, toasts: [] };
   const store = { data: local, onChange: null, applyRemoteData(d) { calls.applied = d; this.data = d; return { ok: true }; } };
   const state = { cloud };
   const leaderboard = {
@@ -82,7 +82,7 @@ function makeDeps({ local, cloud, anonymous = false, choice = 'cloud', cards = n
   const sync = new CloudSync({
     storage: store,
     leaderboard,
-    toast: () => {},
+    toast: (msg) => { calls.toasts.push(msg); },
     askConflict: async (l, c) => { calls.asked = [l, c]; return choice; },
     onPulled: () => { calls.pulled++; },
     customCards: cards
@@ -185,6 +185,38 @@ describe('CloudSync carries the player\'s own cards', () => {
     const a = makeDeps({ local: played(5), cloud: null, cards: big });
     await a.sync.sync();
     expect(a.calls.push[0].data.customCards).toBeUndefined();
+  });
+
+  it('tells the player when the deck is too large to sync, instead of dropping it silently', async () => {
+    const big = fakeCards(Array.from({ length: 4000 }, (_, i) => ({ ...card(i), tp: 'x'.repeat(200) })));
+    const a = makeDeps({ local: played(5), cloud: null, cards: big });
+    await a.sync.sync();
+    expect(a.calls.toasts.some((t) => /too large to sync/.test(t))).toBe(true);
+  });
+
+  it('refuses to push a deckless save over a cloud save that holds a deck (issue 41)', async () => {
+    // the deck was synced while it was small; it has since grown past the cap on this device
+    const cloudData = { ...played(5), customCards: [card(1), card(2)] };
+    const big = fakeCards(Array.from({ length: 4000 }, (_, i) => ({ ...card(i), tp: 'x'.repeat(200) })));
+    const a = makeDeps({ local: played(6), cloud: remote(cloudData), cards: big });
+    // this device is already linked to that cloud save, with unsynced local progress
+    localStorage.setItem('bd_cloud_meta', JSON.stringify({ userId: 'u1', remoteUpdatedAt: 't1' }));
+    a.sync.dirty = true;
+    const result = await a.sync.sync();
+    expect(result).toBe('error');
+    expect(a.calls.push).toHaveLength(0);
+    expect(a.state.cloud.data.customCards).toHaveLength(2); // the cloud deck is untouched
+    expect(a.sync.getStatus().error).toMatch(/too large to sync/);
+  });
+
+  it('refuses a conflict force-save that would drop the cloud deck (issue 41)', async () => {
+    const cloudData = { ...played(9), customCards: [card(1)] };
+    const big = fakeCards(Array.from({ length: 4000 }, (_, i) => ({ ...card(i), tp: 'x'.repeat(200) })));
+    const a = makeDeps({ local: played(6), cloud: remote(cloudData), choice: 'local', cards: big });
+    const result = await a.sync.sync();
+    expect(result).toBe('error');
+    expect(a.calls.force).toHaveLength(0);
+    expect(a.state.cloud.data.customCards).toHaveLength(1);
   });
 });
 

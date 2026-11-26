@@ -114,6 +114,7 @@ export class CloudSync {
     this._started = false;
     this._failures = 0;   // syncs that failed in a row
     this._warned = false; // has the player been told this session that progress is not reaching the account
+    this._deckWarned = false; // has the player been told this session that their deck is too large to sync
   }
 
   /** True when this player has a real (non-guest) account to sync to. */
@@ -218,18 +219,54 @@ export class CloudSync {
   _snapshot() {
     var data = this.deps.storage.data;
     var copy = JSON.parse(JSON.stringify(data));
+    var omitted = false;
     // The player's own cards (typed in or imported) travel with the save, unless a huge deck would make every
-    // sync heavy; that deck stays on this device and goes in a backup file instead.
+    // sync heavy; that deck stays on this device and goes in a backup file instead. The omission is reported
+    // to the caller, never silent: a push that would replace a cloud save holding a deck must not go ahead
+    // without it (see _push), and the player is told the deck is not syncing.
     if (this.deps.customCards) {
       var cards = this.deps.customCards.getAll();
-      if (cards.length && JSON.stringify(cards).length <= MAX_CARDS_SYNC_BYTES) copy.customCards = cards;
+      if (cards.length) {
+        if (JSON.stringify(cards).length <= MAX_CARDS_SYNC_BYTES) copy.customCards = cards;
+        else omitted = true;
+      }
     }
-    return { data: copy, runs: summarize(data).answered };
+    return { data: copy, runs: summarize(data).answered, cardsOmitted: omitted };
+  }
+
+  /** True when the cloud save currently holds a deck of the player's own cards. */
+  _cloudHasDeck(remote) {
+    return !!(remote && remote.data && Array.isArray(remote.data.customCards) && remote.data.customCards.length);
+  }
+
+  /** Tell the player, once a session, that their deck is too large to ride along with the cloud save. */
+  _warnDeckTooLarge() {
+    if (this._deckWarned) return;
+    this._deckWarned = true;
+    if (typeof this.deps.toast === 'function') {
+      this.deps.toast('Your own card deck is too large to sync to your account (over about 450 KB). It stays on this device only, so keep a backup file of it.');
+    }
+  }
+
+  /**
+   * A snapshot whose deck was omitted must never replace a cloud save that holds a deck: the push would
+   * delete the only cloud copy, and the save backup is itself overwritten by later pushes, so the loss
+   * would be permanent. Refuse and say why. Returns an Error to throw, or null when the push may proceed.
+   */
+  _deckGuard(snap, remote) {
+    if (!snap.cardsOmitted) return null;
+    if (this._cloudHasDeck(remote)) {
+      return new Error('Your card deck is too large to sync (over about 450 KB), so this sync was stopped to protect the deck already saved to your account. Nothing was uploaded.');
+    }
+    this._warnDeckTooLarge();
+    return null;
   }
 
   _push(remote, userId) {
     var self = this;
     var snap = this._snapshot();
+    var guard = this._deckGuard(snap, remote);
+    if (guard) { this.dirty = true; throw guard; }
     this.dirty = false;
     return this.deps.leaderboard.pushSave(snap.data, snap.runs, remote ? remote.updatedAt : null).then(function (res) {
       if (res.conflict) {
@@ -273,6 +310,8 @@ export class CloudSync {
       if (choice === 'cloud') return self._pull(remote, userId);
       if (choice === 'local') {
         var snap = self._snapshot();
+        var guard = self._deckGuard(snap, remote);
+        if (guard) { self.dirty = true; throw guard; }
         return self.deps.leaderboard.forceSave(snap.data, snap.runs).then(function (res) {
           if (!res.success) throw new Error(res.error || 'Save failed');
           writeMeta({ userId: userId, remoteUpdatedAt: res.updatedAt });
