@@ -925,7 +925,12 @@ GRANT EXECUTE ON FUNCTION delete_my_account() TO authenticated;
 --   ranked_matches    a pairing. Both players then play peer to peer.
 --   ranked_reports    what each player says happened. Trophies change only when
 --                     the two reports agree (or one player concedes, or one
---                     report stands unanswered for 90 seconds).
+--                     report stands unanswered for 90 seconds AND was filed
+--                     after the match could actually have been played: a
+--                     ranked round runs a 90 second clock that cannot start
+--                     until the pairing exists, so a win or draw claim filed
+--                     within 100 seconds of the pairing is not evidence of
+--                     play and can never settle the match on its own).
 --
 -- Players never write these tables directly; they call the functions below.
 -- The trophy formula is the same as js/leagues.js (trophyDelta).
@@ -1050,12 +1055,17 @@ BEGIN
     END IF;
   ELSIF hr.user_id IS NOT NULL THEN
     IF hr.outcome = 'loss' THEN host_out := 'loss'; guest_out := 'win';
-    ELSIF hr.reported_at < now() - interval '90 seconds' THEN
+    ELSIF hr.reported_at < now() - interval '90 seconds'
+      AND hr.reported_at >= m.created_at + interval '100 seconds' THEN
+      -- (the report is old enough to be unanswered, and the match is old enough to have been played:
+      --  the 90 second round cannot start until the pairing exists, the peers connect and the host's
+      --  start time arrives, so a claim filed sooner describes a match that never happened)
       IF hr.outcome = 'win' THEN host_out := 'win'; guest_out := 'loss'; ELSE host_out := 'draw'; guest_out := 'draw'; END IF;
     ELSE RETURN false; END IF;
   ELSIF gr.user_id IS NOT NULL THEN
     IF gr.outcome = 'loss' THEN guest_out := 'loss'; host_out := 'win';
-    ELSIF gr.reported_at < now() - interval '90 seconds' THEN
+    ELSIF gr.reported_at < now() - interval '90 seconds'
+      AND gr.reported_at >= m.created_at + interval '100 seconds' THEN
       IF gr.outcome = 'win' THEN guest_out := 'win'; host_out := 'loss'; ELSE guest_out := 'draw'; host_out := 'draw'; END IF;
     ELSE RETURN false; END IF;
   ELSE

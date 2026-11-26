@@ -2,7 +2,7 @@
 -- Language Dash in a SHARED Supabase project: everything lives in the schema "language_dash". Nothing is created in "public".
 --
 -- GENERATED FILE - do not edit by hand. Regenerate with:   node tools/ld-migrate/generate.mjs
--- Source: database/*.sql (schema.sql=9f19b0ee2c3a5343 policies.sql=f9e6655dc98820b7 cohorts.sql=c29e96b391e2d298 discovery.sql=bca2b4a571e153a5 pro.sql=582ed0f952695d3c analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
+-- Source: database/*.sql (schema.sql=aab7c04601e799be policies.sql=f9e6655dc98820b7 cohorts.sql=c29e96b391e2d298 discovery.sql=bca2b4a571e153a5 pro.sql=582ed0f952695d3c analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
 -- How it works and how to verify it: docs/SHARED-PROJECT-MIGRATION.md
 --
 -- Safe to run more than once. Runs in ONE transaction; the guard below aborts if search_path did not take effect, so a
@@ -999,7 +999,12 @@ $$;-- (delete_my_account() is NOT carried over: deleted auth.users (the shared s
 --   ranked_matches    a pairing. Both players then play peer to peer.
 --   ranked_reports    what each player says happened. Trophies change only when
 --                     the two reports agree (or one player concedes, or one
---                     report stands unanswered for 90 seconds).
+--                     report stands unanswered for 90 seconds AND was filed
+--                     after the match could actually have been played: a
+--                     ranked round runs a 90 second clock that cannot start
+--                     until the pairing exists, so a win or draw claim filed
+--                     within 100 seconds of the pairing is not evidence of
+--                     play and can never settle the match on its own).
 --
 -- Players never write these tables directly; they call the functions below.
 -- The trophy formula is the same as js/leagues.js (trophyDelta).
@@ -1126,12 +1131,17 @@ BEGIN
     END IF;
   ELSIF hr.user_id IS NOT NULL THEN
     IF hr.outcome = 'loss' THEN host_out := 'loss'; guest_out := 'win';
-    ELSIF hr.reported_at < now() - interval '90 seconds' THEN
+    ELSIF hr.reported_at < now() - interval '90 seconds'
+      AND hr.reported_at >= m.created_at + interval '100 seconds' THEN
+      -- (the report is old enough to be unanswered, and the match is old enough to have been played:
+      --  the 90 second round cannot start until the pairing exists, the peers connect and the host's
+      --  start time arrives, so a claim filed sooner describes a match that never happened)
       IF hr.outcome = 'win' THEN host_out := 'win'; guest_out := 'loss'; ELSE host_out := 'draw'; guest_out := 'draw'; END IF;
     ELSE RETURN false; END IF;
   ELSIF gr.user_id IS NOT NULL THEN
     IF gr.outcome = 'loss' THEN guest_out := 'loss'; host_out := 'win';
-    ELSIF gr.reported_at < now() - interval '90 seconds' THEN
+    ELSIF gr.reported_at < now() - interval '90 seconds'
+      AND gr.reported_at >= m.created_at + interval '100 seconds' THEN
       IF gr.outcome = 'win' THEN guest_out := 'win'; host_out := 'loss'; ELSE guest_out := 'draw'; host_out := 'draw'; END IF;
     ELSE RETURN false; END IF;
   ELSE
