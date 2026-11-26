@@ -43,7 +43,8 @@ function bar(fraction, color, label) {
   track.setAttribute('role', 'img');
   if (label) track.setAttribute('aria-label', label);
   var fill = el('div', 'perf-bar-fill');
-  fill.style.width = Math.max(2, Math.round(Math.min(1, Math.max(0, fraction)) * 100)) + '%';
+  var pct = Math.round(Math.min(1, Math.max(0, fraction)) * 100);
+  fill.style.width = (pct === 0 ? 0 : Math.max(2, pct)) + '%'; // the minimum width is only to keep a sliver of real progress visible: at zero the bar must render empty (issue 43)
   fill.style.background = color;
   track.appendChild(fill);
   return track;
