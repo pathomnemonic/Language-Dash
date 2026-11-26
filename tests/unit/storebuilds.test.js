@@ -90,7 +90,7 @@ describe('the iOS cloud build is ready to run once the Apple account is active',
 
   it('the launch guide exists and names what still blocks a first build', () => {
     const guide = readFileSync('docs/IOS-LAUNCH.md', 'utf8');
-    ['Language Dash App Store Connect', 'LD_APPLE_IAP_PRIVATE_KEY', 'VITE_SUPABASE_ANON_KEY', 'languagedash_pro_lifetime', 'screenshots'].forEach((t) => expect(guide).toContain(t));
+    ['PathoMnemonic App Store Connect', 'LD_APPLE_IAP_PRIVATE_KEY', 'VITE_SUPABASE_ANON_KEY', 'languagedash_pro_lifetime', 'screenshots'].forEach((t) => expect(guide).toContain(t));
   });
 });
 
