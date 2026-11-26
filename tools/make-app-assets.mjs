@@ -1,27 +1,36 @@
 // tools/make-app-assets.mjs
-// Draws the app icon, splash and store images from the Language Dash rubber-stamp mark (tools/brand.mjs, "Paper Passport").
+// Draws the splash and store images from the Language Dash rubber-stamp mark (tools/brand.mjs, "Paper Passport"),
+// and derives the app icon rasters from the settled icon master, public/icon.svg (the neon slot machine).
 //
 //   node tools/make-app-assets.mjs && npx capacitor-assets generate --android
 //
-// Writes: assets/*.png (icon + splash sources), public/icon.svg, public/og.png,
+// Writes: assets/*.png (icon + splash sources), public/og.png,
 // and assets/store/* (Google Play feature graphic). Screenshots: node tools/make-screenshots.mjs
 
 import sharp from 'sharp';
 import fs from 'node:fs';
-import { PAPER, INK, RED, RED_DEEP, TEAL, TEAL_DEEP, GOLD, NIGHT, mark, text, route } from './brand.mjs';
+import { PAPER, INK, RED, RED_DEEP, TEAL_DEEP, GOLD, NIGHT, mark, text, route } from './brand.mjs';
 
 fs.mkdirSync('assets/store', { recursive: true });
 const svg = (w, h, inner) => Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${inner}</svg>`);
 const png = async (path, buf, w, h = w) => { await sharp(buf).resize(w, h).png().toFile(path); console.log('wrote ' + path); };
 
-// Full icon (iOS and legacy Android): the stamp on a teal square, a dotted route behind it
-await png('assets/icon-only.png', svg(1024, 1024, `<rect width="1024" height="1024" fill="${TEAL}"/>${route(1024, 1024, PAPER, 0.4)}${mark(1024, 0.8)}`), 1024);
-// Adaptive icon layers (Android): the teal background plus the stamp inside the safe zone
-await png('assets/icon-background.png', svg(1024, 1024, `<rect width="1024" height="1024" fill="${TEAL}"/>${route(1024, 1024, PAPER, 0.4)}`), 1024);
-await png('assets/icon-foreground.png', svg(1024, 1024, mark(1024, 0.58)), 1024);
-// The website icon
-fs.writeFileSync('public/icon.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="${TEAL}"/>${mark(512, 0.82)}</svg>\n`);
-console.log('wrote public/icon.svg');
+// App icon: the settled neon slot machine (three gates, É Ω Ñ). public/icon.svg is the master;
+// the rasters below are derived from it. Ground colour #170430.
+// Full icon (iOS and legacy Android): the master flattened on its ground colour
+const ICON_GROUND = { r: 0x17, g: 0x04, b: 0x30, alpha: 1 };
+const iconSvg = fs.readFileSync('public/icon.svg');
+await sharp(iconSvg).resize(1024, 1024).flatten({ background: ICON_GROUND }).ensureAlpha().png().toFile('assets/icon-only.png');
+console.log('wrote assets/icon-only.png');
+// Adaptive icon layers (Android): the ground colour, plus the machine inside the safe zone.
+// The foreground drops the master's ground rect so the machine sits on the background layer.
+await sharp({ create: { width: 1024, height: 1024, channels: 4, background: ICON_GROUND } }).png().toFile('assets/icon-background.png');
+console.log('wrote assets/icon-background.png');
+const iconArt = Buffer.from(iconSvg.toString('utf8').replace(/<rect[^>]*fill="#170430"\/>/, ''));
+const iconFg = await sharp(iconArt).resize(676, 676).png().toBuffer();
+await sharp({ create: { width: 1024, height: 1024, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+  .composite([{ input: iconFg, left: 174, top: 174 }]).png().toFile('assets/icon-foreground.png');
+console.log('wrote assets/icon-foreground.png');
 
 // Splash: paper (and Night Train for dark), the stamp, the name, a dotted route
 const splash = (dark) => {
