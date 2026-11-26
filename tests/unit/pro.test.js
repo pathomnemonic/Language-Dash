@@ -3,7 +3,7 @@ import { sanitizeProConfig, defaultProConfig, GATE_FEATURES, DEFAULT_GATES } fro
 import { setProConfigForTest, proConfig, sanitizeConfig } from '../../js/remoteconfig.js';
 import {
   combineStatus, isPro, proStatus, checkGate, recordUse, requireGate, refreshPro, proPlans, buyPlan, restorePro, redeemCode,
-  proEnabled, proLive, setSellableForTest, setProDebug, resetProForTest, proWebUrl, libraryUnlocked, buyLibrary, libraryOffer, ownsLibrary, registerProProducts
+  proEnabled, proLive, setSellableForTest, resetProForTest, proWebUrl, libraryUnlocked, buyLibrary, libraryOffer, ownsLibrary, registerProProducts
 } from '../../js/pro.js';
 import { createIap, isoDays } from '../../js/iap.js';
 import { cleanEvent } from '../../js/analytics/catalog.js';
@@ -139,17 +139,22 @@ describe('who has Pro', () => {
     expect(isPro(NOW)).toBe(true);
     expect(proStatus().plan).toBe('monthly');
   });
-  it('is on from the server (a web payment or a code) and the debug switch can force it', async () => {
+  it('is on from the server (a web payment or a code); the removed debug key changes nothing', async () => {
     setProConfigForTest({ enabled: true });
     const lb = { isAuthenticated: () => true, getMyPro: () => Promise.resolve({ active: true, until: new Date(NOW + 30 * DAY).toISOString(), plan: 'yearly', source: 'stripe' }) };
     const st = await refreshPro({ lb, iap: withPlans(iapFor(fakePlugin())), now: NOW });
     expect(st).toMatchObject({ active: true, source: 'server' });
     resetProForTest();
     expect(isPro()).toBe(false);
-    setProDebug(true);
-    expect(isPro()).toBe(true);
-    setProDebug(false);
+    // Issue 40: the ld_pro_debug switch is gone. A value stored by an old build (or typed in by hand)
+    // must neither turn Pro on nor force it off; only real entitlements count.
+    localStorage.setItem('ld_pro_debug', '1');
     expect(isPro()).toBe(false);
+    const st2 = await refreshPro({ lb, iap: withPlans(iapFor(fakePlugin())), now: NOW });
+    expect(st2.active).toBe(true);
+    localStorage.setItem('ld_pro_debug', '0');
+    expect(isPro()).toBe(true);
+    localStorage.removeItem('ld_pro_debug');
   });
 });
 
