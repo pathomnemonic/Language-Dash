@@ -21,7 +21,7 @@ Nothing has been run: the Apple Developer account is not active yet, and the wor
 **Apple and Codemagic (needs the account, a person)**
 1. Apple Developer Program active, with the Paid Applications agreement, tax and banking done (needed for in-app purchases, not for TestFlight alone).
 2. App Store Connect: register the bundle ID `com.pathomnemonic.languagedash` and create the app record named **Language Dash**.
-3. An App Store Connect **API key** (issuer ID, key ID, the `.p8` file), added in Codemagic under Teams, Integrations, named exactly **Language Dash App Store Connect** (the name `codemagic.yaml` uses). Role: App Manager or Admin.
+3. An App Store Connect **API key** (issuer ID, key ID, the `.p8` file), added in Codemagic under Teams, Integrations, named exactly **PathoMnemonic App Store Connect** (the name `codemagic.yaml` uses). Role: App Manager or Admin.
 4. Codemagic: add the `Language-Dash` repository (it finds `codemagic.yaml` at the root). Signing is automatic through that integration. Apple allows only a few distribution certificates per team, so if Codemagic cannot create one, reuse the certificate Dx Dash already uses (upload it once under Code signing identities).
 5. Codemagic secure variables: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (the same values as the GitHub repository variables, which Codemagic cannot read), `VITE_SUPPORT_EMAIL`, `VITE_APPSTORE_ID` (the numeric id, once the app record exists), `VITE_IAP_VERIFY=1` (once the Apple secrets below are set). Optional: `VITE_AUTH_PROVIDERS`, `VITE_FEATURE_LOCKER_ITEMS=1` only when the Locker item products exist.
 
