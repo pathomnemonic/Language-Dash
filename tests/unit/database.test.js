@@ -110,7 +110,7 @@ describe('ranked matches', () => {
     const early = (await call(A, "SELECT ranked_report($1, 'win') AS r", [m2.match_id])).r;
     expect(early.settled).toBe(false);
     // a match that was actually played: the pairing is minutes old by the time the report stands unanswered
-    await db.query("UPDATE ranked_matches SET created_at = now() - interval '3 minutes' WHERE id = $1", [m2.match_id]);
+    await db.query("UPDATE ranked_matches SET created_at = now() - interval '5 minutes' WHERE id = $1", [m2.match_id]);
     await db.query("UPDATE ranked_reports SET reported_at = now() - interval '2 minutes' WHERE match_id = $1", [m2.match_id]);
     const n = (await call(C, 'SELECT ranked_settle_stale() AS n')).n;
     expect(n).toBeGreaterThan(0);
