@@ -36,6 +36,13 @@ describe('Performance tab', () => {
     expect(c.textContent.length).toBeLessThan(700);
   });
 
+  it('lifetime hint says "1 word" after one encounter and "2 words" after two', () => {
+    storage.set('totalEncounters', 1);
+    expect(mount().querySelector('#perf-lifetime .perf-hint').textContent).toBe('1 word');
+    storage.set('totalEncounters', 2);
+    expect(mount().querySelector('#perf-lifetime .perf-hint').textContent).toBe('2 words');
+  });
+
   it('shows one next study step on a big button, with no list of other suggestions', () => {
     seed();
     const u = ui();
