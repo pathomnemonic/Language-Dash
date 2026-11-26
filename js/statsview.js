@@ -326,13 +326,14 @@ export function renderPerformance(container, ui) {
     });
   }, 'analytics_detail', 'See your trickiest words, ranked, with one tap to drill them.'));
 
-  var lifetimeWords = storage.get('totalEncounters');
-  secs.appendChild(section('lifetime', '🏅', 'Lifetime', lifetimeWords + (lifetimeWords === 1 ? ' word' : ' words'), function (body) {
+  // totalEncounters is every word answered, repeats included (storage adds each run's encountersCompleted), so the Lifetime figure is answers, not distinct words: label it as answers (issue 44)
+  var lifetimeAnswers = storage.get('totalEncounters');
+  secs.appendChild(section('lifetime', '🏅', 'Lifetime', lifetimeAnswers.toLocaleString('en-US') + (lifetimeAnswers === 1 ? ' answer' : ' answers'), function (body) {
     var tc = storage.get('totalCorrect');
     var tw = storage.get('totalWrong');
     var acc = (tc + tw) > 0 ? Math.round(tc / (tc + tw) * 100) : 0;
     var grid = el('div', 'perf-lifetime');
-    [['Words', storage.get('totalEncounters'), null], ['Correct', tc, 'var(--accent-green)'], ['Wrong', tw, 'var(--accent-red)'], ['Accuracy', acc + '%', null], ['Best score', storage.get('bestScore'), 'var(--accent-gold)']].forEach(function (s) {
+    [['Answers', lifetimeAnswers.toLocaleString('en-US'), null], ['Correct', tc, 'var(--accent-green)'], ['Wrong', tw, 'var(--accent-red)'], ['Accuracy', acc + '%', null], ['Best score', storage.get('bestScore'), 'var(--accent-gold)']].forEach(function (s) {
       var t = el('div', 'perf-stat');
       var v = el('div', 'perf-stat-val', String(s[1]));
       if (s[2]) v.style.color = s[2];
