@@ -28,7 +28,6 @@ import { PREMIUM_ITEMS, itemProductId, premiumCents, formatUsd } from '../supaba
 
 var CACHE_KEY = 'ld_pro';
 var USE_KEY = 'ld_pro_use';
-var DEBUG_KEY = 'ld_pro_debug';
 var SELL_KEY = 'ld_pro_sell';
 var LIB_KEY = 'ld_pro_lib';
 var FOREVER = 100 * 365 * 24 * 60 * 60 * 1000;
@@ -82,6 +81,11 @@ export var PRO_FEATURES = [
 ];
 
 function store() { try { return typeof localStorage !== 'undefined' ? localStorage : null; } catch (e) { return null; } }
+
+// Older builds had a debug switch (the localStorage key 'ld_pro_debug', set from a ?debug=1 page) that turned Pro
+// on or off ahead of every real entitlement, and it persisted across sessions. It is removed: nothing reads it any
+// more, and any value an old build left on a device is cleared here so it can never take effect again.
+try { var _st = store(); if (_st) _st.removeItem('ld_pro_debug'); } catch (e) { /* ignore */ }
 function readJson(key, fallback) { try { var s = store(); var raw = s && s.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch (e) { return fallback; } }
 function writeJson(key, value) { try { var s = store(); if (s) s.setItem(key, JSON.stringify(value)); } catch (e) { /* storage full: this session still has it */ } }
 
@@ -192,9 +196,6 @@ export function forgetServerPro() {
 
 function cachedActive() { var c = readJson(CACHE_KEY, null); return !!(c && c.active); }
 
-/** Debug builds (?debug=1): force Pro on or off to try the screens. Never persists past the tab being cleared. */
-export function setProDebug(on) { try { var s = store(); if (s) { if (on === null) s.removeItem(DEBUG_KEY); else s.setItem(DEBUG_KEY, on ? '1' : '0'); } } catch (e) { /* ignore */ } }
-
 /**
  * Combine what the sources said into one answer. Pure.
  * @param {Array<{source: string, active: boolean, until?: number, plan?: string, trial?: boolean}>} found fresh answers
@@ -228,10 +229,6 @@ export function combineStatus(found, cached, o) {
 /** Does this player have Pro right now? (From the saved answer; always false while Pro is dormant.) */
 export function isPro(now) {
   if (!proEnabled()) return false;
-  var s = store();
-  var dbg = s && s.getItem(DEBUG_KEY);
-  if (dbg === '1') return true;
-  if (dbg === '0') return false;
   var c = readJson(CACHE_KEY, null);
   if (!c || !c.active) return false;
   var t = typeof now === 'number' ? now : Date.now();
@@ -758,4 +755,4 @@ export function requireGate(feature, o) {
 }
 
 /** Tests: forget saved counters. */
-export function resetProForTest() { var s = store(); if (s) { s.removeItem(CACHE_KEY); s.removeItem(USE_KEY); s.removeItem(DEBUG_KEY); } _lastPassive = 0; }
+export function resetProForTest() { var s = store(); if (s) { s.removeItem(CACHE_KEY); s.removeItem(USE_KEY); s.removeItem('ld_pro_debug'); } _lastPassive = 0; }

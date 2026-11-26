@@ -243,7 +243,9 @@ describe('Pro screens once switched on', () => {
     const iap = createIap({ platform: 'android', loadPlugin: () => Promise.resolve(fakePlugin()) });
     iap.add([{ id: 'languagedash_pro_monthly', kind: 'subscription' }]);
     setIapForTest(iap);
-    localStorage.setItem('ld_pro_debug', '1');
+    // stand in for a store answer the way refreshPro saves it (the ld_pro entitlement cache).
+    // The old ld_pro_debug switch that faked this was removed in issue 40.
+    localStorage.setItem('ld_pro', JSON.stringify({ active: true, source: 'store', plan: 'monthly', trial: false, until: Date.now() + 30 * 86400000, provenAt: Date.now() }));
     const o = openPaywall({ trigger: 'settings' });
     expect(o.textContent).toMatch(/You have Pro/);
     expect(o.textContent).toMatch(/Manage subscription/);

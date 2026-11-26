@@ -13,8 +13,7 @@ test.describe('Language Dash Pro', () => {
 
   test('with nothing to buy (no payment link) nothing is limited and nothing is shown', async ({ page }) => {
     await openApp(page, '/?debug=1');
-    await page.waitForFunction(() => window.__pro, null, { timeout: 15000 });
-    expect(await page.evaluate(() => window.__pro.proLive())).toBe(false);
+    await page.waitForFunction(() => window.__cards, null, { timeout: 15000 });
     expect(await page.evaluate(() => window.__cards.length)).toBeGreaterThan(3000);
     await page.evaluate(() => window.__ui.show('screenSettings'));
     await expect(page.locator('.settings-card[data-section="pro"]')).toHaveCount(0); // no Pro page until something can be bought
@@ -26,9 +25,9 @@ test.describe('Language Dash Pro', () => {
     await page.addInitScript(() => { try { localStorage.setItem('ld_pro_force_sell', '1'); } catch (e) { /* ignore */ } });
     await openApp(page, '/?debug=1');
     test.skip(!(await hasBackend(page)), 'Pro needs a build with a backend');
-    await page.waitForFunction(() => window.__pro, null, { timeout: 15000 });
-    await expect.poll(() => page.evaluate(() => window.__pro.proLive()), { timeout: 8000 }).toBe(true);
-    // (the 300 most common words; a few rank slots hold no playable pair for this language pair, so a little under 300 are in play)
+    await page.waitForFunction(() => window.__cards, null, { timeout: 15000 });
+    // (Pro is live when the library shrinks to the free set: the 300 most common words; a few rank slots
+    // hold no playable pair for this language pair, so a little under 300 are in play)
     await expect.poll(() => page.evaluate(() => window.__cards.length), { timeout: 8000 }).toBeGreaterThan(280);
     expect(await page.evaluate(() => window.__cards.length)).toBeLessThanOrEqual(300);
     await openSettingsSection(page, 'pro');
@@ -46,10 +45,13 @@ test.describe('Language Dash Pro', () => {
     await expect(page.locator('#proPaywall')).toContainText(/300 of/);
     await page.locator('#proPaywallClose').click();
     await expect(page.locator('#proPaywall')).toHaveCount(0);
-    // Pro (the debug switch stands in for a purchase) opens every card and lifts the gate
-    await page.evaluate(() => window.__pro.setProDebug(true));
+    // Issue 40: the old debug switch (localStorage ld_pro_debug, set from this page) unlocked Pro with no
+    // payment and persisted. It is removed: storing the key must change nothing, the library stays at the
+    // free set and the gates stay shut. Only a real purchase or server grant opens them now.
+    await page.evaluate(() => { try { localStorage.setItem('ld_pro_debug', '1'); } catch (e) { /* ignore */ } });
     await page.evaluate(() => document.dispatchEvent(new CustomEvent('ld:pro-changed')));
-    await expect.poll(() => page.evaluate(() => window.__cards.length), { timeout: 8000 }).toBeGreaterThan(3000);
-    expect(await page.evaluate(() => window.__pro.checkGate('offline_pack').allowed)).toBe(true);
+    await page.waitForTimeout(1000);
+    expect(await page.evaluate(() => window.__cards.length)).toBeLessThanOrEqual(300);
+    await page.evaluate(() => { try { localStorage.removeItem('ld_pro_debug'); } catch (e) { /* ignore */ } });
   });
 });

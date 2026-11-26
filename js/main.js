@@ -22,7 +22,6 @@
  */
 
 import { renderLibraryBanner } from './proui.js';
-import * as proModule from './pro.js';
 import { registerProProducts, refreshPro, probeSellable, libraryUnlocked, waitForWebPayment, waitForWebItem, requireGate, checkGate, checkCancelFollowThrough, clearPaymentPending, forgetServerPro } from './pro.js';
 import { installProUi, setProUiDeps } from './proui.js';
 import { probeTipJar } from './tipjar.js';
@@ -1269,7 +1268,6 @@ function init() {
     window.__useRankedTestClient = useRankedTestClient;
     window.__audio = audio;
     window.__analytics = analytics;
-    window.__pro = proModule;
     window.__analyticsAvailable = analyticsAvailable;
     window.__storage = storage;
     window.__dataProblems = function () { return checkDataSanity(storage.data, STORAGE_DEFAULTS); };
