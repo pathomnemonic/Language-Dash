@@ -43,6 +43,12 @@ describe('Performance tab', () => {
     expect(mount().querySelector('#perf-lifetime .perf-hint').textContent).toBe('2 words');
   });
 
+  it('the Today bar renders empty at 0 words and shows real progress after an answer (issue 43)', () => {
+    expect(mount().querySelector('.perf-hero .perf-bar-fill').style.width).toBe('0%');
+    storage.addStudiedToday(1);
+    expect(mount().querySelector('.perf-hero .perf-bar-fill').style.width).toBe('5%');
+  });
+
   it('shows one next study step on a big button, with no list of other suggestions', () => {
     seed();
     const u = ui();
