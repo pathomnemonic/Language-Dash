@@ -60,7 +60,7 @@ describe('both store builds', () => {
 describe('the iOS cloud build is ready to run once the Apple account is active', () => {
   it('runs only when started by a person (no automatic trigger), with its App Store Connect integration named', () => {
     expect(codemagic).not.toMatch(/^\s*triggering:/m);
-    expect(codemagic).toContain('app_store_connect: Language Dash App Store Connect');
+    expect(codemagic).toContain('app_store_connect: PathoMnemonic App Store Connect');
     expect(codemagic).toMatch(/submit_to_testflight: true/);
   });
 
