@@ -35,6 +35,19 @@ export async function openApp(page, path = '/', opts = {}) {
   if (!/noReviewTipSkip/.test(path)) await page.evaluate(() => { try { if (window.__storage) window.__storage.set('reviewTipSeen', true); } catch (e) { /* not a debug page */ } });
 }
 
+/**
+ * A build with analytics configured asks the player once, before anything else, whether to share anonymous
+ * usage, and the first-run flow (the language welcome, the how-to-play) waits behind the answer
+ * (js/main.js asks via maybeAskConsent). openApp answers as it goes; tests that open the app with a bare
+ * goto call this instead. Says "No thanks", the quietest answer. A build without analytics configured
+ * never shows the card, so this simply waits out the timeout and moves on.
+ */
+export async function answerConsent(page) {
+  const no = page.locator('#analyticsNo');
+  await no.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+  if (await no.isVisible().catch(() => false)) await no.click().catch(() => {});
+}
+
 /** Close the tutorial the way a player does: the × in the corner, then "Exit tutorial" on the warning. */
 export async function closeTutorial(page) {
   await page.locator('#tutCloseBtn').click();
