@@ -2,7 +2,7 @@
 // The dash can be a double tap, an on-screen button, or off; and the countdown never hides the scene.
 
 import { test, expect } from '@playwright/test';
-import { openApp, hasWebGL } from './helpers.js';
+import { openApp, hasWebGL, answerConsent } from './helpers.js';
 
 async function start(page, dashControl) {
   await openApp(page, '/?debug=1');
@@ -99,6 +99,8 @@ test.describe('Phone defaults', () => {
     test.setTimeout(120000);
     await page.goto('/?debug=1');
     test.skip(!(await hasWebGL(page)), 'the real-track tutorial needs WebGL');
+    // (the analytics question comes first on a configured build; the tutorial waits behind the answer)
+    await answerConsent(page);
     const step = (id, timeout = 30000) => expect(page.locator('#tutorialCoach .tut-card, #tutorialOverlay .tut-card')).toHaveAttribute('data-step', id, { timeout });
     await step('welcome');
     await page.locator('#tutNextBtn').click();

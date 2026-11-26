@@ -3,13 +3,15 @@
 // that needs it is sent on the real track, and nothing from it is saved.
 
 import { test, expect } from '@playwright/test';
-import { hasWebGL, closeTutorial, dismissDailyReward } from './helpers.js';
+import { hasWebGL, closeTutorial, dismissDailyReward, answerConsent } from './helpers.js';
 
 const card = (page) => page.locator('#tutorialCoach .tut-card, #tutorialOverlay .tut-card');
 const step = (page, id, timeout = 30000) => expect(card(page)).toHaveAttribute('data-step', id, { timeout });
 
 async function openFirstRun(page) {
   await page.goto('/?debug=1');
+  // (the analytics question comes first on a configured build; the how-to-play waits behind the answer)
+  await answerConsent(page);
   await expect(page.locator('#tutorialOverlay')).toHaveClass(/active/);
   await step(page, 'welcome');
   test.skip(!(await hasWebGL(page)), 'the real-track tutorial needs WebGL');
@@ -126,6 +128,13 @@ test.describe('Interactive tutorial (on the real track)', () => {
     expect(await page.evaluate(() => window.__storage.get('coins'))).toBeGreaterThanOrEqual(300); // enough for the first trail, which the Locker's lesson buys
     await expect(page.locator('.tour-card .tut-count')).toHaveCount(0); // not numbered
     await walkTour(page);
+
+    // The account invitation comes second to last, after the tour (the order lessons.spec.js
+    // documents): "Maybe later" asks "are you sure?", and "Skip for now" leads to the closing page.
+    await step(page, 'account', 20000);
+    await page.locator('#tutAccountLater').click();
+    await expect(page.locator('#tutExitConfirm')).toBeVisible();
+    await page.locator('#tutExitYes').click();
 
     await step(page, 'done', 20000);
     await expect(card(page)).not.toContainText(/step \d+ of/i);

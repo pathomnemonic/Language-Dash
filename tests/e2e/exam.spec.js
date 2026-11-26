@@ -8,7 +8,6 @@ test('an untimed 10-question exam can be taken, finished and reviewed', async ({
   test.setTimeout(120000);
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  page.on('dialog', (d) => d.accept().catch(() => {}));
   await openApp(page, '/?debug=1');
   await page.waitForFunction(() => window.__ui);
   await page.evaluate(() => window.__ui.show('screenExam'));
@@ -25,7 +24,9 @@ test('an untimed 10-question exam can be taken, finished and reviewed', async ({
     if (i === 3) await page.getByRole('button', { name: /Flag/ }).click();
     await page.getByRole('button', { name: i === 9 ? /Finish/ : /Next/ }).click();
   }
-  // "Finish" asks when something is unanswered; everything was answered, so the report shows
+  // "Finish" asks in the page's own dialog (js/confirmdialog.js: native confirm() is blocked in some
+  // browsers); everything was answered, so confirm the submit and the report shows
+  await page.locator('[data-confirm-yes]').click();
   await expect(page.locator('#examContent').getByText(/fluency|Accuracy|correct/i).first()).toBeVisible({ timeout: 15000 });
   await expect(page.locator('#examContent')).toContainText(/\d+\s*\/\s*10|\d+%/);
   const study = page.getByRole('button', { name: /Study missed/ });
