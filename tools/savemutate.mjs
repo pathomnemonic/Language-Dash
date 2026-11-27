@@ -4,6 +4,10 @@
  * Used by tests/unit/savetorture.test.js (the storage code) and tools/savefuzz.mjs (the whole app in a browser).
  * `mutate(save, rng)` changes one thing somewhere inside the save object: removes a field, gives it a value of the wrong
  * type or an extreme value, cuts or pads a list, or adds a key that tries to reach into the prototype.
+ *
+ * One honest limit: the nonfinite numbers (NaN, Infinity) only exist in memory. A save is stored as JSON, and JSON
+ * turns them into null, so through savefuzz they reach the app as null; the raw values are exercised by the torture
+ * test, which hands the storage code the object itself.
  */
 
 /** Every path to something inside the save: [key, key, ...]. */
@@ -25,7 +29,7 @@ export function getAt(root, path) {
 
 export var BAD_VALUES = [
   null, '', 'abc', '2026-13-45', -1, 0, 1.5, 1e21, -1e21, Number.MAX_SAFE_INTEGER * 2, [], {}, [null], [1, 2, 3], { a: 1 }, true, false,
-  'x'.repeat(5000), '\u0000‮\u{1F600}', '__proto__', { __proto__: null }, [[[[[]]]]], 'NaN', 'Infinity', ' '
+  'x'.repeat(5000), '\u0000‮\u{1F600}', '__proto__', JSON.parse('{"__proto__":{"polluted":true}}'), [[[[[]]]]], 'NaN', 'Infinity', ' '
 ];
 
 /** Change one thing in `root` (in place). `rng` returns numbers in [0, 1). */
@@ -42,5 +46,7 @@ export function mutate(root, rng) {
   if (how < 0.85 && Array.isArray(parent[key])) { parent[key] = parent[key].slice(0, Math.floor(rng() * 3)); return; }
   if (how < 0.92 && Array.isArray(parent[key])) { parent[key].push(null, undefined, 7, 'x', {}); return; }
   if (how < 0.96 && typeof parent[key] === 'number') { parent[key] = [NaN, Infinity, -Infinity, -0][Math.floor(rng() * 4)]; return; }
-  if (parent[key] && typeof parent[key] === 'object') parent[key]['__proto__x'] = { polluted: true };
+  // a real prototype-pollution attempt: an OWN enumerable "__proto__" key, exactly what JSON.parse of a hostile save
+  // produces. (Assigning obj['__proto__'] would set the prototype instead, and a '__proto__x' key tests nothing.)
+  if (parent[key] && typeof parent[key] === 'object') Object.defineProperty(parent[key], '__proto__', { value: { polluted: true }, enumerable: true, configurable: true, writable: true });
 }
