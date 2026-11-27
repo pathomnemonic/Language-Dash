@@ -101,6 +101,7 @@ async function gameState(page) {
       ok: true,
       running: !!g.running,
       screen: document.body.getAttribute('data-screen'),
+      progress: (g.encountersDone || 0) + (g.coins || 0),
       geometries: info ? info.memory.geometries : 0,
       textures: info ? info.memory.textures : 0,
       programs: info && info.programs ? info.programs.length : 0,
@@ -141,13 +142,26 @@ export async function goHome(page) {
   await page.keyboard.press('Escape').catch(function () {});
 }
 
-/** Play one run with random keys until it ends (or the time is up). Returns how many inputs were sent. */
-async function playRun(page, rng, deadline) {
+/**
+ * Play one run with random keys until it ends (or the time is up). Returns how many inputs were sent.
+ * A run that stays on the game screen with no progress (no encounter finished, no coin collected) for 30 seconds
+ * is a hang, and fails: without this watchdog such a run used to end at the 4 minute cap and be counted as played.
+ * `onTick` (optional) is called every 15 seconds DURING the run, which is when the sampling has to happen.
+ */
+async function playRun(page, rng, deadline, onTick) {
   var inputs = 0;
   var started = Date.now();
+  var lastProgress = null;
+  var lastProgressAt = Date.now();
+  var lastTick = Date.now();
   while (Date.now() < deadline && Date.now() - started < 4 * 60 * 1000) {
     var st = await gameState(page);
     if (!st.ok) throw new Error('The game object disappeared');
+    if (st.running && st.screen === 'screenGame') {
+      if (lastProgress === null || st.progress !== lastProgress) { lastProgress = st.progress; lastProgressAt = Date.now(); }
+      else if (Date.now() - lastProgressAt > 30000) throw new Error('The game stopped responding: on the game screen with no progress for 30 seconds');
+    }
+    if (onTick && Date.now() - lastTick > 15000) { await onTick(); lastTick = Date.now(); }
     if (!st.running && st.screen !== 'screenGame') {
       if (Date.now() - started > 3000) break; // the run is over
     }
@@ -189,7 +203,12 @@ export async function soak(opts) {
   page.on('console', function (m) {
     if (m.type() !== 'error') return;
     var text = m.text();
-    if (/GPU stall|swiftshader|WebGL: INVALID|Failed to load resource.*(supabase|peerjs)/i.test(text)) return;
+    if (/GPU stall|swiftshader|WebGL: INVALID/i.test(text)) return;
+    // only a resource failure on the two optional online services is ignored, and only when the failing URL (or the
+    // message) names one of them: a blanket "failed to load" filter would also hide the app's own assets failing
+    var loc = '';
+    try { loc = (m.location() || {}).url || ''; } catch { loc = ''; }
+    if (/Failed to load resource/i.test(text) && /(supabase|peerjs)/i.test(text + ' ' + loc)) return;
     errors.push('console.error: ' + text.slice(0, 300));
   });
 
@@ -215,7 +234,7 @@ export async function soak(opts) {
       await ensureHome(page, opts.url);
       await mode.start(page);
       await page.waitForTimeout(1500);
-      result.inputs = await playRun(page, rng, deadline);
+      result.inputs = await playRun(page, rng, deadline, async function () { await sample('tick'); lastSample = Date.now(); });
       await page.waitForTimeout(800);
       await goHome(page);
       if (n % MODES.length === 0) { await playFlashcards(page, rng); await goHome(page); }
