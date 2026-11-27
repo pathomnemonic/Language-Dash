@@ -87,7 +87,7 @@ describe('daily quests', () => {
   });
 
   it('flashcard sessions count towards the flashcard quests', () => {
-    storage.data.progression.questPicks[new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0') + '-' + String(new Date().getDate()).padStart(2, '0')] = ['q_flash10', 'q_flash30', 'q_streak8', 'q_25enc', 'q_daily', 'q_speed3'];
+    storage.data.progression.questPicks[storage.getTodayKey()] = ['q_flash10', 'q_flash30', 'q_streak8', 'q_25enc', 'q_daily', 'q_speed3'];
     const r = storage.finalizeFlashcardSession({ sessionId: 's1', total: 12, correct: 9, wrong: 3, durationMs: 60000, cardResults: [] });
     expect(r.completedQuestIds).toContain('q_flash10');
     expect(storage.getQuestProgress('q_flashrecall15')).toBe(9);
@@ -100,8 +100,7 @@ describe('daily quests', () => {
 
 describe('quest completion is reported', () => {
   it('lists the quests a run just completed (only ones on offer today), once', () => {
-    const { todayKey } = { todayKey: () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); } };
-    storage.data.progression.questPicks[todayKey()] = ['q_streak8', 'q_perfect5', 'q_25enc', 'q_50coins', 'q_daily', 'q_speed3'];
+    storage.data.progression.questPicks[storage.getTodayKey()] = ['q_streak8', 'q_perfect5', 'q_25enc', 'q_50coins', 'q_daily', 'q_speed3'];
     const first = storage.finalizeRun(run({ bestStreak: 9, coinsCollected: 500, powerupsCollected: 9 }));
     expect(first.completedQuestIds.sort()).toEqual(['q_50coins', 'q_perfect5', 'q_streak8']); // q_3powerups is done too, but is not on offer today
     const second = storage.finalizeRun(run({ bestStreak: 9 }));
