@@ -88,6 +88,19 @@ describe('Card selection — Daily determinism', () => {
     expect(r1.card.id).toBe(r2.card.id);
     expect(r1.orderedIndex).toBe(0);
   });
+
+  it('the Daily order itself is stable: same day, same deal; another day, another deal', () => {
+    const pool = poolFor('daily');
+    const eligible = pool.map(c => c.id);
+    const a = createDailyOrder({ dateKey: '2026-01-01', eligibleCardIds: [...eligible], count: 15 });
+    const b = createDailyOrder({ dateKey: '2026-01-01', eligibleCardIds: [...eligible], count: 15 });
+    expect(a).toEqual(b); // the whole point of the Daily: everyone gets the same cards in the same order
+    expect(a).toHaveLength(15);
+    expect(new Set(a).size).toBe(15); // no card twice
+    expect(a.every((id) => eligible.includes(id))).toBe(true); // only cards from the eligible pool
+    const c = createDailyOrder({ dateKey: '2026-01-02', eligibleCardIds: [...eligible], count: 15 });
+    expect(c).not.toEqual(a); // the seed is the date, so tomorrow deals a different set
+  });
 });
 
 describe('Card selection — new cards are favored by default', () => {

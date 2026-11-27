@@ -56,9 +56,13 @@ describe('the phone app reminder', () => {
     await syncNativeReminder({ enabled: true, hour: 19, goalMetToday: false, now: at(2026, 10, 3, 9) });
     await syncNativeReminder({ enabled: false, hour: 19, goalMetToday: false });
     expect(plugin.cancel).toHaveBeenCalledTimes(1);
-    setReminderPluginForTest({ ...plugin, checkPermissions: vi.fn(async () => ({ display: 'denied' })), schedule: vi.fn() });
+    const denied = { ...plugin, checkPermissions: vi.fn(async () => ({ display: 'denied' })), schedule: vi.fn(), cancel: vi.fn() };
+    setReminderPluginForTest(denied);
     const p2 = (await import('../../js/reminders.js'));
     await p2.syncNativeReminder({ enabled: true, hour: 19, goalMetToday: false, now: at(2026, 10, 3, 9) });
+    // without permission the phone is not touched at all: nothing scheduled, nothing cancelled
+    expect(denied.schedule).not.toHaveBeenCalled();
+    expect(denied.cancel).not.toHaveBeenCalled();
   });
 
   it('a failing phone never throws into the app', async () => {
@@ -103,8 +107,12 @@ describe('the streak-at-risk nudge', () => {
     await syncStreakRiskReminder({ enabled: true, streak: 3, playedToday: false, now });
     await syncStreakRiskReminder({ enabled: false, streak: 3, playedToday: false, now });
     expect(plugin.cancel).toHaveBeenCalledWith({ notifications: [{ id: 4102 }] });
-    setReminderPluginForTest({ ...plugin, checkPermissions: vi.fn(async () => ({ display: 'denied' })), schedule: vi.fn(), cancel: vi.fn() });
+    const denied = { ...plugin, checkPermissions: vi.fn(async () => ({ display: 'denied' })), schedule: vi.fn(), cancel: vi.fn() };
+    setReminderPluginForTest(denied);
     const p2 = await import('../../js/reminders.js');
     await p2.syncStreakRiskReminder({ enabled: true, streak: 3, playedToday: false, now });
+    // without permission the phone is not touched at all: nothing scheduled, nothing cancelled
+    expect(denied.schedule).not.toHaveBeenCalled();
+    expect(denied.cancel).not.toHaveBeenCalled();
   });
 });

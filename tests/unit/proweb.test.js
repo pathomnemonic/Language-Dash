@@ -180,7 +180,7 @@ describe('trying to break it: a member who has paid keeps Pro through hiccups', 
     expect(isPro()).toBe(true);
     putPaid({ source: 'store', plan: 'monthly', provenAt: Date.now() - 7 * 3600000 });
     await refreshPro({ iap });
-    expect(isPro()).toBe(false); // it keeps saying so for hours, and the paid period is over: now it goes
+    expect(isPro()).toBe(false); // the store has kept saying "not owned" for 7 hours, past the 6 hour doubt window: Pro goes, even though the cached paid period (200 days) has not run out
   });
 
   it('a member whose payment event never arrived is put right by asking Stripe', async () => {
@@ -307,7 +307,7 @@ describe('the website paywall', () => {
     setProUiDeps({ lb: fakeLb() });
     openPaywall({ trigger: 'test', pricing: true });
     await tick(); await tick();
-    expect(document.getElementById('proPaywall').textContent).not.toMatch(/7-day Pro trial/);
+    expect(document.getElementById('proPaywall').textContent).not.toMatch(/7-day trial/);
   });
 
   it('says so plainly when the payment service is not answering', async () => {

@@ -23,7 +23,7 @@ function fakePlugin(opts) {
       },
       initialize: function () {
         (opts.have || TIP_PRODUCTS.map(function (p) { return p.id; })).forEach(function (id, i) {
-          products[id] = { id: id, offers: [{ id: 'o' + id, pricingPhases: [{ price: '$' + (i + 1) + '.99', priceMicros: (i + 1) * 1990000, currency: 'USD' }] }], getOffer: function () { return this.offers[0]; } };
+          products[id] = { id: id, offers: [{ id: 'o' + id, pricingPhases: [{ price: '$' + (i + 1) + '.99', priceMicros: ((i + 1) * 100 + 99) * 10000, currency: 'USD' }] }], getOffer: function () { return this.offers[0]; } };
         });
         return Promise.resolve([]);
       },
@@ -75,7 +75,7 @@ describe('tip jar', function () {
     var res = await j.buy(TIP_PRODUCTS[1].id);
     expect(res.ok).toBe(true);
     expect(r.map(function (x) { return x[0]; })).toEqual(['started', 'completed']);
-    expect(r[1][1]).toMatchObject({ product: TIP_PRODUCTS[1].id, currency: 'USD', micros: 3980000 });
+    expect(r[1][1]).toMatchObject({ product: TIP_PRODUCTS[1].id, currency: 'USD', micros: 2990000 });
     expect(p.orders.length).toBe(1);
     r.forEach(function (x) { expect(cleanEvent('tip_purchase', Object.assign({ outcome: x[0] }, x[1])).ok).toBe(true); });
   });
@@ -94,5 +94,15 @@ describe('tip jar', function () {
   it('refuses an unknown product and a second purchase while one is open', async function () {
     var j = jar(fakePlugin(), 'android', []);
     expect((await j.buy('nope')).error).toBe('unavailable');
+    // a store order that stays open: the sheet is up and has not answered yet
+    var held = fakePlugin();
+    var release;
+    held.store.order = function () { return new Promise(function (res) { release = res; }); };
+    var j2 = jar(held, 'android', []);
+    var first = j2.buy(TIP_PRODUCTS[0].id);
+    await new Promise(function (r) { setTimeout(r, 30); }); // let the first purchase reach the store
+    expect((await j2.buy(TIP_PRODUCTS[0].id)).error).toBe('busy');
+    release({ code: 1, message: 'done' }); // the store answers with an error, so the first purchase settles
+    expect(await first).toMatchObject({ ok: false, error: 'done' });
   });
 });

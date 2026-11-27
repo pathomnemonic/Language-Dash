@@ -263,6 +263,10 @@ describe('owner copy rules: natural, and never a hyphen or a dash', () => {
   it('a hyphen in a deck word cannot be shown (the copy rule covers the reveal)', () => {
     const v = validateHook(kal(), holds);
     expect(v.errors).toEqual([]);   // the kal words carry none
+    // French rank 227 is "peut-être": a hyphenated deck word, which the shape check forbids
+    // (a dash in shown copy needs spaces around it, and may only join whole shown words)
+    const h = { ...kal(), pair: 'en-fr', concepts: [227], expect: [{ rank: 227, hint: 'maybe', answer: 'peut-être' }] };
+    expect(validateHook(h, holds).errors.join('\n')).toMatch(/deck word "peut-être" contains a hyphen or dash/);
   });
   it('refuses ad speak, exclamation marks, shouting, ellipses and theatrical fragments', () => {
     ['You will not believe this!', 'Unlock every word', 'A total game changer', 'Hindi has ONE word for both', 'Wait for it...', 'Same word. Two days.', 'Burro. Burro.', 'Level up your Spanish', 'The ultimate trick'].forEach((t) => {
