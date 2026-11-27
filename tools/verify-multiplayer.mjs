@@ -7,6 +7,11 @@
 //   node tools/verify-multiplayer.mjs [http://localhost:4190]
 
 import { chromium } from '@playwright/test';
+import { tmpdir } from 'node:os';
+
+let failures = 0;
+const check = (name, cond, detail) => { console.log((cond ? 'PASS ' : 'FAIL ') + name + (detail ? ': ' + detail : '')); if (!cond) failures++; };
+const shot = (name) => tmpdir() + '/' + name;
 
 const dismissDaily = async (pg) => {
   const overlay = pg.locator('#dailyReward');
@@ -49,10 +54,14 @@ await guest.locator('#multiplayerBtn').click();
 await guest.locator('#mpJoinCode').fill(code);
 await guest.locator('#mpJoinBtn').click();
 await guest.waitForTimeout(8000);
-console.log('--- host lobby ---\n' + await lobby(host));
-console.log('--- guest lobby ---\n' + await lobby(guest));
-await host.screenshot({ path: process.env.TEMP + '/mp-host.png' });
-await guest.screenshot({ path: process.env.TEMP + '/mp-guest.png' });
+const hostLobby = await lobby(host);
+const guestLobby = await lobby(guest);
+console.log('--- host lobby ---\n' + hostLobby);
+console.log('--- guest lobby ---\n' + guestLobby);
+check('host lobby lists both players', hostLobby.includes('Hosty') && hostLobby.includes('Guesty'));
+check('guest lobby lists both players', guestLobby.includes('Hosty') && guestLobby.includes('Guesty'));
+await host.screenshot({ path: shot('mp-host.png') });
+await guest.screenshot({ path: shot('mp-guest.png') });
 
 // Both ready up, the match starts, and the two runs see each other
 await host.locator('#mpReadyBtn').click();
@@ -65,16 +74,28 @@ const hud = (p) => p.evaluate(() => ({
   opponentVisible: !document.getElementById('opponentHud').hidden, oppText: document.getElementById('opponentHud').innerText.split(String.fromCharCode(10)).join(' '), oppDisplay: getComputedStyle(document.getElementById('opponentHud')).display,
   me: document.getElementById('hudScore').textContent
 }));
-console.log('host in match:', JSON.stringify(await hud(host)));
-console.log('guest in match:', JSON.stringify(await hud(guest)));
+const hudHost = await hud(host);
+const hudGuest = await hud(guest);
+console.log('host in match:', JSON.stringify(hudHost));
+console.log('guest in match:', JSON.stringify(hudGuest));
+check('both runs are running', hudHost.running && hudGuest.running);
+check('both runs are in the same mode', !!hudHost.mode && hudHost.mode === hudGuest.mode, String(hudHost.mode) + ' vs ' + String(hudGuest.mode));
+check('both players see the opponent HUD', hudHost.opponentVisible && hudGuest.opponentVisible && hudHost.oppText.length > 0 && hudGuest.oppText.length > 0);
 await host.waitForTimeout(25000);
-console.log('host after 25s:', JSON.stringify(await hud(host)), 'opp score', await host.locator('#opponentScore').innerText());
-console.log('guest after 25s:', JSON.stringify(await hud(guest)), 'opp score', await guest.locator('#opponentScore').innerText());
-await host.screenshot({ path: process.env.TEMP + '/mp-host-run.png' });
+const hostOpp = await host.locator('#opponentScore').innerText();
+const guestOpp = await guest.locator('#opponentScore').innerText();
+console.log('host after 25s:', JSON.stringify(await hud(host)), 'opp score', hostOpp);
+console.log('guest after 25s:', JSON.stringify(await hud(guest)), 'opp score', guestOpp);
+check('opponent scores are shown as numbers on both sides', /\d/.test(hostOpp) && /\d/.test(guestOpp), hostOpp + ' / ' + guestOpp);
+await host.screenshot({ path: shot('mp-host-run.png') });
 // The host quits: the guest should be told
 await host.locator('#pauseBtn').click();
 await host.locator('#endRunBtn').click();
 await guest.waitForTimeout(6000);
-console.log('guest after host quits: ' + (await guest.evaluate(() => document.body.innerText.slice(0, 400).split(/\s+/).join(' '))));
-await guest.screenshot({ path: process.env.TEMP + '/mp-guest-end.png' });
+const guestEnd = await guest.evaluate(() => document.body.innerText.slice(0, 400).split(/\s+/).join(' '));
+console.log('guest after host quits: ' + guestEnd);
+check('guest is told the host quit', /left|quit|won|win|forfeit|opponent/i.test(guestEnd));
+await guest.screenshot({ path: shot('mp-guest-end.png') });
 await browser.close();
+if (failures) { console.error('\n' + failures + ' multiplayer check(s) FAILED'); process.exit(1); }
+console.log('\nAll multiplayer checks passed');
