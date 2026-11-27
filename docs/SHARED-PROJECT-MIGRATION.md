@@ -117,24 +117,24 @@ classification does not list, a table without RLS, or a signed-in function that 
 
 | Measure | Count |
 | --- | --- |
-| Template statements read (schema, policies, cohorts, discovery, pro, analytics, analytics_views, lockdown) | 560 |
-| Statements carried over | 557 |
+| Template statements read (schema, policies, cohorts, discovery, pro, analytics, analytics_views, lockdown) | 565 |
+| Statements carried over | 562 |
 | Statements removed (delete_my_account and its REVOKE/GRANT) | 3 |
-| Statements in the migration (incl. wrapper, membership layer, gate, wipe, role grants) | 657 |
-| `SET search_path = public[, auth]` pins rewritten to `language_dash, pg_temp` | 90 |
+| Statements in the migration (incl. wrapper, membership layer, gate, wipe, role grants) | 664 |
+| `SET search_path = public[, auth]` pins rewritten to `language_dash, pg_temp` | 91 |
 | Functions that had NO pin and got one (would have run on the caller's search_path) | 9 |
 | `public.` qualifications rewritten to `language_dash.` | 4 |
 | `'public'` catalog literals / `IN SCHEMA public` rewritten | 4 |
 | Foreign keys `auth.users(id)` retargeted to `language_dash.members(user_id)` | 31 |
 | Membership checks injected: plpgsql functions / SQL functions | 36 / 16 |
-| `ld_member_gate` restrictive policies added | 36 |
+| `ld_member_gate` restrictive policies added | 37 |
 | DO blocks recognised and translated | 5 |
-| Tables created (template + members) | 45 |
+| Tables created (template + members) | 46 |
 | Views created | 127 |
-| Functions created (template + membership layer) | 104 |
-| Migration size (lines) | 4409 |
+| Functions created (template + membership layer) | 105 |
+| Migration size (lines) | 4482 |
 
-Statement kinds read from the template: ALTER_DEFAULT_PRIVILEGES 1, ALTER_TABLE 55, CREATE_FUNCTION 100, CREATE_INDEX 30, CREATE_POLICY 28, CREATE_TABLE 44, CREATE_TRIGGER 5, CREATE_VIEW 127, DELETE 1, DO 5, DROP_FUNCTION 4, DROP_POLICY 28, DROP_TRIGGER 6, GRANT 62, REVOKE 64.
+Statement kinds read from the template: ALTER_DEFAULT_PRIVILEGES 1, ALTER_TABLE 56, CREATE_FUNCTION 101, CREATE_INDEX 30, CREATE_POLICY 28, CREATE_TABLE 45, CREATE_TRIGGER 5, CREATE_VIEW 127, DELETE 1, DO 5, DROP_FUNCTION 4, DROP_POLICY 28, DROP_TRIGGER 6, GRANT 62, REVOKE 66.
 
 Removed: function delete_my_account(); REVOKE on delete_my_account(); GRANT on delete_my_account().
 
@@ -172,6 +172,7 @@ Removed: function delete_my_account(); REVOKE on delete_my_account(); GRANT on d
 | `buddy_listings` | member | yes | user_id | discovery |
 | `group_join_requests` | member | yes | user_id | discovery |
 | `pro_entitlements` | member | yes | user_id | pro |
+| `pro_grants` | member | yes | user_id | pro |
 | `pro_items` | member | yes | user_id | pro |
 | `pro_codes` | internal | no | - | pro |
 | `pro_redemptions` | member | yes | user_id | pro |
@@ -289,12 +290,13 @@ Classes: **member** = member data: restrictive ld_member_gate policy + wiped by 
 | `pro_is_guest` | sql | no | none | trigger or internal helper, not callable by app roles | rewritten |
 | `pro_link_customer` | sql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
 | `pro_make_code` | plpgsql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
-| `pro_revoke` | sql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
+| `pro_revoke` | plpgsql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
 | `pro_revoke_item` | sql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
 | `pro_revoke_library` | sql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
-| `pro_revoke_plan` | sql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
+| `pro_revoke_plan` | plpgsql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
 | `pro_set_billing_cancelled` | sql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
 | `pro_store_claim` | plpgsql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
+| `pro_sync_entitlement` | plpgsql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
 | `pro_user_customer` | sql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
 | `purge_user_data` | plpgsql/sql | yes | none | membership layer: same wipe for a given user id (edge function, service role) before it removes the sign-in | hand-written |
 | `ranked_apply` | plpgsql | yes | none | trigger or internal helper, not callable by app roles | rewritten |
