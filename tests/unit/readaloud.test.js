@@ -28,7 +28,7 @@ describe('planning a reading', () => {
     expect(plan.withAnswers).toBe(false);
     expect(plan.clueCount).toBe(clues.length);
     expect(plan.text).not.toContain('Left:');
-    expect(estimateSeconds(plan.parts, DEFAULT_WPS) / plan.rate).toBeLessThanOrEqual(4.2 - SAFETY_SECONDS + 0.01);
+    expect(estimateSeconds(plan.parts, DEFAULT_WPS) / plan.rate).toBeLessThanOrEqual(3.8 - SAFETY_SECONDS + 0.01);
   });
 
   it('reads only whole clues when even the clues will not fit, never half of one', () => {
