@@ -15,7 +15,10 @@ async function as(user, fn) {
   try { return await fn(); } finally { await db.exec('RESET ROLE'); }
 }
 const one = async (user, sql, params) => (await as(user, () => db.query(sql, params))).rows[0];
-const rejects = async (user, sql, params) => { try { await as(user, () => db.query(sql, params)); return false; } catch (e) { return true; } };
+// "Rejects" must mean the database refused on permission grounds (SQLSTATE 42501, which is
+// what every REVOKE in pro.sql raises). Any error at all used to count, so a typo'd query or
+// a missing function would have passed as "access denied".
+const rejects = async (user, sql, params) => { try { await as(user, () => db.query(sql, params)); return false; } catch (e) { return e.code === '42501'; } };
 
 beforeAll(async () => {
   db = new PGlite();
@@ -131,7 +134,8 @@ describe('Language Dash Pro backend', () => {
     const ok = (await one(B, "SELECT redeem_pro_code('  launch30 ') AS r")).r;
     expect(ok.ok).toBe(true);
     expect((await one(B, 'SELECT get_my_pro() AS r')).r).toMatchObject({ active: true, source: 'code' });
-    expect((await one(B, "SELECT redeem_pro_code('LAUNCH30') AS r")).r.error).toMatch(/already|not valid/);
+    // a spent code answers "not valid": the spent check runs before the already-used one
+    expect((await one(B, "SELECT redeem_pro_code('LAUNCH30') AS r")).r.error).toBe('That code is not valid.');
     // the single use is spent
     expect((await one(A, "SELECT redeem_pro_code('LAUNCH30') AS r")).r.ok).toBe(false);
   });
@@ -146,8 +150,8 @@ describe('Language Dash Pro backend', () => {
     try { expect((await one(G, "SELECT redeem_pro_code('" + code + "') AS r")).r.error).toMatch(/Create a free account/); } finally { await db.exec("SET app.anon = 'false'"); }
     expect((await db.query('SELECT used FROM pro_codes WHERE code = $1', [code])).rows[0].used).toBe(0); // the guest did not spend it
     expect((await one(T1, "SELECT redeem_pro_code('" + code + "') AS r")).r.ok).toBe(true);
-    expect((await one(T1, "SELECT redeem_pro_code('" + code + "') AS r")).r.error).toMatch(/already|not valid/); // not twice by the same account
-    expect((await one(T2, "SELECT redeem_pro_code('" + code + "') AS r")).r.error).toMatch(/not valid/);         // not by anyone else
+    expect((await one(T1, "SELECT redeem_pro_code('" + code + "') AS r")).r.error).toBe('That code is not valid.'); // not twice by the same account (the code is spent, so it reads as not valid)
+    expect((await one(T2, "SELECT redeem_pro_code('" + code + "') AS r")).r.error).toBe('That code is not valid.'); // not by anyone else
     const who = (await db.query('SELECT user_id FROM pro_v_redemptions WHERE code = $1', [code])).rows;
     expect(who).toEqual([{ user_id: T1 }]); // and the owner can see who used it
     expect((await one(T2, 'SELECT get_my_pro() AS r')).r.active).toBe(false);
@@ -160,17 +164,27 @@ describe('Language Dash Pro backend', () => {
     const row = (await db.query('SELECT max_uses, expires_at FROM pro_codes WHERE code = $1', [own])).rows[0];
     expect(row.max_uses).toBe(25);
     expect(new Date(row.expires_at).getTime()).toBeGreaterThan(Date.now() + 13 * 86400000);
+    // a code with uses to spare still stops the same account a second time, with its own answer
+    const U = 'abababab-abab-4aba-8aba-abababababab';
+    expect((await one(U, "SELECT redeem_pro_code('FRIENDS-2026') AS r")).r.ok).toBe(true);
+    expect((await one(U, "SELECT redeem_pro_code('FRIENDS-2026') AS r")).r.error).toBe('You already used that code.');
+    expect((await db.query('SELECT user_id FROM pro_v_redemptions WHERE code = $1', ['FRIENDS-2026'])).rows).toEqual([{ user_id: U }]);
   });
 
   it('refuses unknown and expired codes, and stops guessing after ten wrong tries', async () => {
+    // a fresh account, so the count below is exactly this test's own guesses
+    const L = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
     await db.exec("INSERT INTO pro_codes (code, days, max_uses, expires_at) VALUES ('OLDCODE', 7, 10, now() - interval '1 day')");
-    expect((await one(A, "SELECT redeem_pro_code('OLDCODE') AS r")).r.ok).toBe(false);
-    for (let i = 0; i < 12; i++) await one(A, "SELECT redeem_pro_code('NOPE" + i + "') AS r");
-    const r = (await one(A, "SELECT redeem_pro_code('NOPE99') AS r")).r;
-    expect(r.error).toMatch(/Too many/);
+    // an expired code answers like an unknown one, and counts as a wrong guess (1 of 10)
+    expect((await one(L, "SELECT redeem_pro_code('OLDCODE') AS r")).r.error).toBe('That code is not valid.');
+    for (let i = 0; i < 9; i++) {
+      expect((await one(L, "SELECT redeem_pro_code('NOPE" + i + "') AS r")).r.error, 'wrong guess ' + (i + 2) + ' of 10').toBe('That code is not valid.');
+    }
+    // ten wrong guesses are spent: the eleventh is refused outright
+    expect((await one(L, "SELECT redeem_pro_code('NOPE99') AS r")).r.error).toMatch(/Too many/);
     // even a good code is refused while locked out
     await db.exec("INSERT INTO pro_codes (code, days, max_uses) VALUES ('GOODONE', 7, 10)");
-    expect((await one(A, "SELECT redeem_pro_code('GOODONE') AS r")).r.ok).toBe(false);
+    expect((await one(L, "SELECT redeem_pro_code('GOODONE') AS r")).r.ok).toBe(false);
   });
 
   it('rejects malformed codes and silly grants at the table', async () => {
@@ -180,9 +194,14 @@ describe('Language Dash Pro backend', () => {
   });
 
   it('the owner views show who has Pro and how codes are used', async () => {
+    // this test spends its own code, so the counts it checks are its own work,
+    // not a previous test's (the suite shares one database, in order)
+    const E = '99999999-9999-4999-8999-999999999999';
+    await db.exec("INSERT INTO pro_codes (code, days, max_uses, note) VALUES ('OWNERVIEW', 30, 5, 'owner views test')");
+    expect((await one(E, "SELECT redeem_pro_code('OWNERVIEW') AS r")).r.ok).toBe(true);
     const active = (await db.query('SELECT * FROM pro_v_active')).rows;
     expect(active.reduce((n, r) => n + Number(r.users), 0)).toBeGreaterThanOrEqual(1);
-    expect((await db.query("SELECT used FROM pro_v_codes WHERE code = 'LAUNCH30'")).rows[0].used).toBe(1);
+    expect((await db.query("SELECT used FROM pro_v_codes WHERE code = 'OWNERVIEW'")).rows[0].used).toBe(1);
   });
 
   describe('the free trial', () => {
@@ -195,6 +214,8 @@ describe('Language Dash Pro backend', () => {
       expect((await one(T1, 'SELECT get_my_pro() AS r')).r).toMatchObject({ active: false, trial_available: true });
       const r = (await one(T1, 'SELECT start_my_trial() AS r')).r;
       expect(r).toMatchObject({ ok: true, days: 7 });
+      // the owner can read the trial record the app itself is refused below
+      expect((await db.query('SELECT user_id FROM pro_trials WHERE user_id = $1', [T1])).rows).toEqual([{ user_id: T1 }]);
       const days = (new Date(r.until).getTime() - Date.now()) / 86400000;
       expect(days).toBeGreaterThan(6.9);
       expect(days).toBeLessThan(7.1);
@@ -244,12 +265,17 @@ describe('Language Dash Pro backend', () => {
       await db.query("SELECT pro_grant_library($1)", [D]);
       await db.query("SELECT pro_grant_library($1)", [D]); // twice is fine
       expect((await one(D, 'SELECT get_my_pro() AS r')).r).toMatchObject({ active: false, library: true });
+      // the owner can read the library record the app itself is refused below
+      expect((await db.query('SELECT user_id FROM pro_library WHERE user_id = $1', [D])).rows).toEqual([{ user_id: D }]);
       await db.query("SELECT pro_revoke_library($1)", [D]);
       expect((await one(D, 'SELECT get_my_pro() AS r')).r.library).toBe(false);
+      expect((await db.query('SELECT user_id FROM pro_library WHERE user_id = $1', [D])).rows).toEqual([]);
     });
 
     it('remembers which Stripe customer is whose, and sees each webhook event only once', async () => {
       await db.query("SELECT pro_link_customer('cus_123', $1)", [C]);
+      // the owner can read the customer record the app itself is refused below
+      expect((await db.query("SELECT user_id FROM pro_stripe_customers WHERE customer_id = 'cus_123'")).rows).toEqual([{ user_id: C }]);
       expect((await db.query("SELECT pro_customer_user('cus_123') AS u")).rows[0].u).toBe(C);
       expect((await db.query("SELECT pro_user_customer($1) AS c", [C])).rows[0].c).toBe('cus_123');
       expect((await db.query("SELECT pro_customer_user('cus_nope') AS u")).rows[0].u).toBeNull();
