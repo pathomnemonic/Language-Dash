@@ -96,8 +96,29 @@ describe('Language Dash Pro backend', () => {
     await db.query("SELECT pro_grant_until($1, now() + interval '3649 days', 'lifetime', 'stripe', false)", [D]);
     expect((await one(D, 'SELECT get_my_pro() AS r')).r.plan).toBe('lifetime');
     await db.query('SELECT pro_revoke_plan($1, $2)', [D, 'lifetime']);
+    // The monthly grant was never the lifetime's to take: it survives in the ledger and names the summary now.
+    // (This expectation used to be "inactive": the single summary row merged both grants, and expiring the row
+    // ended them all. That was the defect the ledger fixes.)
+    const after = (await one(D, 'SELECT get_my_pro() AS r')).r;
+    expect(after.active).toBe(true);
+    expect(after.plan).toBe('monthly');
+    await db.query('SELECT pro_revoke_plan($1, $2)', [D, 'monthly']);
     expect((await one(D, 'SELECT get_my_pro() AS r')).r.active).toBe(false);
     expect(await rejects(D, "SELECT pro_revoke_plan('" + D + "', 'lifetime')")).toBe(true); // not callable by a player
+  });
+
+  it('independent grants are kept separately: a redeemed code survives a refunded lifetime', async () => {
+    const K = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+    await db.query("SELECT pro_grant($1, 30, 'pro', 'code')", [K]);
+    await db.query("SELECT pro_grant_until($1, now() + interval '3649 days', 'lifetime', 'stripe', false)", [K]);
+    expect((await one(K, 'SELECT get_my_pro() AS r')).r.plan).toBe('lifetime');
+    await db.query('SELECT pro_revoke_plan($1, $2)', [K, 'lifetime']);
+    const r = (await one(K, 'SELECT get_my_pro() AS r')).r;
+    expect(r.active).toBe(true);
+    expect(r.source).toBe('code');
+    expect((new Date(r.until).getTime() - Date.now()) / 86400000).toBeGreaterThan(29);
+    expect(await rejects(K, 'SELECT * FROM pro_grants')).toBe(true);
+    expect(await rejects(K, "SELECT pro_sync_entitlement('" + K + "')")).toBe(true);
   });
 
   it('grants never shorten, whatever the order: a lifetime outlasts a later subscription event, and an old event cannot undo a newer one', async () => {
