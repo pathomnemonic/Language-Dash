@@ -53,7 +53,7 @@ beforeAll(async () => {
 }, 60000);
 
 beforeEach(async () => {
-  await db.exec('TRUNCATE pro_entitlements, pro_items, pro_library, pro_stripe_customers, pro_stripe_events, pro_trials, pro_store_purchases');
+  await db.exec('TRUNCATE pro_entitlements, pro_grants, pro_items, pro_library, pro_stripe_customers, pro_stripe_events, pro_trials, pro_store_purchases');
 });
 
 describe('a purchase, start to finish, through the real database', () => {
@@ -110,7 +110,7 @@ describe('a purchase, start to finish, through the real database', () => {
     const r = await mine(U);
     expect(r).toMatchObject({ active: true, plan: 'monthly' });
     // and with nothing else held, the refund ends Pro
-    await db.exec('TRUNCATE pro_entitlements');
+    await db.exec('TRUNCATE pro_entitlements, pro_grants');
     await handleEvent(session({ payment_intent: 'pi_l2', subscription: null }, { plan: 'lifetime' }), deps({ listSubscriptions: async () => [] }));
     await handleEvent({ type: 'charge.refunded', data: { object: { refunded: true, metadata: { app: 'language_dash', user_id: U, plan: 'lifetime' } } } }, deps({ listSubscriptions: async () => [] }));
     expect((await mine(U)).active).toBe(false);
