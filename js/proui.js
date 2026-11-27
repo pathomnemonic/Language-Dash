@@ -110,7 +110,7 @@ export function openPaywall(o) {
   }
 
   var cleanup = function () { releaseFocusTrap(); overlay.remove(); if (opener && opener.focus) { try { opener.focus(); } catch (e) { /* gone */ } } };
-  var act = function (action, extra) { track('paywall_action', Object.assign({ action: action, trigger: trigger }, extra || {})); };
+  var act = function (action, extra) { track('paywall_action', Object.assign({ action: action, trigger: trigger, variant: variant('pro_paywall') }, extra || {})); };
 
   var needsAccount = needsPlan && !hasAccount(_lb);
   if (features) {

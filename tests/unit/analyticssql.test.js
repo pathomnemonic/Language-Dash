@@ -333,6 +333,36 @@ describe('the views', () => {
     expect(Number(eco.p)).toBe(4);
   });
 
+  it('crash-free counts only the sessions whose ending is known', async () => {
+    await addSession(1, 45, { version: '9.9.9' }); // clean: its summary reports no errors
+    await addSession(3, 45, { version: '9.9.9' }); // crashed: its summary reports an error
+    // a third session whose summary never arrived (a hard crash loses the final batch too):
+    // it must land in the unknown bucket, not be silently counted as crash free
+    const sid = sessionOf(9, 45);
+    await db.query(
+      `INSERT INTO analytics_sessions (session_id, install_id, started_at, platform, version, os, os_major, browser, form, screen_w, screen_h, tier, language, tz_offset, connection, standalone, last_channel)
+       VALUES ($1, $2, (current_date - 45) + interval '12 hours', 'web', '9.9.9', 'android', 14, 'chrome', 'phone', 400, 800, 'medium', 'en-US', -5, '4g', false, 'search')`,
+      [sid, ids[9]]);
+    await addEvent(9, 45, 'session_start', { reason: 'launch', session_number: 1 }, 12, { session: sid });
+    const cf = (await q("SELECT * FROM analytics_v_crash_free WHERE version = '9.9.9'"))[0];
+    expect(Number(cf.sessions)).toBe(3);
+    expect(Number(cf.known_sessions)).toBe(2);
+    expect(Number(cf.unknown_sessions)).toBe(1);
+    expect(Number(cf.clean_sessions)).toBe(1);
+    expect(Number(cf.crash_free_sessions_pct)).toBeCloseTo(50, 1);
+  });
+
+  it('a distractor\'s share is of every wrong answer, including the ones under the display threshold', async () => {
+    const picks = [1, 1, 1, 1, 1, 1, 0, 0, 0, 2]; // index 1: six picks, index 0: three, index 2: one
+    for (let k = 0; k < picks.length; k++) {
+      await addEvent(k % 6, 45, 'run_cards', { run_id: `denom-${k}`, part: 1, parts: 1, rows: [['denomcard', 0, 2500, 1, 2, picks[k], 0, 0]] });
+    }
+    const d = await q("SELECT * FROM analytics_v_card_distractors WHERE card_id = 'denomcard'");
+    expect(d.length).toBe(1); // only index 1 clears the five-pick display threshold
+    expect(Number(d[0].wrong_answer_index)).toBe(1);
+    expect(Number(d[0].share_of_wrong_answers_pct)).toBeCloseTo(60, 1); // six of all ten wrong answers, not six of six shown
+  });
+
   it('quests, experiments, consent and crash-free sessions are readable', async () => {
     expect(Number((await q("SELECT swapped_away FROM analytics_v_quests WHERE quest = 'q_streak12'"))[0].swapped_away)).toBe(1);
     const ex = await q("SELECT * FROM analytics_v_experiments WHERE experiment = 'swap_price' ORDER BY variant");
@@ -364,9 +394,9 @@ describe('Language Dash Pro and tip views', () => {
     const t = Date.now();
     const events = [
       ['paywall_viewed', { trigger: 'gate_offline_pack', variant: 'a' }],
-      ['paywall_action', { action: 'plan_selected', plan: 'languagedash_pro_yearly', trigger: 'gate_offline_pack' }],
-      ['paywall_action', { action: 'purchase_started', plan: 'languagedash_pro_yearly', trigger: 'gate_offline_pack' }],
-      ['paywall_action', { action: 'purchased', plan: 'languagedash_pro_yearly', trigger: 'gate_offline_pack', micros: 29990000, currency: 'USD', price: '$29.99' }],
+      ['paywall_action', { action: 'plan_selected', plan: 'languagedash_pro_yearly', trigger: 'gate_offline_pack', variant: 'a' }],
+      ['paywall_action', { action: 'purchase_started', plan: 'languagedash_pro_yearly', trigger: 'gate_offline_pack', variant: 'a' }],
+      ['paywall_action', { action: 'purchased', plan: 'languagedash_pro_yearly', trigger: 'gate_offline_pack', variant: 'a', micros: 29990000, currency: 'USD', price: '$29.99' }],
       ['pro_gate_hit', { feature: 'offline_pack', mode: 'locked', used: 0, limit: 0 }],
       ['pro_status', { active: true, source: 'store', plan: 'yearly', trial: false }],
       ['tip_purchase', { outcome: 'completed', product: 'languagedash_tip_small', micros: 1990000, currency: 'USD' }]
@@ -377,6 +407,13 @@ describe('Language Dash Pro and tip views', () => {
     expect(funnel).toMatchObject({ variant: 'a' });
     expect(Number(funnel.bought)).toBe(1);
     expect(Number(funnel.viewers)).toBe(1);
+    // an action with no variant stamped (sent by an older client) is not attributed to variant 'a':
+    // conversions belong to the variant that produced them, not to every variant sharing the trigger
+    await send({ sent_at: t, install: { id: P, platform: 'android', version: '2.0.0', consent_v: 1 }, sessions: { [S]: { started: t, ctx: { platform: 'android' } } },
+      events: [{ id: uuid(902, 99), n: 'paywall_action', t, q: 99, s: S, p: { action: 'cancelled', plan: 'languagedash_pro_yearly', trigger: 'gate_offline_pack' } }] });
+    const again = (await q("SELECT * FROM analytics_v_paywall WHERE trigger = 'gate_offline_pack'"))[0];
+    expect(Number(again.bought)).toBe(1);
+    expect(Number(again.cancelled)).toBe(0);
     const rev = (await q("SELECT * FROM analytics_v_pro_revenue WHERE plan = 'languagedash_pro_yearly'"))[0];
     expect(Number(rev.gross)).toBeCloseTo(29.99, 2);
     expect((await q('SELECT * FROM analytics_v_pro_gates'))[0]).toMatchObject({ feature: 'offline_pack', mode: 'locked' });

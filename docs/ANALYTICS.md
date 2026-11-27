@@ -1019,6 +1019,7 @@ What the player did on the Pro screen, with the plan and the store price.
 | `action` | one of: plan_selected, purchase_started, purchased, cancelled, failed, restore_started, restore_ok, restore_none, code_ok, code_failed, web_opened, manage_opened, closed — required |
 | `plan` | text (≤24) |
 | `trigger` | text (≤30) |
+| `variant` | text (≤20) |
 | `price` | text (≤16) |
 | `micros` | whole number |
 | `currency` | text (≤3) |

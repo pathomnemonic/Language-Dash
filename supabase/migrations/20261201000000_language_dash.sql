@@ -2,7 +2,7 @@
 -- Language Dash in a SHARED Supabase project: everything lives in the schema "language_dash". Nothing is created in "public".
 --
 -- GENERATED FILE - do not edit by hand. Regenerate with:   node tools/ld-migrate/generate.mjs
--- Source: database/*.sql (schema.sql=2493b036194c64c2 policies.sql=db83550c982944b2 cohorts.sql=7e178c2d63f078e4 discovery.sql=bca2b4a571e153a5 pro.sql=cec067c3bcfe5ec8 analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
+-- Source: database/*.sql (schema.sql=2493b036194c64c2 policies.sql=db83550c982944b2 cohorts.sql=7e178c2d63f078e4 discovery.sql=bca2b4a571e153a5 pro.sql=cec067c3bcfe5ec8 analytics.sql=9e9eaf91481ab26b analytics_views.sql=0eb8c754b59acfa1 lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
 -- How it works and how to verify it: docs/SHARED-PROJECT-MIGRATION.md
 --
 -- Safe to run more than once. Runs in ONE transaction; the guard below aborts if search_path did not take effect, so a
@@ -3337,6 +3337,7 @@ WITH last_end AS (
 )
 SELECT s.session_id, s.install_id, s.started_at, s.started_at::date AS day, s.platform, s.version, s.os, s.os_major, s.browser, s.form, s.tier, s.language,
        s.tz_offset, s.screen_w, s.screen_h, s.connection, s.standalone, s.last_channel, s.last_source,
+       (l.session_id IS NOT NULL) AS has_summary,
        analytics_num(l.props, 'duration_s') AS duration_s, analytics_num(l.props, 'active_s') AS active_s, analytics_num(l.props, 'runs') AS runs,
        analytics_num(l.props, 'answers') AS answers, analytics_num(l.props, 'screens') AS screens, analytics_num(l.props, 'errors') AS errors,
        analytics_bool(l.props, 'in_run') AS ended_in_run, l.props ->> 'last_screen' AS last_screen
@@ -3785,14 +3786,21 @@ SELECT * FROM analytics_v_card_difficulty WHERE correct_pct >= 97 AND asked >= 3
 CREATE OR REPLACE VIEW analytics_v_cards_too_hard AS
 SELECT * FROM analytics_v_card_difficulty WHERE correct_pct <= 35 AND asked >= 30 ORDER BY correct_pct;
 
--- which wrong answer players choose, per card: a distractor that wins more than chance is a sign the card is unclear
+-- which wrong answer players choose, per card: a distractor that wins more than chance is a sign the card is unclear.
+-- The share is of ALL wrong answers for the card: the per-card total is counted before the display threshold
+-- (HAVING count(*) >= 5) drops the rare distractors, or their answers would vanish from the denominator too
+-- and the retained distractors' shares would add up past what they are.
 CREATE OR REPLACE VIEW analytics_v_card_distractors AS
 WITH rows AS (
   SELECT e.install_id, row_.value AS r FROM analytics_events e, LATERAL jsonb_array_elements(CASE WHEN jsonb_typeof(e.props -> 'rows') = 'array' THEN e.props -> 'rows' ELSE '[]'::jsonb END) AS row_(value)
-  WHERE e.name = 'run_cards')
-SELECT r ->> 0 AS card_id, (r ->> 5)::int AS wrong_answer_index, count(*) AS times_chosen,
-       analytics_pct(count(*), sum(count(*)) OVER (PARTITION BY r ->> 0)) AS share_of_wrong_answers_pct
-FROM rows WHERE (r ->> 1)::int = 0 AND (r ->> 5)::int >= 0 GROUP BY 1, 2 HAVING count(*) >= 5 ORDER BY card_id, times_chosen DESC;
+  WHERE e.name = 'run_cards'),
+wrong AS (
+  SELECT r ->> 0 AS card_id, (r ->> 5)::int AS wrong_answer_index, count(*) AS times_chosen
+  FROM rows WHERE (r ->> 1)::int = 0 AND (r ->> 5)::int >= 0 GROUP BY 1, 2),
+totals AS (SELECT card_id, sum(times_chosen) AS all_wrong FROM wrong GROUP BY 1)
+SELECT w.card_id, w.wrong_answer_index, w.times_chosen,
+       analytics_pct(w.times_chosen, t.all_wrong) AS share_of_wrong_answers_pct
+FROM wrong w JOIN totals t USING (card_id) WHERE w.times_chosen >= 5 ORDER BY w.card_id, w.times_chosen DESC;
 
 -- do players favour a lane regardless of the answer? (the correct lane is random, so the share should be even)
 CREATE OR REPLACE VIEW analytics_v_lane_bias AS
@@ -4012,16 +4020,16 @@ FROM analytics_events WHERE name IN ('data_action', 'keybinding_changed') GROUP 
 CREATE OR REPLACE VIEW analytics_v_paywall AS
 WITH v AS (SELECT coalesce(props ->> 'trigger', '') AS trigger, coalesce(props ->> 'variant', '') AS variant, count(*) AS views, count(DISTINCT install_id) AS viewers
            FROM analytics_events WHERE name = 'paywall_viewed' GROUP BY 1, 2),
-a AS (SELECT coalesce(props ->> 'trigger', '') AS trigger,
+a AS (SELECT coalesce(props ->> 'trigger', '') AS trigger, coalesce(props ->> 'variant', '') AS variant,
              count(DISTINCT install_id) FILTER (WHERE props ->> 'action' = 'plan_selected') AS chose_plan,
              count(DISTINCT install_id) FILTER (WHERE props ->> 'action' = 'purchase_started') AS started,
              count(DISTINCT install_id) FILTER (WHERE props ->> 'action' = 'purchased') AS bought,
              count(DISTINCT install_id) FILTER (WHERE props ->> 'action' = 'cancelled') AS cancelled,
              count(DISTINCT install_id) FILTER (WHERE props ->> 'action' = 'failed') AS failed,
              count(DISTINCT install_id) FILTER (WHERE props ->> 'action' IN ('code_ok', 'restore_ok')) AS redeemed_or_restored
-      FROM analytics_events WHERE name = 'paywall_action' GROUP BY 1)
+      FROM analytics_events WHERE name = 'paywall_action' GROUP BY 1, 2)
 SELECT v.trigger, v.variant, v.views, v.viewers, a.chose_plan, a.started, a.bought, analytics_pct(a.bought, v.viewers) AS buy_pct_of_viewers, a.cancelled, a.failed, a.redeemed_or_restored
-FROM v LEFT JOIN a USING (trigger) ORDER BY v.views DESC;
+FROM v LEFT JOIN a USING (trigger, variant) ORDER BY v.views DESC;
 
 -- Language Dash Pro: purchases by plan and currency, with the revenue before the store's cut (a trial that did not convert is not counted: the store tells you that)
 CREATE OR REPLACE VIEW analytics_v_pro_revenue AS
@@ -4092,10 +4100,17 @@ SELECT coalesce(e.props ->> 'fingerprint', left(e.props ->> 'message', 40)) AS f
        count(*) FILTER (WHERE analytics_bool(e.props, 'in_run')) AS during_runs
 FROM analytics_events e LEFT JOIN analytics_sessions s ON s.session_id = e.session_id WHERE e.name = 'error' GROUP BY 1, 2, 3 ORDER BY installs DESC, occurrences DESC;
 
--- how stable each version is: share of sessions with no error
+-- how stable each version is: share of sessions with no error. Only sessions that sent a summary can be
+-- judged: one that never sent one (the app was killed or crashed before the hide-time summary) has no
+-- error count at all, and counting it as clean would flatter the number exactly where it hurts. Those
+-- sessions are reported separately as unknown, and the percentage is over the judged sessions only.
 CREATE OR REPLACE VIEW analytics_v_crash_free AS
-SELECT coalesce(version, '') AS version, count(*) AS sessions, count(*) FILTER (WHERE coalesce(errors, 0) = 0) AS clean_sessions,
-       analytics_pct(count(*) FILTER (WHERE coalesce(errors, 0) = 0), count(*)) AS crash_free_sessions_pct, count(DISTINCT install_id) AS installs
+SELECT coalesce(version, '') AS version, count(*) AS sessions,
+       count(*) FILTER (WHERE has_summary) AS known_sessions,
+       count(*) FILTER (WHERE NOT has_summary) AS unknown_sessions,
+       count(*) FILTER (WHERE has_summary AND coalesce(errors, 0) = 0) AS clean_sessions,
+       analytics_pct(count(*) FILTER (WHERE has_summary AND coalesce(errors, 0) = 0), count(*) FILTER (WHERE has_summary)) AS crash_free_sessions_pct,
+       count(DISTINCT install_id) AS installs
 FROM analytics_v_session_summary GROUP BY 1 ORDER BY min(started_at) DESC;
 
 CREATE OR REPLACE VIEW analytics_v_reliability_other AS
