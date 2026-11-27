@@ -67,6 +67,16 @@ function renderPicker(root, opts) {
   draw();
 }
 
+/**
+ * applyPair said no (the pair could not be saved, e.g. storage is blocked): say so where the player is looking
+ * and leave the picker up, so they can fix the cause and try again instead of facing a dead end.
+ */
+function showPairSaveError(body) {
+  var note = body.querySelector('.lang-error');
+  if (!note) { note = createElement('p', { className: 'lang-error', attributes: { role: 'alert' } }); body.appendChild(note); }
+  note.textContent = 'Your languages could not be saved on this device. Check that the browser allows site data, then try again.';
+}
+
 /** First launch: a full-screen welcome that cannot be skipped (the game needs a pair), then the app reloads. */
 export function showLanguageOnboarding() {
   if (document.getElementById('langWelcome')) return;
@@ -82,7 +92,10 @@ export function showLanguageOnboarding() {
   trapFocus(card);
   renderPicker(body, {
     confirmLabel: "Let's run!",
-    onDone: function (known, target) { releaseFocusTrap(); applyPair(known, target); }
+    onDone: function (known, target) {
+      if (!applyPair(known, target)) { showPairSaveError(body); return; }   // not saved: keep the welcome (and its focus trap) up
+      releaseFocusTrap();
+    }
   });
 }
 
@@ -98,7 +111,7 @@ export function renderLanguageSheet(container) {
     known: p.known, target: p.target, confirmLabel: 'Switch languages',
     onDone: function (known, target) {
       if (p.known === known && p.target === target) return;
-      applyPair(known, target);
+      if (!applyPair(known, target)) showPairSaveError(body);
     }
   });
   var levelHost = createElement('div', { attributes: { id: 'levelRowHost' } });
