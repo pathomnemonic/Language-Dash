@@ -82,9 +82,15 @@ export function parseGoogleSubscription(json, nowSec) {
   var state = String((json && json.subscriptionState) || '');
   var items = (json && json.lineItems) || [];
   var end = 0;
-  items.forEach(function (li) { var t = Date.parse(li && li.expiryTime); if (t > 0) end = Math.max(end, Math.floor(t / 1000)); });
+  var productId = '';
+  items.forEach(function (li) {
+    var t = Date.parse(li && li.expiryTime);
+    if (t > 0 && Math.floor(t / 1000) >= end) { end = Math.floor(t / 1000); productId = String((li && li.productId) || productId); }
+  });
   var live = ['SUBSCRIPTION_STATE_ACTIVE', 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD', 'SUBSCRIPTION_STATE_CANCELED'].indexOf(state) >= 0 && end > nowSec;
-  return { valid: live, revoked: false, expiresAt: end, pending: state === 'SUBSCRIPTION_STATE_PENDING' };
+  // productId: the product of the line item that runs longest, so the caller can bind the purchase to the
+  // product that was asked about (the subscriptionsv2 lookup is by token alone: the product is not in the URL).
+  return { valid: live, revoked: false, expiresAt: end, pending: state === 'SUBSCRIPTION_STATE_PENDING', productId: productId };
 }
 
 export function parseGoogleProduct(json) {

@@ -66,6 +66,16 @@ describe('Google Play', () => {
     expect(parseGoogleSubscription({}, NOW).valid).toBe(false);
   });
 
+  it('names the product a subscription is for: the line item that runs longest', () => {
+    const two = { subscriptionState: 'SUBSCRIPTION_STATE_ACTIVE', lineItems: [
+      { productId: 'languagedash_pro_monthly', expiryTime: new Date((NOW + 30 * 86400) * 1000).toISOString() },
+      { productId: 'languagedash_pro_yearly', expiryTime: new Date((NOW + 300 * 86400) * 1000).toISOString() }
+    ] };
+    expect(parseGoogleSubscription(two, NOW).productId).toBe('languagedash_pro_yearly');
+    expect(parseGoogleSubscription({ subscriptionState: 'SUBSCRIPTION_STATE_ACTIVE', lineItems: [{ productId: 'languagedash_pro_monthly', expiryTime: new Date((NOW + 86400) * 1000).toISOString() }] }, NOW).productId).toBe('languagedash_pro_monthly');
+    expect(parseGoogleSubscription({}, NOW).productId).toBe('');
+  });
+
   it('reads a one-time product: purchased, cancelled or refunded, pending', () => {
     expect(parseGoogleProduct({ purchaseState: 0 })).toMatchObject({ valid: true, revoked: false });
     expect(parseGoogleProduct({ purchaseState: 1 })).toMatchObject({ valid: false, revoked: true });
