@@ -63,6 +63,7 @@ const botScript = async ({ ms, wrongRate }) => {
   const stats = { gates: 0, continues: 0, maxScore: 0, states: {} };
   const end = performance.now() + ms;
   let lastScore = -1, lastChange = performance.now(), stuck = false;
+  let lastGateAt = -1;
   while (performance.now() < end) {
     const st = g._state;
     stats.states[st] = (stats.states[st] || 0) + 1;
@@ -72,7 +73,10 @@ const botScript = async ({ ms, wrongRate }) => {
         if (lane < 0) lane = 1;
         if (Math.random() < wrongRate) lane = (lane + 1 + Math.floor(Math.random() * 2)) % 3;
         g.targetLane = lane;
-        stats.gates++;
+        // count each gate encounter once: this poll runs every 120 ms while one set of gates is up, so counting
+        // per poll inflated the reported gate total several times over
+        const gp = g.encountersDone + g.coins;
+        if (gp !== lastGateAt) { lastGateAt = gp; stats.gates++; }
       }
       const r = Math.random();
       if (r < 0.03) g.jump();
@@ -141,6 +145,8 @@ for (const [name, start] of MODES) {
   } catch (e) {
     report(name + ': ' + e.message.split('\n')[0]);
   }
+  const aside = errors.filter((e) => /Dropped|auto-fix/.test(e));
+  if (aside.length) console.log('  note  ' + name + ': ' + aside.length + ' error(s) set aside by the Dropped/auto-fix filter: ' + aside.slice(0, 2).join(' | '));
   const bad = errors.filter((e) => !/Dropped|auto-fix/.test(e));
   if (bad.length) report(name + ': script errors: ' + bad.slice(0, 3).join(' | '));
   await ctx.close();
