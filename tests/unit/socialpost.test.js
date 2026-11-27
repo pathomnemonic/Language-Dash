@@ -214,6 +214,37 @@ describe('the slide-3 pill carries the challenge only', () => {
   });
 });
 
+describe('audit fixes: holds cover both languages, expectations and rank tokens must match the post', () => {
+  it('a hold on the known language blocks too: the hint is shown in it', () => {
+    const fake = [{ concept: 14, kind: 'wrong', kinds: { es: 'wrong' }, langs: ['es'], english: 'why', reason: 'test' }];
+    expect(checkHolds('es-en', [14], fake).join(' ')).toMatch(/known wrong/);
+    expect(checkHolds('en-fr', [14], fake)).toEqual([]);
+  });
+  it('an expect entry for a concept the post does not select is an error, not silently ignored', () => {
+    const h = kal(); h.expect = [{ rank: 999, answer: 'x' }];
+    expect(validateHook(h, holds).errors.join(' ')).toMatch(/not among the post/);
+  });
+  it('a rank token must describe one of the selected concepts and be inside the deck', () => {
+    const off = kal(); off.payoff = ['It is one word. See {{rank:300}} for the idea in full.'];
+    expect(validateHook(off, holds).errors.join(' ')).toMatch(/\{\{rank:300\}\}/);
+    const out = kal(); out.payoff = ['It is one word. See {{rank:99999}} for the idea in full.'];
+    expect(validateHook(out, holds).errors.join(' ')).toMatch(/outside the deck/);
+    const on = kal(); on.payoff = ['It is one word, and it is {{rank:214}} in the deck order we use.'];
+    expect(validateHook(on, holds).errors.join(' ')).not.toMatch(/\{\{rank/);
+  });
+  it('a post id must be a plain slug: it names the output folder', () => {
+    expect(validateHook({ ...kal(), id: '../escape' }, holds).errors.join(' ')).toMatch(/plain slug/);
+    expect(validateHook({ ...kal(), id: 'a/b' }, holds).errors.join(' ')).toMatch(/plain slug/);
+  });
+  it('slide 2 expands rank tokens in the kicker instead of printing them literally', () => {
+    const v = validateHook(kal(), holds);
+    const reveal = v.concepts.map((c) => ({ hint: c.hint, answer: c.answer, roman: c.roman }));
+    const html = slide2Html({ ...kal(), kicker: 'It is {{rank:214}} in the order.' }, reveal, '/f', { layout: 'bold-claim', theme: 'ink-teal' });
+    expect(html).toContain('word #214 of the deck');
+    expect(html).not.toContain('{{rank:');
+  });
+});
+
 describe('owner copy rules: natural, and never a hyphen or a dash', () => {
   it('refuses hyphens and every kind of dash in any copy field', () => {
     ['a well-known word', 'Venetian s-ciào', 'one word \u2014 two days', 'a range 1\u20132', 'a minus \u2212 sign'].forEach((t) => {
