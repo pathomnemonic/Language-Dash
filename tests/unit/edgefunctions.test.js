@@ -229,6 +229,15 @@ describe('ld-pro-checkout: cancelling a subscription (before the Language Dash a
     expect(r.body.error).toMatch(/could not cancel/i);
   });
 
+  it('records the cancellation in the database, so the paid time left cannot block account deletion on its own', async () => {
+    const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
+    customerId = 'cus_1';
+    stripeReply = (path) => (path.startsWith('subscriptions?') ? { data: [{ id: 'sub_live', status: 'active' }] } : {});
+    const r = await call(h, { action: 'cancel_subscription' }, 'good');
+    expect(r.status).toBe(200);
+    expect(db.find((c) => c[0] === 'pro_set_billing_cancelled')[1]).toEqual({ p_user: 'u1', p_cancelled: true });
+  });
+
   it('keeps the Apple token only for an Apple login that is a member', async () => {
     const h = await boot('../../supabase/functions/ld-pro-checkout/index.js');
     expect((await call(h, { action: 'apple_token', refresh_token: 'r_abcdefghijk' }, 'apple')).status).toBe(200);
@@ -407,6 +416,19 @@ describe('ld-remove-signin: removing the sign-in for every app', () => {
     expect(bad.status).toBe(502);
     expect(bad.body.error).toMatch(/nothing was removed/i);
     expect(deleted).toEqual([]);
+  });
+
+  it('says what already happened when a later step fails: a cancelled subscription is not "nothing removed"', async () => {
+    const h = await boot(FN);
+    customerId = 'cus_1'; appleToken = 'r_stored_token'; appleStatus = 500;
+    stripeReply = (path) => (path.startsWith('subscriptions?') ? { data: [{ id: 'sub_live', status: 'active' }] } : {});
+    const bad = await call(h, CONFIRM, 'apple');
+    expect(bad.status).toBe(502);
+    expect(bad.body.error).toMatch(/subscription was cancelled/i);
+    expect(bad.body.error).toMatch(/sign-in and data were not removed/i);
+    expect(bad.body.error).not.toMatch(/so nothing was removed/i);
+    expect(deleted).toEqual([]);
+    expect(stripeCalls.filter((c) => c.method === 'DELETE').map((c) => c.path)).toEqual(['subscriptions/sub_live']);   // (the cancel really happened)
   });
 
   it('never calls Apple for a login that is not from Apple, and still removes an Apple login with no stored token', async () => {
