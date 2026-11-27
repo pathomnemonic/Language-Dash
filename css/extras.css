@@ -59,7 +59,9 @@ body.dyslexia #reviewFullList, body.dyslexia #quickReviewOverlay, body.dyslexia 
 #cbSubjectFilter, #cbStatusFilter, #cbSearch { min-height: 44px; }
 .shop-item .btn, .shop-item .btn-sm { min-height: 40px; min-width: 40px; }
 @media (pointer: coarse) {
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea { font-size: 16px !important; }
+  /* the 16px floor stops phones zooming in on focus; the profile name field is deliberately
+     larger (20px), so it is left out: forcing it down to 16px shrank it on every phone */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(.profile-name-input), select, textarea { font-size: 16px !important; }
 }
 @media (pointer: coarse), (max-width: 600px) {
   .setting-row select { min-height: 44px; font-size: 15px; }
