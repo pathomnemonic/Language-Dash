@@ -5,10 +5,9 @@
 // repo files by root relative paths (js/..., database/...), which only resolve from here.
 // (__dirname is the one anchor vitest gives every file it runs; import.meta.url is
 // rewritten to a /@fs/ URL in the browser-like environments and cannot be used.)
-process.chdir(resolve(__dirname, '../..'));
+process.chdir(__dirname + '/../..');
 
 // The app loads its card database lazily; tests want it present from the start
-import { resolve } from 'node:path';
 import { loadCards } from '../../js/cardhub.js';
 await loadCards();
 
