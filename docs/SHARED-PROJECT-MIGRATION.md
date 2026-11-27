@@ -132,7 +132,7 @@ classification does not list, a table without RLS, or a signed-in function that 
 | Tables created (template + members) | 46 |
 | Views created | 127 |
 | Functions created (template + membership layer) | 105 |
-| Migration size (lines) | 4534 |
+| Migration size (lines) | 4549 |
 
 Statement kinds read from the template: ALTER_DEFAULT_PRIVILEGES 1, ALTER_TABLE 57, CREATE_FUNCTION 101, CREATE_INDEX 31, CREATE_POLICY 28, CREATE_TABLE 45, CREATE_TRIGGER 5, CREATE_VIEW 127, DELETE 1, DO 5, DROP_FUNCTION 4, DROP_POLICY 28, DROP_TRIGGER 6, GRANT 62, REVOKE 66.
 
