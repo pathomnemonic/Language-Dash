@@ -46,14 +46,14 @@ for (const known of LANGUAGES) {
       const other = dropped.filter((d) => d.reason !== 'same word in both languages').length;
       const missing = MIN_CARDS - cards.length;
       const sameWord = dropped.length - other;
-      if (cards.length >= COGNATE_FLOOR && sameWord >= missing) {
+      if (cards.length >= COGNATE_FLOOR && other === 0 && sameWord >= missing) {
         warnings.push(name + ': ' + cards.length + ' cards (' + sameWord + ' words are identical in both languages)');
       } else bad(name, 'only ' + cards.length + ' cards (need ' + MIN_CARDS + '; ' + other + ' dropped for other reasons)');
     }
     const ids = new Set();
     for (const c of cards) {
       const at = name + ' ' + c.id;
-      if (!new RegExp('^' + name + '-\\d{3,4}$').test(c.id)) bad(name, 'bad id ' + c.id);
+      if (!new RegExp('^' + name + '-\\d{3,5}$').test(c.id)) bad(name, 'bad id ' + c.id);
       if (ids.has(c.id)) bad(name, 'duplicate id ' + c.id);
       ids.add(c.id);
       if (!c.bw || c.bw.length !== 1 || !c.bw[0]) bad(name, at + ' needs exactly one hint word');
@@ -74,6 +74,8 @@ for (const known of LANGUAGES) {
     }
   }
 }
+
+if (only && pairs === 0) bad(only, 'unknown pair "' + only + '": no language pair has that name, so nothing was validated');
 
 if (asJson) {
   console.log(JSON.stringify({ pairs, minCards: pairs ? minCards : 0, totalCards, problems, warnings }, null, 2));
