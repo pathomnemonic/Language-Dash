@@ -115,10 +115,17 @@ describe('Performance tab', () => {
     storage.data.settings.dailyGoal = 5;
     storage.data.progression.dailyStudied = undefined;
     CARDS.slice(0, 30).forEach((c) => { storage.data.cards.cardStats[c.id] = { seen: 3, correct: 3, wrong: 0, lastSeen: now, stability: 30, difficulty: 4, lastReview: now, due: now + 20 * DAY }; });
-    vi.spyOn(storage, 'getStudiedToday').mockReturnValue(50);
+    const studied = vi.spyOn(storage, 'getStudiedToday').mockReturnValue(50);
     const c = mount(u);
-    // (the plan may still suggest a weak subject; the button always leads somewhere useful)
+    // nothing is due and the goal is met, so the plan is empty: the hero says so,
+    // and its button leads to a run (the plan may still suggest a weak subject on other days)
     expect(c.querySelector('.perf-next-title')).not.toBeNull();
+    expect(c.querySelector('.perf-next-title').textContent).toMatch(/All caught up/);
+    const play = [...c.querySelectorAll('button')].find((b) => /Play a run/.test(b.textContent));
+    expect(play).toBeTruthy();
+    play.click();
+    expect(u.show).toHaveBeenCalledWith('screenHome');
+    studied.mockRestore();
   });
 });
 
