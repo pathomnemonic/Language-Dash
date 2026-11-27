@@ -137,6 +137,9 @@ export function grantsFromSubscriptions(subs, nowSec) {
   var out = [];
   (subs || []).forEach(function (sub) {
     if (!sub || LIVE_STATUSES.indexOf(sub.status) < 0) return;
+    // Only this app's subscriptions: one Stripe account (and one customer) serves every app, and a subscription
+    // another app created for the same customer must never grant Pro here. The webhook checks the same stamp.
+    if (!sub.metadata || sub.metadata.app !== APP_ID) return;
     var plan = productFor(sub.metadata && sub.metadata.plan);
     var until = subscriptionUntil(sub, nowSec);
     if (plan && plan.def.kind === 'subscription' && until) out.push({ plan: plan.def.plan, until: until, trial: sub.status === 'trialing' });
