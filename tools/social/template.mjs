@@ -105,7 +105,7 @@ export function slide2Html(post, reveal, fontsDir, plan) {
   const text = lines(post).map((l) => `<p>${rich(l)}</p>`).join('');
   let body;
   if (layout === 'bold-claim') {
-    body = `<div class="bold" style="justify-content:flex-start;padding-top:170px"><div class="tag">Language Dash</div><div class="kicker serif" style="margin-top:0">${esc(post.kicker || 'Here is why')}</div><div class="reveal" data-slide="2" data-layout="bold-claim">${revealRows(reveal)}</div><div class="body serif">${text}</div></div>`;
+    body = `<div class="bold" style="justify-content:flex-start;padding-top:170px"><div class="tag">Language Dash</div><div class="kicker serif" style="margin-top:0">${esc(expandTokens(post.kicker || 'Here is why'))}</div><div class="reveal" data-slide="2" data-layout="bold-claim">${revealRows(reveal)}</div><div class="body serif">${text}</div></div>`;
   } else if (layout === 'big-word') {
     const words = reveal.reduce((acc, r) => (acc.some((x) => x.answer === r.answer) ? acc : acc.concat([r])), []);
     const big = words.map((r) => `<div><div class="lab">${esc(reveal.filter((x) => x.answer === r.answer).map((x) => x.hint).join(' / '))}</div><div class="word">${esc(r.answer)}</div>${r.roman ? `<div class="roman">${esc(r.roman)}</div>` : ''}</div>`).join('');
@@ -114,7 +114,7 @@ export function slide2Html(post, reveal, fontsDir, plan) {
   } else if (layout === 'story') {
     body = `<div class="story"><div class="tag">Language Dash</div><div class="reveal" data-slide="2" data-layout="story" style="margin-top:30px">${revealRows(reveal)}</div><div class="story-body serif">${text}</div></div>`;
   } else {
-    body = `<div class="frame"><div class="tag">Language Dash</div><div class="rule"></div><div class="kicker serif">${esc(post.kicker || 'Here is why')}</div><div class="reveal" data-slide="2" data-layout="scenario">${revealRows(reveal)}</div><div class="body serif">${text}</div></div>`;
+    body = `<div class="frame"><div class="tag">Language Dash</div><div class="rule"></div><div class="kicker serif">${esc(expandTokens(post.kicker || 'Here is why'))}</div><div class="reveal" data-slide="2" data-layout="scenario">${revealRows(reveal)}</div><div class="body serif">${text}</div></div>`;
   }
   return page(fontsDir, theme, body);
 }

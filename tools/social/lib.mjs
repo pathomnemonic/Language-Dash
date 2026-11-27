@@ -177,17 +177,20 @@ export function checkCopy(raw, slide, ctx) {
  * ABOUT the quirk, with a reason of at least ten characters.
  */
 export function checkHolds(pair, ranks, holds, acknowledge) {
-  const target = String(pair).split('-')[1];
+  // a post shows the word in BOTH languages of the pair: the hint in the known language and the answer in the target.
+  // A hold on either side blocks the post (checking only the target used to let a held hint straight through).
+  const pairLangs = [...new Set(String(pair).split('-').filter(Boolean))];
   const errors = [];
   ranks.forEach((r) => {
     holds.forEach((h) => {
       if (h.concept !== r) return;
-      const lang = h.langs === '*' || (h.langs || []).indexOf('*') >= 0 || (h.langs || []).indexOf(target) >= 0;
-      if (!lang) return;
-      const ack = (acknowledge || []).find((a) => a.rank === r && (!a.pair || a.pair === pair) && String(a.reason || '').trim().length >= 10);
-      const kind = (h.kinds && h.kinds[target]) || h.kind;
-      if (kind === 'doubt' && ack) return;
-      errors.push('hold list: concept #' + r + (h.english ? ' (' + h.english + ')' : '') + ' is on hold for ' + target + ' (' + (kind === 'wrong' ? 'known wrong' : 'flagged as imprecise; a post about the quirk may acknowledge it') + ': ' + h.reason + ')');
+      const held = h.langs === '*' || (h.langs || []).indexOf('*') >= 0 ? pairLangs : pairLangs.filter((l) => (h.langs || []).indexOf(l) >= 0);
+      held.forEach((lang) => {
+        const ack = (acknowledge || []).find((a) => a.rank === r && (!a.pair || a.pair === pair) && String(a.reason || '').trim().length >= 10);
+        const kind = (h.kinds && h.kinds[lang]) || h.kind;
+        if (kind === 'doubt' && ack) return;
+        errors.push('hold list: concept #' + r + (h.english ? ' (' + h.english + ')' : '') + ' is on hold for ' + lang + ' (' + (kind === 'wrong' ? 'known wrong' : 'flagged as imprecise; a post about the quirk may acknowledge it') + ': ' + h.reason + ')');
+      });
     });
   });
   return errors;
@@ -203,6 +206,7 @@ export function validateHook(h, holds) {
   const out = { id: h && h.id, errors, warnings, concepts: [] };
   if (!h || typeof h !== 'object') { errors.push('spec is not an object'); return out; }
   ['id', 'hook', 'payoff', 'pair', 'verified', 'vein'].forEach((k) => { if (!h[k]) errors.push('missing field: ' + k); });
+  if (h.id && !/^[a-z0-9][a-z0-9-_]*$/i.test(h.id)) errors.push('id must be a plain slug (letters, digits, hyphens, underscores): it names the post\'s output folder, so it cannot contain path separators or dots');
   if (h.vein && VEINS.indexOf(h.vein) < 0) errors.push('vein must be one of ' + VEINS.join(', '));
   if (!Array.isArray(h.concepts) || !h.concepts.length) errors.push('missing field: concepts (a list of deck ranks)');
   if (h.verified && VERIFIED_TAGS.indexOf(h.verified) < 0) errors.push('verified must be one of ' + VERIFIED_TAGS.join(', '));
@@ -218,9 +222,20 @@ export function validateHook(h, holds) {
   });
   (h.expect || []).forEach((x) => {
     const got = out.concepts.find((c) => c.rank === x.rank && (!x.pair || c.pair === x.pair));
-    if (!got) return;
+    if (!got) { errors.push('deck check: the spec expects concept #' + x.rank + (x.pair ? ' in ' + x.pair : '') + ', but that concept is not among the post\'s selected concepts, so the expectation checks nothing'); return; }
     if (x.answer && got.answer !== x.answer) errors.push('deck check: #' + x.rank + ' is "' + got.answer + '" in ' + got.pair + ', but the spec expects "' + x.answer + '"');
     if (x.hint && got.hint.toLowerCase().indexOf(String(x.hint).toLowerCase()) < 0) errors.push('deck check: #' + x.rank + ' is "' + got.hint + '", but the spec expects "' + x.hint + '"');
+  });
+  // a {{rank:N}} token must point at one of the post's own concepts and at a rank the deck actually has: an
+  // out-of-range or unrelated rank would print an honest-sounding phrase about the wrong word
+  const selectedRanks = new Set(items.map((it) => it.rank));
+  [['hook', h.hook], ['kicker', h.kicker || ''], ['payoff', Array.isArray(h.payoff) ? h.payoff.join('\n') : String(h.payoff || '')], ['caption', h.caption || '']].forEach(([slide, text]) => {
+    if (!text) return;
+    for (const m of String(text).matchAll(/\{\{rank:(\d+)\}\}/g)) {
+      const n = Number(m[1]);
+      if (n < 1 || n > CONCEPTS.length) errors.push(slide + ': {{rank:' + n + '}} is outside the deck (ranks run 1 to ' + CONCEPTS.length + ')');
+      else if (!selectedRanks.has(n)) errors.push(slide + ': {{rank:' + n + '}} does not describe any of this post\'s selected concepts (' + [...selectedRanks].join(', ') + ')');
+    }
   });
   if (h.verified === 'deck' && !(h.expect && h.expect.length)) warnings.push('verified "deck" without an expect list: add the expected words so a typo cannot slip through');
   holds && items.forEach((it) => errors.push(...checkHolds(it.pair, [it.rank], holds, h.acknowledge)));

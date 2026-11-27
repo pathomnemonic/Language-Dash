@@ -9,7 +9,7 @@
 // screenshots it. If the screen does not match the deck's own gates it stops with an error rather than saving a wrong picture.
 // Needs WebGL: it uses PW_CHROMIUM if set.
 
-import { readFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, unlinkSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { openApp } from '../../tests/e2e/helpers.js';   // (clears the first-run tutorial and the daily reward, as the e2e tests do)
 
@@ -62,16 +62,21 @@ try {
     // not the engine's own list) and compared with the deck. It retries, and refuses to save a picture that does not match.
     const dealt = () => page.evaluate((it) => {
       const g = globalThis.__game;
+      // random is held at the lane's value only while this card is dealt, then the page's own random is restored:
+      // leaving the stub in place would quietly rig every later roll in the page
+      const realRandom = Math.random;
       Math.random = () => (it.correctLane + 0.5) / 3;
-      g.seededCardOrder = [it.cardId]; g._seededCardIndex = 0;
-      g._clearGates(); g._spawnEncounter();
-      g.paused = true;
-      return {
-        card: g.card && g.card.id,
-        engine: g.gates.map((x) => x.label),
-        screen: [0, 1, 2].map((i) => { const el = globalThis.document.getElementById('ansText' + i); return el ? (el.firstChild ? el.firstChild.textContent : el.textContent).trim() : ''; }),
-        hint: (globalThis.document.getElementById('buzzText') || {}).textContent
-      };
+      try {
+        g.seededCardOrder = [it.cardId]; g._seededCardIndex = 0;
+        g._clearGates(); g._spawnEncounter();
+        g.paused = true;
+        return {
+          card: g.card && g.card.id,
+          engine: g.gates.map((x) => x.label),
+          screen: [0, 1, 2].map((i) => { const el = globalThis.document.getElementById('ansText' + i); return el ? (el.firstChild ? el.firstChild.textContent : el.textContent).trim() : ''; }),
+          hint: (globalThis.document.getElementById('buzzText') || {}).textContent
+        };
+      } finally { Math.random = realRandom; }
     }, item);
     const expectedGates = item.gates.map((x) => x.label);
     let shown = null;
@@ -79,15 +84,28 @@ try {
     for (let attempt = 0; attempt < 6 && !same; attempt++) {
       shown = await dealt();
       await page.waitForTimeout(700);
+      // read the screen back AFTER it has settled, hint included (the hint used to be read before the wait, from the
+      // previous card), and require the hint to be exactly the deck's hint (or its form without the bracketed sense),
+      // not merely to contain its first words
       shown.screen = await page.evaluate(() => [0, 1, 2].map((i) => { const el = globalThis.document.getElementById('ansText' + i); return el ? (el.firstChild ? el.firstChild.textContent : el.textContent).trim() : ''; }));
-      same = shown.card === item.cardId && JSON.stringify(shown.screen) === JSON.stringify(expectedGates) && (shown.hint || '').indexOf(item.hint.split(' (')[0]) >= 0;
+      shown.hint = await page.evaluate(() => (globalThis.document.getElementById('buzzText') || {}).textContent);
+      const hintShown = String(shown.hint || '').trim();
+      const hintOk = hintShown === item.hint.trim() || hintShown === item.hint.split(' (')[0].trim();
+      same = shown.card === item.cardId && JSON.stringify(shown.screen) === JSON.stringify(expectedGates) && hintOk;
     }
+    const png = resolve(outDir, 'slide3-' + item.cardId + '.png');
     if (!same) {
       failed++;
+      // a failed capture must not leave an older screenshot behind for compose-slide3.mjs to pick up as if it were new
+      if (existsSync(png)) unlinkSync(png);
       console.error('MISMATCH ' + item.cardId + ': the screen shows ' + JSON.stringify(shown) + ', the deck says ' + JSON.stringify({ card: item.cardId, gates: expectedGates }));
     } else {
-      const png = resolve(outDir, 'slide3-' + item.cardId + '.png');
       await page.screenshot({ path: png });
+      // record what this screenshot was captured for, so compose-slide3.mjs can refuse a stale or foreign capture
+      const manifestFile = resolve(outDir, 'slide3-captures.json');
+      const manifest = existsSync(manifestFile) ? JSON.parse(readFileSync(manifestFile, 'utf8')) : {};
+      manifest[item.cardId] = { map: spec.capture && spec.capture.map, theme: spec.theme, at: new Date().toISOString() };
+      writeFileSync(manifestFile, JSON.stringify(manifest, null, 2));
       console.log('captured ' + png + ' (screen gates ' + JSON.stringify(shown.screen) + ' match the deck)');
     }
     await ctx.close();
