@@ -7,7 +7,8 @@
 //   'language_dash' (stamped on everything this app creates) and the rest are ignored.
 // In Stripe: Developers -> Webhooks -> add https://<project>.supabase.co/functions/v1/ld-stripe-webhook and send
 //   checkout.session.completed, checkout.session.async_payment_succeeded, invoice.paid, charge.refunded,
-//   charge.dispute.created, charge.dispute.updated and charge.dispute.closed.
+//   charge.dispute.created, charge.dispute.updated, charge.dispute.closed, customer.subscription.deleted
+//   and customer.subscription.updated.
 // Every request is checked against the webhook signing secret first; anything unsigned is refused.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.117.3';
