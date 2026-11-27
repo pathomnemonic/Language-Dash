@@ -254,7 +254,7 @@ describe('the real templates', () => {
     expect(Object.keys(ctx.tables).sort()).toEqual(Object.keys(TABLES).sort());
     expect(report.tables.length).toBe(Object.keys(TABLES).length + 1); // + members
     for (const f of report.functions.filter((x) => x.pin !== 'hand-written')) expect(FUNCTION_POLICY[f.name]).toBeTruthy();
-    expect(report.counters.pinsRewritten).toBe(89);
+    expect(report.counters.pinsRewritten).toBe(90);
     expect(report.gatedFunctions).toBeGreaterThan(40);
     expect(sql.startsWith('-- ====')).toBe(true);
     expect(sql).toContain('SET LOCAL search_path = language_dash, pg_temp;');
@@ -305,6 +305,17 @@ describe('the real templates', () => {
     expect(purge).toContain('DELETE FROM language_dash.members WHERE user_id = p_user');
     expect(purge.replace(/--[^\n]*/g, '')).not.toMatch(/auth\.users/);
     expect(purge).toContain("UPDATE language_dash.schools SET created_by = NULL");
+  });
+  it('keeps the Apple token and the trial marker out of the wipe, and blocks deletion only while a subscription is still billing', async () => {
+    const { ctx } = await gen();
+    const purge = renderPurgeSql(ctx).replace(/--[^\n]*/g, '');
+    // (apple_tokens: a later sign-in removal still needs the token to revoke the Apple login;
+    //  pro_trials: the once-per-account trial must not reset. pro_forget_user removes both with the sign-in.)
+    expect(purge).not.toContain('DELETE FROM language_dash.apple_tokens');
+    expect(purge).not.toContain('DELETE FROM language_dash.pro_trials');
+    expect(purge).toContain('DELETE FROM language_dash.pro_entitlements');
+    // (a cancelled subscription charges nothing more, so the paid time left must not block deletion on its own)
+    expect(purge).toContain('cancelled_at IS NULL');
   });
   it('the hand-written membership layer has the five functions and the own-row policy, and never writes auth.users', () => {
     const m = renderMembershipSql();

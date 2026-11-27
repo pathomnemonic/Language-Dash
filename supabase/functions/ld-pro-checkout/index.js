@@ -141,9 +141,15 @@ Deno.serve(async function (req) {
 
     // Cancel a subscription that is still billing (immediately, no further charge). The app calls this before it deletes the
     // Language Dash account, so nobody keeps paying for an account that is gone. If it cannot be done, the app deletes nothing.
+    // A successful cancel is also recorded in the database (pro_set_billing_cancelled): delete_my_ld_data blocks deletion
+    // only while a subscription is still billing, and the paid time left on the entitlement must not block it on its own.
     if (body.action === 'cancel_subscription') {
       var cancelled = await cancelBillingSubscriptions(stripe, customerId);
       if (!cancelled.ok) { console.error('ld-pro-checkout cancel failed'); return json({ error: cancelled.error }, 502); }
+      if (cancelled.cancelled > 0) {
+        var marked = await admin.rpc('pro_set_billing_cancelled', { p_user: user.id, p_cancelled: true });
+        if (marked && marked.error) { console.error('ld-pro-checkout: could not record the cancellation', marked.error.message); return json({ error: 'Your subscription was cancelled, but that could not be recorded just now, so nothing was deleted. Please try again.' }, 502); }
+      }
       return json({ ok: true, cancelled: cancelled.cancelled });
     }
 

@@ -307,6 +307,29 @@ export async function handleEvent(event, deps) {
     return { handled: true, action: 'renewal' };
   }
 
+  // A subscription that ended for good (deleted in Stripe: its paid time ran out after a cancellation, or it was
+  // cancelled at once): take that plan back, exactly like a refund of it, and put back anything else still held.
+  if (type === 'customer.subscription.deleted') {
+    if (!isOurs(obj)) return { handled: false, action: 'other_app' };
+    var dplan = productFor(obj.metadata && obj.metadata.plan);
+    var duser = (obj.metadata && obj.metadata.user_id) || (obj.customer ? await rpc('pro_customer_user', { p_customer: obj.customer }) : null);
+    if (!duser || !dplan || dplan.def.kind !== 'subscription') return { handled: false };
+    await rpc('pro_revoke_plan', { p_user: duser, p_plan: dplan.def.plan });
+    await restoreHeldSubscriptions(duser, dplan.def.plan, deps);
+    return { handled: true, action: 'subscription_ended' };
+  }
+
+  // A cancellation made in Stripe's portal (or an undo there): record the still-billing fact that account deletion
+  // checks, so a member whose subscription will not charge again is not blocked from deleting their data while the
+  // paid time runs out — and a member who un-cancels is blocked again until they really cancel.
+  if (type === 'customer.subscription.updated') {
+    if (!isOurs(obj)) return { handled: false, action: 'other_app' };
+    var uuser = (obj.metadata && obj.metadata.user_id) || (obj.customer ? await rpc('pro_customer_user', { p_customer: obj.customer }) : null);
+    if (!uuser) return { handled: false };
+    await rpc('pro_set_billing_cancelled', { p_user: uuser, p_cancelled: !!(obj.cancel_at_period_end || obj.cancel_at) });
+    return { handled: true, action: 'subscription_cancel_state' };
+  }
+
   // Money returned (a refund, or a chargeback) takes the purchase back; a chargeback that was won gives it again. These
   // events can arrive late and out of order, so none of them is taken at its word: the charge is read fresh from Stripe
   // and the answer follows how it stands now. The same events in any order leave the same result.

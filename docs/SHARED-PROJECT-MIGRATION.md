@@ -117,11 +117,11 @@ classification does not list, a table without RLS, or a signed-in function that 
 
 | Measure | Count |
 | --- | --- |
-| Template statements read (schema, policies, cohorts, discovery, pro, analytics, analytics_views, lockdown) | 557 |
-| Statements carried over | 554 |
+| Template statements read (schema, policies, cohorts, discovery, pro, analytics, analytics_views, lockdown) | 560 |
+| Statements carried over | 557 |
 | Statements removed (delete_my_account and its REVOKE/GRANT) | 3 |
-| Statements in the migration (incl. wrapper, membership layer, gate, wipe, role grants) | 654 |
-| `SET search_path = public[, auth]` pins rewritten to `language_dash, pg_temp` | 89 |
+| Statements in the migration (incl. wrapper, membership layer, gate, wipe, role grants) | 657 |
+| `SET search_path = public[, auth]` pins rewritten to `language_dash, pg_temp` | 90 |
 | Functions that had NO pin and got one (would have run on the caller's search_path) | 9 |
 | `public.` qualifications rewritten to `language_dash.` | 4 |
 | `'public'` catalog literals / `IN SCHEMA public` rewritten | 4 |
@@ -131,10 +131,10 @@ classification does not list, a table without RLS, or a signed-in function that 
 | DO blocks recognised and translated | 5 |
 | Tables created (template + members) | 45 |
 | Views created | 127 |
-| Functions created (template + membership layer) | 103 |
-| Migration size (lines) | 4364 |
+| Functions created (template + membership layer) | 104 |
+| Migration size (lines) | 4385 |
 
-Statement kinds read from the template: ALTER_DEFAULT_PRIVILEGES 1, ALTER_TABLE 54, CREATE_FUNCTION 99, CREATE_INDEX 30, CREATE_POLICY 28, CREATE_TABLE 44, CREATE_TRIGGER 5, CREATE_VIEW 127, DELETE 1, DO 5, DROP_FUNCTION 4, DROP_POLICY 28, DROP_TRIGGER 6, GRANT 62, REVOKE 63.
+Statement kinds read from the template: ALTER_DEFAULT_PRIVILEGES 1, ALTER_TABLE 55, CREATE_FUNCTION 100, CREATE_INDEX 30, CREATE_POLICY 28, CREATE_TABLE 44, CREATE_TRIGGER 5, CREATE_VIEW 127, DELETE 1, DO 5, DROP_FUNCTION 4, DROP_POLICY 28, DROP_TRIGGER 6, GRANT 62, REVOKE 64.
 
 Removed: function delete_my_account(); REVOKE on delete_my_account(); GRANT on delete_my_account().
 
@@ -177,10 +177,10 @@ Removed: function delete_my_account(); REVOKE on delete_my_account(); GRANT on d
 | `pro_redemptions` | member | yes | user_id | pro |
 | `pro_attempts` | member | yes | user_id | pro |
 | `pro_library` | member | yes | user_id | pro |
-| `pro_trials` | member | yes | user_id | pro |
+| `pro_trials` | member | yes | kept (removed by pro_forget_user with the sign-in) | pro |
 | `pro_stripe_customers` | member | yes | user_id | pro |
 | `pro_stripe_events` | internal | no | - | pro |
-| `apple_tokens` | member | yes | user_id | pro |
+| `apple_tokens` | member | yes | kept (removed by pro_forget_user with the sign-in) | pro |
 | `pro_store_purchases` | member | yes | user_id | pro |
 | `analytics_installs` | anon | no | - | analytics |
 | `analytics_sessions` | anon | no | - | analytics |
@@ -293,6 +293,7 @@ Classes: **member** = member data: restrictive ld_member_gate policy + wiped by 
 | `pro_revoke_item` | sql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
 | `pro_revoke_library` | sql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
 | `pro_revoke_plan` | sql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
+| `pro_set_billing_cancelled` | sql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
 | `pro_store_claim` | plpgsql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
 | `pro_user_customer` | sql | yes | none | service role / owner only: acts on an explicit user id, never creates membership | rewritten |
 | `purge_user_data` | plpgsql/sql | yes | none | membership layer: same wipe for a given user id (edge function, service role) before it removes the sign-in | hand-written |
