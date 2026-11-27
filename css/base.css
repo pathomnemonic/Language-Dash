@@ -147,9 +147,10 @@ body:not([data-screen="screenHome"]) #bgFlyers { display: none; } /* a Home-only
   position: relative;
 }
 
-/* Screen titles: Fraunces Black with a printed double rule under it */
+/* Screen titles: Fraunces Black with a printed double rule under it.
+   Direct children only: a descendant h2:first-child rule also caught the first heading
+   inside any card on the screen and dressed it up as the screen's own title. */
 .screen-scroll > h2,
-.screen-scroll h2:first-child,
 .fit-zoom > h2 {
   font-family: var(--font-display);
   font-size: 30px;
@@ -162,7 +163,6 @@ body:not([data-screen="screenHome"]) #bgFlyers { display: none; } /* a Home-only
   position: relative;
 }
 .screen-scroll > h2::after,
-.screen-scroll h2:first-child::after,
 .fit-zoom > h2::after {
   content: '';
   position: absolute;
