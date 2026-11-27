@@ -2,7 +2,7 @@
 -- Language Dash in a SHARED Supabase project: everything lives in the schema "language_dash". Nothing is created in "public".
 --
 -- GENERATED FILE - do not edit by hand. Regenerate with:   node tools/ld-migrate/generate.mjs
--- Source: database/*.sql (schema.sql=2455b49f6e63c9c8 policies.sql=db83550c982944b2 cohorts.sql=c29e96b391e2d298 discovery.sql=bca2b4a571e153a5 pro.sql=cec067c3bcfe5ec8 analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
+-- Source: database/*.sql (schema.sql=2493b036194c64c2 policies.sql=db83550c982944b2 cohorts.sql=7e178c2d63f078e4 discovery.sql=bca2b4a571e153a5 pro.sql=cec067c3bcfe5ec8 analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
 -- How it works and how to verify it: docs/SHARED-PROJECT-MIGRATION.md
 --
 -- Safe to run more than once. Runs in ONE transaction; the guard below aborts if search_path did not take effect, so a
@@ -1069,6 +1069,10 @@ CREATE TABLE IF NOT EXISTS ranked_matches (
   winner_id      uuid,
   CHECK (host_id <> guest_id)
 );
+-- How the match was settled: 'win' (winner_id says who), 'draw' (an agreed or unopposed draw), or 'disputed'
+-- (the two reports disagreed, so nobody gained anything). Recorded by ranked_try_settle on every path: cohort
+-- war points read this, because a disputed match must not pay draw points just because one side claimed a draw.
+ALTER TABLE ranked_matches ADD COLUMN IF NOT EXISTS outcome text;
 CREATE INDEX IF NOT EXISTS ranked_matches_host_idx ON ranked_matches (host_id, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS ranked_reports (
@@ -1155,7 +1159,7 @@ BEGIN
     ELSIF hr.outcome = 'draw' AND gr.outcome = 'draw' THEN host_out := 'draw'; guest_out := 'draw';
     ELSE
       -- the two stories do not match: nobody gains or loses anything
-      UPDATE ranked_matches SET settled = true WHERE id = p_match;
+      UPDATE ranked_matches SET settled = true, outcome = 'disputed' WHERE id = p_match;
       RETURN true;
     END IF;
   ELSIF hr.user_id IS NOT NULL THEN
@@ -1180,7 +1184,8 @@ BEGIN
   PERFORM ranked_apply(m.host_id, m.host_trophies, m.guest_trophies, host_out);
   PERFORM ranked_apply(m.guest_id, m.guest_trophies, m.host_trophies, guest_out);
   UPDATE ranked_matches SET settled = true,
-    winner_id = CASE WHEN host_out = 'win' THEN m.host_id WHEN guest_out = 'win' THEN m.guest_id ELSE NULL END
+    winner_id = CASE WHEN host_out = 'win' THEN m.host_id WHEN guest_out = 'win' THEN m.guest_id ELSE NULL END,
+    outcome = CASE WHEN host_out = 'draw' THEN 'draw' ELSE 'win' END
   WHERE id = p_match;
   RETURN true;
 END;
@@ -1789,6 +1794,8 @@ CREATE TABLE IF NOT EXISTS cohort_members (
   PRIMARY KEY (cohort_id, user_id)
 );
 CREATE INDEX IF NOT EXISTS cohort_members_cohort_idx ON cohort_members (cohort_id);
+-- At most one leader per cohort, enforced by the storage itself (cohort_set_role also locks the rows).
+CREATE UNIQUE INDEX IF NOT EXISTS cohort_members_one_leader_idx ON cohort_members (cohort_id) WHERE role = 'leader';
 
 CREATE TABLE IF NOT EXISTS cohort_war_points (
   week       text NOT NULL,
@@ -1935,12 +1942,20 @@ BEGIN
   IF p_role NOT IN ('leader', 'officer', 'member') THEN RAISE EXCEPTION 'Bad role'; END IF;
   SELECT * INTO mine FROM cohort_members WHERE user_id = me;
   IF NOT FOUND OR mine.role <> 'leader' THEN RAISE EXCEPTION 'Only the leader can do that'; END IF;
+  -- Lock the cohort's membership rows and check leadership again on the locked rows: two overlapping
+  -- transfers (two devices, a double submit) could otherwise both pass the check above on the same
+  -- pre-transfer snapshot, promote two different members, and leave the cohort with two leaders.
+  PERFORM 1 FROM cohort_members WHERE cohort_id = mine.cohort_id FOR UPDATE;
+  SELECT * INTO mine FROM cohort_members WHERE user_id = me;
+  IF NOT FOUND OR mine.role <> 'leader' THEN RAISE EXCEPTION 'Only the leader can do that'; END IF;
   SELECT * INTO theirs FROM cohort_members WHERE user_id = p_user AND cohort_id = mine.cohort_id;
   IF NOT FOUND OR p_user = me THEN RAISE EXCEPTION 'Not a member of your cohort'; END IF;
-  UPDATE cohort_members SET role = p_role WHERE cohort_id = mine.cohort_id AND user_id = p_user;
+  -- A leadership transfer steps down FIRST: the one-leader index allows no moment with two leaders,
+  -- and the call is atomic, so a failure after the step-down restores the old leader.
   IF p_role = 'leader' THEN
     UPDATE cohort_members SET role = 'officer' WHERE cohort_id = mine.cohort_id AND user_id = me;
   END IF;
+  UPDATE cohort_members SET role = p_role WHERE cohort_id = mine.cohort_id AND user_id = p_user;
 END;
 $$;
 
@@ -2065,7 +2080,12 @@ DECLARE
 BEGIN
   SELECT cohort_id INTO cid FROM cohort_members WHERE user_id = p_user;
   IF cid IS NULL THEN RETURN; END IF;
-  SELECT coalesce(points, 0) INTO have FROM cohort_war_points WHERE week = wk AND cohort_id = cid AND user_id = p_user;
+  -- One lock per player and week, then the cap is measured on everything the player has earned this week
+  -- in every cohort: the limit is per player per week (as the war rules state), so leaving and joining
+  -- another cohort cannot reset it, and two awards landing at once cannot both spend the same allowance
+  -- (the old code computed the award from an unlocked read of just the current cohort's row).
+  PERFORM pg_advisory_xact_lock(hashtextextended(p_user::text || ':' || wk, 0));
+  SELECT coalesce(sum(points), 0) INTO have FROM cohort_war_points WHERE week = wk AND user_id = p_user;
   have := coalesce(have, 0);
   give := least(p_points, 100 - have);   -- at most 100 points per player per week
   IF give <= 0 THEN RETURN; END IF;
@@ -2081,7 +2101,9 @@ BEGIN
   IF NEW.settled AND NOT OLD.settled THEN
     IF NEW.winner_id IS NOT NULL THEN
       PERFORM cohort_add_war_points(NEW.winner_id, 10);
-    ELSIF EXISTS (SELECT 1 FROM ranked_reports r WHERE r.match_id = NEW.id AND r.outcome = 'draw') THEN
+    ELSIF NEW.outcome = 'draw' THEN
+      -- the settled outcome, recorded by ranked_try_settle: a match whose reports disagreed settles as
+      -- 'disputed' and pays nothing, even when one side's report claimed a draw
       PERFORM cohort_add_war_points(NEW.host_id, 3);
       PERFORM cohort_add_war_points(NEW.guest_id, 3);
     END IF;

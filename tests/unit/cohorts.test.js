@@ -141,3 +141,57 @@ describe('cohorts', () => {
     expect((await db.query("SELECT count(*)::int AS n FROM cohorts WHERE name = 'Rival Rounds'")).rows[0].n).toBe(0);
   });
 });
+
+describe('cohort war outcomes: the settled outcome, the per player cap, one leader', () => {
+  const F = U('6'), G = U('7'), H = U('8');
+  const pointsOf = async (user) => Number((await db.query('SELECT coalesce(sum(points), 0) AS p FROM cohort_war_points WHERE user_id = $1', [user])).rows[0].p);
+  const match = async (host, guest, code) => {
+    await db.exec(`INSERT INTO ranked_matches (host_id, guest_id, room_code, host_trophies, guest_trophies) VALUES ('${host}', '${guest}', '${code}', 0, 0)`);
+    return (await db.query('SELECT id FROM ranked_matches WHERE room_code = $1', [code])).rows[0].id;
+  };
+
+  it('sets up a second cohort', async () => {
+    await db.query(`INSERT INTO auth.users VALUES ('${F}'), ('${G}'), ('${H}')`);
+    await db.query(`INSERT INTO player_profiles (user_id, player_name) VALUES ('${F}', 'Fi'), ('${G}', 'Gil'), ('${H}', 'Hal')`);
+    await one(F, "SELECT cohort_create('Outcome Owls', 'Outcome College', '') AS r");
+    const tag = (await one(F, 'SELECT my_cohort() AS r')).r.tag;
+    await one(G, 'SELECT cohort_join($1) AS r', [tag]);
+  });
+
+  it('a disputed match pays no draw points; an agreed draw pays both players', async () => {
+    const m1 = await match(F, H, 'DISP1');
+    await as(F, () => db.query("SELECT ranked_report($1, 'draw')", [m1]));
+    await as(H, () => db.query("SELECT ranked_report($1, 'win')", [m1]));
+    expect((await db.query('SELECT settled, outcome FROM ranked_matches WHERE id = $1', [m1])).rows[0]).toEqual({ settled: true, outcome: 'disputed' });
+    expect(await pointsOf(F)).toBe(0);
+
+    const m2 = await match(F, G, 'DRAW1');
+    await as(F, () => db.query("SELECT ranked_report($1, 'draw')", [m2]));
+    await as(G, () => db.query("SELECT ranked_report($1, 'draw')", [m2]));
+    expect((await db.query('SELECT outcome FROM ranked_matches WHERE id = $1', [m2])).rows[0].outcome).toBe('draw');
+    expect(await pointsOf(F)).toBe(3);
+    expect(await pointsOf(G)).toBe(3);
+  });
+
+  it('leadership moves exactly once, and the storage itself refuses a second leader', async () => {
+    await as(F, () => db.query('SELECT cohort_set_role($1, $2)', [G, 'leader']));
+    const leaders = (await db.query("SELECT user_id FROM cohort_members WHERE role = 'leader' AND cohort_id = (SELECT cohort_id FROM cohort_members WHERE user_id = $1)", [F])).rows;
+    expect(leaders).toEqual([{ user_id: G }]);
+    let failed = false;
+    try { await db.query("UPDATE cohort_members SET role = 'leader' WHERE user_id = $1", [F]); } catch (e) { failed = true; }
+    expect(failed).toBe(true);
+  });
+
+  it('the weekly cap follows the player across cohorts', async () => {
+    await db.query('SELECT cohort_add_war_points($1, 200)', [F]);
+    expect(await pointsOf(F)).toBe(100);
+    await one(H, "SELECT cohort_create('Second Owls', 'Second College', '') AS r");
+    const tag2 = (await one(H, 'SELECT my_cohort() AS r')).r.tag;
+    await as(F, () => db.query('SELECT cohort_leave()'));
+    await one(F, 'SELECT cohort_join($1) AS r', [tag2]);
+    const m3 = await match(F, H, 'CAPX1');
+    await as(F, () => db.query("SELECT ranked_report($1, 'win')", [m3]));
+    await as(H, () => db.query("SELECT ranked_report($1, 'loss')", [m3]));
+    expect(await pointsOf(F)).toBe(100); // the win in the new cohort adds nothing: the cap is the player's, not the cohort's
+  });
+});

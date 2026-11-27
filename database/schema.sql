@@ -995,6 +995,10 @@ CREATE TABLE IF NOT EXISTS ranked_matches (
   winner_id      uuid,
   CHECK (host_id <> guest_id)
 );
+-- How the match was settled: 'win' (winner_id says who), 'draw' (an agreed or unopposed draw), or 'disputed'
+-- (the two reports disagreed, so nobody gained anything). Recorded by ranked_try_settle on every path: cohort
+-- war points read this, because a disputed match must not pay draw points just because one side claimed a draw.
+ALTER TABLE ranked_matches ADD COLUMN IF NOT EXISTS outcome text;
 CREATE INDEX IF NOT EXISTS ranked_matches_host_idx ON ranked_matches (host_id, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS ranked_reports (
@@ -1079,7 +1083,7 @@ BEGIN
     ELSIF hr.outcome = 'draw' AND gr.outcome = 'draw' THEN host_out := 'draw'; guest_out := 'draw';
     ELSE
       -- the two stories do not match: nobody gains or loses anything
-      UPDATE ranked_matches SET settled = true WHERE id = p_match;
+      UPDATE ranked_matches SET settled = true, outcome = 'disputed' WHERE id = p_match;
       RETURN true;
     END IF;
   ELSIF hr.user_id IS NOT NULL THEN
@@ -1104,7 +1108,8 @@ BEGIN
   PERFORM ranked_apply(m.host_id, m.host_trophies, m.guest_trophies, host_out);
   PERFORM ranked_apply(m.guest_id, m.guest_trophies, m.host_trophies, guest_out);
   UPDATE ranked_matches SET settled = true,
-    winner_id = CASE WHEN host_out = 'win' THEN m.host_id WHEN guest_out = 'win' THEN m.guest_id ELSE NULL END
+    winner_id = CASE WHEN host_out = 'win' THEN m.host_id WHEN guest_out = 'win' THEN m.guest_id ELSE NULL END,
+    outcome = CASE WHEN host_out = 'draw' THEN 'draw' ELSE 'win' END
   WHERE id = p_match;
   RETURN true;
 END;
