@@ -211,6 +211,17 @@ function setMember(value, joinedAt, userId) {
   if (value === false && was) tellListeners('MEMBERSHIP_REQUIRED');
 }
 
+/**
+ * The membership check itself failed (a network or RPC error), which says nothing about the answer: keep the
+ * answer already held for this login and report the error alongside it. With no answer held yet, stay unknown
+ * (the account screen shows the error and a retry) rather than declaring the login a non-member.
+ */
+function membershipUnknown(uid) {
+  if (_member !== null && _membershipFor === uid) return { member: _member === true, joinedAt: _joinedAt, error: _membershipError };
+  _membershipFor = uid;
+  return { member: false, joinedAt: null, error: _membershipError };
+}
+
 /** A gated call said "not_a_member": the answer we held is out of date. Ask again, and tell the account screen. */
 function onNotMember() {
   if (_member !== false) { _member = false; _membershipFor = _userId; tellListeners('MEMBERSHIP_REQUIRED'); }
@@ -626,6 +637,7 @@ var leaderboard = {
   /**
    * Ask the database whether this login already has a Language Dash account (my_membership).
    * A guest never has one and is not asked. Always resolves: { member, joinedAt, error }.
+   * When the check itself fails, error is set and the previously held answer stands (see membershipUnknown).
    * @param {boolean} [force] ask again even if an answer is held
    */
   refreshMembership: function (force) {
@@ -638,8 +650,7 @@ var leaderboard = {
       if (uid !== _userId) return { member: false, joinedAt: null, error: null }; // (signed in as someone else meanwhile)
       if (res.error) {
         _membershipError = res.error.message || 'Could not check your Language Dash account.';
-        setMember(false, null, uid);
-        return { member: false, joinedAt: null, error: _membershipError };
+        return membershipUnknown(uid);
       }
       var d = res.data || {};
       _membershipError = null;
@@ -647,8 +658,7 @@ var leaderboard = {
       return { member: d.member === true, joinedAt: d.joined_at || null, error: null };
     }).catch(function (e) {
       _membershipError = (e && e.message) || 'Could not check your Language Dash account.';
-      setMember(false, null, uid);
-      return { member: false, joinedAt: null, error: _membershipError };
+      return membershipUnknown(uid);
     }).then(function (out) { if (_membershipPromise && _membershipPromise.p === p) _membershipPromise = null; return out; });
     _membershipPromise = { uid: uid, p: p };
     return p;
