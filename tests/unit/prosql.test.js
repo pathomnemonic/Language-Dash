@@ -47,6 +47,18 @@ describe('Language Dash Pro backend', () => {
     expect(await rejects(A, 'SELECT * FROM pro_v_active')).toBe(true);
   });
 
+  it('the billing-cancelled marker: set only by the service role, and a fresh subscription grant clears it', async () => {
+    await db.query("SELECT pro_grant($1, 30, 'monthly', 'stripe')", [B]);
+    expect(await rejects(B, "SELECT pro_set_billing_cancelled($1, true)", [B])).toBe(true);   // the app cannot mark itself cancelled
+    await db.query('SELECT pro_set_billing_cancelled($1, true)', [B]);
+    let row = (await db.query('SELECT cancelled_at FROM pro_entitlements WHERE user_id = $1', [B])).rows[0];
+    expect(row.cancelled_at).not.toBeNull();
+    await db.query("SELECT pro_grant($1, 30, 'monthly', 'stripe')", [B]);   // subscribed again: billing again
+    row = (await db.query('SELECT cancelled_at FROM pro_entitlements WHERE user_id = $1', [B])).rows[0];
+    expect(row.cancelled_at).toBeNull();
+    await db.query('SELECT pro_revoke($1)', [B]);
+  });
+
   it('an owner grant turns Pro on, extends it, and a revoke turns it off', async () => {
     await db.query("SELECT pro_grant($1, 30, 'yearly', 'stripe')", [A]);
     const r = (await one(A, 'SELECT get_my_pro() AS r')).r;
