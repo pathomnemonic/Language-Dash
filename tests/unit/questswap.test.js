@@ -32,15 +32,20 @@ describe('choosing the quest to swap in', () => {
     const startedSame = (id) => (sameKind.some((q) => q.id === id) ? 1 : 0);
     const other = QUESTS.find((q) => q.id === pickReplacementQuest(offered, old.id, startedSame, () => 0));
     expect(other.category).not.toBe(old.category);
-    // everything started but not finished: still something to offer
-    expect(pickReplacementQuest(offered, old.id, () => 0.0001 + 1, () => 0)).not.toBeNull();
+    // everything started but not finished: still something to offer. Half of each quest's
+    // own target: always more than 0 and less than the target. (A flat 1.0001 used to stand
+    // here, which for a target of 1 is already finished, not started.)
+    const startedNotFinished = (id) => Math.min(1, QUESTS.find((q) => q.id === id).target / 2);
+    expect(pickReplacementQuest(offered, old.id, startedNotFinished, () => 0)).not.toBeNull();
     // nothing open at all
     expect(pickReplacementQuest(offered, old.id, (id) => QUESTS.find((q) => q.id === id).target, () => 0)).toBeNull();
   });
 
-  it('costs a few seconds of play, never more than a quest pays out many times over', () => {
-    expect(QUEST_SWAP_COST).toBeGreaterThan(0);
-    expect(QUEST_SWAP_COST).toBeLessThanOrEqual(150);
+  it('the swap costs real coins: more than any single quest pays, no more than two typical quests', () => {
+    const rewards = QUESTS.map((q) => q.reward).sort((a, b) => a - b);
+    const median = rewards[Math.floor(rewards.length / 2)];
+    expect(QUEST_SWAP_COST).toBeGreaterThan(Math.max(...rewards)); // 75 against a best reward of 70: swapping is never free money
+    expect(QUEST_SWAP_COST).toBeLessThanOrEqual(2 * median);        // and it stays within reach of a couple of quests' pay
   });
 });
 
