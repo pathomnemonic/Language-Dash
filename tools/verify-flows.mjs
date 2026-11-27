@@ -50,7 +50,14 @@ async function open(seed = true) {
   await page.waitForTimeout(1200);
   return { ctx, page };
 }
-const errs = (name, page) => { const e = page.errs.filter((x) => !/Dropped|auto-fix/.test(x)); if (e.length) bad(name + ': script errors: ' + e.slice(0, 2).join(' | ')); };
+// errors matching Dropped|auto-fix are set aside (legacy library noise), but never silently: whatever the filter
+// sets aside is printed, so a genuine failure that happens to contain those words is still seen by a human
+const errs = (name, page) => {
+  const aside = page.errs.filter((x) => /Dropped|auto-fix/.test(x));
+  if (aside.length) console.log('  note  ' + name + ': ' + aside.length + ' error(s) set aside by the Dropped/auto-fix filter: ' + aside.slice(0, 2).join(' | '));
+  const e = page.errs.filter((x) => !/Dropped|auto-fix/.test(x));
+  if (e.length) bad(name + ': script errors: ' + e.slice(0, 2).join(' | '));
+};
 
 // ---- exam simulator ----
 console.log('\n== exam simulator');
@@ -100,6 +107,22 @@ for (const [label, src] of [['My subjects', 'mine'], ['Due for review', 'due'], 
     const m = total.match(/Card 1 of (\d+)/);
     ok(src + ': started' + (m ? ' with ' + m[1] + ' cards' : ''));
     if (m && Number(m[1]) > 10) bad(src + ': asked for 10 cards but got ' + m[1]);
+    // starting is not enough: the dealt cards must actually come from the chosen source
+    const membership = await page.evaluate(() => {
+      const fm = window.__ui.flashcardMode;
+      return { dealt: (fm.cards || []).map((c) => ({ id: c.id, subj: c.subj })), pools: window.__ui._pickerPools() };
+    });
+    if (src === 'due' || src === 'missed' || src === 'fresh') {
+      const pool = new Set(membership.pools[src]);
+      const off = membership.dealt.filter((c) => !pool.has(c.id));
+      if (!membership.dealt.length || off.length) bad(src + ': dealt cards outside the chosen source: ' + (off.map((c) => c.id).join(', ') || 'none dealt'));
+      else ok(src + ': all ' + membership.dealt.length + ' dealt cards belong to the chosen source');
+    } else {
+      const want = src === 'subjects' ? ['Basics'] : membership.pools.mine;
+      const off = membership.dealt.filter((c) => !want.includes(c.subj));
+      if (!membership.dealt.length || off.length) bad(src + ': dealt cards outside the chosen topics: ' + (off.map((c) => c.id + ' (' + c.subj + ')').join(', ') || 'none dealt'));
+      else ok(src + ': all ' + membership.dealt.length + ' dealt cards belong to the chosen topics');
+    }
   }
   errs('flashcards ' + src, page);
   await ctx.close();
@@ -115,8 +138,17 @@ console.log('\n== hands-free audio');
   await page.getByRole('button', { name: /Listen hands-free/ }).click();
   await page.locator('#flashcardContent').getByText(/Hands-free/).waitFor({ timeout: 4000 }).then(() => ok('hands-free started'), () => bad('hands-free did not start'));
   await page.waitForTimeout(1500);
-  const spoken = await page.evaluate(() => window.__spoken.length);
-  if (spoken < 1) bad('hands-free spoke nothing'); else ok('hands-free spoke ' + spoken + ' line(s)');
+  // counting utterances is not enough: check WHAT was spoken. It must be real speech, and it must include the
+  // current card (its prompt word or its answer), not just any noise the stub happened to emit.
+  const spokenInfo = await page.evaluate(() => {
+    const first = (window.__ui.flashcardMode.cards || [])[0] || {};
+    return { texts: window.__spoken.slice(), prompt: (first.bw && first.bw[0]) || '', answer: first.ans || '' };
+  });
+  const said = spokenInfo.texts.join(' ');
+  if (spokenInfo.texts.length < 1) bad('hands-free spoke nothing');
+  else if (!spokenInfo.texts.some((t) => t && t.trim().length >= 3)) bad('hands-free spoke only filler: ' + JSON.stringify(spokenInfo.texts));
+  else if (spokenInfo.prompt && spokenInfo.answer && !said.includes(spokenInfo.prompt) && !said.includes(spokenInfo.answer)) bad('hands-free did not speak the current card (expected "' + spokenInfo.prompt + '" or "' + spokenInfo.answer + '", heard: ' + said.slice(0, 120) + ')');
+  else ok('hands-free spoke the current card in ' + spokenInfo.texts.length + ' line(s)');
   await page.getByRole('button', { name: /Stop/ }).click();
   await page.waitForTimeout(800);
   if (!(await page.locator('#flashcardContent').getByText(/finished/i).count())) bad('stopping did not finish the session'); else ok('stop works');
