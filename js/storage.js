@@ -122,6 +122,8 @@ var DEFAULTS = {
     dashPromptSeen: false,  // asked once, after 3 games, whether to switch the phone default to double-tap
     dashDefaultSeen: false,
     scoreBests: {},       // best score already sent to the leaderboard, by "mode|season" (see scorebest.js)
+    pendingScoreSubmissions: [], // leaderboard scores queued but not yet confirmed sent (retried on launch and sign-in; see main.js)
+    interruptedRun: {},   // the latest snapshot of a run still in progress ({} = none): if the app dies mid run, the run is finalized from this on the next launch
     promptState: {},      // when the share / rate / account asks were last shown (see prompts.js)
     runsFinished: 0,
     explored: [],   // menus and tabs the player has opened (red "new" dots go away for these; see discoverydots.js)

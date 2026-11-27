@@ -982,6 +982,7 @@ function launchRun(mode, orderedCardIds, modeConfig) {
   currentRunId = generateRunId();
   runFinalized = false;
   runStartTime = Date.now();
+  storage.set('interruptedRun', {}); // a new run supersedes any snapshot of the last one
 
   // Canonical options object. Subject/exam/source filters are read from
   // storage by the engine when it builds each card pool.
@@ -1059,11 +1060,119 @@ function buildRunSummary(gameRef) {
 }
 
 // =========================================================================
+//  LEADERBOARD SCORE OUTBOX + INTERRUPTED RUN SNAPSHOTS
+// =========================================================================
+// A run's score used to be submitted exactly once, at run end: if the tab closed (or the network
+// dropped) before the board answered, that score was lost for good, and a run quit mid way lost its
+// answers entirely. Two stored pieces close both holes:
+//   - pendingScoreSubmissions: a score is queued BEFORE it is sent and removed only when the board
+//     confirms it; the queue is flushed on launch, on sign-in, and right after queueing. The board's
+//     insert is idempotent by run id, so a retry can never post a run twice.
+//   - interruptedRun: a snapshot of the run in progress, refreshed after every encounter and when
+//     the page hides; on the next launch a snapshot that was never finalized is finalized from it.
+
+function queueScoreSubmission(payload, season) {
+  var entries = (storage.get('pendingScoreSubmissions') || []).filter(function (e) { return e && e.payload && e.payload.runId !== payload.runId; });
+  entries.push({ payload: payload, season: season || '' });
+  storage.set('pendingScoreSubmissions', entries);
+}
+
+var scoreFlushRunning = false;
+function flushPendingScores() {
+  if (scoreFlushRunning) return;
+  if (!leaderboardModule || !leaderboardModule.leaderboard.isAuthenticated()) return;
+  var entries = storage.get('pendingScoreSubmissions') || [];
+  if (!entries.length) return;
+  scoreFlushRunning = true;
+  var lb = leaderboardModule.leaderboard;
+  var jobs = entries.map(function (entry) {
+    var season = entry.season || lb.getSeasonKey();
+    // A better score for this mode and season is already recorded as sent (perhaps from another
+    // device): this entry has nothing left to add.
+    if (!beatsBest(storage.get('scoreBests'), entry.payload.mode, season, entry.payload.score)) {
+      return Promise.resolve(entry.payload.runId);
+    }
+    return lb.submitVerifiedScore(entry.payload).then(function (res) {
+      if (!res.success) {
+        reportError(new Error(res.error), { system: 'leaderboard', operation: 'submitScore', recoverable: true });
+        return null; // stays queued for the next flush
+      }
+      storage.set('scoreBests', recordBest(storage.get('scoreBests'), entry.payload.mode, season, entry.payload.score));
+      syncWeeklyStudy();
+      return entry.payload.runId;
+    }).catch(function (e) {
+      reportError(e, { system: 'leaderboard', operation: 'submitScore', recoverable: true });
+      return null;
+    });
+  });
+  Promise.all(jobs).then(function (doneIds) {
+    var done = {};
+    doneIds.forEach(function (id) { if (id) done[id] = true; });
+    var left = (storage.get('pendingScoreSubmissions') || []).filter(function (e) { return !(e && e.payload && done[e.payload.runId]); });
+    storage.set('pendingScoreSubmissions', left);
+    scoreFlushRunning = false;
+    if (left.length) flushPendingScores(); // entries queued while this flush was running
+  });
+}
+
+/** Snapshot the run in progress, so a dead app does not take the run's answers with it. */
+function snapshotInterruptedRun() {
+  if (runFinalized || !game || !currentRunId) return;
+  if (game._tutorial || isMultiplayerMode(game.mode)) return;
+  if (!game.encountersDone) return;
+  var summary = buildRunSummary(game);
+  summary.endReason = 'interrupted';
+  summary.completed = false;
+  summary.dailyCompleted = false;
+  summary.userSpeed = game.userSpeed;
+  summary.encounters = (game.runCards || []).map(function (rc, i) {
+    return {
+      eventId: currentRunId + '-' + i, encounterIndex: i,
+      cardId: rc.card && rc.card.id, subject: rc.card && rc.card.subj,
+      presentedAnswers: rc.presentedAnswers || [null, null, null],
+      correctLane: rc.correctLane || 0, committedLane: rc.committedLane || 0,
+      selectedAnswer: rc.choice, correct: rc.ok,
+      rushed: rc.rushed || false, rushStacks: rc.rushStacks || 0,
+      clueShownAt: rc.clueShownAt || 0, firstInputAt: rc.firstInputAt || null,
+      committedAt: rc.committedAt || 0, resolvedAt: rc.resolvedAt || 0,
+      decisionMs: rc.decisionMs || null, scoreAwarded: rc.scoreAwarded || 0, coinsAwarded: rc.coinsAwarded || 0
+    };
+  }).filter(function (e) { return typeof e.cardId === 'string'; });
+  storage.set('interruptedRun', summary);
+}
+
+/** Finalize a run the app died in the middle of (called once, right after the save loads). */
+function recoverInterruptedRun() {
+  var saved = storage.get('interruptedRun');
+  if (!saved || !saved.runId) return;
+  storage.set('interruptedRun', {});
+  if (!saved.encountersCompleted) return;
+  var result = storage.finalizeRun(saved); // idempotent by runId: a run that did finish is a no-op here
+  if (!result.applied) return;
+  awardRunXp(saved);
+  if (storage.get('profileVisible') && storage.get('profileName') && isRankedRun(saved) && !isUnrankedMode(saved.mode)) {
+    queueScoreSubmission({
+      runId: saved.runId,
+      playerName: storage.get('profileName'),
+      avatar: storage.get('profilePicture') || 'avatar_intern',
+      score: saved.score,
+      correct: saved.correct,
+      wrong: saved.wrong,
+      bestStreak: saved.bestStreak,
+      userSpeed: saved.userSpeed || 1,
+      mode: saved.mode,
+      badges: storage.get('selectedBadges') || []
+    }, '');
+  }
+}
+
+// =========================================================================
 //  FINALIZE RUN (exactly once)
 // =========================================================================
 function finalizeRun(gameRef) {
   if (runFinalized) return;
   runFinalized = true;
+  storage.set('interruptedRun', {}); // the run finished properly: its snapshot must never be recovered
 
   // The engine's canonical summary is persisted by storage.finalizeRun only
   // (idempotent by runId); nothing else writes run totals.
@@ -1127,11 +1236,13 @@ function finalizeRun(gameRef) {
   var canPost = leaderboardModule && storage.get('profileVisible') && storage.get('profileName') &&
     leaderboardModule.leaderboard.isAuthenticated() && isRankedRun(summary);
   if (canPost) postActivities(summary, result);
-  // Only a run that beats the player's best for this mode this season is sent: the board keeps one entry per player
+  // Only a run that beats the player's best for this mode this season is sent: the board keeps one entry per player.
+  // The score goes through the outbox (queued first, removed when the board confirms), so a tab that closes
+  // before the answer comes back no longer loses the score.
   var season = canPost ? leaderboardModule.leaderboard.getSeasonKey() : '';
   if (canPost && summary.encountersCompleted > 0 && !isUnrankedMode(summary.mode) &&
       beatsBest(storage.get('scoreBests'), summary.mode, season, summary.score)) {
-    leaderboardModule.leaderboard.submitVerifiedScore({
+    queueScoreSubmission({
       runId: summary.runId,
       playerName: storage.get('profileName'),
       avatar: storage.get('profilePicture') || 'avatar_intern',
@@ -1142,14 +1253,8 @@ function finalizeRun(gameRef) {
       userSpeed: gameRef.userSpeed,
       mode: summary.mode,
       badges: storage.get('selectedBadges') || []
-    }).then(function (res) {
-      if (!res.success) {
-        reportError(new Error(res.error), { system: 'leaderboard', operation: 'submitScore', recoverable: true });
-        return;
-      }
-      storage.set('scoreBests', recordBest(storage.get('scoreBests'), summary.mode, season, summary.score));
-      syncWeeklyStudy();
-    });
+    }, season);
+    flushPendingScores();
   }
 }
 
@@ -1282,6 +1387,7 @@ function init() {
     Object.defineProperty(window, '__cards', { get: function () { return CARDS; } }); // (CARDS is filled in after the first paint)
   }
   storage.load();
+  recoverInterruptedRun();
   if (clipModule) clipModule.then(function (m) { m.prepareClip(storage); });
   // In the phone apps the save is also kept in a file (the browser storage can be cleared by the system); if this game started
   // empty and the file holds a fuller save, it is offered back before the first-run tutorial
@@ -1476,7 +1582,7 @@ function init() {
     // someone else on this device (signed out, or another account): never show them the last account's Pro
     mod.leaderboard.onAuthEvent(function (event) {
       if (event === 'SIGNED_OUT') forgetServerPro();
-      else if (event === 'SIGNED_IN') refreshPro({ lb: mod.leaderboard });
+      else if (event === 'SIGNED_IN') { refreshPro({ lb: mod.leaderboard }); flushPendingScores(); }
     });
     mod.leaderboard.init().then(function () { refreshPro({ lb: mod.leaderboard }); if (webPayReturn !== 'billing') checkCancelFollowThrough(mod.leaderboard).then(function (r) { if (r) announceCancel(r); }); });
     document.addEventListener('ld:pro-trial-started', function () { ui._showToast('Your free 7-day Pro trial has started! 🎉', 4000); });
@@ -1517,6 +1623,7 @@ function init() {
     }
     mod.leaderboard.init().then(function () {
       if (pendingDeepLink) { handleDeepLink(pendingDeepLink); pendingDeepLink = null; }
+      flushPendingScores();
       startCloudSync(mod.leaderboard);
       mountLeaderboard();
       if (profileCorner && profileCorner.onLeaderboardReady) profileCorner.onLeaderboardReady();
@@ -1571,6 +1678,8 @@ function init() {
     }
     // Route to multiplayer (once)
     sendMultiplayerEncounterResult(wasCorrect, card);
+    // Keep the interrupted-run snapshot current: if the app dies now, this run is recovered on launch
+    snapshotInterruptedRun();
   };
 
   game.onRunEnd = function () {
@@ -2000,7 +2109,7 @@ function init() {
     }
   });
   // Closing the page or sending it to the back (iOS fires this instead of visibilitychange): same
-  window.addEventListener('pagehide', function () { audio.pause('pagehide'); });
+  window.addEventListener('pagehide', function () { audio.pause('pagehide'); snapshotInterruptedRun(); });
   window.addEventListener('pageshow', function () { if (document.visibilityState === 'visible') audio.resume('pageshow'); });
 
   // ==========================
