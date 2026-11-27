@@ -16,7 +16,7 @@
 // Every database call goes to the language_dash schema, and only a Language Dash member may buy.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.117.3';
-import { PRODUCTS, LIFETIME_DAYS, chargeReturned, configuredProducts, describePrice, checkoutParams, itemCheckoutParams, portalConfig, productFor, grantsFromSubscriptions, periodEnd } from '../_shared/billing.js';
+import { PRODUCTS, LIFETIME_DAYS, APP_ID, chargeReturned, configuredProducts, describePrice, checkoutParams, itemCheckoutParams, portalConfig, productFor, grantsFromSubscriptions, periodEnd } from '../_shared/billing.js';
 import { isPremiumItem } from '../_shared/premium.js';
 import { hasAppleLogin, appleConfigured, appleCodeForm, markIosToken } from '../_shared/applesignin.js';
 import { cancelBillingSubscriptions } from '../_shared/stripecancel.js';
@@ -179,16 +179,21 @@ Deno.serve(async function (req) {
           if (r.error) throw new Error(r.error.message);
           granted.push(g.plan);
         }
-        // a lifetime purchase (and not refunded)
+        // a lifetime purchase (and not refunded). Only this app's own sessions count, and only the caller's:
+        // the Stripe customer is shared with the other apps on this account, so another app's lifetime sale
+        // (or another member's session) must never be granted here.
         var sessions = await stripe('checkout/sessions?customer=' + encodeURIComponent(customerId) + '&limit=100&expand[]=data.payment_intent.latest_charge.dispute');
+        var mine = function (x) {
+          return x.metadata && x.metadata.app === APP_ID && (!x.metadata.user_id || x.metadata.user_id === user.id);
+        };
         var life = ((sessions && sessions.data) || []).filter(function (x) {
           var ch = x.payment_intent && x.payment_intent.latest_charge;
-          return x.status === 'complete' && x.payment_status === 'paid' && x.metadata && x.metadata.plan === 'lifetime' && ch && typeof ch === 'object' && !chargeReturned(ch);
+          return x.status === 'complete' && x.payment_status === 'paid' && mine(x) && x.metadata.plan === 'lifetime' && ch && typeof ch === 'object' && !chargeReturned(ch);
         })[0];
         // premium items bought with this customer (and not refunded)
         var bought = ((sessions && sessions.data) || []).filter(function (x) {
           var ch = x.payment_intent && x.payment_intent.latest_charge;
-          return x.status === 'complete' && x.payment_status === 'paid' && x.metadata && x.metadata.kind === 'item' && x.metadata.item_id && ch && typeof ch === 'object' && !chargeReturned(ch);
+          return x.status === 'complete' && x.payment_status === 'paid' && mine(x) && x.metadata.kind === 'item' && x.metadata.item_id && ch && typeof ch === 'object' && !chargeReturned(ch);
         });
         for (var it of bought) {
           var ir = await admin.rpc('pro_grant_item', { p_user: user.id, p_item: it.metadata.item_id, p_source: 'stripe', p_ref: typeof it.payment_intent === 'string' ? it.payment_intent : (it.payment_intent && it.payment_intent.id) || null });

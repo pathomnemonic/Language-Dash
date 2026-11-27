@@ -2,7 +2,7 @@
 -- Language Dash in a SHARED Supabase project: everything lives in the schema "language_dash". Nothing is created in "public".
 --
 -- GENERATED FILE - do not edit by hand. Regenerate with:   node tools/ld-migrate/generate.mjs
--- Source: database/*.sql (schema.sql=a1c52d59bd0f1de2 policies.sql=f9e6655dc98820b7 cohorts.sql=c29e96b391e2d298 discovery.sql=bca2b4a571e153a5 pro.sql=dec955a0d135e8c6 analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
+-- Source: database/*.sql (schema.sql=a1c52d59bd0f1de2 policies.sql=f9e6655dc98820b7 cohorts.sql=c29e96b391e2d298 discovery.sql=bca2b4a571e153a5 pro.sql=cec067c3bcfe5ec8 analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
 -- How it works and how to verify it: docs/SHARED-PROJECT-MIGRATION.md
 --
 -- Safe to run more than once. Runs in ONE transaction; the guard below aborts if search_path did not take effect, so a
@@ -2374,6 +2374,26 @@ ALTER TABLE pro_entitlements ADD COLUMN IF NOT EXISTS started_at timestamptz NOT
 -- subscription grant clears it (the subscription is billing again).
 ALTER TABLE pro_entitlements ADD COLUMN IF NOT EXISTS cancelled_at timestamptz;
 
+-- Every independent grant of Pro a member holds, one row per (plan, source): a redeemed code, a Stripe subscription,
+-- a store purchase, a trial. pro_entitlements above is the summary the app reads (the furthest-reaching grant names
+-- it); this ledger is what the grant and revoke functions keep, so taking one grant back (a refunded lifetime, say)
+-- can never erase another the member still holds (a code they redeemed). pro_sync_entitlement rebuilds the summary
+-- from here. Service role only, like the summary.
+CREATE TABLE IF NOT EXISTS pro_grants (
+  user_id uuid NOT NULL,
+  plan text NOT NULL,
+  source text NOT NULL DEFAULT 'manual',
+  until timestamptz NOT NULL,
+  trial boolean NOT NULL DEFAULT false,
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (user_id, plan, source)
+);
+ALTER TABLE pro_grants ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON pro_grants FROM PUBLIC, anon, authenticated;
+
+-- (No backfill statement here: pro_sync_entitlement seeds the ledger from a member's summary row the first
+-- time it runs for them, and the live project was seeded with the same insert during the rollout.)
+
 -- Locker items bought with real money (the premium items). One row per member and item; kept for good unless refunded.
 CREATE TABLE IF NOT EXISTS pro_items (
   user_id uuid NOT NULL,
@@ -2489,28 +2509,64 @@ BEGIN
   RETURN jsonb_build_object('ok', true, 'until', new_until, 'days', 7);
 END $$;
 
--- Give Pro for some days (adds to what is left). Service role / SQL editor only.
+-- Rebuild the pro_entitlements summary from the member's ledger of grants (pro_grants): the summary's until is the
+-- furthest any grant reaches, and its plan, source and trial come from that grant. A member whose summary predates
+-- the ledger is seeded from it first, so the summary they hold becomes their first grant and nothing is lost.
+-- started_at follows the summary's own rule: kept across renewals, restarted after a lapse or when a trial turns
+-- into a purchase. cancelled_at is not the ledger's business and is never touched here. Internal: service role only.
+CREATE OR REPLACE FUNCTION pro_sync_entitlement(p_user uuid) RETURNS void
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
+DECLARE cur pro_entitlements%ROWTYPE; win pro_grants%ROWTYPE; new_started timestamptz;
+BEGIN
+  SELECT * INTO cur FROM pro_entitlements WHERE user_id = p_user;
+  IF cur.user_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM pro_grants WHERE user_id = p_user) THEN
+    INSERT INTO pro_grants (user_id, plan, source, until, trial, updated_at)
+    VALUES (p_user, cur.plan, cur.source, cur.until, cur.trial, cur.updated_at) ON CONFLICT DO NOTHING;
+    SELECT * INTO cur FROM pro_entitlements WHERE user_id = p_user;
+  END IF;
+  SELECT * INTO win FROM pro_grants WHERE user_id = p_user
+    ORDER BY (until > now()) DESC, until DESC, updated_at DESC LIMIT 1;
+  IF NOT FOUND THEN RETURN; END IF;
+  new_started := CASE
+    WHEN cur.user_id IS NULL THEN now()
+    WHEN cur.until <= now() THEN now()
+    WHEN cur.trial AND NOT win.trial THEN now()
+    ELSE cur.started_at END;
+  INSERT INTO pro_entitlements AS e (user_id, plan, source, until, trial, updated_at, started_at)
+  VALUES (p_user, win.plan, win.source, win.until, win.trial, now(), new_started)
+  ON CONFLICT (user_id) DO UPDATE SET
+    plan = excluded.plan, source = excluded.source, until = excluded.until, trial = excluded.trial,
+    updated_at = now(), started_at = excluded.started_at;
+END $$;
+
+-- Give Pro for some days (adds to what that grant already has left). Service role / SQL editor only.
 CREATE OR REPLACE FUNCTION pro_grant(p_user uuid, p_days integer, p_plan text DEFAULT 'pro', p_source text DEFAULT 'manual', p_trial boolean DEFAULT false) RETURNS timestamptz
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
-DECLARE new_until timestamptz;
+DECLARE new_until timestamptz; plan_v text := coalesce(p_plan, 'pro'); source_v text := coalesce(p_source, 'manual');
 BEGIN
   IF p_days IS NULL OR p_days < 1 OR p_days > 3650 THEN RAISE EXCEPTION 'days must be 1 to 3650'; END IF;
-  INSERT INTO pro_entitlements AS e (user_id, plan, source, until, trial, updated_at, started_at)
-  VALUES (p_user, coalesce(p_plan, 'pro'), coalesce(p_source, 'manual'), now() + make_interval(days => p_days), coalesce(p_trial, false), now(), now())
-  ON CONFLICT (user_id) DO UPDATE SET
-    until = greatest(e.until, now()) + make_interval(days => p_days),
-    plan = excluded.plan, source = excluded.source, trial = excluded.trial AND e.until > now(), updated_at = now(),
-    cancelled_at = CASE WHEN excluded.source = 'stripe' AND excluded.plan IN ('monthly', 'yearly', 'pass3m') THEN NULL ELSE e.cancelled_at END,
-    started_at = CASE WHEN e.until <= now() OR (e.trial AND NOT excluded.trial) THEN now() ELSE e.started_at END
-  RETURNING until INTO new_until;
+  PERFORM pro_sync_entitlement(p_user);
+  INSERT INTO pro_grants AS g (user_id, plan, source, until, trial, updated_at)
+  VALUES (p_user, plan_v, source_v, now() + make_interval(days => p_days), coalesce(p_trial, false), now())
+  ON CONFLICT (user_id, plan, source) DO UPDATE SET
+    until = greatest(g.until, now()) + make_interval(days => p_days),
+    trial = excluded.trial AND g.until > now(), updated_at = now();
+  -- a fresh subscription grant means the subscription is billing again (see pro_set_billing_cancelled)
+  IF source_v = 'stripe' AND plan_v IN ('monthly', 'yearly', 'pass3m') THEN
+    UPDATE pro_entitlements SET cancelled_at = NULL WHERE user_id = p_user;
+  END IF;
+  PERFORM pro_sync_entitlement(p_user);
+  SELECT until INTO new_until FROM pro_entitlements WHERE user_id = p_user;
   RETURN new_until;
 END $$;
 
--- End someone's Pro now. Service role / SQL editor only.
+-- End someone's Pro now: every grant they hold, not just the one the summary happens to name. Service role only.
 CREATE OR REPLACE FUNCTION pro_revoke(p_user uuid) RETURNS void
-LANGUAGE sql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
+BEGIN
+  UPDATE pro_grants SET until = now(), updated_at = now() WHERE user_id = p_user;
   UPDATE pro_entitlements SET until = now(), updated_at = now() WHERE user_id = p_user;
-$$;
+END $$;
 
 -- Give a member a premium Locker item they paid for (safe to repeat). Service role only.
 -- Returns 'granted' (new), 'already' (the same payment again, or an older item with no payment on record) or 'duplicate'
@@ -2546,11 +2602,16 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = language_dash, pg_temp AS
   SELECT EXISTS (SELECT 1 FROM pro_items WHERE user_id = p_user AND item_id = p_item);
 $$;
 
--- Take back only a particular plan (a refunded lifetime must not end a subscription the same person also holds). Service role only.
+-- Take back only a particular plan (a refunded lifetime must not end a subscription the same person also holds —
+-- nor a code grant, nor anything else in the ledger: only that plan's grants end, and the summary is rebuilt from
+-- what remains). Service role only.
 CREATE OR REPLACE FUNCTION pro_revoke_plan(p_user uuid, p_plan text) RETURNS void
-LANGUAGE sql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
-  UPDATE pro_entitlements SET until = now(), updated_at = now() WHERE user_id = p_user AND plan = p_plan;
-$$;
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
+BEGIN
+  PERFORM pro_sync_entitlement(p_user);
+  UPDATE pro_grants SET until = now(), updated_at = now() WHERE user_id = p_user AND plan = p_plan;
+  PERFORM pro_sync_entitlement(p_user);
+END $$;
 
 -- Record that a member's Stripe subscription was cancelled (true) or is billing again (false). The paid time in
 -- `until` does not change: only the "still billing" fact that delete_my_ld_data checks. Called by the checkout
@@ -2568,6 +2629,7 @@ CREATE OR REPLACE FUNCTION pro_forget_user(p_user uuid) RETURNS void
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
 BEGIN
   DELETE FROM pro_entitlements WHERE user_id = p_user;
+  DELETE FROM pro_grants WHERE user_id = p_user;
   DELETE FROM pro_items WHERE user_id = p_user;
   DELETE FROM pro_library WHERE user_id = p_user;
   DELETE FROM pro_trials WHERE user_id = p_user;
@@ -2670,23 +2732,28 @@ BEGIN
 END $$;
 
 -- Set Pro to last until an exact moment (a web subscription: the end of the period just paid). Never shortens a longer
--- lifetime or code grant. Service role only.
+-- lifetime or code grant: the grant is recorded in the ledger under its own (plan, source), and the summary keeps
+-- whichever grant reaches furthest. Service role only.
 CREATE OR REPLACE FUNCTION pro_grant_until(p_user uuid, p_until timestamptz, p_plan text DEFAULT 'pro', p_source text DEFAULT 'stripe', p_trial boolean DEFAULT false) RETURNS timestamptz
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
-DECLARE new_until timestamptz;
+DECLARE new_until timestamptz; plan_v text := coalesce(p_plan, 'pro'); source_v text := coalesce(p_source, 'stripe');
 BEGIN
   IF p_until IS NULL OR p_until > now() + interval '3651 days' THEN RAISE EXCEPTION 'until is out of range'; END IF;
-  INSERT INTO pro_entitlements AS e (user_id, plan, source, until, trial, updated_at, started_at)
-  VALUES (p_user, coalesce(p_plan, 'pro'), coalesce(p_source, 'stripe'), p_until, coalesce(p_trial, false), now(), now())
-  ON CONFLICT (user_id) DO UPDATE SET
-    until = greatest(e.until, excluded.until),
-    plan = CASE WHEN excluded.until >= e.until THEN excluded.plan ELSE e.plan END,
-    source = CASE WHEN excluded.until >= e.until THEN excluded.source ELSE e.source END,
-    trial = excluded.trial AND excluded.until >= e.until,
-    cancelled_at = CASE WHEN excluded.source = 'stripe' AND excluded.plan IN ('monthly', 'yearly', 'pass3m') AND excluded.until >= e.until THEN NULL ELSE e.cancelled_at END,
-    updated_at = now(),
-    started_at = CASE WHEN e.until <= now() OR (e.trial AND NOT excluded.trial) THEN now() ELSE e.started_at END
-  RETURNING until INTO new_until;
+  PERFORM pro_sync_entitlement(p_user);
+  INSERT INTO pro_grants AS g (user_id, plan, source, until, trial, updated_at)
+  VALUES (p_user, plan_v, source_v, p_until, coalesce(p_trial, false), now())
+  ON CONFLICT (user_id, plan, source) DO UPDATE SET
+    until = greatest(g.until, excluded.until),
+    trial = CASE WHEN excluded.until >= g.until THEN excluded.trial ELSE g.trial END, updated_at = now();
+  PERFORM pro_sync_entitlement(p_user);
+  -- a subscription grant that ends up naming the summary means that subscription is the live one: it is billing
+  -- again, so any recorded cancellation no longer holds (the summary's plan and source are the winning grant's,
+  -- and (plan, source) is the ledger key, so this can only be this grant)
+  IF source_v = 'stripe' AND plan_v IN ('monthly', 'yearly', 'pass3m')
+     AND EXISTS (SELECT 1 FROM pro_entitlements WHERE user_id = p_user AND plan = plan_v AND source = source_v) THEN
+    UPDATE pro_entitlements SET cancelled_at = NULL WHERE user_id = p_user;
+  END IF;
+  SELECT until INTO new_until FROM pro_entitlements WHERE user_id = p_user;
   RETURN new_until;
 END $$;
 
@@ -2737,6 +2804,7 @@ REVOKE ALL ON FUNCTION get_my_pro() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_grant(uuid, integer, text, text, boolean) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_revoke(uuid) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_revoke_plan(uuid, text) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION pro_sync_entitlement(uuid) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_set_billing_cancelled(uuid, boolean) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_grant_item(uuid, text, text, text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_revoke_item(uuid, text, text) FROM PUBLIC, anon, authenticated;
@@ -4074,7 +4142,7 @@ BEGIN
 END $$;
 
 -- ===================================================================================================================
--- MEMBER GATE (generated: 36 tables). A RESTRICTIVE policy is ANDed with every other policy, so a signed-in
+-- MEMBER GATE (generated: 37 tables). A RESTRICTIVE policy is ANDed with every other policy, so a signed-in
 -- non-member sees and writes nothing, whatever the template's own policies say. service_role and the table owner bypass RLS.
 -- ===================================================================================================================
 
@@ -4162,6 +4230,9 @@ CREATE POLICY ld_member_gate ON language_dash.group_join_requests AS RESTRICTIVE
 DROP POLICY IF EXISTS ld_member_gate ON language_dash.pro_entitlements;
 CREATE POLICY ld_member_gate ON language_dash.pro_entitlements AS RESTRICTIVE FOR ALL TO authenticated
   USING ((SELECT language_dash.is_member())) WITH CHECK ((SELECT language_dash.is_member()));
+DROP POLICY IF EXISTS ld_member_gate ON language_dash.pro_grants;
+CREATE POLICY ld_member_gate ON language_dash.pro_grants AS RESTRICTIVE FOR ALL TO authenticated
+  USING ((SELECT language_dash.is_member())) WITH CHECK ((SELECT language_dash.is_member()));
 DROP POLICY IF EXISTS ld_member_gate ON language_dash.pro_items;
 CREATE POLICY ld_member_gate ON language_dash.pro_items AS RESTRICTIVE FOR ALL TO authenticated
   USING ((SELECT language_dash.is_member())) WITH CHECK ((SELECT language_dash.is_member()));
@@ -4188,7 +4259,7 @@ CREATE POLICY ld_member_gate ON language_dash.pro_store_purchases AS RESTRICTIVE
   USING ((SELECT language_dash.is_member())) WITH CHECK ((SELECT language_dash.is_member()));
 
 -- ===================================================================================================================
--- MEMBER DATA WIPE (generated from the table classification: 35 tables, children before parents)
+-- MEMBER DATA WIPE (generated from the table classification: 36 tables, children before parents)
 -- ===================================================================================================================
 
 -- Removes every Language Dash row that belongs to p_user, then the membership. NEVER touches auth.users (the shared sign-in).
@@ -4239,6 +4310,8 @@ BEGIN
   GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('pro_attempts', n);
   DELETE FROM language_dash.pro_entitlements WHERE user_id = p_user;
   GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('pro_entitlements', n);
+  DELETE FROM language_dash.pro_grants WHERE user_id = p_user;
+  GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('pro_grants', n);
   DELETE FROM language_dash.pro_items WHERE user_id = p_user;
   GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('pro_items', n);
   DELETE FROM language_dash.pro_library WHERE user_id = p_user;
