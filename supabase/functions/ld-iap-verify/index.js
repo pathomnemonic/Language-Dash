@@ -87,8 +87,10 @@ Deno.serve(async function (req) {
       if (platform === 'android') { key = await tokenKey(token); check = await googleCheck(product, productId, token, nowSec); } else {
         check = await appleCheck(token, nowSec);
         key = check && check.key;
-        if (check && check.productId && check.productId !== productId) return json({ error: 'That purchase is for a different product.' }, 400);
       }
+      // The purchase the store describes must be the product the app asked about: on Android the subscription
+      // lookup is by token alone, so without this a token for one plan could be claimed under another.
+      if (check && check.productId && check.productId !== productId) return json({ error: 'That purchase is for a different product.' }, 400);
     } catch (e) {
       console.error('ld-iap-verify: store check failed', e && e.message);
       return json({ error: 'Could not check with the store just now. Please try again.' }, 502); // (nothing is taken away on an error)
