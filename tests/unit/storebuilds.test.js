@@ -44,6 +44,7 @@ describe('both store builds', () => {
     // market:// is only ever produced inside the android branch
     const lines = review.split('\n');
     const i = lines.findIndex((l) => l.includes("'market://"));
+    expect(i).toBeGreaterThanOrEqual(0); // the marker must be there: at -1 the slice below would cover almost the whole file and pass on any "android" in it
     expect(lines.slice(Math.max(0, i - 3), i).join('\n')).toMatch(/android/);
   });
 
