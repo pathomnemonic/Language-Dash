@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS cohort_members (
   PRIMARY KEY (cohort_id, user_id)
 );
 CREATE INDEX IF NOT EXISTS cohort_members_cohort_idx ON cohort_members (cohort_id);
+-- At most one leader per cohort, enforced by the storage itself (cohort_set_role also locks the rows).
+CREATE UNIQUE INDEX IF NOT EXISTS cohort_members_one_leader_idx ON cohort_members (cohort_id) WHERE role = 'leader';
 
 CREATE TABLE IF NOT EXISTS cohort_war_points (
   week       text NOT NULL,
@@ -191,12 +193,20 @@ BEGIN
   IF p_role NOT IN ('leader', 'officer', 'member') THEN RAISE EXCEPTION 'Bad role'; END IF;
   SELECT * INTO mine FROM cohort_members WHERE user_id = me;
   IF NOT FOUND OR mine.role <> 'leader' THEN RAISE EXCEPTION 'Only the leader can do that'; END IF;
+  -- Lock the cohort's membership rows and check leadership again on the locked rows: two overlapping
+  -- transfers (two devices, a double submit) could otherwise both pass the check above on the same
+  -- pre-transfer snapshot, promote two different members, and leave the cohort with two leaders.
+  PERFORM 1 FROM cohort_members WHERE cohort_id = mine.cohort_id FOR UPDATE;
+  SELECT * INTO mine FROM cohort_members WHERE user_id = me;
+  IF NOT FOUND OR mine.role <> 'leader' THEN RAISE EXCEPTION 'Only the leader can do that'; END IF;
   SELECT * INTO theirs FROM cohort_members WHERE user_id = p_user AND cohort_id = mine.cohort_id;
   IF NOT FOUND OR p_user = me THEN RAISE EXCEPTION 'Not a member of your cohort'; END IF;
-  UPDATE cohort_members SET role = p_role WHERE cohort_id = mine.cohort_id AND user_id = p_user;
+  -- A leadership transfer steps down FIRST: the one-leader index allows no moment with two leaders,
+  -- and the call is atomic, so a failure after the step-down restores the old leader.
   IF p_role = 'leader' THEN
     UPDATE cohort_members SET role = 'officer' WHERE cohort_id = mine.cohort_id AND user_id = me;
   END IF;
+  UPDATE cohort_members SET role = p_role WHERE cohort_id = mine.cohort_id AND user_id = p_user;
 END;
 $$;
 
@@ -316,7 +326,12 @@ DECLARE
 BEGIN
   SELECT cohort_id INTO cid FROM cohort_members WHERE user_id = p_user;
   IF cid IS NULL THEN RETURN; END IF;
-  SELECT coalesce(points, 0) INTO have FROM cohort_war_points WHERE week = wk AND cohort_id = cid AND user_id = p_user;
+  -- One lock per player and week, then the cap is measured on everything the player has earned this week
+  -- in every cohort: the limit is per player per week (as the war rules state), so leaving and joining
+  -- another cohort cannot reset it, and two awards landing at once cannot both spend the same allowance
+  -- (the old code computed the award from an unlocked read of just the current cohort's row).
+  PERFORM pg_advisory_xact_lock(hashtextextended(p_user::text || ':' || wk, 0));
+  SELECT coalesce(sum(points), 0) INTO have FROM cohort_war_points WHERE week = wk AND user_id = p_user;
   have := coalesce(have, 0);
   give := least(p_points, 100 - have);   -- at most 100 points per player per week
   IF give <= 0 THEN RETURN; END IF;
@@ -332,7 +347,9 @@ BEGIN
   IF NEW.settled AND NOT OLD.settled THEN
     IF NEW.winner_id IS NOT NULL THEN
       PERFORM cohort_add_war_points(NEW.winner_id, 10);
-    ELSIF EXISTS (SELECT 1 FROM ranked_reports r WHERE r.match_id = NEW.id AND r.outcome = 'draw') THEN
+    ELSIF NEW.outcome = 'draw' THEN
+      -- the settled outcome, recorded by ranked_try_settle: a match whose reports disagreed settles as
+      -- 'disputed' and pays nothing, even when one side's report claimed a draw
       PERFORM cohort_add_war_points(NEW.host_id, 3);
       PERFORM cohort_add_war_points(NEW.guest_id, 3);
     END IF;
