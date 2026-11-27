@@ -52,8 +52,15 @@ const SKIP_LANG_LINES = [/Spelling note/i];   // not a gloss problem
 
 function idsFromLine(line) {
   const m = line.match(/^-\s+#?(\d+(?:\s*[/,]\s*#?\d+)*)(?=\s|:)/);
-  if (!m) return null;
-  return m[1].split(/[/,]/).map((x) => parseInt(x.replace('#', ''), 10)).filter((n) => n > 0);
+  if (m) return m[1].split(/[/,]/).map((x) => parseInt(x.replace('#', ''), 10)).filter((n) => n > 0);
+  // a range ("262-266") names every id in between; the span is capped so a typo cannot hold half the deck
+  const r = line.match(/^-\s+#?(\d+)\s*-\s*#?(\d+)(?=\s|:)/);
+  if (r) {
+    const a = parseInt(r[1], 10);
+    const b = parseInt(r[2], 10);
+    if (b >= a && b - a <= 50) { const out = []; for (let n = a; n <= b; n++) out.push(n); return out; }
+  }
+  return null;
 }
 
 function section(text) {
@@ -96,7 +103,8 @@ for (const f of readdirSync(dir).filter((x) => x.endsWith('.md')).sort()) {
         if (want && /^[a-z ]+$/.test(want) && concepts[id - 1] && concepts[id - 1].en !== want) {
           let found = 0;
           for (let d = 1; d <= 4 && !found; d++) for (const j of [id - d, id + d]) if (concepts[j - 1] && concepts[j - 1].en === want) { found = j; break; }
-          if (found) { corrected.push(lang + ' #' + id + ' "' + want + '" -> #' + found); use = found; } else unverified.push(lang + ' #' + id + ' "' + want + '" (concept is "' + (concepts[id - 1] && concepts[id - 1].en) + '")');
+          if (found) { corrected.push(lang + ' #' + id + ' "' + want + '" -> #' + found); use = found; }
+          else { unverified.push(lang + ' #' + id + ' "' + want + '" (concept is "' + (concepts[id - 1] && concepts[id - 1].en) + '")'); return; }
         }
         add(use, lang, reason, 'doubt'); n++;
       });
@@ -132,7 +140,7 @@ const pairs = out.reduce((n, h) => n + h.langs.length, 0);
 const wrongPairs = out.reduce((n, h) => n + h.langs.filter((l) => h.kinds[l] === 'wrong').length, 0);
 console.log('hold list: ' + out.length + ' concepts, ' + pairs + ' concept-language pairs (' + wrongPairs + ' wrong, ' + (pairs - wrongPairs) + ' doubts)');
 if (corrected.length) console.log('ids corrected to the named English word: ' + corrected.join('; '));
-if (unverified.length) console.log('ids kept but the English word does not match: ' + unverified.join('; '));
+if (unverified.length) console.log('ids NOT held (the named English word matches no nearby concept, so the number cannot be trusted): ' + unverified.join('; '));
 console.log('per language: ' + Object.entries(perLang).map(([l, n]) => l + ' ' + n).join(', '));
 if (process.argv.includes('--write')) {
   writeFileSync(resolve(ROOT, 'data/content-hold.json'), JSON.stringify({
