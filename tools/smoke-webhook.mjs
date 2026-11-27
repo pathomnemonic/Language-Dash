@@ -42,6 +42,11 @@ if (at > 0) {
   var DB = (process.env.SUPABASE_URL || '').replace(/\/+$/, '');
   var KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!user || !DB || !KEY) { console.error('--grant-test needs a user id, SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.'); process.exit(2); }
+  // the grant below only proves the chain works if the member does not already hold the item: if they do, the
+  // database check afterwards would pass even if the webhook granted nothing
+  var beforeRes = await fetch(DB + '/rest/v1/pro_items?select=item_id&user_id=eq.' + encodeURIComponent(user) + '&item_id=eq.' + encodeURIComponent(item), { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Accept-Profile': 'language_dash' } });
+  var beforeRows = beforeRes.ok ? await beforeRes.json() : [];
+  check('the test item is not already held (pick another --item or member, or revoke it first)', beforeRows.length, 0);
   var purchase = JSON.stringify({ id: 'evt_smoke_buy_' + now, type: 'checkout.session.completed', data: { object: { id: 'cs_smoke_' + now, mode: 'payment', client_reference_id: user, payment_status: 'paid', metadata: { app: 'language_dash', kind: 'item', item_id: item, user_id: user } } } });
   check('a signed purchase is accepted', await send(purchase, { 'stripe-signature': 't=' + now + ',v1=' + sign(purchase, SECRET, now) }), 200);
   var res = await fetch(DB + '/rest/v1/pro_items?select=item_id&user_id=eq.' + encodeURIComponent(user) + '&item_id=eq.' + encodeURIComponent(item), { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Accept-Profile': 'language_dash' } });
