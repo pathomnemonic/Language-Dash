@@ -40,7 +40,11 @@ describe('the ask on the results screen', () => {
 
   it('"Don\'t ask again" is remembered for that kind', () => {
     attachPromptCard(deps);
-    container.querySelectorAll('button')[2].click();
+    // find the button by what it says, not by its place among the card's buttons:
+    // an index breaks silently the day the card gains or loses a button
+    const dismiss = [...container.querySelectorAll('button')].find((b) => b.textContent.includes('ask again'));
+    expect(dismiss).toBeTruthy();
+    dismiss.click();
     expect(deps.storage.get('promptState').kinds.account.off).toBe(true);
   });
 
