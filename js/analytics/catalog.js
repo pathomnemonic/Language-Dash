@@ -174,7 +174,7 @@ export var EVENTS = {
   paywall_viewed: ['monetization', 'The Language Dash Pro screen was opened (only once Pro is launched).', { trigger: 's30', feature: 's24', plans: 'sa', variant: 's20', pro: 'b' }],
   paywall_action: ['monetization', 'What the player did on the Pro screen, with the plan and the store price.', {
     action: 'e:plan_selected|purchase_started|purchased|cancelled|failed|restore_started|restore_ok|restore_none|code_ok|code_failed|web_opened|manage_opened|closed!',
-    plan: 's24', trigger: 's30', price: 's16', micros: 'i', currency: 's3', trial_days: 'i'
+    plan: 's24', trigger: 's30', variant: 's20', price: 's16', micros: 'i', currency: 's3', trial_days: 'i'
   }],
   pro_gate_hit: ['monetization', 'A free player reached a Pro limit (a locked feature, or the daily/weekly/total limit).', { feature: 's24!', mode: 'e:limit|locked', used: 'i', limit: 'i' }],
   subscription_cancel_check: ['monetization', 'After a member went to cancel: what the billing system says (cancelled, or still renewing).', { cancelled: 'b!', ends_at: 's10' }],
