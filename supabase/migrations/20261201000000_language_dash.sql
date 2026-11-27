@@ -2,7 +2,7 @@
 -- Language Dash in a SHARED Supabase project: everything lives in the schema "language_dash". Nothing is created in "public".
 --
 -- GENERATED FILE - do not edit by hand. Regenerate with:   node tools/ld-migrate/generate.mjs
--- Source: database/*.sql (schema.sql=aab7c04601e799be policies.sql=f9e6655dc98820b7 cohorts.sql=c29e96b391e2d298 discovery.sql=bca2b4a571e153a5 pro.sql=582ed0f952695d3c analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
+-- Source: database/*.sql (schema.sql=aab7c04601e799be policies.sql=f9e6655dc98820b7 cohorts.sql=c29e96b391e2d298 discovery.sql=bca2b4a571e153a5 pro.sql=dec955a0d135e8c6 analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
 -- How it works and how to verify it: docs/SHARED-PROJECT-MIGRATION.md
 --
 -- Safe to run more than once. Runs in ONE transaction; the guard below aborts if search_path did not take effect, so a
@@ -2344,6 +2344,11 @@ CREATE TABLE IF NOT EXISTS pro_entitlements (
 -- When this stretch of Pro began: kept across renewals, restarted after a lapse or when a trial turns into a purchase.
 -- The monthly Locker gift counts its months from here.
 ALTER TABLE pro_entitlements ADD COLUMN IF NOT EXISTS started_at timestamptz NOT NULL DEFAULT now();
+-- When the member's Stripe subscription was cancelled (in the app, or in Stripe's portal): from then on nothing more
+-- will be charged, even though the paid time runs on to `until`. delete_my_ld_data blocks deletion only while a
+-- subscription is still billing, so it reads this, not `until` alone. Set by pro_set_billing_cancelled; a fresh
+-- subscription grant clears it (the subscription is billing again).
+ALTER TABLE pro_entitlements ADD COLUMN IF NOT EXISTS cancelled_at timestamptz;
 
 -- Locker items bought with real money (the premium items). One row per member and item; kept for good unless refunded.
 CREATE TABLE IF NOT EXISTS pro_items (
@@ -2471,6 +2476,7 @@ BEGIN
   ON CONFLICT (user_id) DO UPDATE SET
     until = greatest(e.until, now()) + make_interval(days => p_days),
     plan = excluded.plan, source = excluded.source, trial = excluded.trial AND e.until > now(), updated_at = now(),
+    cancelled_at = CASE WHEN excluded.source = 'stripe' AND excluded.plan IN ('monthly', 'yearly', 'pass3m') THEN NULL ELSE e.cancelled_at END,
     started_at = CASE WHEN e.until <= now() OR (e.trial AND NOT excluded.trial) THEN now() ELSE e.started_at END
   RETURNING until INTO new_until;
   RETURN new_until;
@@ -2522,6 +2528,16 @@ LANGUAGE sql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
   UPDATE pro_entitlements SET until = now(), updated_at = now() WHERE user_id = p_user AND plan = p_plan;
 $$;
 
+-- Record that a member's Stripe subscription was cancelled (true) or is billing again (false). The paid time in
+-- `until` does not change: only the "still billing" fact that delete_my_ld_data checks. Called by the checkout
+-- function after it cancels in Stripe, and by the webhook when Stripe reports a cancellation (or an undo).
+-- Service role only.
+CREATE OR REPLACE FUNCTION pro_set_billing_cancelled(p_user uuid, p_cancelled boolean) RETURNS void
+LANGUAGE sql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
+  UPDATE pro_entitlements SET cancelled_at = CASE WHEN coalesce(p_cancelled, false) THEN now() ELSE NULL END, updated_at = now()
+  WHERE user_id = p_user;
+$$;
+
 -- Forget a member's payment records when their account is deleted (these tables hold a user id but, unlike the rest of the
 -- app's data, do not cascade from the login). Service role / the delete function only.
 CREATE OR REPLACE FUNCTION pro_forget_user(p_user uuid) RETURNS void
@@ -2538,8 +2554,10 @@ BEGIN
   DELETE FROM pro_store_purchases WHERE user_id = p_user;
 END $$;
 
--- The Sign in with Apple token of an account, kept only so that deleting the account can revoke it (an App Store rule).
--- Service role only; it is removed with the account.
+-- The Sign in with Apple token of an account, kept only so that removing the sign-in can revoke it (an App Store rule).
+-- Service role only. It is removed by pro_forget_user when the sign-in itself is removed. Deleting only the Language
+-- Dash data (delete_my_ld_data) deliberately keeps it: the login still exists afterwards, and a later sign-in removal
+-- still has to be able to revoke it.
 CREATE TABLE IF NOT EXISTS apple_tokens (
   user_id uuid PRIMARY KEY,
   refresh_token text NOT NULL,
@@ -2641,6 +2659,7 @@ BEGIN
     plan = CASE WHEN excluded.until >= e.until THEN excluded.plan ELSE e.plan END,
     source = CASE WHEN excluded.until >= e.until THEN excluded.source ELSE e.source END,
     trial = excluded.trial AND excluded.until >= e.until,
+    cancelled_at = CASE WHEN excluded.source = 'stripe' AND excluded.plan IN ('monthly', 'yearly', 'pass3m') AND excluded.until >= e.until THEN NULL ELSE e.cancelled_at END,
     updated_at = now(),
     started_at = CASE WHEN e.until <= now() OR (e.trial AND NOT excluded.trial) THEN now() ELSE e.started_at END
   RETURNING until INTO new_until;
@@ -2694,6 +2713,7 @@ REVOKE ALL ON FUNCTION get_my_pro() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_grant(uuid, integer, text, text, boolean) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_revoke(uuid) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_revoke_plan(uuid, text) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION pro_set_billing_cancelled(uuid, boolean) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_grant_item(uuid, text, text, text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_revoke_item(uuid, text, text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_has_item(uuid, text) FROM PUBLIC, anon, authenticated;
@@ -4149,6 +4169,9 @@ CREATE POLICY ld_member_gate ON language_dash.pro_store_purchases AS RESTRICTIVE
 
 -- Removes every Language Dash row that belongs to p_user, then the membership. NEVER touches auth.users (the shared sign-in).
 -- Used by delete_my_ld_data() for the caller, and by the edge function (service role) just before it removes the sign-in.
+-- Two tables are deliberately NOT wiped here (keepOnPurge in the classification): apple_tokens (a later sign-in removal
+-- still needs the token to revoke the Apple login) and pro_trials (the once-per-account trial marker must not reset).
+-- pro_forget_user removes both when the sign-in itself is removed.
 CREATE OR REPLACE FUNCTION language_dash.purge_user_data(p_user uuid) RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
 DECLARE n integer; counts jsonb := '{}'::jsonb;
@@ -4160,8 +4183,6 @@ BEGIN
   GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('activity_events', n);
   DELETE FROM language_dash.app_feedback WHERE user_id = p_user;
   GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('app_feedback', n);
-  DELETE FROM language_dash.apple_tokens WHERE user_id = p_user;
-  GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('apple_tokens', n);
   DELETE FROM language_dash.buddy_listings WHERE user_id = p_user;
   GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('buddy_listings', n);
   DELETE FROM language_dash.card_reports WHERE reporter_id = p_user;
@@ -4204,8 +4225,6 @@ BEGIN
   GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('pro_store_purchases', n);
   DELETE FROM language_dash.pro_stripe_customers WHERE user_id = p_user;
   GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('pro_stripe_customers', n);
-  DELETE FROM language_dash.pro_trials WHERE user_id = p_user;
-  GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('pro_trials', n);
   DELETE FROM language_dash.ranked_reports WHERE user_id = p_user;
   GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('ranked_reports', n);
   DELETE FROM language_dash.ranked_matches WHERE host_id = p_user OR guest_id = p_user;
@@ -4231,13 +4250,15 @@ END $$;
 
 -- "Delete my Language Dash account": the caller's Language Dash data and membership only. Works for a non-member too (it
 -- clears anything a payment webhook may have recorded before they joined). A subscription that is still billing must be
--- cancelled first, exactly as the template's delete_my_account required.
+-- cancelled first, exactly as the template's delete_my_account required. "Still billing" is the cancelled_at marker,
+-- not the paid time left in until: once the subscription is cancelled (in the app, which records it, or in Stripe's
+-- portal, which the webhook records) nothing more will be charged, and deletion may proceed while the paid time runs on.
 CREATE OR REPLACE FUNCTION language_dash.delete_my_ld_data() RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
 DECLARE me uuid := auth.uid();
 BEGIN
   IF me IS NULL THEN RAISE EXCEPTION 'not_signed_in' USING ERRCODE = '28000'; END IF;
-  IF EXISTS (SELECT 1 FROM language_dash.pro_entitlements WHERE user_id = me AND source = 'stripe' AND plan IN ('monthly', 'yearly', 'pass3m') AND until > now()) THEN
+  IF EXISTS (SELECT 1 FROM language_dash.pro_entitlements WHERE user_id = me AND source = 'stripe' AND plan IN ('monthly', 'yearly', 'pass3m') AND until > now() AND cancelled_at IS NULL) THEN
     RAISE EXCEPTION 'subscription_still_billing' USING ERRCODE = '55000',
       HINT = 'Cancel the subscription first (Settings, Language Dash Pro, Manage subscription), then delete your Language Dash data.';
   END IF;
