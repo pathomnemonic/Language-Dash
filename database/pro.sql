@@ -23,6 +23,11 @@ CREATE TABLE IF NOT EXISTS pro_entitlements (
 -- When this stretch of Pro began: kept across renewals, restarted after a lapse or when a trial turns into a purchase.
 -- The monthly Locker gift counts its months from here.
 ALTER TABLE pro_entitlements ADD COLUMN IF NOT EXISTS started_at timestamptz NOT NULL DEFAULT now();
+-- When the member's Stripe subscription was cancelled (in the app, or in Stripe's portal): from then on nothing more
+-- will be charged, even though the paid time runs on to `until`. delete_my_ld_data blocks deletion only while a
+-- subscription is still billing, so it reads this, not `until` alone. Set by pro_set_billing_cancelled; a fresh
+-- subscription grant clears it (the subscription is billing again).
+ALTER TABLE pro_entitlements ADD COLUMN IF NOT EXISTS cancelled_at timestamptz;
 
 -- Locker items bought with real money (the premium items). One row per member and item; kept for good unless refunded.
 CREATE TABLE IF NOT EXISTS pro_items (
@@ -148,6 +153,7 @@ BEGIN
   ON CONFLICT (user_id) DO UPDATE SET
     until = greatest(e.until, now()) + make_interval(days => p_days),
     plan = excluded.plan, source = excluded.source, trial = excluded.trial AND e.until > now(), updated_at = now(),
+    cancelled_at = CASE WHEN excluded.source = 'stripe' AND excluded.plan IN ('monthly', 'yearly', 'pass3m') THEN NULL ELSE e.cancelled_at END,
     started_at = CASE WHEN e.until <= now() OR (e.trial AND NOT excluded.trial) THEN now() ELSE e.started_at END
   RETURNING until INTO new_until;
   RETURN new_until;
@@ -199,6 +205,16 @@ LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
   UPDATE pro_entitlements SET until = now(), updated_at = now() WHERE user_id = p_user AND plan = p_plan;
 $$;
 
+-- Record that a member's Stripe subscription was cancelled (true) or is billing again (false). The paid time in
+-- `until` does not change: only the "still billing" fact that delete_my_ld_data checks. Called by the checkout
+-- function after it cancels in Stripe, and by the webhook when Stripe reports a cancellation (or an undo).
+-- Service role only.
+CREATE OR REPLACE FUNCTION pro_set_billing_cancelled(p_user uuid, p_cancelled boolean) RETURNS void
+LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
+  UPDATE pro_entitlements SET cancelled_at = CASE WHEN coalesce(p_cancelled, false) THEN now() ELSE NULL END, updated_at = now()
+  WHERE user_id = p_user;
+$$;
+
 -- Forget a member's payment records when their account is deleted (these tables hold a user id but, unlike the rest of the
 -- app's data, do not cascade from the login). Service role / the delete function only.
 CREATE OR REPLACE FUNCTION pro_forget_user(p_user uuid) RETURNS void
@@ -215,8 +231,10 @@ BEGIN
   DELETE FROM pro_store_purchases WHERE user_id = p_user;
 END $$;
 
--- The Sign in with Apple token of an account, kept only so that deleting the account can revoke it (an App Store rule).
--- Service role only; it is removed with the account.
+-- The Sign in with Apple token of an account, kept only so that removing the sign-in can revoke it (an App Store rule).
+-- Service role only. It is removed by pro_forget_user when the sign-in itself is removed. Deleting only the Language
+-- Dash data (delete_my_ld_data) deliberately keeps it: the login still exists afterwards, and a later sign-in removal
+-- still has to be able to revoke it.
 CREATE TABLE IF NOT EXISTS apple_tokens (
   user_id uuid PRIMARY KEY,
   refresh_token text NOT NULL,
@@ -317,6 +335,7 @@ BEGIN
     plan = CASE WHEN excluded.until >= e.until THEN excluded.plan ELSE e.plan END,
     source = CASE WHEN excluded.until >= e.until THEN excluded.source ELSE e.source END,
     trial = excluded.trial AND excluded.until >= e.until,
+    cancelled_at = CASE WHEN excluded.source = 'stripe' AND excluded.plan IN ('monthly', 'yearly', 'pass3m') AND excluded.until >= e.until THEN NULL ELSE e.cancelled_at END,
     updated_at = now(),
     started_at = CASE WHEN e.until <= now() OR (e.trial AND NOT excluded.trial) THEN now() ELSE e.started_at END
   RETURNING until INTO new_until;
@@ -370,6 +389,7 @@ REVOKE ALL ON FUNCTION get_my_pro() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_grant(uuid, integer, text, text, boolean) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_revoke(uuid) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_revoke_plan(uuid, text) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION pro_set_billing_cancelled(uuid, boolean) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_grant_item(uuid, text, text, text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_revoke_item(uuid, text, text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION pro_has_item(uuid, text) FROM PUBLIC, anon, authenticated;
