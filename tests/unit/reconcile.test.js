@@ -4,8 +4,8 @@ import { reconcile, returned } from '../../tools/reconcile-lib.mjs';
 
 const NOW = 1_800_000_000;
 const ok = { status: 'complete', payment_status: 'paid', mode: 'payment' };
-const item = (id, user, charge, extra) => ({ ...ok, id: 'cs_' + id, client_reference_id: user, metadata: { kind: 'item', item_id: id, user_id: user }, payment_intent: { latest_charge: charge || { refunded: false } }, ...extra });
-const life = (user, charge) => ({ ...ok, id: 'cs_life', client_reference_id: user, metadata: { plan: 'lifetime', user_id: user }, payment_intent: { latest_charge: charge || { refunded: false } } });
+const item = (id, user, charge, extra) => ({ ...ok, id: 'cs_' + id, client_reference_id: user, metadata: { app: 'language_dash', kind: 'item', item_id: id, user_id: user }, payment_intent: { latest_charge: charge || { refunded: false } }, ...extra });
+const life = (user, charge) => ({ ...ok, id: 'cs_life', client_reference_id: user, metadata: { app: 'language_dash', plan: 'lifetime', user_id: user }, payment_intent: { latest_charge: charge || { refunded: false } } });
 const future = new Date((NOW + 86400 * 100) * 1000).toISOString();
 const empty = { items: [], entitlements: [] };
 
@@ -33,14 +33,29 @@ describe('comparing Stripe with the database', () => {
   });
 
   it('finds a live subscription whose member has no Pro, but not an ended one', () => {
-    const sub = (status) => ({ status: 'complete', payment_status: 'paid', mode: 'subscription', id: 'cs_sub', client_reference_id: 'u3', metadata: { plan: 'monthly', user_id: 'u3' }, subscription: { status } });
+    const sub = (status) => ({ status: 'complete', payment_status: 'paid', mode: 'subscription', id: 'cs_sub', client_reference_id: 'u3', metadata: { app: 'language_dash', plan: 'monthly', user_id: 'u3' }, subscription: { status } });
     expect(reconcile([sub('active')], empty, NOW).map((o) => o.problem)).toEqual(['subscription live, no Pro']);
     expect(reconcile([sub('canceled')], empty, NOW)).toEqual([]);
     expect(reconcile([sub('active')], { items: [], entitlements: [{ user_id: 'u3', plan: 'monthly', until: future }] }, NOW)).toEqual([]);
   });
 
   it('skips unpaid or incomplete sessions and ones with no member', () => {
-    expect(reconcile([{ ...item('trail_lanterns', 'u1'), payment_status: 'unpaid' }, { ...item('trail_lanterns', 'u1'), status: 'open' }, { ...item('trail_lanterns', ''), client_reference_id: '', metadata: { kind: 'item', item_id: 'trail_lanterns' } }], empty, NOW)).toEqual([]);
+    expect(reconcile([{ ...item('trail_lanterns', 'u1'), payment_status: 'unpaid' }, { ...item('trail_lanterns', 'u1'), status: 'open' }, { ...item('trail_lanterns', ''), client_reference_id: '', metadata: { app: 'language_dash', kind: 'item', item_id: 'trail_lanterns' } }], empty, NOW)).toEqual([]);
+  });
+
+  it('a second valid purchase covers a refunded one: the held item is legitimate', () => {
+    const db = { items: [{ user_id: 'u1', item_id: 'trail_lanterns' }], entitlements: [] };
+    const two = [item('trail_lanterns', 'u1', { refunded: true }), { ...item('trail_lanterns', 'u1'), id: 'cs_second' }];
+    expect(reconcile(two, db, NOW)).toEqual([]);
+    // and with no valid purchase left, the same held item is flagged exactly once, not once per session
+    const only = [{ ...item('trail_lanterns', 'u1', { refunded: true }), id: 'cs_a' }, { ...item('trail_lanterns', 'u1', { refunded: true }), id: 'cs_b' }];
+    expect(reconcile(only, db, NOW).map((o) => o.problem)).toEqual(['given back, still held']);
+  });
+
+  it('only Language Dash sessions count: the Stripe account is shared', () => {
+    const foreign = { ...item('trail_lanterns', 'u1'), metadata: { app: 'dx_dash', kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } };
+    const noApp = { ...item('trail_lanterns', 'u1'), metadata: { kind: 'item', item_id: 'trail_lanterns', user_id: 'u1' } };
+    expect(reconcile([foreign, noApp], empty, NOW)).toEqual([]);
   });
 
   it('knows what counts as returned', () => {
