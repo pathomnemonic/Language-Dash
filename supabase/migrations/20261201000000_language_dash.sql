@@ -2,7 +2,7 @@
 -- Language Dash in a SHARED Supabase project: everything lives in the schema "language_dash". Nothing is created in "public".
 --
 -- GENERATED FILE - do not edit by hand. Regenerate with:   node tools/ld-migrate/generate.mjs
--- Source: database/*.sql (schema.sql=aab7c04601e799be policies.sql=f9e6655dc98820b7 cohorts.sql=c29e96b391e2d298 discovery.sql=bca2b4a571e153a5 pro.sql=dec955a0d135e8c6 analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
+-- Source: database/*.sql (schema.sql=a1c52d59bd0f1de2 policies.sql=f9e6655dc98820b7 cohorts.sql=c29e96b391e2d298 discovery.sql=bca2b4a571e153a5 pro.sql=dec955a0d135e8c6 analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
 -- How it works and how to verify it: docs/SHARED-PROJECT-MIGRATION.md
 --
 -- Safe to run more than once. Runs in ONE transaction; the guard below aborts if search_path did not take effect, so a
@@ -887,7 +887,11 @@ BEGIN
     -- push out the biggest one
     AND s.run_count >= coalesce((SELECT b.run_count FROM player_saves_backup b WHERE b.user_id = p_uid), 0)
   ON CONFLICT (user_id) DO UPDATE
-    SET data = excluded.data, run_count = excluded.run_count, saved_at = excluded.saved_at;
+    SET data = excluded.data, run_count = excluded.run_count, saved_at = excluded.saved_at
+    -- the SELECT guard above reads this call's snapshot: if a richer backup was committed by a concurrent call
+    -- while this one waited on the conflict, the update must not go through over it. This WHERE is judged against
+    -- the conflicting row as committed, so the smaller candidate is dropped instead.
+    WHERE player_saves_backup.run_count <= excluded.run_count;
 END;
 $$;
 
@@ -901,12 +905,16 @@ AS $$
 DECLARE
   uid uuid := auth.uid();
   b player_saves_backup%ROWTYPE;
-  new_ts timestamptz := clock_timestamp();
+  new_ts timestamptz;
 BEGIN
   IF NOT language_dash.is_member() THEN RAISE EXCEPTION 'not_a_member' USING ERRCODE = '42501'; END IF;
   IF uid IS NULL THEN
     RAISE EXCEPTION 'Not authenticated';
   END IF;
+  -- Lock the live row first (as push_save and force_save do) and take the timestamp after the lock, so a
+  -- restore can never write an older timestamp over a save committed while this call was waiting.
+  PERFORM 1 FROM player_saves WHERE user_id = uid FOR UPDATE;
+  new_ts := clock_timestamp();
   SELECT * INTO b FROM player_saves_backup WHERE user_id = uid;
   IF NOT FOUND THEN
     RETURN NULL;
@@ -929,7 +937,7 @@ AS $$
 DECLARE
   uid uuid := auth.uid();
   current_ts timestamptz;
-  new_ts timestamptz := clock_timestamp();
+  new_ts timestamptz;
 BEGIN
   IF NOT language_dash.is_member() THEN RAISE EXCEPTION 'not_a_member' USING ERRCODE = '42501'; END IF;
   IF uid IS NULL THEN
@@ -940,6 +948,9 @@ BEGIN
   END IF;
 
   SELECT updated_at INTO current_ts FROM player_saves WHERE user_id = uid FOR UPDATE;
+  -- The new timestamp is taken only after the live row is locked (or known not to exist): writers are
+  -- serialised by that lock, so a save's timestamp can never be older than the save it replaces.
+  new_ts := clock_timestamp();
 
   IF FOUND THEN
     -- Someone else (another device) saved since the caller last synced.
@@ -954,8 +965,16 @@ BEGIN
       -- The caller believed a save existed but it is gone; treat as a new save.
       NULL;
     END IF;
+    -- A concurrent first save for this account can commit between the SELECT above and this INSERT (the
+    -- SELECT locked nothing: there was no row). ON CONFLICT DO NOTHING turns that race into this function's
+    -- conflict signal (NULL, as in the found branch) instead of a primary key exception escaping to the caller.
     INSERT INTO player_saves (user_id, data, run_count, updated_at)
-    VALUES (uid, p_data, greatest(p_run_count, 0), new_ts);
+    VALUES (uid, p_data, greatest(p_run_count, 0), new_ts)
+    ON CONFLICT (user_id) DO NOTHING
+    RETURNING updated_at INTO new_ts;
+    IF NOT FOUND THEN
+      RETURN NULL;
+    END IF;
   END IF;
 
   RETURN new_ts;
@@ -971,7 +990,7 @@ SET search_path = language_dash, pg_temp
 AS $$
 DECLARE
   uid uuid := auth.uid();
-  new_ts timestamptz := clock_timestamp();
+  new_ts timestamptz;
 BEGIN
   IF NOT language_dash.is_member() THEN RAISE EXCEPTION 'not_a_member' USING ERRCODE = '42501'; END IF;
   IF uid IS NULL THEN
@@ -980,6 +999,11 @@ BEGIN
   IF pg_column_size(p_data) > 3000000 THEN
     RAISE EXCEPTION 'Save is too large';
   END IF;
+  -- Take the live row's lock before anything else, exactly as push_save does, and only then the timestamp:
+  -- without the lock, an earlier started call could pause (inside keep_richest_save, say) while a later call
+  -- committed, then write its older timestamp over the newer save.
+  PERFORM 1 FROM player_saves WHERE user_id = uid FOR UPDATE;
+  new_ts := clock_timestamp();
   PERFORM keep_richest_save(uid, greatest(p_run_count, 0));
   INSERT INTO player_saves (user_id, data, run_count, updated_at)
   VALUES (uid, p_data, greatest(p_run_count, 0), new_ts)
