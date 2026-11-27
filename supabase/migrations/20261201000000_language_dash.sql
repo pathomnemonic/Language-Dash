@@ -2,7 +2,7 @@
 -- Language Dash in a SHARED Supabase project: everything lives in the schema "language_dash". Nothing is created in "public".
 --
 -- GENERATED FILE - do not edit by hand. Regenerate with:   node tools/ld-migrate/generate.mjs
--- Source: database/*.sql (schema.sql=a1c52d59bd0f1de2 policies.sql=f9e6655dc98820b7 cohorts.sql=c29e96b391e2d298 discovery.sql=bca2b4a571e153a5 pro.sql=cec067c3bcfe5ec8 analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
+-- Source: database/*.sql (schema.sql=2455b49f6e63c9c8 policies.sql=db83550c982944b2 cohorts.sql=c29e96b391e2d298 discovery.sql=bca2b4a571e153a5 pro.sql=cec067c3bcfe5ec8 analytics.sql=9e9eaf91481ab26b analytics_views.sql=7ee1b396e5e8a29e lockdown.sql=8652950c3e186272 audit.sql=9aaca59d7da385a4)
 -- How it works and how to verify it: docs/SHARED-PROJECT-MIGRATION.md
 --
 -- Safe to run more than once. Runs in ONE transaction; the guard below aborts if search_path did not take effect, so a
@@ -166,6 +166,11 @@ CREATE TRIGGER scores_sanity_trg BEFORE INSERT ON scores
 CREATE OR REPLACE FUNCTION scores_keep_best() RETURNS trigger
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = language_dash, pg_temp AS $$
 BEGIN
+  -- Serialise submissions for the same player, mode and season for the length of this transaction:
+  -- the check, delete and insert below are three separate steps, and two overlapping submissions
+  -- could otherwise both pass the check against the same stored best (keeping duplicates), or the
+  -- delete could remove a better row a concurrent submission had just committed.
+  PERFORM pg_advisory_xact_lock(hashtextextended(NEW.user_id::text || ':' || NEW.mode || ':' || NEW.season, 0));
   IF EXISTS (
     SELECT 1 FROM scores
     WHERE user_id = NEW.user_id AND mode = NEW.mode AND season = NEW.season AND score >= NEW.score
@@ -1199,6 +1204,23 @@ BEGIN
   IF code !~ '^[A-Z0-9]{5}$' THEN RAISE EXCEPTION 'Bad room code'; END IF;
   INSERT INTO player_trophies (user_id) VALUES (me) ON CONFLICT DO NOTHING;
   SELECT trophies INTO my_t FROM player_trophies WHERE user_id = me;
+
+  -- One live match at a time: a caller who is already in an unsettled match gets that match back
+  -- instead of being paired into a second one. (The window matches ranked_poll_match's horizon:
+  -- past it an unsettled match is abandoned, and settlement owns any match with reports in.)
+  SELECT * INTO m FROM ranked_matches
+   WHERE (host_id = me OR guest_id = me) AND NOT settled
+     AND created_at > now() - interval '2 minutes'
+   ORDER BY created_at DESC LIMIT 1;
+  IF FOUND THEN
+    DELETE FROM ranked_queue WHERE user_id = me;
+    RETURN jsonb_build_object('role', CASE WHEN m.host_id = me THEN 'host' ELSE 'guest' END,
+                              'match_id', m.id, 'room_code', m.room_code,
+                              'own_trophies', CASE WHEN m.host_id = me THEN m.host_trophies ELSE m.guest_trophies END,
+                              'opponent_trophies', CASE WHEN m.host_id = me THEN m.guest_trophies ELSE m.host_trophies END,
+                              'existing', true);
+  END IF;
+
   DELETE FROM ranked_queue WHERE user_id = me;
 
   -- a waiting player of similar strength; the window widens 10 trophies per second waited
@@ -1375,11 +1397,17 @@ ALTER TABLE card_reports ENABLE ROW LEVEL SECURITY;
 
 -- ==================== SCORES POLICIES ====================
 
--- Anyone can read scores (leaderboard is public).
+-- Scores are readable when the player's profile is public (the leaderboard is public), and always by
+-- the player themselves. A hidden profile's raw score rows are NOT public: the leaderboard views have
+-- always filtered on visible = true, and this policy now matches them, so hiding a profile hides the
+-- scores behind it too instead of only removing the board entry.
 DROP POLICY IF EXISTS "scores_select_public" ON scores;
 CREATE POLICY "scores_select_public"
   ON scores FOR SELECT
-  USING (true);
+  USING (
+    auth.uid() = user_id
+    OR EXISTS (SELECT 1 FROM player_profiles p WHERE p.user_id = scores.user_id AND p.visible = true)
+  );
 
 -- Authenticated users can insert their own scores.
 DROP POLICY IF EXISTS "scores_insert_own" ON scores;
@@ -1481,6 +1509,8 @@ CREATE POLICY "invites_insert_own"
   ON match_invites FOR INSERT
   WITH CHECK (
     auth.uid() = from_user
+    AND status = 'pending'
+    AND NOT has_block_between(auth.uid(), to_user)
     AND EXISTS (
       SELECT 1 FROM friends f
       WHERE f.status = 'accepted'
