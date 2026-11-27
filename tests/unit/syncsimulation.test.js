@@ -100,9 +100,14 @@ function life(seed, steps) {
       const total = r() < 0.5;
       if (prog(d.data) > 0 && !total) keepAside(d); // (storage.js keeps the old save aside before an empty one replaces it)
       d.data = blank(); d.meta = r() < 0.5 ? null : d.meta; d.dirty = false;
-      if (total) { d.lastgood = null; d.meta = null; }
-      // progress that existed only on this device is gone for good in a total wipe: that is not the sync's fault
-      w.best = locations(w);
+      if (total) {
+        d.lastgood = null; d.meta = null;
+        // progress that existed only on this device is gone for good in a total wipe: that is not
+        // the sync's fault, so the high-water mark restarts from what survives. A partial wipe
+        // keeps the copy aside, so nothing may be lost by it: the mark must NOT restart there,
+        // or a loss the sync really caused would be forgiven unseen.
+        w.best = locations(w);
+      }
       // on starting empty, the app offers the copy kept aside: the player takes it or not
       if (!total && d.lastgood && r() < 0.5) { d.data = JSON.parse(JSON.stringify(d.lastgood)); d.dirty = true; }
       log.push(total ? 'wipe-all' : 'wipe');

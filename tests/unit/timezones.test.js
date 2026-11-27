@@ -40,6 +40,20 @@ afterAll(() => {
 function setZone(tz) { process.env.TZ = tz; }
 function setNow(date) { vi.setSystemTime(date); }
 
+/** The first NaN, infinite number or undefined held anywhere in a value, as a path; '' when clean. */
+function findBadValue(node, path) {
+  path = path || '';
+  if (typeof node === 'number' && !isFinite(node)) return path + ' = ' + node;
+  if (node === undefined) return path + ' is undefined';
+  if (node !== null && typeof node === 'object') {
+    for (const k of Object.keys(node)) {
+      const bad = findBadValue(node[k], path + '.' + k);
+      if (bad) return bad;
+    }
+  }
+  return '';
+}
+
 /** Every instant (hourly, 2026-01 to 2027-06) at which this zone's UTC offset changes. */
 function transitionsOf(tz) {
   setZone(tz);
@@ -150,7 +164,7 @@ describe('time zones and clock changes', () => {
         expect(toDayKey(old)).toBe(key);
         expect(loginStep(old, 3, key)).toEqual({ claim: false, streak: 3, last: key });
         const yesterday = keyOfDay(dayNumber(key) - 1);
-        expect(loginStep(new Date(ms - 24 * 3600000).toDateString(), 3, key).claim).toBe(daysBetween(toDayKey(new Date(ms - 24 * 3600000).toDateString()), key) >= 1);
+        expect(loginStep(new Date(ms - 24 * 3600000).toDateString(), 3, key).claim).toBe(daysBetween(expectedLocalKey(ms - 24 * 3600000), key) >= 1);
         expect(loginStep(yesterday, 3, key)).toEqual({ claim: true, streak: 4, last: key });
       });
     });
@@ -236,14 +250,16 @@ describe('time zones and clock changes', () => {
         expect(st.streak).toBeLessThanOrEqual(p.studyStreak);
         expect(storage.getWeeklyProgress().daysMet).toBeLessThanOrEqual(7);
       }
-      expect(JSON.stringify(storage.data)).not.toMatch(/NaN|null.*undefined/);
+      // nothing in the save may be NaN, infinite or undefined, anywhere: walk the value
+      // (a JSON text search cannot see NaN: stringify turns it into null first)
+      expect(findBadValue(storage.data), 'walk ' + walk).toBe('');
     }
   });
 
   it('a trip west never costs the streak, and a trip east that skips a day costs it only when there is no shield', () => {
     vi.useFakeTimers({ toFake: ['Date'] });
     const study = (tz, y, m, d, h) => { setZone(tz); setNow(new Date(y, m, d, h, 0, 0)); storage.addStudiedToday(3, 2); };
-    // west: Auckland 5 Oct morning, then the same evening in Los Angeles it is still the 4th
+    // west: Auckland on 3 and 4 Oct, then the same evening in Los Angeles it is still the 4th
     study('Pacific/Auckland', 2026, 9, 3, 9);
     study('Pacific/Auckland', 2026, 9, 4, 9);
     expect(storage.getStreakStatus().streak).toBe(2);

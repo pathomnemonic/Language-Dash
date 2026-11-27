@@ -21,7 +21,7 @@ function fakePlugin(owned = []) {
   };
   return plugin;
 }
-const tick = () => new Promise((r) => setTimeout(r, 20));
+const tick = () => new Promise((r) => setTimeout(r, 50));
 
 beforeEach(() => {
   document.body.innerHTML = '';
