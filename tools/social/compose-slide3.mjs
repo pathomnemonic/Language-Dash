@@ -19,6 +19,10 @@ const spec = JSON.parse(readFileSync(file, 'utf8'));
 const dir = dirname(resolve(file));
 const verdict = checkOverlay(spec.overlay && spec.overlay.challenge);
 if (verdict.errors.length) { verdict.errors.forEach((e) => console.error('REFUSED ' + e)); process.exit(1); }
+// the capture manifest capture-gates.mjs writes: a screenshot is only composed when it was captured for THIS spec
+// (same card, same map, same theme), never just because a file with the right name happens to be lying around
+const manifestFile = resolve(dir, 'slide3-captures.json');
+const manifest = existsSync(manifestFile) ? JSON.parse(readFileSync(manifestFile, 'utf8')) : {};
 
 const { chromium } = await import('playwright');
 const opts = process.env.PW_CHROMIUM ? { executablePath: process.env.PW_CHROMIUM, args: ['--no-sandbox'] } : {};
@@ -27,6 +31,9 @@ try {
   for (const item of spec.items) {
     const shot = resolve(dir, 'slide3-' + item.cardId + '.png');
     if (!existsSync(shot)) { console.error('missing ' + shot + ': run capture-gates.mjs first'); process.exitCode = 1; continue; }
+    const cap = manifest[item.cardId];
+    if (!cap) { console.error('no capture record for ' + item.cardId + ' in ' + manifestFile + ': the screenshot was not captured by capture-gates.mjs for this spec; recapture it'); process.exitCode = 1; continue; }
+    if ((spec.capture && cap.map !== spec.capture.map) || cap.theme !== spec.theme) { console.error('stale capture for ' + item.cardId + ': it was captured for map ' + cap.map + ' / theme ' + cap.theme + ', this spec wants ' + (spec.capture && spec.capture.map) + ' / ' + spec.theme + '; recapture it'); process.exitCode = 1; continue; }
     const html = slide3Html(pathToFileURL(shot).href, spec.overlay, resolve(HERE, '../../css/fonts'), spec.theme);
     const htmlFile = resolve(dir, 'slide3-final-' + item.cardId + '.html');
     writeFileSync(htmlFile, html);
