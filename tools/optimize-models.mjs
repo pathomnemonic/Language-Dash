@@ -7,9 +7,14 @@
 // Safe to run again: already-optimized files are read, re-pruned and rewritten.
 // Static scenery (obstacles, props) is tiny and is merged at runtime, so it is
 // left untouched.
+//
+// Every original is copied to backups/models-<timestamp> (outside public/, so
+// backups never ship) before its file is rewritten. If anything fails mid run,
+// every file written so far is restored from the backup and the run aborts, so
+// the shipped models are never left half optimized.
 
-import { readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { readdirSync, statSync, copyFileSync, mkdirSync } from 'node:fs';
+import { join, dirname } from 'node:path';
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { dedup, prune, quantize, meshopt } from '@gltf-transform/functions';
@@ -24,8 +29,22 @@ const io = new NodeIO()
   .registerExtensions(ALL_EXTENSIONS)
   .registerDependencies({ 'meshopt.encoder': MeshoptEncoder, 'meshopt.decoder': MeshoptDecoder });
 
+const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+const backupRoot = join('backups', 'models-' + stamp);
+const written = [];
+function backupOriginal(path) {
+  const dest = join(backupRoot, path.replace(/^public[/\\]models[/\\]/, ''));
+  mkdirSync(dirname(dest), { recursive: true });
+  copyFileSync(path, dest);
+  written.push({ path, backup: dest });
+}
+function restoreAll() {
+  for (const w of written) { try { copyFileSync(w.backup, w.path); } catch { /* keep restoring the rest */ } }
+}
+
 let before = 0;
 let after = 0;
+try {
 for (const dir of ['characters', 'monsters']) {
   const folder = join('public', 'models', dir);
   for (const file of readdirSync(folder).filter((f) => f.endsWith('.glb'))) {
@@ -46,6 +65,7 @@ for (const dir of ['characters', 'monsters']) {
     }
 
     await doc.transform(dedup(), prune(), quantize(), meshopt({ encoder: MeshoptEncoder, level: 'medium' }));
+    backupOriginal(path);
     await io.write(path, doc);
 
     const now = statSync(path).size;
@@ -55,3 +75,9 @@ for (const dir of ['characters', 'monsters']) {
   }
 }
 console.log(`Total: ${Math.round(before / 1024)} KB -> ${Math.round(after / 1024)} KB`);
+console.log('Originals backed up in ' + backupRoot);
+} catch (err) {
+  restoreAll();
+  console.error('optimize-models failed: ' + (err && err.message) + '. Restored ' + written.length + ' file(s) from ' + backupRoot + '; the originals also remain there.');
+  process.exit(1);
+}
