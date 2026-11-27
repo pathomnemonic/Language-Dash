@@ -34,6 +34,8 @@ for (const map of maps) {
     const r = await page.evaluate(() => ({ st: window.__game._state, skin: window.__game.currentSkin && window.__game.currentSkin.name, draw: window.__game.renderer.info.render.calls }));
     if (r.st !== 'playing') bad(map + ' (glow ' + glow + '): state ' + r.st);
     if (r.skin !== map) bad(map + ': got map ' + r.skin);
+    const aside = page.errs.filter((x) => /Dropped|auto-fix/.test(x));
+    if (aside.length) console.log('  note  ' + map + ': ' + aside.length + ' error(s) set aside by the Dropped/auto-fix filter: ' + aside.slice(0, 2).join(' | '));
     const e = page.errs.filter((x) => !/Dropped|auto-fix/.test(x));
     if (e.length) bad(map + ': errors ' + e.slice(0, 2).join(' | '));
     console.log('  ' + map + (glow ? ' +glow' : '') + ': ' + r.st + ', ' + r.draw + ' draw calls');
@@ -52,6 +54,7 @@ console.log('\n== short laptop screen (1366x560)');
     }, sel);
     if (!r) { bad(label + ': not found'); return; }
     if (r.l < -1 || r.r > r.w + 1) bad(label + ': sticks out sideways ' + JSON.stringify(r));
+    if (r.t < -1 || r.b > r.h + 1) bad(label + ': sticks out vertically ' + JSON.stringify(r));
     if (Math.abs(r.cx - r.w / 2) > 60) bad(label + ': not centered (center ' + Math.round(r.cx) + ' of ' + r.w + ')');
   };
   await page.locator('#flashcardBtn').click();
@@ -73,6 +76,8 @@ console.log('\n== short laptop screen (1366x560)');
   await fits('.continue-box', 'continue box');
   const cb = await page.evaluate(() => { const b = document.getElementById('continueNoBtn'); if (!b) return null; const r = b.getBoundingClientRect(); return r.bottom <= innerHeight + 1 && r.top >= 0; });
   if (cb === false) bad('continue "No" button is off screen');
+  const aside2 = page.errs.filter((x) => /Dropped|auto-fix/.test(x));
+  if (aside2.length) console.log('  note  laptop: ' + aside2.length + ' error(s) set aside by the Dropped/auto-fix filter: ' + aside2.slice(0, 2).join(' | '));
   const e = page.errs.filter((x) => !/Dropped|auto-fix/.test(x));
   if (e.length) bad('laptop: errors ' + e.slice(0, 2).join(' | '));
   await ctx.close();

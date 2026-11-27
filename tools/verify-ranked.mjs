@@ -9,6 +9,11 @@
 //   node tools/verify-ranked.mjs [http://localhost:4190]
 
 import { chromium } from '@playwright/test';
+import { tmpdir } from 'node:os';
+
+let failures = 0;
+const check = (name, cond, detail) => { console.log((cond ? 'PASS ' : 'FAIL ') + name + (detail ? ': ' + detail : '')); if (!cond) failures++; };
+const shot = (name) => tmpdir() + '/' + name;
 
 const dismissDaily = async (pg) => {
   const overlay = pg.locator('#dailyReward');
@@ -99,6 +104,8 @@ async function player(user) {
 
 async function play(label, trophies) {
   await setTrophies(trophies);
+  const beforeRows = (await db.query('SELECT user_id, wins, losses FROM player_trophies ORDER BY user_id')).rows;
+  const beforeOf = (u) => beforeRows.find((r) => r.user_id === u) || { wins: 0, losses: 0 };
   const a = await player(A);
   const b = await player(B);
   for (const p of [a, b]) {
@@ -106,7 +113,7 @@ async function play(label, trophies) {
     await p.locator('#mpRankedBtn').waitFor({ timeout: 15000 });
   }
   console.log(label + ': league card:', (await a.locator('#rkCard').innerText()).split('\n').join(' | '));
-  await a.screenshot({ path: process.env.TEMP + '/ranked-lobby-' + label + '.png' });
+  await a.screenshot({ path: shot('ranked-lobby-' + label + '.png') });
   await a.locator('#mpRankedBtn').click();
   await a.waitForTimeout(1500);
   await b.locator('#mpRankedBtn').click();
@@ -127,20 +134,29 @@ async function play(label, trophies) {
   }));
   console.log(label + ': Ada run:', JSON.stringify(await info(a)));
   console.log(label + ': Bo run:', JSON.stringify(await info(b)));
-  await a.screenshot({ path: process.env.TEMP + '/ranked-run-' + label + '.png' });
+  await a.screenshot({ path: shot('ranked-run-' + label + '.png') });
 
   // Ada quits (forfeits), so Bo wins
   await a.locator('#pauseBtn').click();
   await a.locator('#endRunBtn').click();
   await b.locator('#rankedResult').waitFor({ timeout: 30000 });
   await a.locator('#rankedResult').waitFor({ timeout: 30000 });
-  console.log(label + ': Ada sees:', (await a.locator('#rankedResult').innerText()).split('\n').join(' | '));
-  await b.waitForFunction(() => document.getElementById('rankedResult').innerText.includes('+'), null, { timeout: 30000 }).catch(() => null);
-  console.log(label + ': Bo sees:', (await b.locator('#rankedResult').innerText()).split('\n').join(' | '));
+  const adaSees = (await a.locator('#rankedResult').innerText()).split('\n').join(' | ');
+  console.log(label + ': Ada sees:', adaSees);
+  // Bo won, so Bo's result must show a gain: a timeout here is a failure, not something to swallow
+  const boGain = await b.waitForFunction(() => document.getElementById('rankedResult').innerText.includes('+'), null, { timeout: 30000 }).then(() => true, () => false);
+  check(label + ': the winner sees a trophy gain', boGain);
+  const boSees = (await b.locator('#rankedResult').innerText()).split('\n').join(' | ');
+  console.log(label + ': Bo sees:', boSees);
+  check(label + ': the loser sees a result too', adaSees.trim().length > 0);
   await b.waitForTimeout(1500);
-  await b.screenshot({ path: process.env.TEMP + '/ranked-result-' + label + '.png' });
+  await b.screenshot({ path: shot('ranked-result-' + label + '.png') });
   const rows = (await db.query('SELECT user_id, trophies, wins, losses FROM player_trophies ORDER BY user_id')).rows;
   console.log(label + ': database:', JSON.stringify(rows.map((r) => ({ name: names[r.user_id], trophies: r.trophies, wins: r.wins, losses: r.losses }))));
+  const ada = rows.find((r) => r.user_id === A);
+  const bo = rows.find((r) => r.user_id === B);
+  check(label + ': the database records Bo\'s win and Ada\'s loss', !!bo && !!ada && bo.wins === beforeOf(B).wins + 1 && ada.losses === beforeOf(A).losses + 1 && ada.wins === beforeOf(A).wins && bo.losses === beforeOf(B).losses, JSON.stringify(rows));
+  check(label + ': trophies move the right way', !!bo && !!ada && bo.trophies > trophies && ada.trophies <= trophies, 'start ' + trophies + ', Bo ' + (bo && bo.trophies) + ', Ada ' + (ada && ada.trophies));
   await a.context().close();
   await b.context().close();
 }
@@ -152,3 +168,5 @@ await db.exec('DELETE FROM ranked_reports; DELETE FROM ranked_matches; DELETE FR
 await play('dean', 2800);
 await browser.close();
 await db.close();
+if (failures) { console.error('\n' + failures + ' ranked check(s) FAILED'); process.exit(1); }
+console.log('\nAll ranked checks passed');

@@ -139,7 +139,9 @@ const inView = (page, sel) => page.evaluate((s) => {
   await page.keyboard.press('ArrowRight');
   await page.waitForTimeout(150);
   const laneR = await page.evaluate(() => window.__game.targetLane);
-  check('Arrow keys change lanes', laneL === lane0 - 1 && laneR === Math.min(2, laneL + 2), lane0 + ' -> ' + laneL + ' -> ' + laneR);
+  // lanes run 0..2: from the start lane a left press goes nowhere, so the expectation is max(0, lane0 - 1)
+  // exactly (the old check expected lane0 - 1, which is -1, an impossible lane, when starting in lane 0)
+  check('Arrow keys change lanes', laneL === Math.max(0, lane0 - 1) && laneR === Math.min(2, laneL + 2), lane0 + ' -> ' + laneL + ' -> ' + laneR);
   await page.keyboard.press('ArrowUp');
   await page.waitForTimeout(100);
   check('Up arrow jumps', await page.evaluate(() => window.__game.jumping));
@@ -214,7 +216,7 @@ const inView = (page, sel) => page.evaluate((s) => {
   await page.locator('.plan-step-buttons .btn-green').first().click();
   await page.waitForTimeout(8000);
   const info = await page.evaluate(() => ({ mode: window.__game.mode, state: window.__game._state, plan: (window.__game._modeConfig || {}).planCardIds }));
-  check('"Run it" starts a runner session with the planned cards', info.mode === 'study' && Array.isArray(info.plan) && info.plan.length >= 1, JSON.stringify(info));
+  check('"Run it" starts a runner session with the planned cards', info.mode === 'study' && info.state === 'playing' && Array.isArray(info.plan) && info.plan.length >= 1, JSON.stringify(info));
   const firstIsPlanned = await page.evaluate(() => { const g = window.__game; return !!(g.card && (g._modeConfig.planCardIds || []).indexOf(g.card.id) >= 0); });
   check('The first question comes from the plan', firstIsPlanned);
   check('No script errors in the study plan', errors.length === 0, errors.join(' | '));
