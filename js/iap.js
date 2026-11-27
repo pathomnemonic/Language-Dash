@@ -17,8 +17,12 @@ export function createIap(deps) {
   var plugin = null;
   var started = null;
   var defs = [];
-  var waiting = {}; // product id -> resolve of the open purchase
+  var waiting = {}; // product id -> settle of the open purchase
   var listeners = [];
+
+  // A purchase the store leaves pending (deferred approval, a slow network) never calls back. Without a limit the
+  // order would hang forever and every later order for that product would answer "busy" until the app restarts.
+  var ORDER_TIMEOUT_MS = 10 * 60 * 1000;
 
   function platformId(mod) {
     return deps.platform === 'ios' ? mod.Platform.APPLE_APPSTORE : deps.platform === 'android' ? mod.Platform.GOOGLE_PLAY : null;
@@ -31,7 +35,7 @@ export function createIap(deps) {
       list.forEach(function (d) { if (!defs.some(function (x) { return x.id === d.id; })) defs.push(d); });
     },
 
-    /** Connect to the store (once). Resolves true when the store answered. */
+    /** Connect to the store. A start that worked is kept for the session; a failed one is forgotten, so the next call tries again. */
     start: function () {
       if (started) return started;
       started = Promise.resolve().then(function () { return deps.loadPlugin(); }).then(function (mod) {
@@ -52,6 +56,9 @@ export function createIap(deps) {
           return defs.some(function (d) { return !!self.product(d.id); }) || !(errors && errors.length);
         });
       }).catch(function () { return false; });
+      // One temporary store failure must not disable purchases for the whole session: when the attempt comes
+      // back false, forget it so a later start() connects again. Callers already holding the promise still get false.
+      started = started.then(function (ok) { if (!ok) started = null; return ok; });
       return started;
     },
 
@@ -60,13 +67,18 @@ export function createIap(deps) {
       try { return (plugin && plugin.store.get(id, platformId(plugin))) || null; } catch (e) { return null; }
     },
 
-    /** Local price details of a product: {price, micros, currency, trialDays, period}. null when the store lacks it. */
+    /**
+     * Local price details of a product: {price, micros, currency, trialDays, period}. null when the store lacks it.
+     * The price is the regular ongoing one: the LAST paid phase. An offer can open with a cheaper introductory
+     * phase, and presenting that as the regular price would misstate what the subscription renews at.
+     */
     price: function (id) {
       var prod = self.product(id);
       var offer = prod && bestOffer(prod);
       if (!offer || !offer.pricingPhases || !offer.pricingPhases.length) return null;
       var phases = offer.pricingPhases;
-      var paid = phases.filter(function (p) { return p.paymentMode !== 'FreeTrial'; })[0] || phases[phases.length - 1];
+      var paidPhases = phases.filter(function (p) { return p.paymentMode !== 'FreeTrial'; });
+      var paid = paidPhases[paidPhases.length - 1] || phases[phases.length - 1];
       var trial = phases.filter(function (p) { return p.paymentMode === 'FreeTrial'; })[0];
       return { price: paid.price || '', micros: paid.priceMicros || 0, currency: paid.currency || '', period: paid.billingPeriod || '', trialDays: trial ? isoDays(trial.billingPeriod) : 0 };
     },
@@ -98,13 +110,18 @@ export function createIap(deps) {
         if (!offer) return { ok: false, error: 'unavailable' };
         if (waiting[id]) return { ok: false, error: 'busy' };
         return new Promise(function (resolve) {
-          waiting[id] = resolve;
+          var timer = setTimeout(function () {
+            if (waiting[id] === settle) delete waiting[id];
+            resolve({ ok: false, error: 'pending' }); // still open at the store: the product is free to order again
+          }, ORDER_TIMEOUT_MS);
+          function settle(result) { clearTimeout(timer); resolve(result); }
+          waiting[id] = settle;
           Promise.resolve(plugin.store.order(offer)).then(function (err) {
-            if (!err) return; // the sheet is open: the result comes through finished()
-            delete waiting[id];
+            if (!err) return; // the sheet is open: the result comes through finished(), or the timeout above
+            if (waiting[id] === settle) delete waiting[id];
             var cancelled = !!(plugin.ErrorCode && err.code === plugin.ErrorCode.PAYMENT_CANCELLED);
-            resolve({ ok: false, cancelled: cancelled, error: cancelled ? 'cancelled' : String(err.message || 'failed').slice(0, 80) });
-          }, function () { delete waiting[id]; resolve({ ok: false, error: 'failed' }); });
+            settle({ ok: false, cancelled: cancelled, error: cancelled ? 'cancelled' : String(err.message || 'failed').slice(0, 80) });
+          }, function () { if (waiting[id] === settle) delete waiting[id]; settle({ ok: false, error: 'failed' }); });
         });
       });
     },
