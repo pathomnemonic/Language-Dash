@@ -64,6 +64,7 @@ export const TABLES = {
   cohort_war_points: { cls: 'member', userCols: ['user_id'] },
   schools: { cls: 'member', userCols: [], setNull: ['created_by'] },
   pro_entitlements: { cls: 'member', userCols: ['user_id'] },
+  pro_grants: { cls: 'member', userCols: ['user_id'] },
   pro_items: { cls: 'member', userCols: ['user_id'] },
   pro_library: { cls: 'member', userCols: ['user_id'] },
   pro_trials: { cls: 'member', userCols: ['user_id'], keepOnPurge: true },
@@ -125,7 +126,7 @@ const SERVICE_ONLY = [
   'pro_grant', 'pro_grant_until', 'pro_revoke', 'pro_grant_item', 'pro_revoke_item', 'pro_has_item', 'pro_revoke_plan',
   'pro_forget_user', 'pro_grant_library', 'pro_revoke_library', 'pro_link_customer', 'pro_customer_user', 'pro_user_customer',
   'pro_event_once', 'pro_make_code', 'pro_store_claim', 'apple_token_save', 'apple_token_get', 'analytics_purge',
-  'pro_set_billing_cancelled'
+  'pro_set_billing_cancelled', 'pro_sync_entitlement'
 ];
 const ANON_RPCS = ['ingest_analytics', 'delete_analytics', 'count_consent'];
 
