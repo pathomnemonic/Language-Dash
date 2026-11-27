@@ -1,7 +1,14 @@
 // tests/unit/setup.js
 // Global test setup for Vitest unit tests
 
+// Run from the repo root, whatever directory vitest was launched in: many suites read
+// repo files by root relative paths (js/..., database/...), which only resolve from here.
+// (__dirname is the one anchor vitest gives every file it runs; import.meta.url is
+// rewritten to a /@fs/ URL in the browser-like environments and cannot be used.)
+process.chdir(resolve(__dirname, '../..'));
+
 // The app loads its card database lazily; tests want it present from the start
+import { resolve } from 'node:path';
 import { loadCards } from '../../js/cardhub.js';
 await loadCards();
 
@@ -94,17 +101,21 @@ if (!navigator.vibrate) {
   navigator.vibrate = () => true;
 }
 
-// Mock localStorage for storage.js tests
+// Mock localStorage for storage.js tests. The backing store has no prototype:
+// on a plain object, getItem('constructor') would answer the inherited constructor
+// instead of null, which no real localStorage ever does.
 const localStorageMock = (() => {
-  let store = {};
+  let store = Object.create(null);
   return {
     getItem(key) { return store[key] ?? null; },
     setItem(key, value) { store[key] = String(value); },
     removeItem(key) { delete store[key]; },
-    clear() { store = {}; },
+    clear() { store = Object.create(null); },
     get length() { return Object.keys(store).length; },
     key(i) { return Object.keys(store)[i] ?? null; }
   };
 })();
 
-Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock });
+// configurable and writable, so a suite may replace this mock with its own
+// (vi.stubGlobal refuses to stub a property that is neither)
+Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, configurable: true, writable: true });
