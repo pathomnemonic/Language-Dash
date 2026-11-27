@@ -32,7 +32,10 @@ export const AUDIT_FILE = 'audit';
 // cls: member = holds one member's data (gated + wiped by delete_my_ld_data); shared = Language Dash content with no user column
 // (gated, nobody reads it directly); internal = owner/service data with no user column (ungated); anon = written by the
 // signed-out app (ungated, no account id at all). userCols: the columns delete_my_ld_data matches on. setNull: columns that
-// are set to NULL instead (the row belongs to something else).
+// are set to NULL instead (the row belongs to something else). keepOnPurge: the row is NOT wiped by delete_my_ld_data /
+// purge_user_data, because something outside this app's data still needs it; pro_forget_user removes it when the
+// sign-in itself is removed (apple_tokens: the Apple login can only be revoked while the token exists; pro_trials:
+// the once-per-account free trial marker, which must not reset when only the app data is deleted).
 export const TABLES = {
   player_profiles: { cls: 'member', userCols: ['user_id'] },
   scores: { cls: 'member', userCols: ['user_id'] },
@@ -63,12 +66,12 @@ export const TABLES = {
   pro_entitlements: { cls: 'member', userCols: ['user_id'] },
   pro_items: { cls: 'member', userCols: ['user_id'] },
   pro_library: { cls: 'member', userCols: ['user_id'] },
-  pro_trials: { cls: 'member', userCols: ['user_id'] },
+  pro_trials: { cls: 'member', userCols: ['user_id'], keepOnPurge: true },
   pro_redemptions: { cls: 'member', userCols: ['user_id'] },
   pro_attempts: { cls: 'member', userCols: ['user_id'] },
   pro_stripe_customers: { cls: 'member', userCols: ['user_id'] },
   pro_store_purchases: { cls: 'member', userCols: ['user_id'] },
-  apple_tokens: { cls: 'member', userCols: ['user_id'] },
+  apple_tokens: { cls: 'member', userCols: ['user_id'], keepOnPurge: true },
   cohorts: { cls: 'shared', userCols: [] },
   pro_codes: { cls: 'internal', userCols: [] },
   pro_stripe_events: { cls: 'internal', userCols: [] },
@@ -121,7 +124,8 @@ const INTERNAL = [
 const SERVICE_ONLY = [
   'pro_grant', 'pro_grant_until', 'pro_revoke', 'pro_grant_item', 'pro_revoke_item', 'pro_has_item', 'pro_revoke_plan',
   'pro_forget_user', 'pro_grant_library', 'pro_revoke_library', 'pro_link_customer', 'pro_customer_user', 'pro_user_customer',
-  'pro_event_once', 'pro_make_code', 'pro_store_claim', 'apple_token_save', 'apple_token_get', 'analytics_purge'
+  'pro_event_once', 'pro_make_code', 'pro_store_claim', 'apple_token_save', 'apple_token_get', 'analytics_purge',
+  'pro_set_billing_cancelled'
 ];
 const ANON_RPCS = ['ingest_analytics', 'delete_analytics', 'count_consent'];
 
@@ -974,7 +978,7 @@ export function renderPurgeSql(ctx) {
   const lines = [];
   for (const n of order) {
     const t = TABLES[n];
-    if (t.userCols.length) {
+    if (t.userCols.length && !t.keepOnPurge) {
       const cond = t.userCols.map((c) => c + ' = p_user').join(' OR ');
       lines.push('  DELETE FROM language_dash.' + n + ' WHERE ' + cond + ';');
       lines.push("  GET DIAGNOSTICS n = ROW_COUNT; counts := counts || jsonb_build_object('" + n + "', n);");
@@ -990,6 +994,9 @@ export function renderPurgeSql(ctx) {
 
 -- Removes every Language Dash row that belongs to p_user, then the membership. NEVER touches auth.users (the shared sign-in).
 -- Used by delete_my_ld_data() for the caller, and by the edge function (service role) just before it removes the sign-in.
+-- Two tables are deliberately NOT wiped here (keepOnPurge in the classification): apple_tokens (a later sign-in removal
+-- still needs the token to revoke the Apple login) and pro_trials (the once-per-account trial marker must not reset).
+-- pro_forget_user removes both when the sign-in itself is removed.
 CREATE OR REPLACE FUNCTION language_dash.purge_user_data(p_user uuid) RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER ${PIN} AS $$
 DECLARE n integer; counts jsonb := '{}'::jsonb;
@@ -1003,13 +1010,15 @@ END $$;
 
 -- "Delete my Language Dash account": the caller's Language Dash data and membership only. Works for a non-member too (it
 -- clears anything a payment webhook may have recorded before they joined). A subscription that is still billing must be
--- cancelled first, exactly as the template's delete_my_account required.
+-- cancelled first, exactly as the template's delete_my_account required. "Still billing" is the cancelled_at marker,
+-- not the paid time left in until: once the subscription is cancelled (in the app, which records it, or in Stripe's
+-- portal, which the webhook records) nothing more will be charged, and deletion may proceed while the paid time runs on.
 CREATE OR REPLACE FUNCTION language_dash.delete_my_ld_data() RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER ${PIN} AS $$
 DECLARE me uuid := auth.uid();
 BEGIN
   IF me IS NULL THEN RAISE EXCEPTION 'not_signed_in' USING ERRCODE = '28000'; END IF;
-  IF EXISTS (SELECT 1 FROM language_dash.pro_entitlements WHERE user_id = me AND source = 'stripe' AND plan IN ('monthly', 'yearly', 'pass3m') AND until > now()) THEN
+  IF EXISTS (SELECT 1 FROM language_dash.pro_entitlements WHERE user_id = me AND source = 'stripe' AND plan IN ('monthly', 'yearly', 'pass3m') AND until > now() AND cancelled_at IS NULL) THEN
     RAISE EXCEPTION 'subscription_still_billing' USING ERRCODE = '55000',
       HINT = 'Cancel the subscription first (Settings, Language Dash Pro, Manage subscription), then delete your Language Dash data.';
   END IF;
@@ -1224,7 +1233,7 @@ export function assertNoPublicLeft(sql) {
 }
 
 function buildReport(ctx, sql, files, auditCounters) {
-  const tables = Object.keys(ctx.tables).map((n) => ({ name: n, cls: TABLES[n].cls, gated: ['member', 'shared'].includes(TABLES[n].cls), userCols: TABLES[n].userCols, setNull: TABLES[n].setNull || [], file: ctx.tables[n].file, why: TABLE_CLASS_TEXT[TABLES[n].cls] }));
+  const tables = Object.keys(ctx.tables).map((n) => ({ name: n, cls: TABLES[n].cls, gated: ['member', 'shared'].includes(TABLES[n].cls), userCols: TABLES[n].userCols, setNull: TABLES[n].setNull || [], keepOnPurge: !!TABLES[n].keepOnPurge, file: ctx.tables[n].file, why: TABLE_CLASS_TEXT[TABLES[n].cls] }));
   tables.unshift({ name: 'members', cls: 'membership', gated: false, userCols: ['user_id'], setNull: [], file: 'generator', why: 'membership table: own-row SELECT policy only, no client writes' });
   const seen = new Map();
   for (const f of ctx.functions) seen.set(f.name + f.args, { name: f.name, args: f.args, lang: f.lang, secdef: f.secdef, decision: f.decision, why: f.why, file: f.file, pin: f.pin });
@@ -1287,7 +1296,7 @@ export function renderReportMarkdown(r) {
   L.push('| Table | Class | Member gate | Wiped by delete_my_ld_data on | Source |');
   L.push('| --- | --- | --- | --- | --- |');
   for (const t of r.tables) {
-    const wipe = t.userCols.length ? t.userCols.join(', ') : (t.setNull.length ? 'set NULL: ' + t.setNull.join(', ') : '-');
+    const wipe = t.keepOnPurge ? 'kept (removed by pro_forget_user with the sign-in)' : (t.userCols.length ? t.userCols.join(', ') : (t.setNull.length ? 'set NULL: ' + t.setNull.join(', ') : '-'));
     L.push('| `' + t.name + '` | ' + t.cls + ' | ' + yn(t.gated) + ' | ' + wipe + ' | ' + t.file + ' |');
   }
   L.push('');
