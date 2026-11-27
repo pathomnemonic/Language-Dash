@@ -322,6 +322,9 @@ describe('a payment is never lost to a missing field, a free renewal or an odd o
     expect(g.map((x) => x.plan)).toEqual(['yearly', 'monthly']);
     expect(g[1].trial).toBe(true);
     expect(grantsFromSubscriptions([{ status: 'active', current_period_end: NOW - 10 * 86400, metadata: { app: 'language_dash', plan: 'yearly' } }], NOW)).toEqual([]); // long over
+    // another app's subscription on the same Stripe customer grants nothing here (the account is shared)
+    expect(grantsFromSubscriptions([{ status: 'active', current_period_end: NOW + 20 * 86400, metadata: { app: 'dx_dash', plan: 'yearly', user_id: 'u1' } }], NOW)).toEqual([]);
+    expect(grantsFromSubscriptions([{ status: 'active', current_period_end: NOW + 20 * 86400, metadata: { plan: 'yearly', user_id: 'u1' } }], NOW)).toEqual([]); // no stamp at all
   });
 
   it('a signed event is accepted, an altered or stale one is not', async () => {
