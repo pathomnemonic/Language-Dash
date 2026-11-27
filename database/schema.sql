@@ -79,6 +79,11 @@ CREATE TRIGGER scores_sanity_trg BEFORE INSERT ON scores
 CREATE OR REPLACE FUNCTION scores_keep_best() RETURNS trigger
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 BEGIN
+  -- Serialise submissions for the same player, mode and season for the length of this transaction:
+  -- the check, delete and insert below are three separate steps, and two overlapping submissions
+  -- could otherwise both pass the check against the same stored best (keeping duplicates), or the
+  -- delete could remove a better row a concurrent submission had just committed.
+  PERFORM pg_advisory_xact_lock(hashtextextended(NEW.user_id::text || ':' || NEW.mode || ':' || NEW.season, 0));
   IF EXISTS (
     SELECT 1 FROM scores
     WHERE user_id = NEW.user_id AND mode = NEW.mode AND season = NEW.season AND score >= NEW.score
@@ -1122,6 +1127,23 @@ BEGIN
   IF code !~ '^[A-Z0-9]{5}$' THEN RAISE EXCEPTION 'Bad room code'; END IF;
   INSERT INTO player_trophies (user_id) VALUES (me) ON CONFLICT DO NOTHING;
   SELECT trophies INTO my_t FROM player_trophies WHERE user_id = me;
+
+  -- One live match at a time: a caller who is already in an unsettled match gets that match back
+  -- instead of being paired into a second one. (The window matches ranked_poll_match's horizon:
+  -- past it an unsettled match is abandoned, and settlement owns any match with reports in.)
+  SELECT * INTO m FROM ranked_matches
+   WHERE (host_id = me OR guest_id = me) AND NOT settled
+     AND created_at > now() - interval '2 minutes'
+   ORDER BY created_at DESC LIMIT 1;
+  IF FOUND THEN
+    DELETE FROM ranked_queue WHERE user_id = me;
+    RETURN jsonb_build_object('role', CASE WHEN m.host_id = me THEN 'host' ELSE 'guest' END,
+                              'match_id', m.id, 'room_code', m.room_code,
+                              'own_trophies', CASE WHEN m.host_id = me THEN m.host_trophies ELSE m.guest_trophies END,
+                              'opponent_trophies', CASE WHEN m.host_id = me THEN m.guest_trophies ELSE m.host_trophies END,
+                              'existing', true);
+  END IF;
+
   DELETE FROM ranked_queue WHERE user_id = me;
 
   -- a waiting player of similar strength; the window widens 10 trophies per second waited

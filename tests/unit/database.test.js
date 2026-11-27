@@ -149,8 +149,25 @@ describe('ranked matches', () => {
     expect(visible).toHaveLength(0);
   });
 
+  it('a player already in a live ranked match is handed that match, not a second one', async () => {
+    await db.query('DELETE FROM ranked_matches WHERE NOT settled');
+    await db.query('DELETE FROM ranked_queue');
+    const host = (await call(A, "SELECT ranked_find_match('PQRS1') AS r")).r;
+    expect(host.role).toBe('host');
+    const guest = (await call(B, "SELECT ranked_find_match('TUVW2') AS r")).r;
+    expect(guest.role).toBe('guest');
+    const again = (await call(B, "SELECT ranked_find_match('XYZA3') AS r")).r;
+    expect(again.match_id).toBe(guest.match_id);
+    expect(again.existing).toBe(true);
+    const hostAgain = (await call(A, "SELECT ranked_find_match('BCDE4') AS r")).r;
+    expect(hostAgain.match_id).toBe(guest.match_id);
+    await db.query('DELETE FROM ranked_matches WHERE NOT settled');
+    await db.query('DELETE FROM ranked_queue');
+  });
+
   it('does not pair players far apart in strength, but widens the search as they wait', async () => {
     await db.query("DELETE FROM ranked_queue");
+    await db.query("DELETE FROM ranked_matches WHERE NOT settled"); // (an earlier test's pairing is still live, and a player in a live match is not paired again)
     await db.query("INSERT INTO player_trophies (user_id, trophies) VALUES ($1, 1500) ON CONFLICT (user_id) DO UPDATE SET trophies = 1500", [C]);
     await call(C, "SELECT ranked_find_match('JJJJ2') AS r");
     const far = (await call(A, "SELECT ranked_find_match('KKKK3') AS r")).r;
@@ -224,6 +241,20 @@ describe('scores and profiles', () => {
     expect(row).toEqual({ best_score: 500, best_streak: 5 });
     expect(await rejects(A, `SELECT upsert_player_profile($1,'Hax','a','{}',9,9,true)`, [B])).toBe(true);
   });
+
+  it('a hidden profile\'s raw scores are readable only by their owner', async () => {
+    // (the leaderboard views have always filtered on visible; the raw table now matches them)
+    expect((await as(B, () => db.query('SELECT * FROM scores WHERE user_id = $1', [A]))).rows.length).toBeGreaterThan(0);
+    await as(A, () => db.query(`SELECT upsert_player_profile($1,'Alice','a','{}',500,5,false)`, [A]));
+    expect((await as(B, () => db.query('SELECT * FROM scores WHERE user_id = $1', [A]))).rows).toHaveLength(0);
+    expect((await as(A, () => db.query('SELECT * FROM scores WHERE user_id = $1', [A]))).rows.length).toBeGreaterThan(0);
+    await as(A, () => db.query(`SELECT upsert_player_profile($1,'Alice','a','{}',500,5,true)`, [A]));
+  });
+
+  it('the keep-best rule serialises on the player, mode and season (its stored definition carries the lock)', async () => {
+    const def = (await db.query(`SELECT pg_get_functiondef('scores_keep_best()'::regprocedure) AS d`)).rows[0].d;
+    expect(def).toContain('pg_advisory_xact_lock');
+  });
 });
 
 describe('friends, blocks and invites', () => {
@@ -246,6 +277,18 @@ describe('friends, blocks and invites', () => {
     expect(await rejects(A, "INSERT INTO match_invites (from_user, to_user, room_code) VALUES ($1,$2,'ABCDE')", [A, C])).toBe(true);
     expect((await as(C, () => db.query('SELECT * FROM match_invites'))).rows).toHaveLength(0);
   });
+
+  it('stops invites between blocked players, and an invite can only be born pending', async () => {
+    // A and B are accepted friends (above), but a block ends invites even though the friendship row stands
+    await as(B, () => db.query('INSERT INTO friend_blocks (blocker_id, blocked_id) VALUES ($1,$2)', [B, A]));
+    expect(await rejects(A, "INSERT INTO match_invites (from_user, to_user, room_code) VALUES ($1,$2,'FGHIJ')", [A, B])).toBe(true);
+    expect(await rejects(B, "INSERT INTO match_invites (from_user, to_user, room_code) VALUES ($1,$2,'FGHIJ')", [B, A])).toBe(true);
+    await db.query('DELETE FROM friend_blocks WHERE blocker_id = $1 AND blocked_id = $2', [B, A]);
+    // acceptance is the recipient's decision: the sender cannot insert an invite already marked accepted
+    expect(await rejects(A, "INSERT INTO match_invites (from_user, to_user, room_code, status) VALUES ($1,$2,'KLMNO','accepted')", [A, B])).toBe(true);
+    expect(await rejects(A, "INSERT INTO match_invites (from_user, to_user, room_code, status) VALUES ($1,$2,'KLMNO','pending')", [A, B])).toBe(false);
+  });
+
 });
 
 describe('leaderboards, groups and decks', () => {
