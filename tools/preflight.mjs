@@ -27,6 +27,13 @@ function walk(dir, out) {
   return out;
 }
 
+/** Is this path one of the bundled scripts under assets/? Separators are normalised first: on Windows join() hands
+ *  back backslash paths, which a '/assets/' test would never match (the scan used to silently cover zero files). */
+export function isBundleJs(p) {
+  var n = String(p).split('\\').join('/');
+  return extname(n) === '.js' && n.indexOf('/assets/') >= 0;
+}
+
 /** @returns {{fails: string[], warns: string[], info: string[]}} */
 export function preflight(root, dist) {
   var fails = [];
@@ -37,9 +44,11 @@ export function preflight(root, dist) {
 
   var html = existsSync(join(dist, 'index.html')) ? readFileSync(join(dist, 'index.html'), 'utf8') : '';
   var refs = [];
-  html.replace(/(?:src|href)="([^"#?]+)"/g, function (_, u) { if (!/^(https?:|data:|mailto:|\/\/)/.test(u)) refs.push(u); return ''; });
+  // double- or single-quoted, with or without a query string: a reference the pattern cannot see is a reference
+  // that is never checked (assets/app.js?v=1 used to slip past entirely)
+  html.replace(/(?:src|href)=["']([^"']+)["']/g, function (_, u) { if (!/^(https?:|data:|mailto:|\/\/|#)/.test(u)) refs.push(u); return ''; });
   refs.forEach(function (u) {
-    var rel = u.replace(/^\.?\//, '');
+    var rel = u.split(/[?#]/)[0].replace(/^\.?\//, '');
     if (rel && !existsSync(join(dist, rel))) fails.push('index.html points at ' + u + ' which is not in the build');
   });
 
@@ -47,7 +56,7 @@ export function preflight(root, dist) {
   if (/__BUILD_ID__/.test(sw)) fails.push('sw.js still has the __BUILD_ID__ placeholder (old caches would never be replaced)');
 
   var files = walk(dist);
-  var js = files.filter(function (f) { return extname(f) === '.js' && f.indexOf('/assets/') >= 0; });
+  var js = files.filter(isBundleJs);
   var jsBytes = 0;
   var largest = 0;
   js.forEach(function (f) {
@@ -56,8 +65,14 @@ export function preflight(root, dist) {
     jsBytes += size;
     largest = Math.max(largest, size);
     if (/\bdebugger\b\s*;/.test(text) && !/three/.test(f)) warns.push('a debugger statement in ' + f.replace(dist, ''));
-    SECRETS.forEach(function (re) { if (re.test(text)) fails.push('secret-looking text (' + re + ') in ' + f.replace(dist, '')); });
     if (/YOUR_SUPABASE_URL/.test(text)) info.push('the online backend was NOT configured at build time (placeholders are in the bundle): accounts, friends and leaderboards stay off');
+  });
+  // secrets are scanned in everything textual that ships, not only the bundled scripts: the pages, the manifest,
+  // the remote config and the service worker are shipped code too, and a key pasted into any of them is just as live
+  var TEXT_EXT = ['.js', '.html', '.json', '.webmanifest', '.txt'];
+  files.filter(function (f) { return TEXT_EXT.indexOf(extname(f)) >= 0; }).forEach(function (f) {
+    var text = readFileSync(f, 'utf8');
+    SECRETS.forEach(function (re) { if (re.test(text)) fails.push('secret-looking text (' + re + ') in ' + f.replace(dist, '')); });
   });
   info = info.filter(function (v, i) { return info.indexOf(v) === i; });
   if (jsBytes > BUDGET.jsBytes) warns.push('JavaScript is ' + Math.round(jsBytes / 1024) + ' KB, over the ' + Math.round(BUDGET.jsBytes / 1024) + ' KB budget');
@@ -77,7 +92,24 @@ export function preflight(root, dist) {
   } catch { fails.push('manifest.webmanifest is not valid JSON'); }
   try {
     var rc = JSON.parse(readFileSync(join(dist, 'remote-config.json'), 'utf8'));
-    if (Array.isArray(rc.killed) && rc.killed.length) warns.push('remote-config.json has mechanics switched off: ' + rc.killed.join(', '));
+    // the app silently ignores a field of the wrong type, so a typo here would switch nothing off and nobody would
+    // know: the structure is checked properly, not only that the file parses
+    if (!rc || typeof rc !== 'object' || Array.isArray(rc)) fails.push('remote-config.json must be a JSON object');
+    else {
+      if (rc.killed !== undefined && (!Array.isArray(rc.killed) || rc.killed.some(function (k) { return typeof k !== 'string'; }))) fails.push('remote-config.json: "killed" must be a list of mechanic names');
+      else if (Array.isArray(rc.killed) && rc.killed.length) warns.push('remote-config.json has mechanics switched off: ' + rc.killed.join(', '));
+      if (rc.analytics !== undefined) {
+        var an = rc.analytics;
+        if (!an || typeof an !== 'object' || Array.isArray(an)) fails.push('remote-config.json: "analytics" must be an object');
+        else {
+          if (an.enabled !== undefined && typeof an.enabled !== 'boolean') fails.push('remote-config.json: analytics.enabled must be true or false');
+          if (an.sample !== undefined && (typeof an.sample !== 'number' || an.sample < 0 || an.sample > 1)) fails.push('remote-config.json: analytics.sample must be a number between 0 and 1');
+          if (an.killed !== undefined && (!Array.isArray(an.killed) || an.killed.some(function (k) { return typeof k !== 'string'; }))) fails.push('remote-config.json: analytics.killed must be a list of event names');
+          if (an.rates !== undefined && (!an.rates || typeof an.rates !== 'object' || Array.isArray(an.rates) || Object.values(an.rates).some(function (r) { return typeof r !== 'number' || r < 0 || r > 1; }))) fails.push('remote-config.json: analytics.rates must map event names to numbers between 0 and 1');
+        }
+      }
+      if (rc.pro !== undefined && (!rc.pro || typeof rc.pro !== 'object' || Array.isArray(rc.pro) || (rc.pro.enabled !== undefined && typeof rc.pro.enabled !== 'boolean'))) fails.push('remote-config.json: "pro" must be an object with a true or false "enabled"');
+    }
   } catch { fails.push('remote-config.json is missing or not valid JSON'); }
   return { fails: fails, warns: warns, info: info };
 }
