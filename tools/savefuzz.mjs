@@ -39,7 +39,9 @@ export function parseArgs(argv, env) {
 var SCREENS = ['screenHome', 'screenStats', 'screenShop', 'screenQuests', 'screenProfile', 'screenSettings', 'screenMyCards', 'screenCardBrowser', 'screenFlashcard', 'screenExam', 'screenLeaderboard', 'screenCohorts', 'screenImportExport'];
 var AUX_KEYS = ['langdash_custom_words', 'langdash_decks_v1', 'bd_cloud_meta', 'langdash_ranked_cache', 'langdash_activity_throttle', 'ld_tts_wps', 'langdash_save_v1_damaged'];
 var JUNK = ['', '{', 'null', '[]', '{}', '123', '"text"', 'true', '[null,1,"x",{}]', '{"a":{"b":null}}', '\u0000', '{"__proto__":{"polluted":1}}', 'x'.repeat(100000)];
-var NOISE = /GPU stall|swiftshader|WebGL: INVALID|GroupMarkerNotSet|Failed to load resource|net::ERR|WebSocket connection|peerjs|supabase|\[vite\]/i;
+// "Failed to load resource" and net::ERR are deliberately NOT in this list: they used to swallow every resource
+// failure, including the app's own assets. They are handled in the console listener below, by the failing URL.
+var NOISE = /GPU stall|swiftshader|WebGL: INVALID|GroupMarkerNotSet|WebSocket connection|peerjs|\[vite\]/i;
 
 /** The save a player with a lot of progress would have, built the way the game builds it. Runs in the page. */
 function buildRichSave() {
@@ -70,7 +72,13 @@ export async function savefuzz(opts) {
   var page = await context.newPage();
   var errors = [];
   page.on('pageerror', function (e) { errors.push('pageerror: ' + e.message); });
-  page.on('console', function (m) { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push('console.error: ' + m.text().slice(0, 300)); });
+  page.on('console', function (m) {
+    if (m.type() !== 'error' || NOISE.test(m.text())) return;
+    var loc = '';
+    try { loc = (m.location() || {}).url || ''; } catch { loc = ''; }
+    if (/Failed to load resource/i.test(m.text()) && /(supabase|peerjs)/i.test(loc)) return; // the optional online services only
+    errors.push('console.error: ' + m.text().slice(0, 300));
+  });
   page.on('dialog', function (d) { d.dismiss().catch(function () {}); });
   page.setDefaultTimeout(8000);
 
@@ -80,9 +88,11 @@ export async function savefuzz(opts) {
 
   var rng = makeRng(opts.seed);
   var failures = [];
+  var tried = 0;
   mkdirSync(opts.out, { recursive: true });
 
   for (var i = 1; i <= opts.count && failures.length < 10; i++) {
+    tried = i;
     var mutant = JSON.parse(JSON.stringify(base));
     var n = 1 + Math.floor(rng() * 4);
     for (var m = 0; m < n; m++) mutate(mutant, rng);
@@ -151,7 +161,9 @@ export async function savefuzz(opts) {
     if (i % 10 === 0) console.log('...' + i + ' saves, ' + failures.length + ' failures');
   }
   await browser.close();
-  return { options: opts, tried: opts.count, failures: failures };
+  // `tried` is how many saves were actually attempted: the loop stops early at 10 failures, and the report used to
+  // claim the full requested count anyway
+  return { options: opts, tried: tried, failures: failures };
 }
 
 async function main() {

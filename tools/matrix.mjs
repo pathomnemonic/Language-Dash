@@ -19,7 +19,7 @@
 
 /* global window, document */
 /* eslint-disable no-control-regex */
-import { makeRng } from './soak.mjs';
+import { makeRng, keepsClimbing } from './soak.mjs';
 
 const args = process.argv.slice(2);
 const opt = (name, d) => { const i = args.indexOf('--' + name); return i >= 0 ? args[i + 1] : d; };
@@ -27,7 +27,9 @@ const RUNS = Number(opt('runs', 30));
 const SEED = Number(opt('seed', Date.now() % 100000));
 const URL = opt('url', 'http://localhost:4173');
 const CHROME = opt('chrome', process.env.CHROME_PATH || '/opt/pw-browsers/chromium');
-const NOISE = /WebSocket connection|peerjs|GPU stall|swiftshader|WebGL: INVALID|GroupMarkerNotSet|Failed to load resource|net::ERR|\[vite\]|status of (404|401|403|400)|offline|KHR_parallel/i;
+// "Failed to load resource" and net::ERR are deliberately NOT in this list: they used to swallow every resource
+// failure, including the app's own assets. They are handled in the console listener below, by the failing URL.
+const NOISE = /WebSocket connection|peerjs|GPU stall|swiftshader|WebGL: INVALID|GroupMarkerNotSet|\[vite\]|status of (404|401|403|400)|offline|KHR_parallel/i;
 const VIEWPORTS = [[390, 780], [320, 480], [1280, 720], [800, 360], [412, 915]];
 const MODES = ['endless', 'endless', 'endless', 'study', 'weakness'];
 const KEYS = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space', 'KeyA', 'KeyD'];
@@ -44,7 +46,14 @@ async function newPage() {
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
-  page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push('console: ' + m.text().slice(0, 200)); });
+  page.on('console', (m) => {
+    if (m.type() !== 'error') return;
+    const text = m.text();
+    if (NOISE.test(text)) return;
+    const loc = (m.location() || {}).url || '';
+    if (/Failed to load resource/i.test(text) && /(supabase|peerjs)/i.test(loc)) return; // the optional online services only
+    errors.push('console: ' + text.slice(0, 200));
+  });
   page.on('dialog', (d) => d.dismiss().catch(() => {}));
   await page.goto(URL + '/?debug=1');
   await page.waitForFunction(() => window.__game && window.__storage, null, { timeout: 30000 });
@@ -68,6 +77,8 @@ async function newPage() {
 const { page, errors } = await newPage();
 
 let baseline = null;
+const geoSeries = [];
+const texSeries = [];
 for (let n = 0; n < RUNS; n++) {
   const mode = pick(MODES);
   const vp = pick(VIEWPORTS);
@@ -119,7 +130,7 @@ for (let n = 0; n < RUNS; n++) {
     await page.waitForFunction(() => window.__game && (window.__game.running || window.__game.gatesActive), null, { timeout: 8000 }).catch(() => {});
     // dismiss a no-WebGL / not-enough-weakness alert if one stopped the run
     const alive = await page.evaluate(() => window.__game.running);
-    if (!alive) { log('skip (did not start): ' + desc); await page.keyboard.press('Escape'); continue; }
+    if (!alive) { failures.push({ desc, error: 'the run did not start' }); log('FAIL (did not start): ' + desc); await page.keyboard.press('Escape'); continue; }
 
     const frames = 12 + Math.floor(rng() * 30);
     for (let i = 0; i < frames; i++) {
@@ -129,7 +140,20 @@ for (let n = 0; n < RUNS; n++) {
       else if (r < 0.7) await page.evaluate(() => { const g = window.__game; if (g._monsterSlip) g._monsterSlip(); });
       else if (r < 0.76) await page.locator('#autoBtn').dispatchEvent('pointerdown').catch(() => {});
       else if (r < 0.82) await page.locator('#dashBtn').dispatchEvent('pointerdown').catch(() => {});
-      else if (r < 0.88) await page.evaluate(() => { document.dispatchEvent(new Event('visibilitychange')); window.dispatchEvent(new Event('blur')); window.dispatchEvent(new Event('focus')); });
+      else if (r < 0.88) await page.evaluate(async () => {
+        // actually hide the tab, not just fire the events: document.hidden and visibilityState change too, so the
+        // game's hidden-state branches (pause on hide, timers) are what get exercised
+        const setHidden = (hidden) => {
+          Object.defineProperty(document, 'hidden', { value: hidden, configurable: true });
+          Object.defineProperty(document, 'visibilityState', { value: hidden ? 'hidden' : 'visible', configurable: true });
+          document.dispatchEvent(new Event('visibilitychange'));
+        };
+        setHidden(true);
+        window.dispatchEvent(new Event('blur'));
+        await new Promise((res) => setTimeout(res, 350));
+        setHidden(false);
+        window.dispatchEvent(new Event('focus'));
+      });
       else if (r < 0.93) await page.keyboard.press('KeyP');
       else if (r < 0.97) await page.setViewportSize({ width: vp[1], height: vp[0] });
       else await page.evaluate(() => { const g = window.__game; g.lives = 1; });
@@ -142,7 +166,7 @@ for (let n = 0; n < RUNS; n++) {
       if (bad) throw new Error('NaN or non-number in the game state: ' + bad);
     }
     await page.setViewportSize({ width: vp[0], height: vp[1] });
-    await page.evaluate(() => { const g = window.__game; if (g.paused) g.resume && g.resume(); g._endRun(Math.random() < 0.5 ? 'no_lives' : 'manual'); });
+    await page.evaluate((endReason) => { const g = window.__game; if (g.paused) g.resume && g.resume(); g._endRun(endReason); }, rng() < 0.5 ? 'no_lives' : 'manual');
     await page.waitForTimeout(700);
     // a "continue?" or results screen: get home
     await page.locator('#goHomeBtn').click({ timeout: 2500 }).catch(async () => { await page.keyboard.press('Escape'); });
@@ -150,6 +174,8 @@ for (let n = 0; n < RUNS; n++) {
     const problems = await page.evaluate(() => (window.__dataProblems ? window.__dataProblems() : []));
     if (problems && problems.length) throw new Error('saved data problems: ' + JSON.stringify(problems).slice(0, 300));
     const info = await page.evaluate(() => { const i = window.__game.renderer.info; return { geo: i.memory.geometries, tex: i.memory.textures }; });
+    geoSeries.push(info.geo);
+    texSeries.push(info.tex);
     if (baseline === null && n >= 2) baseline = info;
     if (baseline && (info.geo > baseline.geo * 2 + 200 || info.tex > baseline.tex * 2 + 100)) throw new Error('3D memory keeps growing: ' + JSON.stringify(info) + ' vs ' + JSON.stringify(baseline));
     if (errors.length) throw new Error(errors.splice(0).join(' | '));
@@ -165,6 +191,9 @@ for (let n = 0; n < RUNS; n++) {
     await page.waitForFunction(() => window.__game, null, { timeout: 30000 }).catch(() => {});
   }
 }
+// the ceiling above catches a blow-out; this catches the slow leak that stays under it: a steady climb across runs
+if (keepsClimbing(geoSeries)) { failures.push({ desc: 'leak trend', error: 'geometry counts keep climbing across runs' }); log('FAIL leak trend: geometry counts keep climbing across runs: ' + geoSeries.join(', ')); }
+if (keepsClimbing(texSeries)) { failures.push({ desc: 'leak trend', error: 'texture counts keep climbing across runs' }); log('FAIL leak trend: texture counts keep climbing across runs: ' + texSeries.join(', ')); }
 await browser.close();
 if (failures.length) { console.log('\n' + failures.length + ' failing run(s), seed ' + SEED); process.exit(1); }
 console.log('\nall ' + RUNS + ' runs ok (seed ' + SEED + ')');
