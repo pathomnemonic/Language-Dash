@@ -16,12 +16,13 @@ var maps = args;
 mkdirSync(out, { recursive: true });
 var chrome = existsSync('/opt/pw-browsers/chromium') ? '/opt/pw-browsers/chromium' : undefined;
 var browser = await chromium.launch({ executablePath: chrome, args: ['--use-gl=swiftshader', '--no-sandbox', '--ignore-gpu-blocklist'] });
+var failures = 0;
 for (var name of maps) {
   var ctx = await browser.newContext({ viewport: { width: width, height: height }, bypassCSP: true });
   var page = await ctx.newPage();
   var errs = [];
   page.on('pageerror', function (e) { errs.push(e.message); });
-  page.on('console', function (m) { if (m.type() === 'error' && !/favicon|Failed to load resource/.test(m.text())) errs.push(m.text().slice(0, 200)); });
+  page.on('console', function (m) { if (m.type() === 'error' && !/favicon/.test(m.text())) errs.push(m.text().slice(0, 200)); });
   if (atmosphere) await page.addInitScript('window.__forceAtmosphere = ' + JSON.stringify(atmosphere));
   await page.goto(base + '/?debug=1');
   await page.waitForTimeout(1500);
@@ -42,11 +43,21 @@ for (var name of maps) {
   await page.locator('.btn-play').click();
   await page.waitForTimeout(wait);
   var info = await page.evaluate(function () { return { skin: window.__game.currentSkin && window.__game.currentSkin.name, state: window.__game._state, draw: window.__game.renderer.info.render.calls, tris: window.__game.renderer.info.render.triangles }; });
+  // a screenshot of the wrong map (or of a run that never started, or a page with errors) is worse than none:
+  // it gets filed under the requested map's name and nobody notices. Refuse it instead.
+  var norm = function (s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); };
+  if (errs.length || info.state !== 'playing' || norm(info.skin) !== norm(name)) {
+    failures++;
+    console.log('FAIL', name, JSON.stringify(info), errs.length ? 'ERRORS: ' + errs.slice(0, 3).join(' | ') : '(no errors)', 'screenshot skipped');
+    await ctx.close();
+    continue;
+  }
   var file = out + '/' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.png';
   await page.screenshot({ path: file });
   await page.waitForTimeout(1500);
   await page.screenshot({ path: file.replace('.png', '-b.png') });
-  console.log(name, JSON.stringify(info), errs.length ? 'ERRORS: ' + errs.slice(0, 3).join(' | ') : 'ok', file);
+  console.log(name, JSON.stringify(info), 'ok', file);
   await ctx.close();
 }
 await browser.close();
+if (failures) { console.error(failures + ' map(s) failed'); process.exit(1); }
