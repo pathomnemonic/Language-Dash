@@ -163,6 +163,35 @@ describe('an existing member', () => {
   });
 });
 
+describe('a failed membership check', () => {
+  it('keeps a known member a member: a network error is not a lost account', async () => {
+    member = { member: true, joined_at: '2026-10-01T00:00:00Z' };
+    const lb = await boot();
+    expect(lb.isMember()).toBe(true);
+    rpcOverride = (name) => (name === 'my_membership' ? { data: null, error: { message: 'network down' } } : null);
+    const res = await lb.refreshMembership(true);
+    expect(res).toMatchObject({ member: true, joinedAt: '2026-10-01T00:00:00Z', error: 'network down' });
+    expect(lb.isMember()).toBe(true);
+    expect(lb.getStatus()).toMatchObject({ member: true, membershipKnown: true, membershipError: 'network down' });
+    await tick();
+    expect(events).not.toContain('MEMBERSHIP_REQUIRED');
+    rpcOverride = null;   // the connection recovers: the next check clears the error
+    const again = await lb.refreshMembership(true);
+    expect(again).toMatchObject({ member: true, error: null });
+    expect(lb.getStatus().membershipError).toBeNull();
+  });
+
+  it('leaves membership unknown when the very first check fails, instead of declaring a non-member', async () => {
+    rpcOverride = (name) => (name === 'my_membership' ? { data: null, error: { message: 'network down' } } : null);
+    const lb = await boot();
+    await tick();
+    expect(lb.isMember()).toBe(false);
+    expect(lb.getStatus()).toMatchObject({ signedIn: true, member: false, membershipKnown: false, membershipError: 'network down' });
+    expect(events).not.toContain('MEMBERSHIP_REQUIRED');
+    expect(calls).not.toContain('rpc:join_language_dash');
+  });
+});
+
 describe('guests', () => {
   it('are never asked about membership and are never offered to join', async () => {
     user = { id: 'g1', email: '', is_anonymous: true };
