@@ -94,13 +94,34 @@ async function main() {
   week.warnings.forEach((w) => { console.warn('week warning: ' + w + (args.final ? ' (blocks --final)' : '')); });
   if (week.errors.length || (args.final && week.warnings.length)) { console.error('the week plan is refused: fix the repeats above (or leave layout/theme/map/runner unset so the tool rotates them)'); refused++; }
   const planOf = (id) => week.posts.find((p) => p.id === id);
+  const outRoot = resolve(args.out, args.final ? 'final' : 'draft');
+  // the post id names its output folder: it must stay inside the output directory (validateHook already refuses a
+  // non-slug id; this containment check is the second line of defence)
+  const dirOf = (h) => { const dir = resolve(outRoot, String(h.id)); return dir.startsWith(outRoot + '/') ? dir : null; };
+  const blockedOf = (v) => v.errors.length > 0 || (args.final && v.warnings.length > 0) || week.errors.length > 0 || (args.final && week.warnings.length > 0);
+  if (args.final) {
+    // a final run is all-or-nothing: if anything is refused, nothing is written, so the final folder never holds a
+    // partial week that looks complete
+    const blockedCount = verdicts.filter(({ h, v }) => blockedOf(v) || !dirOf(h)).length;
+    if (blockedCount || refused) {
+      verdicts.forEach(({ h, v }) => {
+        if (!blockedOf(v) && dirOf(h)) return;
+        console.error('REFUSED ' + ((h && h.id) || '(no id)'));
+        v.errors.forEach((e) => console.error('  - ' + e));
+        v.warnings.forEach((w) => console.error('  - (warning, blocks --final) ' + w));
+        if (!dirOf(h)) console.error('  - id escapes the output directory');
+      });
+      console.error('final run refused: ' + (blockedCount + refused) + ' problem(s); nothing was written');
+      process.exit(1);
+    }
+  }
   if (!args.check && !refused) {
-    mkdirSync(resolve(args.out, args.final ? 'final' : 'draft'), { recursive: true });
-    writeFileSync(resolve(args.out, args.final ? 'final' : 'draft', 'week-plan.json'), JSON.stringify(week.posts, null, 2));
+    mkdirSync(outRoot, { recursive: true });
+    writeFileSync(resolve(outRoot, 'week-plan.json'), JSON.stringify(week.posts, null, 2));
   }
   for (const { h, v } of verdicts) {
     const label = (h && h.id) || '(no id)';
-    const blocked = v.errors.length > 0 || (args.final && v.warnings.length > 0) || week.errors.length > 0 || (args.final && week.warnings.length > 0);
+    const blocked = blockedOf(v);
     if (blocked) {
       if (v.errors.length || (args.final && v.warnings.length)) {
         refused++;
@@ -113,7 +134,8 @@ async function main() {
     v.warnings.forEach((w) => console.warn('warning ' + label + ': ' + w));
     const plan = planOf(h.id);
     if (args.check) { console.log('ok      ' + label + '  [' + [plan.layout, plan.theme, h.vein].join(' / ') + ']'); continue; }
-    const dir = resolve(args.out, args.final ? 'final' : 'draft', h.id);
+    const dir = dirOf(h);
+    if (!dir) { refused++; console.error('REFUSED ' + label + ': id escapes the output directory'); continue; }
     mkdirSync(dir, { recursive: true });
     const reveal = v.concepts.map((c) => ({ hint: c.hint, answer: c.answer, roman: c.roman }));
     await render(slide1Html(h, FONTS, plan), resolve(dir, 'slide1.html'), resolve(dir, 'slide1.png'));
