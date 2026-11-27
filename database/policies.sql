@@ -19,11 +19,17 @@ ALTER TABLE card_reports ENABLE ROW LEVEL SECURITY;
 
 -- ==================== SCORES POLICIES ====================
 
--- Anyone can read scores (leaderboard is public).
+-- Scores are readable when the player's profile is public (the leaderboard is public), and always by
+-- the player themselves. A hidden profile's raw score rows are NOT public: the leaderboard views have
+-- always filtered on visible = true, and this policy now matches them, so hiding a profile hides the
+-- scores behind it too instead of only removing the board entry.
 DROP POLICY IF EXISTS "scores_select_public" ON scores;
 CREATE POLICY "scores_select_public"
   ON scores FOR SELECT
-  USING (true);
+  USING (
+    auth.uid() = user_id
+    OR EXISTS (SELECT 1 FROM player_profiles p WHERE p.user_id = scores.user_id AND p.visible = true)
+  );
 
 -- Authenticated users can insert their own scores.
 DROP POLICY IF EXISTS "scores_insert_own" ON scores;
@@ -125,6 +131,8 @@ CREATE POLICY "invites_insert_own"
   ON match_invites FOR INSERT
   WITH CHECK (
     auth.uid() = from_user
+    AND status = 'pending'
+    AND NOT has_block_between(auth.uid(), to_user)
     AND EXISTS (
       SELECT 1 FROM friends f
       WHERE f.status = 'accepted'
