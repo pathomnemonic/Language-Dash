@@ -254,7 +254,7 @@ describe('the real templates', () => {
     expect(Object.keys(ctx.tables).sort()).toEqual(Object.keys(TABLES).sort());
     expect(report.tables.length).toBe(Object.keys(TABLES).length + 1); // + members
     for (const f of report.functions.filter((x) => x.pin !== 'hand-written')) expect(FUNCTION_POLICY[f.name]).toBeTruthy();
-    expect(report.counters.pinsRewritten).toBe(90);
+    expect(report.counters.pinsRewritten).toBe(91);
     expect(report.gatedFunctions).toBeGreaterThan(40);
     expect(sql.startsWith('-- ====')).toBe(true);
     expect(sql).toContain('SET LOCAL search_path = language_dash, pg_temp;');
