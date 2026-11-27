@@ -168,6 +168,28 @@ describe('what a payment does', () => {
     expect(subscriptionUntil({ current_period_end: NOW - 10 * 86400 }, NOW)).toBe('');
     expect(subscriptionUntil({ current_period_end: NOW + 100 }, NOW)).toMatch(/Z$/);
   });
+
+  it('a subscription that ended for good takes its plan back, like a refund of it', async () => {
+    const t = fake();
+    const gone = { id: 'e5', type: 'customer.subscription.deleted', data: { object: { customer: 'cus_1', status: 'canceled', metadata: { app: 'language_dash', user_id: 'u1', plan: 'yearly' } } } };
+    expect((await handleEvent(gone, t.deps)).action).toBe('subscription_ended');
+    expect(t.calls[0]).toEqual(['pro_revoke_plan', { p_user: 'u1', p_plan: 'yearly' }]);
+  });
+
+  it('a cancellation made in the portal is recorded, and an undo records that too', async () => {
+    const upd = (flag) => ({ id: 'e6', type: 'customer.subscription.updated', data: { object: { customer: 'cus_1', status: 'active', cancel_at_period_end: flag, metadata: { app: 'language_dash', user_id: 'u1', plan: 'yearly' } } } });
+    let t = fake();
+    expect((await handleEvent(upd(true), t.deps)).action).toBe('subscription_cancel_state');
+    expect(t.calls).toEqual([['pro_set_billing_cancelled', { p_user: 'u1', p_cancelled: true }]]);
+    t = fake();
+    await handleEvent(upd(false), t.deps);
+    expect(t.calls).toEqual([['pro_set_billing_cancelled', { p_user: 'u1', p_cancelled: false }]]);
+    // (another app's subscription on the shared account is ignored)
+    t = fake();
+    const other = upd(true); other.data.object.metadata = { app: 'dx_dash', user_id: 'u9', plan: 'yearly' };
+    expect((await handleEvent(other, t.deps)).handled).toBe(false);
+    expect(t.calls).toEqual([]);
+  });
 });
 
 
