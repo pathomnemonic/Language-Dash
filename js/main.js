@@ -102,6 +102,8 @@ var webglOk = true;
 var multiplayerClient = null;
 var multiplayerLastStateSend = 0;
 var multiplayerMatchStarted = false;
+var multiplayerMatchStartAt = 0;   // startAt of the match currently scheduled: tells a duplicate start call from a new match
+var multiplayerMatchSeq = 0;       // bumped on every scheduled match, so a stale post-run timer cannot clear a newer match
 var multiplayerModeConfig = {};
 var multiplayerLocalResult = null;
 var multiplayerOpponentResult = null;
@@ -204,8 +206,13 @@ function showMultiplayerMessage(message, color) {
 }
 
 function scheduleVersusStart(config) {
-  if (multiplayerMatchStarted) return;
+  // A duplicate call for the match already scheduled (same startAt) is ignored, but a NEW match is not:
+  // after a run ends the started flag only clears on a delay, and a rematch arranged inside that window
+  // must still start.
+  if (multiplayerMatchStarted && config.startAt && config.startAt === multiplayerMatchStartAt) return;
   multiplayerMatchStarted = true;
+  multiplayerMatchStartAt = config.startAt || 0;
+  multiplayerMatchSeq++;
   multiplayerModeConfig = config.config || config.modeConfig || {};
   multiplayerLocalResult = null;
   multiplayerOpponentResult = null;
@@ -282,6 +289,7 @@ function makeForfeitResult() {
 function configureMultiplayer(client, content) {
   multiplayerClient = client;
   multiplayerMatchStarted = false;
+  multiplayerMatchStartAt = 0;
   multiplayerModeConfig = {};
   multiplayerLocalResult = null;
   multiplayerOpponentResult = null;
@@ -1613,10 +1621,12 @@ function init() {
       weakBtn.addEventListener('click', function () { startMode('weakness'); });
     }
 
-    // Hide opponent HUD after delay
+    // Hide opponent HUD after delay, and release the match: unless a newer match has been scheduled
+    // since this run ended (its flag is not ours to clear).
+    var seqAtRunEnd = multiplayerMatchSeq;
     setTimeout(function () {
       hideOpponentHud();
-      multiplayerMatchStarted = false;
+      if (multiplayerMatchSeq === seqAtRunEnd) { multiplayerMatchStarted = false; multiplayerMatchStartAt = 0; }
     }, 5000);
   };
 
