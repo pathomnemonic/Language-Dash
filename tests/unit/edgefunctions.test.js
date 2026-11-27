@@ -487,6 +487,16 @@ describe('ld-iap-verify: phone-store purchases', () => {
     expect(Math.round(new Date(grant.p_until).getTime() / 1000)).toBe(end + 2 * 86400);
   });
 
+  it('Google Play: a subscription token for one plan cannot be claimed under another', async () => {
+    const h = await boot('../../supabase/functions/ld-iap-verify/index.js');
+    const end = NOWS() + 20 * 86400;
+    storeReply = { status: 200, body: { subscriptionState: 'SUBSCRIPTION_STATE_ACTIVE', lineItems: [{ productId: 'languagedash_pro_monthly', expiryTime: new Date(end * 1000).toISOString() }] } };
+    const r = await call(h, { platform: 'android', product_id: 'languagedash_pro_yearly', token: 'purchase-token-123' }, 'good');
+    expect(r.status).toBe(400);
+    expect(r.body.error).toMatch(/different product/i);
+    expect(db.some((c) => c[0] === 'pro_store_claim' || c[0] === 'pro_grant_until')).toBe(false);
+  });
+
   it('Google Play: a refunded item is taken back, an unknown purchase gives nothing', async () => {
     const h = await boot('../../supabase/functions/ld-iap-verify/index.js');
     storeReply = { status: 200, body: { purchaseState: 1 } };
