@@ -36,7 +36,15 @@ describe('settings', () => {
     const keys = [...new Set([...ui.matchAll(/key:\s*'([A-Za-z0-9_]+)'/g)].map((m) => m[1]))];
     expect(keys.length).toBeGreaterThan(10);
     const others = walk('js').filter((p) => !/uisettings\.js$|storage\.js$/.test(p.replace(/\\/g, '/'))).map((p) => readFileSync(p, 'utf8')).join('\n');
-    const unread = keys.filter((k) => !new RegExp("['\"\\.]" + k + "\\b").test(others));
+    // a read is one of the real shapes: storage.get('key'), .settings.key, settings['key'], getSetting('key').
+    // The key merely appearing after some quote or dot anywhere (a label, a data attribute) is not a read.
+    const readAs = (k) => [
+      new RegExp("storage\\.(?:get|set)\\(\\s*['\"]" + k + "['\"]"),
+      new RegExp('\\.settings\\.' + k + '\\b'),
+      new RegExp("settings\\[\\s*['\"]" + k + "['\"]\\s*\\]"),
+      new RegExp("getSetting\\(\\s*['\"]" + k + "['\"]"),
+    ];
+    const unread = keys.filter((k) => !readAs(k).some((re) => re.test(others)));
     expect(unread).toEqual([]);
   });
 });
