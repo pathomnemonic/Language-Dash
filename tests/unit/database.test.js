@@ -512,6 +512,20 @@ describe('cloud saves', () => {
     await db.exec('RESET ROLE');
     expect(failed).toBe(true);
   });
+
+  it('the backup guard is judged again on the conflicting row, and the first save cannot raise', async () => {
+    // The race itself needs two connections, which this harness has not got; what can be pinned is the
+    // shape of the fix: the backup upsert re-checks its size guard against the conflicting row as committed
+    // (not the caller's snapshot), and push_save's first insert carries conflict handling that returns NULL.
+    const keep = (await db.query(`SELECT pg_get_functiondef('keep_richest_save(uuid, integer)'::regprocedure) AS d`)).rows[0].d;
+    expect(keep).toContain('player_saves_backup.run_count <= excluded.run_count');
+    const push = (await db.query(`SELECT pg_get_functiondef('push_save(jsonb, integer, timestamptz)'::regprocedure) AS d`)).rows[0].d;
+    expect(push).toContain('ON CONFLICT (user_id) DO NOTHING');
+    // force_save and restore take the live row's lock before taking their timestamp (save order = lock order).
+    const force = (await db.query(`SELECT pg_get_functiondef('force_save(jsonb, integer)'::regprocedure) AS d`)).rows[0].d;
+    expect(force.indexOf('FOR UPDATE')).toBeGreaterThan(-1);
+    expect(force.indexOf('FOR UPDATE')).toBeLessThan(force.indexOf('clock_timestamp()'));
+  });
 });
 
 
