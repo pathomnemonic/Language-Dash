@@ -600,4 +600,5 @@
 .lang-welcome-card h2 { margin: 4px 0 6px; font-size: 28px; }
 .lang-logo { display: inline-block; font-family: var(--font-display); font-weight: 900; font-size: 15px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--red-deep); margin-top: 6px; padding: 3px 12px; border: 3px double var(--red); border-radius: 6px; transform: rotate(-2deg); }
 .lang-sub { margin: 0 0 4px; color: var(--ink-soft); font-size: 14px; }
+.lang-error { margin: 12px 0 0; color: var(--accent-red); font-size: 14px; font-weight: 700; }
 .lang-picker { position: relative; }
