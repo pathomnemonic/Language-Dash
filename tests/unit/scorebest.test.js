@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
 import { beatsBest, recordBest } from '../../js/scorebest.js';
 
 describe('only a player\'s best run is sent', () => {
@@ -25,11 +24,6 @@ describe('only a player\'s best run is sent', () => {
   });
 });
 
-describe('the database keeps one row per player, mode and season', () => {
-  const sql = readFileSync('database/schema.sql', 'utf8');
-  it('has the keep-best trigger and a one-time tidy-up', () => {
-    expect(sql).toMatch(/CREATE OR REPLACE FUNCTION scores_keep_best\(\)/);
-    expect(sql).toMatch(/CREATE TRIGGER scores_zkeep_best_trg BEFORE INSERT ON scores/);
-    expect(sql).toMatch(/DELETE FROM scores s\s+USING scores better/);
-  });
-});
+// The database side of "one best run per player, mode and season" is covered for real,
+// against a live database, in tests/unit/database.test.js. A text search over schema.sql
+// that used to sit here only proved the trigger's name is spelled the same in both files.
